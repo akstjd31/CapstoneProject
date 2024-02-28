@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
+    public List<int> lobbyPlayerViewID;
     void Start()
     {
         if (PhotonNetwork.IsConnected)
@@ -22,6 +23,24 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             else
             {
                 CreateRoom();
+            }
+        }
+    }
+
+    private void Update()
+    {
+        AddPlayersWithPhotonViewToList();
+    }
+
+    // 하이에라키에 존재하는 모든 플레이어의 ViewID
+    void AddPlayersWithPhotonViewToList()
+    {
+        PhotonView[] allViews = GameObject.FindObjectsOfType<PhotonView>();
+        foreach (PhotonView view in allViews)
+        {
+            if (view.ViewID > 1000 && !lobbyPlayerViewID.Contains(view.ViewID))
+            {
+                lobbyPlayerViewID.Add(view.ViewID);
             }
         }
     }

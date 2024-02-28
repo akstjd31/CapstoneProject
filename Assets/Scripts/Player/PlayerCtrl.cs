@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using Photon.Pun;
 using Photon.Realtime;
-using UnityEngine.SceneManagement;
+
 
 ///////////////////////////////////////////////////////
 //////// PunRPC 사용 시 주의사항
@@ -39,10 +41,15 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     SpriteRenderer spriteRenderer; // 피격 시 색 변경을 위한 스프라이트 렌더러
     private Status status; // 플레이어 상태 스크립트
     private Chat chatScript;
+    private PartySystem partySystemScript;
 
     public string weaponName = "None"; // 초기에는 아무 무기가 없음.
 
     [SerializeField] private State state; // enum 클래스 변수
+
+    public bool isPartyMember = false; // 파티에 이미 속해있는 상태인지 아닌지 확인하는 변수
+
+    public Party party;
 
     // 상태 변경을 위한 함수
     public void ChangeState(State newState)
@@ -66,9 +73,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         status = this.GetComponent<Status>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
+        partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
 
         state = State.NORMAL;
         weaponPV = null;
+        party = null;
+
+        //partySystemScript.partyCreator.transform.GetComponentInChildren<Button>().onClick.AddListener(OnPartyCreationComplete);
+
     }
 
     void FixedUpdate()
@@ -99,7 +111,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             // }
             
             // 공격
-            if (Input.GetMouseButtonDown(0) && !chatScript.inputField.isFocused)
+            
+            if (Input.GetMouseButtonDown(0) &&
+                !chatScript.inputField.isFocused &&
+                !partySystemScript.partyCreator.activeSelf &&
+                !partySystemScript.partyView.activeSelf &&
+                !EventSystem.current.IsPointerOverGameObject())
             {
                 state = State.ATTACK;
                 anim.SetTrigger("Attack");
@@ -109,6 +126,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                 attackDistanceSpeed = 6f;
             }
+
+            IsPartyHUDActive();
         }
     }
     //Graphic & Input Updates	
@@ -140,7 +159,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     void LateUpdate()
     {
-        if (pv.IsMine && !chatScript.inputField.isFocused)
+        if (pv.IsMine && 
+            !chatScript.inputField.isFocused &&
+            !partySystemScript.partyCreator.activeSelf &&
+            !partySystemScript.partyView.activeSelf)
         {
             // 상태에 따른 함수 실행
             switch (state)
@@ -251,6 +273,30 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         if (rollSpeed < rollSpeedMinimum)
         {
             state = State.NORMAL;
+        }
+    }
+
+    // 플레이어가 파티 방에 속해있는지 확인 후에 정보를 전달해주는 함수
+    public void IsPartyHUDActive()
+    {
+        if (party != null)
+        {
+            if (party.partyMembers.Count == 1)
+            {
+                PhotonView partyLeaderPhotonView = PhotonView.Find(party.partyMembers[0]);
+                partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
+                partySystemScript.partyMemberHUD[0].SetActive(true);
+            }
+            else
+            {
+                PhotonView partyLeaderPhotonView = PhotonView.Find(party.partyMembers[0]);
+                partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
+                partySystemScript.partyMemberHUD[0].SetActive(true);
+
+                PhotonView partyMemberPhotonView = PhotonView.Find(party.partyMembers[1]);
+                partySystemScript.partyMemberHUD[1].GetComponentInChildren<Text>().text = partyMemberPhotonView.Owner.NickName;
+                partySystemScript.partyMemberHUD[1].SetActive(true);
+            }
         }
     }
 

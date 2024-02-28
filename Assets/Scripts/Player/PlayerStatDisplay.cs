@@ -27,13 +27,12 @@ public class PlayerStatDisplay : MonoBehaviour
                 {
                     playetCtrl = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCtrl>();
                     status = GameObject.FindGameObjectWithTag("Playe;").GetComponent<Status>();
-                }
-                    
+                }  
             }
         }
         else
         {
-            UpdateText(status.HP, playetCtrl.weaponName, status.attackDamage, status.attackSpeed);
+            UpdateText((int)status.HP, playetCtrl.weaponName, status.attackDamage, status.attackSpeed);
         }
     }
 

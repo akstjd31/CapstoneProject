@@ -61,6 +61,10 @@ MonoBehaviour:
   - ChatBoxDestroy
   - RPC_SendMessage
   - GetMessage
+  - GetPartyRoom
+  - IsPlayerInPartyRoom
+  - PartyMemberAdd
+  - SyncPartyMembers
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
