@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1049753969677",
+    "project_id": "capstoneproject-8992c",
+    "storage_bucket": "capstoneproject-8992c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049753969677:android:e030ca9f5b9e9be6506144",
+        "android_client_info": {
+          "package_name": "com.hallym.capstone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1049753969677-hfu0873d5sgcjf77dm1nbanqv14bk5g8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvJu_xoV2eaiQmuy9Dsm2GvBXcPvhqw0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1049753969677-hfu0873d5sgcjf77dm1nbanqv14bk5g8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1049753969677-u4ahusnj9ub4pbqirkb674cidog94eva.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hallym.capstone"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
