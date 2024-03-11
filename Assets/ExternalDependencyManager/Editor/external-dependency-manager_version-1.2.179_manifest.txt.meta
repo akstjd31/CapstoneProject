@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5dbacd4ab6d87a818f8d6c71e42d91ee09435b28936bd5033c7de056b325e8ad
-size 409
+fileFormatVersion: 2
+guid: 53a0906dfc3143ba8bf0193c245ad230
+labels:
+- gvh
+- gvh_manifest
+- gvh_version-1.2.179
+- gvhp_exportpath-ExternalDependencyManager/Editor/external-dependency-manager_version-1.2.179_manifest.txt
+- gvhp_manifestname-0External Dependency Manager
+- gvhp_manifestname-play-services-resolver
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

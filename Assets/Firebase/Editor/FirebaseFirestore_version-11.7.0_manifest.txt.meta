@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fa45b3b2c267a5e73962f0a65ce08364fb250c52a50da3172583a03eb0e96d57
-size 281
+fileFormatVersion: 2
+guid: 54be7a1ced844a6c9f5423f446956a96
+labels:
+- gvh
+- gvh_manifest
+- gvh_version-11.7.0
+- gvhp_exportpath-Firebase/Editor/FirebaseFirestore_version-11.7.0_manifest.txt
+- gvhp_manifestname-0Cloud Firestore
+- gvhp_manifestname-1FirebaseFirestore
+timeCreated: 0
