@@ -37,6 +37,36 @@ public class UserData : MonoBehaviour
         }
     }
 
+    public void SignInWithGoogle()
+    {
+        auth = FirebaseAuth.DefaultInstance;
+
+        if (auth == null)
+        {
+            Debug.LogError("Firebase Auth is not initialized.");
+            return;
+        }
+
+        // Google 로그인 팝업 표시
+        auth.SignInWithCredentialAsync(GoogleAuthProvider.GetCredential(null, null)).ContinueWith(task =>
+        {
+            if (task.IsCanceled)
+            {
+                Debug.LogError("SignInWithCredentialAsync was canceled.");
+                return;
+            }
+            if (task.IsFaulted)
+            {
+                Debug.LogError("SignInWithCredentialAsync encountered an error: " + task.Exception);
+                return;
+            }
+
+            // 로그인 성공
+            FirebaseUser user = task.Result;
+            Debug.Log("Google User Signed In: " + user.DisplayName + " (" + user.Email + ")");
+        });
+    }
+
     public string GetUserId()
     {
         string userId = authEmail;
