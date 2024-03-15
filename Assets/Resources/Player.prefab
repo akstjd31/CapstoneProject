@@ -105,6 +105,7 @@ MonoBehaviour:
   observableSearch: 0
   ObservedComponents:
   - {fileID: 4616695674804560234}
+  - {fileID: 646657611337115926}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -123,7 +124,7 @@ MonoBehaviour:
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
-  m_UseLocal: 0
+  m_UseLocal: 1
 --- !u!61 &3162622583736101165
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -238,22 +239,22 @@ MonoBehaviour:
   ShowParameterInspector: 1
   m_SynchronizeParameters:
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: isMove
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Rolling
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: AttackIdle
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Die
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Idle
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Attack
   m_SynchronizeLayers:
   - SynchronizeType: 0
