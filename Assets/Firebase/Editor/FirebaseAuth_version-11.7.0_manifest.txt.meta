@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:342daed50ab82239376263bf246a263b6abd5c4f7ba74f3871ea91915a48564f
-size 279
+fileFormatVersion: 2
+guid: 100ba58a6d04484aa71acacd6b85e878
+labels:
+- gvh
+- gvh_manifest
+- gvh_version-11.7.0
+- gvhp_exportpath-Firebase/Editor/FirebaseAuth_version-11.7.0_manifest.txt
+- gvhp_manifestname-0Firebase Authentication
+- gvhp_manifestname-1FirebaseAuth
+timeCreated: 0
