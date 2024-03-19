@@ -13,7 +13,6 @@ public class UserData : MonoBehaviour
     private string authEmail = "test0311@gmail.com";
     private string authPassword = "asdf";
 
-
     public void SignInWithEmail_Password()
     {
         auth = FirebaseAuth.DefaultInstance;
@@ -124,35 +123,53 @@ public class UserData : MonoBehaviour
     //https://chat.openai.com/c/e2745705-fb02-4669-9261-4e1ae30daaf5
     private const string authorizationEndpoint_second = "https://accounts.google.com/o/oauth2/auth";
     private const string redirectUri_second = "https://capstoneproject-8992c.firebaseapp.com/__/auth/handler"; // 리디렉션 URI 설정
+    private const string new_redirectUri = "https://hallym.capstone.photon.firebaseapp.com/__/auth/handler"; // 리디렉션 URI 설정
     private const string clientId_second = "1049753969677-hfu0873d5sgcjf77dm1nbanqv14bk5g8.apps.googleusercontent.com"; // 클라이언트 ID 설정
     private const string scope_second = "email profile"; // 승인 범위 설정
 
     private string authUrl_second;
 
+    //redirection uri를 다른 값으로 대체하는 경우 : {{액세스 차단됨: 이 앱의 요청이 잘못되었습니다}}
+    //private string normal_google_uri = "https://google.com";
 
     public void GetGoogleTokens()
     {
         StartCoroutine(OpenOAuthURL());
+        //StartCoroutine(OpenLoginWebview());   //rawImage를 활용한 웹뷰는 컨트롤 할 수 없음
     }
 
     IEnumerator OpenOAuthURL()
     {
-        authUrl_second = $"{authorizationEndpoint_second}?response_type=code&client_id={clientId_second}&redirect_uri={redirectUri_second}&scope={scope_second}";
+        auth = FirebaseAuth.DefaultInstance;
+
+        //redirect URI가 없으면
+        //액세스 차단됨: 승인 오류
+        //Missing required parameter: redirect_uri 이 오류에 관해 자세히 알아보기
+        //400 오류: invalid_request
+
+        //authUrl_second = $"{authorizationEndpoint_second}?response_type=code&client_id={clientId_second}";
+        authUrl_second = $"{authorizationEndpoint_second}?response_type=code&client_id={clientId_second}&redirect_uri={new_redirectUri}&scope={scope_second}";
 
         // Google 로그인 페이지로 이동
         Application.OpenURL(authUrl_second);
 
         // 로그인 후에 인증 코드를 수신할 때까지 대기
-        while (!Application.absoluteURL.StartsWith(redirectUri_second))
+        //// 여기 경로는 OAuth 2.0에 지정된 redirect uri가 아니어도 잘못된 request라는 오류가 발생하지 않음 
+        // Unity에서 현재 실행 중인 애플리케이션의 URL이 주어진 문자열로 시작하는지 여부를 확인하는 함수
+
+        while (!Application.absoluteURL.StartsWith(new_redirectUri))
         {
-            yield return null;
+            Debug.Log("Application.absoluteURL : " + Application.absoluteURL);
+            //Debug.Log("Application.temporaryCachePath : " + Application.temporaryCachePath);
+            //Debug.Log("Application.identifier : " + Application.identifier);            //hallym.capstone.photon
+            //Debug.Log("Application.cloudProjectId : " + Application.cloudProjectId);    //a7a5451d-c406-4b70-80a9-007d670f7277
+            
+
+            yield return new WaitForSeconds(1);
         }
 
         // 인증 코드 추출
         string authCode = GetAuthCodeFromUrl(Application.absoluteURL);
-
-        Text textComponent = GameObject.Find("Canvas").GetComponentInChildren<Text>();
-        textComponent.text = authCode;
 
         // 인증 코드를 사용하여 토큰 요청 등의 작업 수행
         Debug.Log("Received auth code: " + authCode);

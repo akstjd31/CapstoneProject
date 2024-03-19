@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1049753969677:android:e030ca9f5b9e9be6506144",
+        "mobilesdk_app_id": "1:1049753969677:android:28c5c76af39f0f90506144",
         "android_client_info": {
-          "package_name": "com.hallym.capstone"
+          "package_name": "com.DefaultCompany.Project2D"
         }
       },
       "oauth_client": [
@@ -27,14 +27,50 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1049753969677-hfu0873d5sgcjf77dm1nbanqv14bk5g8.apps.googleusercontent.com",
+              "client_id": "1049753969677-dp8k59e688m58bu4dovf8565gjgkja63.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1049753969677-u4ahusnj9ub4pbqirkb674cidog94eva.apps.googleusercontent.com",
+              "client_id": "1049753969677-0sg0gu7iq494h04u5kl8m7ompgsr9hq4.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.hallym.capstone"
+                "bundle_id": "com.hallym.capstone1"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049753969677:android:956d6ba1152669c6506144",
+        "android_client_info": {
+          "package_name": "hallym.capstone.photon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1049753969677-hfu0873d5sgcjf77dm1nbanqv14bk5g8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvJu_xoV2eaiQmuy9Dsm2GvBXcPvhqw0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1049753969677-dp8k59e688m58bu4dovf8565gjgkja63.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1049753969677-0sg0gu7iq494h04u5kl8m7ompgsr9hq4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hallym.capstone1"
               }
             }
           ]
