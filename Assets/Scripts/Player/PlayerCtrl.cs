@@ -292,9 +292,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
         if (party != null)
         {
-            if (party.partyMembers.Count == 1)
+            if (party.GetPartyHeadCount() == 1)
             {
-                PhotonView partyLeaderPhotonView = PhotonView.Find(party.partyMembers[0]);
+                PhotonView partyLeaderPhotonView = PhotonView.Find(party.GetPartyLeaderID());
                 partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[0].SetActive(true);
 
@@ -305,11 +305,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
             else
             {
-                PhotonView partyLeaderPhotonView = PhotonView.Find(party.partyMembers[0]);
+                PhotonView partyLeaderPhotonView = PhotonView.Find(party.GetPartyLeaderID());
                 partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[0].SetActive(true);
 
-                PhotonView partyMemberPhotonView = PhotonView.Find(party.partyMembers[1]);
+                PhotonView partyMemberPhotonView = PhotonView.Find(party.GetPartyMemberID());
                 partySystemScript.partyMemberHUD[1].GetComponentInChildren<Text>().text = partyMemberPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[1].SetActive(true);
             }
