@@ -32,14 +32,14 @@ public class Chat : MonoBehaviour
     public void SendMessage()
     {   
         // 닉네임 : 메세지 형식으로 전달
-        GetComponent<PhotonView>().RPC("GetMessage", RpcTarget.All, inputField.text);
+        this.GetComponent<PhotonView>().RPC("GetMessage", RpcTarget.All, PhotonNetwork.NickName, inputField.text);
 
         //inputField.Select(); // 입력 부분의 필드가 활성화되어있으면 비활성화, 비활성화 상태이면 활성화
         inputField.text = ""; // 입력 부분의 텍스트 비워주기
     }
 
     [PunRPC]
-    public void GetMessage(string receiveMessage)
+    public void GetMessage(string nickName, string receiveMessage)
     {
         // 10번째 자리마다 개행 문자(\n)를 삽입하여 문자열 다듬기
         string formattedMessage = "";
@@ -61,7 +61,7 @@ public class Chat : MonoBehaviour
         GameObject msg = Instantiate(message, Vector3.zero, Quaternion.identity, content.transform);
         Message messageScript = msg.GetComponent<Message>();
 
-        messageScript.NickName.text = PhotonNetwork.NickName;
+        messageScript.NickName.text = nickName;
         messageScript.myMessage.text = formattedMessage; 
 
         Vector2 newHeight = messageScript.myMessage.GetComponent<RectTransform>().sizeDelta;
