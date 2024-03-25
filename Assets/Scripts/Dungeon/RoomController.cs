@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,11 +12,14 @@ public class RoomController : MonoBehaviour
 	public GameObject[] leftRooms;
     public Transform[] mapSpawnPoints;
 
+    float roomCreateDelay = 0.1f;
+
     // Start is called before the first frame update
     void Start()
     {
-        Invoke("CreateRoom", 0.3f);
-        Debug.Log(DungeonManager.roomNum);
+        //Invoke("CreateRoom", 0.3f);
+        StartCoroutine(CreateRoom());
+        //CreateRoom();
     }
 
     // Update is called once per frame
@@ -24,7 +28,7 @@ public class RoomController : MonoBehaviour
         
     }
 
-    public void CreateRoom()
+    private IEnumerator CreateRoom()
     {
         RaycastHit2D hit;
         mapSpawnPoints = this.gameObject.transform.GetChild(0).GetComponentsInChildren<Transform>();
@@ -32,6 +36,7 @@ public class RoomController : MonoBehaviour
         {
             for(int i = 2; i < mapSpawnPoints.Length; i++)
             {
+                yield return new WaitForSeconds(roomCreateDelay);
                 GameObject roomtemp;
                 if(mapSpawnPoints[i].name.Contains("Up"))
                 {
@@ -112,6 +117,7 @@ public class RoomController : MonoBehaviour
             }
             for(int i = 2; i < mapSpawnPoints.Length; i++)
             {
+                yield return new WaitForSeconds(roomCreateDelay);
                 GameObject roomtemp;
                 if(mapSpawnPoints[i].name.Contains("Up"))
                 {
@@ -183,5 +189,6 @@ public class RoomController : MonoBehaviour
                 }
             }
         }
+        yield break;
     }
 }

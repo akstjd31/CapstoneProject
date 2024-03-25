@@ -23,6 +23,7 @@ public class DungeonManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(roomNum);
         Debug.Log(mapCreateTimer);
         Debug.Log(isMapCreate);
         if(!isMapCreate)
