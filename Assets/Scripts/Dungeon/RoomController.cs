@@ -12,7 +12,11 @@ public class RoomController : MonoBehaviour
 	public GameObject[] leftRooms;
     public Transform[] mapSpawnPoints;
 
+    public bool[] doorList = new bool[4];
+
     float roomCreateDelay = 0.1f;
+    bool makeDoor = false;
+    bool doorCheck = false;
 
     // Start is called before the first frame update
     void Start()
@@ -23,25 +27,149 @@ public class RoomController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        if(DungeonManager.isMapCreate && !makeDoor)
+        {
+            RaycastHit2D hit;
+            
+            for(int i = 2; i < mapSpawnPoints.Length; i++)
+            {
+                hit = Physics2D.Raycast(new Vector2(this.transform.position.x + (mapSpawnPoints[i].position.x - this.transform.position.x) * 0.2f, this.transform.position.y + (mapSpawnPoints[i].position.y - this.transform.position.y) * 0.2f), 
+                new Vector2(mapSpawnPoints[i].position.x - this.transform.position.x , mapSpawnPoints[i].position.y - this.transform.position.y), 0.5f);
+                Debug.DrawRay(new Vector2(this.transform.position.x + (mapSpawnPoints[i].position.x - this.transform.position.x) * 0.2f, this.transform.position.y + (mapSpawnPoints[i].position.y - this.transform.position.y) * 0.2f), 
+                new Vector2(mapSpawnPoints[i].position.x - this.transform.position.x , mapSpawnPoints[i].position.y - this.transform.position.y) * 0.5f, Color.blue);
+                if(hit.collider == null)
+                {
+                    continue;
+                }
+                else if(hit.transform.CompareTag("Door"))
+                {
+                    int ranBin = Random.Range(0, 5);
+                    Debug.Log(ranBin);
+                    if(ranBin == 0)
+                    {
+                        Debug.Log("breakDoor");
+                        //hit.transform.localScale = new Vector3(1, 1, 1);
+                        hit.transform.gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        Debug.Log("makeDoor");
+
+                        mapSpawnPoints[i].GetChild(0).gameObject.SetActive(true);
+                    }
+                }
+            }
+            makeDoor = true;
+        }
+        if(DungeonManager.isMapCreate && makeDoor && !doorCheck)
+        {
+            for(int i = 0; i < 4; i ++)
+            {
+                RaycastHit2D hit;
+                if (i == 0)
+                {
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y + 1 * 0.2f),
+                    Vector2.up, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 1 * 0.2f),
+                    Vector2.up * 0.5f, Color.blue);
+                    if(hit.collider == null)
+                    {
+                        doorList[i] = true;
+                    }
+                    else
+                    {
+                        doorList[i] = false;
+                    }
+                }
+                else if (i == 1)
+                {
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x + 1 * 0.2f, this.transform.position.y),
+                    Vector2.right, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x + 1 * 0.2f, this.transform.position.y),
+                    Vector2.right * 0.5f, Color.blue);
+                    if(hit.collider == null)
+                    {
+                        doorList[i] = true;
+                    }
+                    else
+                    {
+                        doorList[i] = false;
+                    }
+                }
+                else if (i == 2)
+                {
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1 * 0.2f),
+                    Vector2.down, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 1 * 0.2f),
+                    Vector2.down * 0.5f, Color.blue);
+                    if(hit.collider == null)
+                    {
+                        doorList[i] = true;
+                    }
+                    else
+                    {
+                        doorList[i] = false;
+                    }
+                }
+                else if (i == 3)
+                {
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x - 1 * 0.2f, this.transform.position.y),
+                    Vector2.left, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x - 1 * 0.2f, this.transform.position.y),
+                    Vector2.left * 0.5f, Color.blue);
+                    if(hit.collider == null)
+                    {
+                        doorList[i] = true;
+                    }
+                    else
+                    {
+                        doorList[i] = false;
+                    }
+                }
+            }
+            doorCheck = true;
+            Debug.Log(this.transform.position);
+            for(int i = 0; i < 4; i++)
+            {
+                Debug.Log(doorList[i]);
+            } 
+        }
     }
 
     private IEnumerator CreateRoom()
     {
+        if(this.transform.position.x > DungeonManager.farherstX)
+        {
+            DungeonManager.farherstX = (int)this.transform.position.x;
+        }
+        else if(this.transform.position.y > DungeonManager.farherstY)
+        {
+            DungeonManager.farherstY = (int)this.transform.position.y;
+        }
+        else if(this.transform.position.x < DungeonManager.farherstMX)
+        {
+            DungeonManager.farherstMX = (int)this.transform.position.x;
+        }
+        else if(this.transform.position.y < DungeonManager.farherstMY)
+        {
+            DungeonManager.farherstMY = (int)this.transform.position.y;
+        }
+
+        int roomNumTemp = DungeonManager.roomNum;
         RaycastHit2D hit;
         mapSpawnPoints = this.gameObject.transform.GetChild(0).GetComponentsInChildren<Transform>();
-        if(DungeonManager.roomNum > 0)
+        if(DungeonManager.roomNum > (int)roomNumTemp / 3)
         {
             for(int i = 2; i < mapSpawnPoints.Length; i++)
             {
-                yield return new WaitForSeconds(roomCreateDelay);
+                yield return new WaitForSeconds(Random.Range(0.01f, 0.2f));
                 GameObject roomtemp;
                 if(mapSpawnPoints[i].name.Contains("Up"))
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up, LayerMask.GetMask("Room Checker"));
-                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up, Color.red);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up, 0.5f, LayerMask.GetMask("Room Checker"));
+                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
                         roomtemp = Instantiate(upRooms[Random.Range(1, upRooms.Length-1)]);
@@ -52,13 +180,15 @@ public class RoomController : MonoBehaviour
                     }
                     // else
                     // {
-                    //     Debug.Log("1");
+                    //     Debug.Log(this.transform.position);
+                    //     Debug.Log(hit.transform.name);
+                    //     Debug.Log(hit.transform.position);
                     // }
                 }
                 else if(mapSpawnPoints[i].name.Contains("Right"))
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x + 0.5f, this.transform.position.y), Vector2.right, LayerMask.GetMask("Room Checker"));
-                    Debug.DrawRay(new Vector2(this.transform.position.x + 0.5f, this.transform.position.y), Vector2.right, Color.red);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x + 0.5f, this.transform.position.y), Vector2.right, 0.5f, LayerMask.GetMask("Room Checker"));
+                    Debug.DrawRay(new Vector2(this.transform.position.x + 0.5f, this.transform.position.y), Vector2.right * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
                         roomtemp = Instantiate(rightRooms[Random.Range(1, rightRooms.Length-1)]);
@@ -69,13 +199,15 @@ public class RoomController : MonoBehaviour
                     }
                     // else
                     // {
-                    //     Debug.Log("2");
+                    //     Debug.Log(this.transform.position);
+                    //     Debug.Log(hit.transform.name);
+                    //     Debug.Log(hit.transform.position);
                     // }
                 }
                 else if(mapSpawnPoints[i].name.Contains("Down"))
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - 0.5f), Vector2.down, LayerMask.GetMask("Room Checker"));
-                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 0.5f), Vector2.down, Color.red);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - 0.5f), Vector2.down, 0.5f, LayerMask.GetMask("Room Checker"));
+                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 0.5f), Vector2.down * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
                         roomtemp = Instantiate(downRooms[Random.Range(1, downRooms.Length-1)]);
@@ -86,13 +218,15 @@ public class RoomController : MonoBehaviour
                     }
                     // else
                     // {
-                    //     Debug.Log("3");
+                    //     Debug.Log(this.transform.position);
+                    //     Debug.Log(hit.transform.name);
+                    //     Debug.Log(hit.transform.position);
                     // }
                 }
                 else if(mapSpawnPoints[i].name.Contains("Left"))
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x - 0.5f, this.transform.position.y), Vector2.left, LayerMask.GetMask("Room Checker"));
-                    Debug.DrawRay(new Vector2(this.transform.position.x - 0.5f, this.transform.position.y), Vector2.left, Color.red);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x - 0.5f, this.transform.position.y), Vector2.left, 0.5f, LayerMask.GetMask("Room Checker"));
+                    Debug.DrawRay(new Vector2(this.transform.position.x - 0.5f, this.transform.position.y), Vector2.left * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
                         roomtemp = Instantiate(leftRooms[Random.Range(1, leftRooms.Length-1)]);
@@ -103,7 +237,9 @@ public class RoomController : MonoBehaviour
                     }
                     // else
                     // {
-                    //     Debug.Log("4");
+                    //     Debug.Log(this.transform.position);
+                    //     Debug.Log(hit.transform.name);
+                    //     Debug.Log(hit.transform.position);
                     // }
                 }
             }
@@ -121,8 +257,8 @@ public class RoomController : MonoBehaviour
                 GameObject roomtemp;
                 if(mapSpawnPoints[i].name.Contains("Up"))
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up, LayerMask.GetMask("Room Checker"));
-                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up, Color.red);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up, 0.5f, LayerMask.GetMask("Room Checker"));
+                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
                         roomtemp = Instantiate(upRooms[0]);
@@ -133,13 +269,15 @@ public class RoomController : MonoBehaviour
                     }
                     // else
                     // {
-                    //     Debug.Log("5");
+                    //     Debug.Log(this.transform.position);
+                    //     Debug.Log(hit.transform.name);
+                    //     Debug.Log(hit.transform.position);
                     // }
                 }
                 else if(mapSpawnPoints[i].name.Contains("Right"))
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x + 0.5f, this.transform.position.y), Vector2.right, LayerMask.GetMask("Room Checker"));
-                    Debug.DrawRay(new Vector2(this.transform.position.x + 0.5f, this.transform.position.y), Vector2.right, Color.red);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x + 0.5f, this.transform.position.y), Vector2.right, 0.5f, LayerMask.GetMask("Room Checker"));
+                    Debug.DrawRay(new Vector2(this.transform.position.x + 0.5f, this.transform.position.y), Vector2.right * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
                         roomtemp = Instantiate(rightRooms[0]);
@@ -150,13 +288,15 @@ public class RoomController : MonoBehaviour
                     }
                     // else
                     // {
-                    //     Debug.Log("6");
+                    //     Debug.Log(this.transform.position);
+                    //     Debug.Log(hit.transform.name);
+                    //     Debug.Log(hit.transform.position);
                     // }
                 }
                 else if(mapSpawnPoints[i].name.Contains("Down"))
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - 0.5f), Vector2.down, LayerMask.GetMask("Room Checker"));
-                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 0.5f), Vector2.down, Color.red);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - 0.5f), Vector2.down, 0.5f, LayerMask.GetMask("Room Checker"));
+                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 0.5f), Vector2.down * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
                         roomtemp = Instantiate(downRooms[0]);
@@ -167,13 +307,15 @@ public class RoomController : MonoBehaviour
                     }
                     // else
                     // {
-                    //     Debug.Log("7");
+                    //     Debug.Log(this.transform.position);
+                    //     Debug.Log(hit.transform.name);
+                    //     Debug.Log(hit.transform.position);
                     // }
                 }
                 else if(mapSpawnPoints[i].name.Contains("Left"))
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x - 0.5f, this.transform.position.y), Vector2.left, LayerMask.GetMask("Room Checker"));
-                    Debug.DrawRay(new Vector2(this.transform.position.x - 0.5f, this.transform.position.y), Vector2.left, Color.red);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x - 0.5f, this.transform.position.y), Vector2.left, 0.5f, LayerMask.GetMask("Room Checker"));
+                    Debug.DrawRay(new Vector2(this.transform.position.x - 0.5f, this.transform.position.y), Vector2.left * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
                         roomtemp = Instantiate(leftRooms[0]);
@@ -184,7 +326,9 @@ public class RoomController : MonoBehaviour
                     }
                     // else
                     // {
-                    //     Debug.Log("8");
+                    //     Debug.Log(this.transform.position);
+                    //     Debug.Log(hit.transform.name);
+                    //     Debug.Log(hit.transform.position);
                     // }
                 }
             }
