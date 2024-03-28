@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 using System.Web;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -12,20 +13,23 @@ using UnityEngine.UI;
 
 public class UserData : MonoBehaviour
 {
-    private FirebaseAuth auth;
-    private string authEmail = "test0311@gmail.com";
-    private string authPassword = "asdf";
+    private static FirebaseAuth auth;
+    private static string authEmail;
+    //private string authPassword = "asdf";
     //안드로이드 앱 지문 //https://www.youtube.com/watch?v=AiXIAe6on5M&t=563s
-
-    public void SignInWithEmail_Password()
+    
+    public static async void SignInWithEmail_Password(string email, string password, Dictionary<string, object> initData)
     {
         auth = FirebaseAuth.DefaultInstance;
+        authEmail = email;
 
-        auth.CreateUserWithEmailAndPasswordAsync(authEmail, authPassword);
+        await auth.CreateUserWithEmailAndPasswordAsync(email, password);
+        await auth.SignInWithEmailAndPasswordAsync(email, password);
 
-        Debug.Log("auth : " + auth);
+        MakeDB(initData);
 
-        MakeDB();
+        Button btn_photon = GameObject.Find("Submit").GetComponent<Button>();
+        btn_photon.onClick.Invoke();
     }
 
     public void LogoutWithEmail_Password()
@@ -126,7 +130,6 @@ public class UserData : MonoBehaviour
 
     //https://chat.openai.com/c/e2745705-fb02-4669-9261-4e1ae30daaf5
     private const string authorizationEndpoint_second = "https://accounts.google.com/o/oauth2/auth";
-    private const string redirectUri_second = "https://capstoneproject-8992c.firebaseapp.com/__/auth/handler"; // 리디렉션 URI 설정
     private const string new_redirectUri = "https://hallym.capstone.photon.firebaseapp.com/__/auth/handler"; // 리디렉션 URI 설정
     private const string clientId_second = "1049753969677-hfu0873d5sgcjf77dm1nbanqv14bk5g8.apps.googleusercontent.com"; // 클라이언트 ID 설정
     private const string scope_second = "email profile"; // 승인 범위 설정
@@ -139,13 +142,91 @@ public class UserData : MonoBehaviour
     public void GetGoogleTokens()
     {
         //StartCoroutine(OpenOAuthURL());
-        StartCoroutine(OpenOAuthURL3());
+        //StartCoroutine(GetAuthorizationCode());
+        GenerateCustomToken();
+        //StartCoroutine(OpenOAuthURL3());
         //StartCoroutine(SignInWithGoogle2());
         //StartCoroutine(OpenOAuthURL2());
         //StartCoroutine(SignInWithGoogleCoroutine2());
         //StartCoroutine(SignInWithGoogleCoroutine());  //memory leak & 403 forbidden
         //StartCoroutine(SigninAnonymously());    //익명 로그인은 정상적으로 동작
         //StartCoroutine(OpenLoginWebview());   //rawImage를 활용한 웹뷰는 컨트롤 할 수 없음
+    }
+
+    private void Start()
+    {
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+        {
+            Debug.Log($"task : {task}\n{task.Result}");     //System.Threading.Tasks.UnwrapPromise`1[Firebase.DependencyStatus]     //Available
+
+            if (task.Result == DependencyStatus.Available)
+            {
+                auth = FirebaseAuth.DefaultInstance;
+                Debug.Log("init auth");
+            }
+            else
+            {
+                Debug.LogError("Could not resolve Firebase dependencies: " + task.Result);
+                return;
+            }
+        });
+    }
+
+    public void GenerateCustomToken()
+    {
+        string googleClientId = clientId_second; // Google Cloud Console에서 생성한 OAuth 2.0 클라이언트 ID
+
+        Firebase.Auth.Credential credential = Firebase.Auth.GoogleAuthProvider.GetCredential(googleClientId, null);
+        Debug.Log("end of credential");
+
+        auth.SignInWithCredentialAsync(credential).ContinueWith(task =>
+        {
+            Debug.Log($"task\n{task}\n{task.Result}");
+
+            if (task.IsCanceled || task.IsFaulted)
+            {
+                Debug.LogError("Google sign-in failed: " + task.Exception);
+                return;
+            }
+
+            // Google 로그인 성공
+            Firebase.Auth.FirebaseUser user = task.Result;
+            Debug.Log("Firebase user signed in: " + user.DisplayName + " (ID: " + user.UserId + ")");
+        });
+
+        
+    }
+
+    IEnumerator GetAuthorizationCode()
+    {
+        //string url = $"https://accounts.google.com/o/oauth2/auth?client_id={clientId_second}&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=email%20profile";
+        string url = $"{authorizationEndpoint_second}?response_type=code&client_id={clientId_second}&scope={scope_second}";
+
+        // 유저를 구글 로그인 페이지로 리디렉션
+        Application.OpenURL(url);
+
+        // 사용자가 구글에서 로그인하고 권한 부여를 하고 난 후, 인증 코드를 수신하기 위해 대기
+        while (true)
+        {
+            Debug.Log("in while");
+
+            if (!Application.absoluteURL.StartsWith("urn:ietf:wg:oauth:2.0:oob"))
+            {
+                yield return new WaitForSeconds(1);
+            }
+            else
+            {
+                break;
+            }
+        }
+        Debug.Log("escape while");
+
+        // 인증 코드 추출
+        string authorizationCode = Application.absoluteURL.Substring(Application.absoluteURL.IndexOf("code=") + 5);
+
+        // 액세스 토큰 요청
+        yield return new WaitForSeconds(1);
+        //yield return StartCoroutine(GetAccessToken(authorizationCode));
     }
 
     IEnumerator OpenOAuthURL3()
@@ -532,7 +613,7 @@ public class UserData : MonoBehaviour
         public string id_token;
     }
 
-    public string GetUserId()
+    public static string GetUserId()
     {
         string userId = authEmail;
 
@@ -640,7 +721,7 @@ public class UserData : MonoBehaviour
         doc_skill.SetAsync(skillData);
     }
     
-    public void MakeDB()
+    public static void MakeDB(Dictionary<string, object> param)
     {
         FirebaseUser user = auth.CurrentUser;
         if (user == null)
@@ -703,7 +784,7 @@ public class UserData : MonoBehaviour
         //유저의 컬랙션
         Dictionary<string, object> userData = new Dictionary<string, object>
         {
-            { "userName", "projecting name" },
+            { "userName", param["nickname"] != null ? param["nickname"] : "null" },
             { "email", GetUserId() },
             { "photon_ID", "rewrite photon id" },
             { "dungeon_progress", dungeonProgress },
