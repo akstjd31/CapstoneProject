@@ -52,7 +52,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public Party party;
 
     // 상태 변경을 위한 함수
-    public void ChangeState(State newState)
+    [PunRPC]
+    public void UpdatePlayerState(State newState)
     {
         state = newState;
     }
@@ -279,21 +280,36 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 플레이어가 파티 방에 속해있는지 확인 후에 정보를 전달해주는 함수
     public void IsPartyHUDActive()
     {
+        if (!isPartyMember)
+        {
+            partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = "";
+            partySystemScript.partyMemberHUD[1].GetComponentInChildren<Text>().text = "";
+
+            partySystemScript.partyMemberHUD[0].SetActive(false);
+            partySystemScript.partyMemberHUD[1].SetActive(false);
+            return;
+        }
+
         if (party != null)
         {
-            if (party.partyMembers.Count == 1)
+            if (party.GetPartyHeadCount() == 1)
             {
-                PhotonView partyLeaderPhotonView = PhotonView.Find(party.partyMembers[0]);
-                partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
-                partySystemScript.partyMemberHUD[0].SetActive(true);
-            }
-            else
-            {
-                PhotonView partyLeaderPhotonView = PhotonView.Find(party.partyMembers[0]);
+                PhotonView partyLeaderPhotonView = PhotonView.Find(party.GetPartyLeaderID());
                 partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[0].SetActive(true);
 
-                PhotonView partyMemberPhotonView = PhotonView.Find(party.partyMembers[1]);
+                if (partySystemScript.partyMemberHUD[1].activeSelf)
+                {
+                    partySystemScript.partyMemberHUD[1].SetActive(false);
+                }
+            }
+            else
+            {
+                PhotonView partyLeaderPhotonView = PhotonView.Find(party.GetPartyLeaderID());
+                partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
+                partySystemScript.partyMemberHUD[0].SetActive(true);
+
+                PhotonView partyMemberPhotonView = PhotonView.Find(party.GetPartyMemberID());
                 partySystemScript.partyMemberHUD[1].GetComponentInChildren<Text>().text = partyMemberPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[1].SetActive(true);
             }

@@ -7,8 +7,13 @@ using UnityEngine;
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     public List<int> lobbyPlayerViewID;
+
+    PhotonView canvasPV;
+    PartySystem partySystemScript;
     void Start()
     {
+        canvasPV = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PhotonView>();
+        partySystemScript = canvasPV.GetComponent<PartySystem>();
         if (PhotonNetwork.IsConnected)
         {
             // 이미 생성된 방 목록 가져오기
@@ -44,6 +49,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
         }
     }
+
 
     public void CreateRoom() 
     {
@@ -84,10 +90,23 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonNetwork.Instantiate("Player", Vector2.zero, Quaternion.identity);
     }
 
+    public override void OnLeftLobby()
+    {
+        base.OnLeftLobby();
+    }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        
-        Debug.Log(otherPlayer.NickName + " 님이 떠났습니다!");
+        // 특정 플레이어가 게임을 종료하게 되면 챗에 남김.
+        canvasPV.RPC("GetMessage", RpcTarget.AllBuffered, otherPlayer.NickName + " 님이 떠났습니다!");
+    
+        // 특정 파티에 속해있는 상태로 탈주 시 해당 파티에서 제거
+        canvasPV.RPC("HandlePlayerGameExit", RpcTarget.AllBuffered, otherPlayer.NickName);
+
+        //Debug.Log(otherPlayer.NickName + " 님이 떠났습니다!");
+
+        // 로비에 있는 플레이어 목록에 제거
+        PlayerCtrl leftPlayer = partySystemScript.GetPlayerCtrlByNickname(otherPlayer.NickName);
+        lobbyPlayerViewID.Remove(leftPlayer.GetComponent<PhotonView>().ViewID);
 
         // 여기에 다른 플레이어가 방을 나갈 때 실행하고 싶은 로직을 추가
     }
