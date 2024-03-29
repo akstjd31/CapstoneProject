@@ -36,7 +36,6 @@ public class UserRegister : MonoBehaviour
 
     public async Task<bool> IsExistAccount(string email, string password)
     {
-        Debug.Log("start of IsExistAccount");
         //이미 존재하는 계정인 경우
         bool SubmitRegister = await IsValidAccountAsync(email, password);
         if (!SubmitRegister)
@@ -44,14 +43,12 @@ public class UserRegister : MonoBehaviour
             errCode = 4;
             Debug.Log("Account is already exist");
         }
-        Debug.Log("end of IsExistAccount");
 
         return SubmitRegister;
     }
 
     public async void InnerSubmitRegister()
     {
-        Debug.Log("start of InnerSubmitRegister");
         //값을 알아야 하는 태그의 부모
         string[] tagList = { "Register_Email_Input", "Register_Password_Input", "Register_Password_Confirm_Input", "Register_Nickname_Input" };
         GameObject parent;
@@ -108,9 +105,7 @@ public class UserRegister : MonoBehaviour
             return;
         }
 
-        Debug.Log("@@ waiting isExistAccount method @@");
         var continueRegister = await IsExistAccount(email, password);
-        Debug.Log($"@@ isExistAccount method is end @@\t{continueRegister}");
 
         if (!continueRegister)
         {
@@ -124,7 +119,7 @@ public class UserRegister : MonoBehaviour
         additionalData.Add("nickname", nickname);
 
 
-        UserData.SignInWithEmail_Password(email, password, additionalData);
+        UserData.RegisterWithEmail_Password(email, password, additionalData);
 
         EmailRegisterPopup.SetActive(false);
 
@@ -156,7 +151,7 @@ public class UserRegister : MonoBehaviour
                 var user = createUserResult.User;
                 await user.DeleteAsync();
 
-                Debug.Log("User deleted successfully!");
+                //Debug.Log("User deleted successfully!");
                 return true;
             }
             else

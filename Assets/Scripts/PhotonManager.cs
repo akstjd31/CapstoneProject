@@ -92,7 +92,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         }
 
         // 마스터 서버 접속 요청
-        PhotonNetwork.ConnectUsingSettings();
+        if(UserData.CanEnter())
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
     }
 
     //회원가입 시 호출되는 메소드

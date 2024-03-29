@@ -1,6 +1,7 @@
 using Firebase;
 using Firebase.Auth;
 using Firebase.Firestore;
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,7 +19,12 @@ public class UserData : MonoBehaviour
     //private string authPassword = "asdf";
     //안드로이드 앱 지문 //https://www.youtube.com/watch?v=AiXIAe6on5M&t=563s
     
-    public static async void SignInWithEmail_Password(string email, string password, Dictionary<string, object> initData = null)
+    public static bool CanEnter()
+    {
+        return auth != null;
+    }
+
+    public static async void RegisterWithEmail_Password(string email, string password, Dictionary<string, object> initData = null)
     {
         auth = FirebaseAuth.DefaultInstance;
         authEmail = email;
@@ -27,6 +33,28 @@ public class UserData : MonoBehaviour
         await auth.SignInWithEmailAndPasswordAsync(email, password);
 
         MakeDB(initData);
+
+        Button btn_photon = GameObject.Find("Submit")?.GetComponent<Button>();
+        if (btn_photon != null)
+        {
+            btn_photon.onClick.Invoke();
+        }
+    }
+
+    public void SigninWithEmail()
+    {
+        SigninWithEmailAsync();
+    }
+
+    public async void SigninWithEmailAsync()
+    {
+        auth = FirebaseAuth.DefaultInstance;
+
+        string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text;
+        string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text;
+
+        await auth.SignInWithEmailAndPasswordAsync(email, password);
+        await SetNickname();
 
         Button btn_photon = GameObject.Find("Submit")?.GetComponent<Button>();
         if (btn_photon != null)
@@ -49,6 +77,51 @@ public class UserData : MonoBehaviour
         }
     }
 
+    public async Task SetNickname()
+    {
+        string name = "";
+        // Firebase 인증 및 Firestore 초기화
+        auth = FirebaseAuth.DefaultInstance;
+        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+        // 현재 사용자 가져오기
+        FirebaseUser user = auth.CurrentUser;
+
+        // 현재 사용자가 로그인되어 있는지 확인
+        if (user != null)
+        {
+            // 현재 사용자의 UID 가져오기
+            string uid = user.UserId;
+            
+            // Firestore에서 현재 사용자의 문서에 접근
+            DocumentReference docRef = db.Collection(authEmail).Document("User_Data");
+
+            // 문서 읽기
+            await docRef.GetSnapshotAsync().ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    DocumentSnapshot snapshot = task.Result;
+                    if (snapshot.Exists)
+                    {
+                        Debug.Log("Document data: " + snapshot.ToDictionary()["userName"]);
+                        name = snapshot.ToDictionary()["userName"].ToString();
+                        PhotonNetwork.NickName = name;
+                    }
+                    else
+                    {
+                        Debug.Log("Document does not exist!");
+                    }
+                }
+            });
+        }
+        else
+        {
+            Debug.Log("No user is currently logged in.");
+        }
+    }
+
+    /*
     public void SignInWithGoogle()
     {
         auth = FirebaseAuth.DefaultInstance;
@@ -155,17 +228,18 @@ public class UserData : MonoBehaviour
         //StartCoroutine(SigninAnonymously());    //익명 로그인은 정상적으로 동작
         //StartCoroutine(OpenLoginWebview());   //rawImage를 활용한 웹뷰는 컨트롤 할 수 없음
     }
+    */
 
     private void Start()
     {
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
-            Debug.Log($"task : {task}\n{task.Result}");     //System.Threading.Tasks.UnwrapPromise`1[Firebase.DependencyStatus]     //Available
+            //Debug.Log($"task : {task}\n{task.Result}");     //System.Threading.Tasks.UnwrapPromise`1[Firebase.DependencyStatus]     //Available
 
             if (task.Result == DependencyStatus.Available)
             {
                 auth = FirebaseAuth.DefaultInstance;
-                Debug.Log("init auth");
+                //Debug.Log("init auth");
             }
             else
             {
@@ -175,6 +249,7 @@ public class UserData : MonoBehaviour
         });
     }
 
+    /*
     public void GenerateCustomToken()
     {
         string googleClientId = clientId_second; // Google Cloud Console에서 생성한 OAuth 2.0 클라이언트 ID
@@ -431,6 +506,7 @@ public class UserData : MonoBehaviour
         }
         return authCode;
     }
+    */
 
     /*
     private IEnumerator SigninCustomToken()
@@ -455,7 +531,7 @@ public class UserData : MonoBehaviour
         }
     }
     */
-
+    /*
     private IEnumerator SignInWithGoogleCoroutine()
     {
         string webApiKey = "AIzaSyA0iuKe5o2kge6nz2zHtysWeT1PCUEhWhQ";
@@ -615,6 +691,7 @@ public class UserData : MonoBehaviour
         public string access_token;
         public string id_token;
     }
+    */
 
     public static string GetUserId()
     {
@@ -647,7 +724,8 @@ public class UserData : MonoBehaviour
 
         return userId;
     }
-
+    
+    /*
     public void MakeDB_GoogleSocial()
     {
         FirebaseUser user = auth.CurrentUser;
@@ -723,6 +801,7 @@ public class UserData : MonoBehaviour
         doc_userdata.SetAsync(userData);
         doc_skill.SetAsync(skillData);
     }
+    */
     
     public static void MakeDB(Dictionary<string, object> param)
     {

@@ -3146,8 +3146,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d6626ce301d4dc2bf86d141df8c238, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputText: {fileID: 1281326121}
-  inputPassword: {fileID: 0}
+  inputText: {fileID: 1635248964}
+  inputPassword: {fileID: 1281326121}
   inputButton: {fileID: 210349617}
 --- !u!1 &1560726915
 GameObject:
