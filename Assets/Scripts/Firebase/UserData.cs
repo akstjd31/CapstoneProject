@@ -17,7 +17,7 @@ public class UserData : MonoBehaviour
     private static FirebaseAuth auth;
     private static string authEmail;
     //private string authPassword = "asdf";
-    //¾Èµå·ÎÀÌµå ¾Û Áö¹® //https://www.youtube.com/watch?v=AiXIAe6on5M&t=563s
+    //ï¿½Èµï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ //https://www.youtube.com/watch?v=AiXIAe6on5M&t=563s
     
     public static bool CanEnter()
     {
@@ -80,23 +80,23 @@ public class UserData : MonoBehaviour
     public async Task SetNickname()
     {
         string name = "";
-        // Firebase ÀÎÁõ ¹× Firestore ÃÊ±âÈ­
+        // Firebase ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Firestore ï¿½Ê±ï¿½È­
         auth = FirebaseAuth.DefaultInstance;
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
-        // ÇöÀç »ç¿ëÀÚ °¡Á®¿À±â
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         FirebaseUser user = auth.CurrentUser;
 
-        // ÇöÀç »ç¿ëÀÚ°¡ ·Î±×ÀÎµÇ¾î ÀÖ´ÂÁö È®ÀÎ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Î±ï¿½ï¿½ÎµÇ¾ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
         if (user != null)
         {
-            // ÇöÀç »ç¿ëÀÚÀÇ UID °¡Á®¿À±â
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UID ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             string uid = user.UserId;
             
-            // Firestore¿¡¼­ ÇöÀç »ç¿ëÀÚÀÇ ¹®¼­¿¡ Á¢±Ù
+            // Firestoreï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             DocumentReference docRef = db.Collection(authEmail).Document("User_Data");
 
-            // ¹®¼­ ÀÐ±â
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
             await docRef.GetSnapshotAsync().ContinueWith(task =>
             {
                 if (task.IsCompleted)
@@ -132,7 +132,7 @@ public class UserData : MonoBehaviour
             return;
         }
 
-        // Google ·Î±×ÀÎ ÆË¾÷ Ç¥½Ã
+        // Google ï¿½Î±ï¿½ï¿½ï¿½ ï¿½Ë¾ï¿½ Ç¥ï¿½ï¿½
         auth.SignInWithCredentialAsync(GoogleAuthProvider.GetCredential(null, null)).ContinueWith(task =>
         {
             if (task.IsCanceled)
@@ -146,7 +146,7 @@ public class UserData : MonoBehaviour
                 return;
             }
 
-            // ·Î±×ÀÎ ¼º°ø
+            // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             FirebaseUser user = task.Result;
             Debug.Log("Google User Signed In: " + user.DisplayName + " (" + user.Email + ")");
         });
@@ -189,7 +189,7 @@ public class UserData : MonoBehaviour
 
             Debug.Log("SignInAndRetrieveDataWithCredentialAsync Success");
 
-            // ·Î±×ÀÎ ¼º°ø
+            // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             var result = task.Result;
             Debug.Log("result : " + result);
         });
@@ -206,13 +206,13 @@ public class UserData : MonoBehaviour
 
     //https://chat.openai.com/c/e2745705-fb02-4669-9261-4e1ae30daaf5
     private const string authorizationEndpoint_second = "https://accounts.google.com/o/oauth2/auth";
-    private const string new_redirectUri = "https://hallym.capstone.photon.firebaseapp.com/__/auth/handler"; // ¸®µð·º¼Ç URI ¼³Á¤
-    private const string clientId_second = "1049753969677-hfu0873d5sgcjf77dm1nbanqv14bk5g8.apps.googleusercontent.com"; // Å¬¶óÀÌ¾ðÆ® ID ¼³Á¤
-    private const string scope_second = "email profile"; // ½ÂÀÎ ¹üÀ§ ¼³Á¤
+    private const string new_redirectUri = "https://hallym.capstone.photon.firebaseapp.com/__/auth/handler"; // ï¿½ï¿½ï¿½ð·º¼ï¿½ URI ï¿½ï¿½ï¿½ï¿½
+    private const string clientId_second = "1049753969677-hfu0873d5sgcjf77dm1nbanqv14bk5g8.apps.googleusercontent.com"; // Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ID ï¿½ï¿½ï¿½ï¿½
+    private const string scope_second = "email profile"; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     private string authUrl_second;
 
-    //redirection uri¸¦ ´Ù¸¥ °ªÀ¸·Î ´ëÃ¼ÇÏ´Â °æ¿ì : {{¾×¼¼½º Â÷´ÜµÊ: ÀÌ ¾ÛÀÇ ¿äÃ»ÀÌ Àß¸øµÇ¾ú½À´Ï´Ù}}
+    //redirection uriï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ : {{ï¿½×¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Üµï¿½: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ß¸ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½}}
     //private string normal_google_uri = "https://google.com";
 
     public void GetGoogleTokens()
@@ -225,8 +225,8 @@ public class UserData : MonoBehaviour
         //StartCoroutine(OpenOAuthURL2());
         //StartCoroutine(SignInWithGoogleCoroutine2());
         //StartCoroutine(SignInWithGoogleCoroutine());  //memory leak & 403 forbidden
-        //StartCoroutine(SigninAnonymously());    //ÀÍ¸í ·Î±×ÀÎÀº Á¤»óÀûÀ¸·Î µ¿ÀÛ
-        //StartCoroutine(OpenLoginWebview());   //rawImage¸¦ È°¿ëÇÑ À¥ºä´Â ÄÁÆ®·Ñ ÇÒ ¼ö ¾øÀ½
+        //StartCoroutine(SigninAnonymously());    //ï¿½Í¸ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        //StartCoroutine(OpenLoginWebview());   //rawImageï¿½ï¿½ È°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
     */
 
@@ -252,7 +252,7 @@ public class UserData : MonoBehaviour
     /*
     public void GenerateCustomToken()
     {
-        string googleClientId = clientId_second; // Google Cloud Console¿¡¼­ »ý¼ºÇÑ OAuth 2.0 Å¬¶óÀÌ¾ðÆ® ID
+        string googleClientId = clientId_second; // Google Cloud Consoleï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ OAuth 2.0 Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ID
 
         Firebase.Auth.Credential credential = Firebase.Auth.GoogleAuthProvider.GetCredential(googleClientId, null);
         Debug.Log("end of credential");
@@ -267,7 +267,7 @@ public class UserData : MonoBehaviour
                 return;
             }
 
-            // Google ·Î±×ÀÎ ¼º°ø
+            // Google ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             Firebase.Auth.FirebaseUser user = task.Result;
             Debug.Log("Firebase user signed in: " + user.DisplayName + " (ID: " + user.UserId + ")");
         });
@@ -280,10 +280,10 @@ public class UserData : MonoBehaviour
         //string url = $"https://accounts.google.com/o/oauth2/auth?client_id={clientId_second}&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=email%20profile";
         string url = $"{authorizationEndpoint_second}?response_type=code&client_id={clientId_second}&scope={scope_second}";
 
-        // À¯Àú¸¦ ±¸±Û ·Î±×ÀÎ ÆäÀÌÁö·Î ¸®µð·º¼Ç
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ð·º¼ï¿½
         Application.OpenURL(url);
 
-        // »ç¿ëÀÚ°¡ ±¸±Û¿¡¼­ ·Î±×ÀÎÇÏ°í ±ÇÇÑ ºÎ¿©¸¦ ÇÏ°í ³­ ÈÄ, ÀÎÁõ ÄÚµå¸¦ ¼ö½ÅÇÏ±â À§ÇØ ´ë±â
+        // ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½Ï°ï¿½ ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Úµå¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         while (true)
         {
             Debug.Log("in while");
@@ -299,10 +299,10 @@ public class UserData : MonoBehaviour
         }
         Debug.Log("escape while");
 
-        // ÀÎÁõ ÄÚµå ÃßÃâ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½
         string authorizationCode = Application.absoluteURL.Substring(Application.absoluteURL.IndexOf("code=") + 5);
 
-        // ¾×¼¼½º ÅäÅ« ¿äÃ»
+        // ï¿½×¼ï¿½ï¿½ï¿½ ï¿½ï¿½Å« ï¿½ï¿½Ã»
         yield return new WaitForSeconds(1);
         //yield return StartCoroutine(GetAccessToken(authorizationCode));
     }
@@ -313,7 +313,7 @@ public class UserData : MonoBehaviour
 
         authUrl_second = $"{authorizationEndpoint_second}?response_type=code&client_id={clientId_second}&redirect_uri={new_redirectUri}&scope={scope_second}";
 
-        // Google ·Î±×ÀÎ ÆäÀÌÁö·Î ÀÌµ¿
+        // Google ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         Application.OpenURL(authUrl_second);
 
         while(true)
@@ -321,20 +321,20 @@ public class UserData : MonoBehaviour
             Debug.Log("abs url" + Application.absoluteURL);
             Debug.Log("data path" + Application.dataPath);
 
-            // À¥ ÆäÀÌÁö¿¡ ´ëÇÑ GET ¿äÃ» »ý¼º
+            // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ GET ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½
             UnityWebRequest request = UnityWebRequest.Get(authUrl_second);
 
-            // ¿äÃ» º¸³»±â
+            // ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             yield return request.SendWebRequest();
 
-            // ¿äÃ»ÀÌ ¼º°øÀûÀ¸·Î ¿Ï·áµÇ¾ú´ÂÁö È®ÀÎ
+            // ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError("Failed to open web page: " + request.error);
                 yield break;
             }
 
-            // À¥ ÆäÀÌÁöÀÇ ³»¿ë Ãâ·Â
+            // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             //Debug.Log("Web page content: " + request.downloadHandler.text);
         }
 
@@ -346,11 +346,11 @@ public class UserData : MonoBehaviour
     {
         auth = FirebaseAuth.DefaultInstance;
 
-        // »ç¿ëÀÚ°¡ ±¸±Û ·Î±×ÀÎ ÆäÀÌÁö·Î ÀÌµ¿ÇÏµµ·Ï URLÀ» »ý¼ºÇÕ´Ï´Ù.
+        // ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ïµï¿½ï¿½ï¿½ URLï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
         string authUrl = $"https://accounts.google.com/o/oauth2/v2/auth?client_id={clientId}&redirect_uri={redirectUri}&response_type=code&scope={scope_second}";
 
-        // º¸¾È»óÀÇ ÀÌÀ¯·Î À¥ ºä¸¦ »ç¿ëÇÏ¿© ±¸±Û ·Î±×ÀÎÀ» ÁøÇàÇÕ´Ï´Ù.
-        // ±¸±Û ·Î±×ÀÎ ÆäÀÌÁö·Î ÀÌµ¿
+        // ï¿½ï¿½ï¿½È»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ä¸¦ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         Application.OpenURL(authUrl);
 
 
@@ -358,7 +358,7 @@ public class UserData : MonoBehaviour
         yield return new WaitForSeconds(1);
     }
 
-    // ¸®µð·º¼Ç URI¿¡¼­ ÀÎÁõ ÄÚµå¸¦ ¹Þ°í Firebase¿¡ ·Î±×ÀÎÇÏ´Â ÇÔ¼ö
+    // ï¿½ï¿½ï¿½ð·º¼ï¿½ URIï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµå¸¦ ï¿½Þ°ï¿½ Firebaseï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
     public void HandleGoogleSignInCallback(string authorizationCode)
     {
         Debug.Log("authorizationCode : " + authorizationCode);
@@ -368,7 +368,7 @@ public class UserData : MonoBehaviour
 
     IEnumerator ExchangeAuthorizationCodeForAccessToken(string authorizationCode)
     {
-        // ÀÎÁõ ÄÚµå¸¦ »ç¿ëÇÏ¿© ¾×¼¼½º ÅäÅ«À» ¿äÃ»ÇÕ´Ï´Ù.
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Úµå¸¦ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½×¼ï¿½ï¿½ï¿½ ï¿½ï¿½Å«ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½Õ´Ï´ï¿½.
         string tokenEndpoint = "https://oauth2.googleapis.com/token";
         WWWForm form = new WWWForm();
         form.AddField("code", authorizationCode);
@@ -387,11 +387,11 @@ public class UserData : MonoBehaviour
             }
             else
             {
-                // ÀÀ´ä ¹ÞÀº JSONÀ» ÆÄ½ÌÇÏ¿© ¾×¼¼½º ÅäÅ« ÃßÃâ
+                // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ JSONï¿½ï¿½ ï¿½Ä½ï¿½ï¿½Ï¿ï¿½ ï¿½×¼ï¿½ï¿½ï¿½ ï¿½ï¿½Å« ï¿½ï¿½ï¿½ï¿½
                 Dictionary<string, object> responseData = Google.MiniJSON.Json.Deserialize(www.text) as Dictionary<string, object>;
                 string accessToken = responseData["access_token"] as string;
 
-                // Firebase¿¡ ¾×¼¼½º ÅäÅ«À» »ç¿ëÇÏ¿© ·Î±×ÀÎÇÕ´Ï´Ù.
+                // Firebaseï¿½ï¿½ ï¿½×¼ï¿½ï¿½ï¿½ ï¿½ï¿½Å«ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
                 Credential credential = GoogleAuthProvider.GetCredential(accessToken, null);
                 auth.SignInWithCredentialAsync(credential).ContinueWith(task =>
                 {
@@ -410,27 +410,27 @@ public class UserData : MonoBehaviour
     }
 
     //try01
-    // Google ·Î±×ÀÎÀ» À§ÇÑ Coroutine
+    // Google ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Coroutine
     IEnumerator OpenOAuthURL2()
     {
         auth = FirebaseAuth.DefaultInstance;
 
         authUrl_second = $"{authorizationEndpoint_second}?response_type=code&client_id={clientId_second}&redirect_uri={new_redirectUri}&scope={scope_second}";
 
-        // Google ·Î±×ÀÎ ÆäÀÌÁö·Î ÀÌµ¿
+        // Google ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         Application.OpenURL(authUrl_second);
 
         while(true)
         {
-            // URL¿¡¼­ Äõ¸® ½ºÆ®¸µÀ» ÃßÃâÇÕ´Ï´Ù.
+            // URLï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
             NameValueCollection queryString = HttpUtility.ParseQueryString(new Uri(new_redirectUri).Query);
 
-            // "code" ¸Å°³º¯¼ö¸¦ »ç¿ëÇÏ¿© ÀÎÁõ ÄÚµå¸¦ °¡Á®¿É´Ï´Ù.
+            // "code" ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµå¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½É´Ï´ï¿½.
             string authorizationCode = queryString["code"];
 
             if (!string.IsNullOrEmpty(authorizationCode))
             {
-                // ¿©±â¼­ ÀÎÁõ ÄÚµå¸¦ »ç¿ëÇÏ¿© Firebase¿¡ ·Î±×ÀÎÇÏ´Â µîÀÇ ÀÛ¾÷À» ¼öÇàÇÕ´Ï´Ù.
+                // ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµå¸¦ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ Firebaseï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
                 Debug.Log("Authorization Code: " + authorizationCode);
             }
             else
@@ -451,20 +451,20 @@ public class UserData : MonoBehaviour
         var credential = GoogleAuthProvider.GetCredential(clientId, clientSecret);
         //var signInTask = auth.SignInWithCredentialAsync(credential);
 
-        //redirect URI°¡ ¾øÀ¸¸é
-        //¾×¼¼½º Â÷´ÜµÊ: ½ÂÀÎ ¿À·ù
-        //Missing required parameter: redirect_uri ÀÌ ¿À·ù¿¡ °üÇØ ÀÚ¼¼È÷ ¾Ë¾Æº¸±â
-        //400 ¿À·ù: invalid_request
+        //redirect URIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //ï¿½×¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Üµï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        //Missing required parameter: redirect_uri ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¼ï¿½ï¿½ï¿½ ï¿½Ë¾Æºï¿½ï¿½ï¿½
+        //400 ï¿½ï¿½ï¿½ï¿½: invalid_request
 
         //authUrl_second = $"{authorizationEndpoint_second}?response_type=code&client_id={clientId_second}";
         authUrl_second = $"{authorizationEndpoint_second}?response_type=code&client_id={clientId_second}&redirect_uri={new_redirectUri}&scope={scope_second}";
 
-        // Google ·Î±×ÀÎ ÆäÀÌÁö·Î ÀÌµ¿
+        // Google ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         Application.OpenURL(authUrl_second);
 
-        // ·Î±×ÀÎ ÈÄ¿¡ ÀÎÁõ ÄÚµå¸¦ ¼ö½ÅÇÒ ¶§±îÁö ´ë±â
-        //// ¿©±â °æ·Î´Â OAuth 2.0¿¡ ÁöÁ¤µÈ redirect uri°¡ ¾Æ´Ï¾îµµ Àß¸øµÈ request¶ó´Â ¿À·ù°¡ ¹ß»ýÇÏÁö ¾ÊÀ½ 
-        // Unity¿¡¼­ ÇöÀç ½ÇÇà ÁßÀÎ ¾ÖÇÃ¸®ÄÉÀÌ¼ÇÀÇ URLÀÌ ÁÖ¾îÁø ¹®ÀÚ¿­·Î ½ÃÀÛÇÏ´ÂÁö ¿©ºÎ¸¦ È®ÀÎÇÏ´Â ÇÔ¼ö
+        // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµå¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+        //// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î´ï¿½ OAuth 2.0ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ redirect uriï¿½ï¿½ ï¿½Æ´Ï¾îµµ ï¿½ß¸ï¿½ï¿½ï¿½ requestï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
+        // Unityï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ URLï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¸ï¿½ È®ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 
         while (!Application.absoluteURL.StartsWith(new_redirectUri))
         {
@@ -482,10 +482,10 @@ public class UserData : MonoBehaviour
             yield return new WaitForSeconds(1);
         }
 
-        // ÀÎÁõ ÄÚµå ÃßÃâ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½
         string authCode = GetAuthCodeFromUrl(Application.absoluteURL);
 
-        // ÀÎÁõ ÄÚµå¸¦ »ç¿ëÇÏ¿© ÅäÅ« ¿äÃ» µîÀÇ ÀÛ¾÷ ¼öÇà
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Úµå¸¦ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½Å« ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½ ï¿½Û¾ï¿½ ï¿½ï¿½ï¿½ï¿½
         Debug.Log("Received auth code: " + authCode);
 
         MakeDB_GoogleSocial();
@@ -514,18 +514,18 @@ public class UserData : MonoBehaviour
         auth = FirebaseAuth.DefaultInstance;
         string customToken = "YOUR_CUSTOM_TOKEN_HERE";
 
-        // »ç¿ëÀÚ Á¤ÀÇ ÅäÅ«À¸·Î ·Î±×ÀÎ ½Ãµµ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å«ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½Ãµï¿½
         var authTask = auth.SignInWithCustomTokenAsync(customToken);
         yield return new WaitUntil(() => authTask.IsCompleted);
 
         if (authTask.Exception != null)
         {
-            // ÀÎÁõ ½ÇÆÐÇÑ °æ¿ì
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             Debug.LogError("Failed to sign in with custom token: " + authTask.Exception.Message);
         }
         else
         {
-            // ÀÎÁõÀÌ ¼º°øÇÑ °æ¿ì
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             var authResult = authTask.Result;
             Debug.Log("Signed in with custom token with UID: " + authResult.User.UserId);
         }
@@ -538,14 +538,14 @@ public class UserData : MonoBehaviour
         string googleLoginUrl;
         string accessToken;
 
-        // À¥ ¿äÃ»À» º¸³¾ URL
+        // ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ URL
         string url = $"https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key={webApiKey}";
 
-        // À¥ ¿äÃ» º¸³»±â
+        // ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         UnityWebRequest www = UnityWebRequest.Get(url);
         yield return www.SendWebRequest();
 
-        // ¿äÃ»ÀÌ ¼º°øÇß´ÂÁö È®ÀÎ
+        // ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
         if (www.result != UnityWebRequest.Result.Success)
         {
             Debug.LogError("Failed to get project config: " + www.error);
@@ -553,25 +553,25 @@ public class UserData : MonoBehaviour
         }
         Debug.Log("request Result is Success : " + www);
 
-        // ±¸±Û ÇÁ·ÎÁ§Æ® ¼³Á¤¿¡¼­ Web API Å° °¡Á®¿À±â
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Web API Å° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         webApiKey = JsonUtility.FromJson<ProjectConfigResponse>(www.downloadHandler.text).webApiKey;
         Debug.Log("webApiKey : " + webApiKey);
 
-        // Google ·Î±×ÀÎ URL »ý¼º
+        // Google ï¿½Î±ï¿½ï¿½ï¿½ URL ï¿½ï¿½ï¿½ï¿½
         googleLoginUrl = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyAssertion?key=" + webApiKey;
 
-        // »ç¿ëÀÚ°¡ ·Î±×ÀÎÇÑ ±¸±Û °èÁ¤ÀÇ ¾×¼¼½º ÅäÅ« °¡Á®¿À±â
-        accessToken = "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"; // ¿©±â¿¡ »ç¿ëÀÚÀÇ ±¸±Û ¾×¼¼½º ÅäÅ«À» ¼³Á¤ÇØ¾ß ÇÕ´Ï´Ù.
+        // ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×¼ï¿½ï¿½ï¿½ ï¿½ï¿½Å« ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        accessToken = "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"; // ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×¼ï¿½ï¿½ï¿½ ï¿½ï¿½Å«ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½Õ´Ï´ï¿½.
 
         string requestUri = "https://hallym.capstone.photon.firebaseapp.com/";
 
-        // Google ÀÎÁõ ÅäÅ« ¿äÃ» µ¥ÀÌÅÍ »ý¼º
+        // Google ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å« ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         GoogleAuthRequestData requestData = new GoogleAuthRequestData
         {
             postBody = "{\"postBody\":\"id_token=" + accessToken + "&providerId=google.com\",\"requestUri\":\"" + requestUri + "\",\"returnIdpCredential\":true,\"returnSecureToken\":true}"
         };
 
-        // Google ÀÎÁõ ÅäÅ« ¿äÃ» º¸³»±â
+        // Google ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å« ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         www = new UnityWebRequest(googleLoginUrl, "POST");
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(JsonUtility.ToJson(requestData));
         www.uploadHandler = new UploadHandlerRaw(bodyRaw);
@@ -579,17 +579,17 @@ public class UserData : MonoBehaviour
         www.SetRequestHeader("Content-Type", "application/json");
         yield return www.SendWebRequest();
 
-        // ¿äÃ»ÀÌ ¼º°øÇß´ÂÁö È®ÀÎ
+        // ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
         if (www.result != UnityWebRequest.Result.Success)
         {
             Debug.LogError("Failed to get Google authentication token: " + www.error);
             yield break;
         }
 
-        // Google ÀÎÁõ °á°ú µ¥ÀÌÅÍ °¡Á®¿À±â
+        // Google ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         GoogleAuthResponseData responseData = JsonUtility.FromJson<GoogleAuthResponseData>(www.downloadHandler.text);
 
-        // FirebaseAuth¿¡ Google ÀÎÁõ ÅäÅ« Àü´ÞÇÏ¿© ÀÎÁõ
+        // FirebaseAuthï¿½ï¿½ Google ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å« ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½
         var authTask = auth.SignInWithCredentialAsync(GoogleAuthProvider.GetCredential(responseData.idToken, null));
         yield return new WaitUntil(() => authTask.IsCompleted);
 
@@ -599,35 +599,35 @@ public class UserData : MonoBehaviour
             yield break;
         }
 
-        // ÀÎÁõµÈ »ç¿ëÀÚ Á¤º¸ °¡Á®¿À±â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         FirebaseUser user = authTask.Result;
 
-        // ÀÎÁõµÈ »ç¿ëÀÚÀÇ Á¤º¸ Ãâ·Â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         //statusText.text = "User signed in successfully: " + user.DisplayName + " (UID: " + user.UserId + ")";
     }
 
-    // ±¸±Û ÇÁ·ÎÁ§Æ® ¼³Á¤ ÀÀ´ä Å¬·¡½º
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
     [System.Serializable]
     private class ProjectConfigResponse
     {
         public string webApiKey;
     }
 
-    // Google ÀÎÁõ ¿äÃ» µ¥ÀÌÅÍ Å¬·¡½º
+    // Google ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
     [System.Serializable]
     private class GoogleAuthRequestData
     {
         public string postBody;
     }
 
-    // Google ÀÎÁõ ÀÀ´ä µ¥ÀÌÅÍ Å¬·¡½º
+    // Google ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
     [System.Serializable]
     private class GoogleAuthResponseData
     {
         public string idToken;
     }
 
-    //ÀÍ¸í ·Î±×ÀÎ Á¤»ó µ¿ÀÛ
+    //ï¿½Í¸ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private IEnumerator SigninAnonymously()
     {
         auth = FirebaseAuth.DefaultInstance;
@@ -637,12 +637,12 @@ public class UserData : MonoBehaviour
 
         if (authTask.Exception != null)
         {
-            // ÀÎÁõ ½ÇÆÐÇÑ °æ¿ì
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             Debug.LogError("Failed to sign in anonymously: " + authTask.Exception.Message);
         }
         else
         {
-            // ÀÎÁõÀÌ ¼º°øÇÑ °æ¿ì
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             var authResult = authTask.Result;
             Debug.Log("Signed in anonymously with UID: " + authResult.User.UserId);
         }
@@ -651,15 +651,15 @@ public class UserData : MonoBehaviour
     //https://chat.openai.com/share/6c741b14-c6ab-41de-aecb-01658a21903b
     private IEnumerator GetTokensCoroutine()
     {
-        // Google OAuth 2.0 ÀÎÁõ ¿äÃ» URL »ý¼º
+        // Google OAuth 2.0 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» URL ï¿½ï¿½ï¿½ï¿½
         string authUrl = $"{authorizationEndpoint}?response_type=code&client_id={clientId}&redirect_uri={redirectUri}&scope={scope}";
 
-        // ¿©±â¼­´Â À¥ºä¸¦ »ç¿ëÇÏ¿© »ç¿ëÀÚ¿¡°Ô Google ·Î±×ÀÎ ÆäÀÌÁö¸¦ º¸¿©ÁÜ
-        // »ç¿ëÀÚ°¡ ·Î±×ÀÎ ÈÄ¿¡ authorization code¸¦ ¾òÀº »óÈ²À» °¡Á¤ÇÏ¿© ÄÚµå¸¦ ÀÛ¼ºÇÕ´Ï´Ù
-        // »ç¿ëÀÚ°¡ ·Î±×ÀÎ ÈÄ¿¡ ¾òÀº authorization code¸¦ authCode º¯¼ö¿¡ ÇÒ´çÇÕ´Ï´Ù
+        // ï¿½ï¿½ï¿½â¼­ï¿½ï¿½ ï¿½ï¿½ï¿½ä¸¦ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ Google ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½Ä¿ï¿½ authorization codeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È²ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Úµå¸¦ ï¿½Û¼ï¿½ï¿½Õ´Ï´ï¿½
+        // ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ï¿½ authorization codeï¿½ï¿½ authCode ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½Õ´Ï´ï¿½
         string authCode = "YOUR_AUTHORIZATION_CODE";
 
-        // ÀÎÁõ ÄÚµå (authorization code)¸¦ ÀÌ¿ëÇÏ¿© ¿¢¼¼½º ÅäÅ« ¹× ID ÅäÅ« ¿äÃ»
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ (authorization code)ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å« ï¿½ï¿½ ID ï¿½ï¿½Å« ï¿½ï¿½Ã»
         string tokenRequestParams = $"code={authCode}&client_id={clientId}&client_secret={clientSecret}&redirect_uri={redirectUri}&grant_type=authorization_code";
         UnityWebRequest tokenRequest = UnityWebRequest.Post(tokenEndpoint, tokenRequestParams);
         tokenRequest.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -684,7 +684,7 @@ public class UserData : MonoBehaviour
         MakeDB_GoogleSocial();
     }
 
-    // Google OAuth 2.0 ÅäÅ« ÀÀ´äÀ» ÆÄ½ÌÇÏ±â À§ÇÑ Å¬·¡½º
+    // Google OAuth 2.0 ï¿½ï¿½Å« ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ä½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
     [System.Serializable]
     private class GoogleTokenResponse
     {
@@ -697,22 +697,22 @@ public class UserData : MonoBehaviour
     {
         string userId = authEmail;
 
-        // Firebase ÃÊ±âÈ­
+        // Firebase ï¿½Ê±ï¿½È­
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             if (task.IsCompleted)
             {
-                // »ç¿ëÀÚ ÀÎÁõ »óÅÂ È®ÀÎ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
                 FirebaseUser user = auth.CurrentUser;
                 if (user != null)
                 {
-                    // »ç¿ëÀÚ°¡ ÀÎÁõµÇ¾úÀ¸¸ç, ½Äº°ÀÚ¸¦ ¾ò½À´Ï´Ù.
+                    // ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½Äºï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
                     userId = user.UserId;
                     Debug.Log("User ID: " + userId);
                 }
                 else
                 {
-                    // »ç¿ëÀÚ°¡ ÀÎÁõµÇÁö ¾Ê¾Ò½À´Ï´Ù.
+                    // ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½.
                     Debug.Log("User is not authenticated.");
                 }
             }
@@ -737,29 +737,29 @@ public class UserData : MonoBehaviour
 
         Debug.Log("processing makeDB");
 
-        //ÀÌ¹Ì µ¥ÀÌÅÍ°¡ Á¸ÀçÇÏ´Â °æ¿ì´Â ¹Ù·Î return
+        //ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ return
 
 
-        // Firestore ÀÎ½ºÅÏ½º »ý¼º
+        // Firestore ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
 
 
-        // µ¥ÀÌÅÍ¸¦ ÀúÀåÇÒ ÄÃ·º¼Ç°ú ¹®¼­ ÂüÁ¶
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         CollectionReference coll_userdata = db.Collection(GetUserId());
 
         DocumentReference doc_userdata = coll_userdata.Document("User_Data");
         DocumentReference doc_skill = coll_userdata.Document("Skill");
 
 
-        // ÀúÀåÇÒ µ¥ÀÌÅÍ »ý¼º
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         Dictionary<string, object> dungeonProgress = new Dictionary<string, object>
         {
             { "first", 0 },
             { "second", 0 }
         };
 
-        //±ÙÁ¢ Ä³¸¯ÅÍ ½ºÅ³ Á¤º¸
+        //ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
         Dictionary<string, object> char_skill_Melee = new Dictionary<string, object>
         {
             { "melee_skill_01", "0" },
@@ -769,7 +769,7 @@ public class UserData : MonoBehaviour
             { "melee_skill_05", "0" }
         };
 
-        //¿ø°Å¸® Ä³¸¯ÅÍ ½ºÅ³ Á¤º¸
+        //ï¿½ï¿½ï¿½Å¸ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
         Dictionary<string, object> char_skill_Ranged = new Dictionary<string, object>
         {
             { "range_skill_01", "0" },
@@ -779,14 +779,14 @@ public class UserData : MonoBehaviour
             { "range_skill_05", "0" }
         };
 
-        //À¯Àú ±Í¼Ó ½ºÅ³ Á¤º¸
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½Í¼ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
         Dictionary<string, object> skillData = new Dictionary<string, object>
         {
             { "Melee", char_skill_Melee },
             { "Range", char_skill_Ranged }
         };
 
-        //À¯ÀúÀÇ ÄÃ·¢¼Ç
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
         Dictionary<string, object> userData = new Dictionary<string, object>
         {
             { "isGoogleSocial", true },
@@ -797,7 +797,7 @@ public class UserData : MonoBehaviour
         };
 
 
-        // µ¥ÀÌÅÍ¸¦ Firestore¿¡ ÀúÀå
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ Firestoreï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         doc_userdata.SetAsync(userData);
         doc_skill.SetAsync(skillData);
     }
@@ -814,29 +814,29 @@ public class UserData : MonoBehaviour
 
         Debug.Log("processing makeDB");
 
-        //ÀÌ¹Ì µ¥ÀÌÅÍ°¡ Á¸ÀçÇÏ´Â °æ¿ì´Â ¹Ù·Î return
+        //ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ return
 
 
-        // Firestore ÀÎ½ºÅÏ½º »ý¼º
+        // Firestore ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
 
 
-        // µ¥ÀÌÅÍ¸¦ ÀúÀåÇÒ ÄÃ·º¼Ç°ú ¹®¼­ ÂüÁ¶
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         CollectionReference coll_userdata = db.Collection(GetUserId());
 
         DocumentReference doc_userdata = coll_userdata.Document("User_Data");
         DocumentReference doc_skill = coll_userdata.Document("Skill");
 
 
-        // ÀúÀåÇÒ µ¥ÀÌÅÍ »ý¼º
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         Dictionary<string, object> dungeonProgress = new Dictionary<string, object>
         {
             { "first", 0 },
             { "second", 0 }
         };
 
-        //±ÙÁ¢ Ä³¸¯ÅÍ ½ºÅ³ Á¤º¸
+        //ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
         Dictionary<string, object> char_skill_Melee = new Dictionary<string, object>
         {
             { "melee_skill_01", "0" },
@@ -846,7 +846,7 @@ public class UserData : MonoBehaviour
             { "melee_skill_05", "0" }
         };
 
-        //¿ø°Å¸® Ä³¸¯ÅÍ ½ºÅ³ Á¤º¸
+        //ï¿½ï¿½ï¿½Å¸ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
         Dictionary<string, object> char_skill_Ranged = new Dictionary<string, object>
         {
             { "range_skill_01", "0" },
@@ -856,14 +856,14 @@ public class UserData : MonoBehaviour
             { "range_skill_05", "0" }
         };
 
-        //À¯Àú ±Í¼Ó ½ºÅ³ Á¤º¸
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½Í¼ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
         Dictionary<string, object> skillData = new Dictionary<string, object>
         {
             { "Melee", char_skill_Melee },
             { "Range", char_skill_Ranged }
         };
 
-        //À¯ÀúÀÇ ÄÃ·¢¼Ç
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
         Dictionary<string, object> userData = new Dictionary<string, object>
         {
             { "userName", param["nickname"] != null ? param["nickname"] : "null" },
@@ -873,7 +873,7 @@ public class UserData : MonoBehaviour
         };
 
 
-        // µ¥ÀÌÅÍ¸¦ Firestore¿¡ ÀúÀå
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ Firestoreï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         doc_userdata.SetAsync(userData);
         doc_skill.SetAsync(skillData);
     }
