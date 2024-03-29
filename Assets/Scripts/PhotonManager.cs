@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using static UnityEngine.EventSystems.PointerEventData;
-
+using Firebase.Auth;
 
 public class PhotonManager : MonoBehaviourPunCallbacks
 {
@@ -16,7 +16,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     [SerializeField]
     InputField inputText;
     [SerializeField]
+    InputField inputPassword;
+    [SerializeField]
     Button inputButton;
+
+    private int isSocialLogin = 0;
 
     void Start()
     {
@@ -68,6 +72,31 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     }
 
     public void OnClickConnect()
+    {
+        //다른 로그인 방법을 사용 중인지
+        if(isSocialLogin == 1)
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
+
+        //이메일과 비밀번호가 정상적으로 입력 되었는지 확인
+        if(inputText.text == "" || inputPassword.text == "")
+        {
+            return;
+        }
+        //입력한 이메일과 비밀번호로 로그인이 되는지
+        else if(!UserRegister.IsValidAccount(inputText.text, inputPassword.text))
+        {
+            //이메일과 비밀번호가 잘 못 입력된 경우
+            return;
+        }
+
+        // 마스터 서버 접속 요청
+        PhotonNetwork.ConnectUsingSettings();
+    }
+
+    //회원가입 시 호출되는 메소드
+    public static void ConnectWithRegister()
     {
         // 마스터 서버 접속 요청
         PhotonNetwork.ConnectUsingSettings();

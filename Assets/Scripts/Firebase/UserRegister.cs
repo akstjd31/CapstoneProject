@@ -1,6 +1,9 @@
+using Firebase.Auth;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +12,7 @@ public class UserRegister : MonoBehaviour
 {
     public GameObject EmailRegisterPopup;
     private int errCode;    //입력 중 발생한 오류의 종류
+    //1 : 빈 항목 존재, 2 : 이메일 형식 오류, 3 : 비밀번호 길이, 일치 오류, 4: 존재하는 계정을 생성하려 함
 
     void Start()
     {
@@ -27,6 +31,27 @@ public class UserRegister : MonoBehaviour
 
     public void SubmitRegister()
     {
+        InnerSubmitRegister();
+    }
+
+    public async Task<bool> IsExistAccount(string email, string password)
+    {
+        Debug.Log("start of IsExistAccount");
+        //이미 존재하는 계정인 경우
+        bool SubmitRegister = await IsValidAccountAsync(email, password);
+        if (!SubmitRegister)
+        {
+            errCode = 4;
+            Debug.Log("Account is already exist");
+        }
+        Debug.Log("end of IsExistAccount");
+
+        return SubmitRegister;
+    }
+
+    public async void InnerSubmitRegister()
+    {
+        Debug.Log("start of InnerSubmitRegister");
         //값을 알아야 하는 태그의 부모
         string[] tagList = { "Register_Email_Input", "Register_Password_Input", "Register_Password_Confirm_Input", "Register_Nickname_Input" };
         GameObject parent;
@@ -78,10 +103,22 @@ public class UserRegister : MonoBehaviour
         //비밀번호와 비밀번호 확인의 값은 동일해야 함 & 길이 제한(파이어베이스 기준 6이상)
         if(!password.Equals(passwordConfirm) && password.Length > 7)
         {
+            errCode = 3;
             Debug.Log("password exception");
             return;
         }
-        
+
+        Debug.Log("@@ waiting isExistAccount method @@");
+        var continueRegister = await IsExistAccount(email, password);
+        Debug.Log($"@@ isExistAccount method is end @@\t{continueRegister}");
+
+        if (!continueRegister)
+        {
+            errCode = 4;
+            Debug.Log("Account is already exist");
+            return;
+        }
+
         //추가로 등록할 데이터 설정        //닉네임 등
         Dictionary<string, object> additionalData = new Dictionary<string, object>();
         additionalData.Add("nickname", nickname);
@@ -90,6 +127,8 @@ public class UserRegister : MonoBehaviour
         UserData.SignInWithEmail_Password(email, password, additionalData);
 
         EmailRegisterPopup.SetActive(false);
+
+        PhotonManager.ConnectWithRegister();
     }
 
     static bool IsValidEmail(string email)
@@ -99,5 +138,80 @@ public class UserRegister : MonoBehaviour
 
         // 이메일 형식 확인
         return Regex.IsMatch(email, pattern);
+    }
+
+    //생성 가능한 계정인지 확인
+    public static async Task<bool> IsValidAccountAsync(string email, string password)
+    {
+        var auth = FirebaseAuth.DefaultInstance;
+
+        try
+        {
+            var createUserResult = await auth.CreateUserWithEmailAndPasswordAsync(email, password);
+
+            // 사용자 생성이 성공적으로 완료되었으면
+            if (createUserResult != null && createUserResult.User != null)
+            {
+                // 사용자 삭제
+                var user = createUserResult.User;
+                await user.DeleteAsync();
+
+                Debug.Log("User deleted successfully!");
+                return true;
+            }
+            else
+            {
+                // 사용자 생성에 실패한 경우
+                Debug.LogError("Failed to create user");
+                return false;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log($"IsValidAccountAsync Exception : ${e}");
+            return false;
+        }
+    }
+    
+    //생성 가능한 계정인지 확인
+    public static bool IsValidAccount(string email, string password)
+    {
+        var auth = FirebaseAuth.DefaultInstance;
+
+        auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
+        {
+            if (task.IsCanceled)
+            {
+                Debug.LogError("CreateUserWithEmailAndPasswordAsync was canceled.");
+                return;
+            }
+            if (task.IsFaulted)
+            {
+                Debug.LogError("CreateUserWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+                return;
+            }
+
+            //확인을 위한 계정이 생성된 경우 바로 삭제
+            FirebaseUser user = task.Result.User;
+            user.DeleteAsync().ContinueWith(task =>
+            {
+                if (task.IsCanceled)
+                {
+                    Debug.LogError("DeleteAsync was canceled.");
+                    return;
+                }
+                if (task.IsFaulted)
+                {
+                    Debug.LogError("DeleteAsync encountered an error: " + task.Exception);
+                    return;
+                }
+
+                // 사용자 삭제가 성공한 경우
+                Debug.Log("User deleted successfully!");
+            });
+
+        });
+
+        return true;
     }
 }

@@ -18,7 +18,7 @@ public class UserData : MonoBehaviour
     //private string authPassword = "asdf";
     //안드로이드 앱 지문 //https://www.youtube.com/watch?v=AiXIAe6on5M&t=563s
     
-    public static async void SignInWithEmail_Password(string email, string password, Dictionary<string, object> initData)
+    public static async void SignInWithEmail_Password(string email, string password, Dictionary<string, object> initData = null)
     {
         auth = FirebaseAuth.DefaultInstance;
         authEmail = email;
@@ -28,8 +28,11 @@ public class UserData : MonoBehaviour
 
         MakeDB(initData);
 
-        Button btn_photon = GameObject.Find("Submit").GetComponent<Button>();
-        btn_photon.onClick.Invoke();
+        Button btn_photon = GameObject.Find("Submit")?.GetComponent<Button>();
+        if (btn_photon != null)
+        {
+            btn_photon.onClick.Invoke();
+        }
     }
 
     public void LogoutWithEmail_Password()
