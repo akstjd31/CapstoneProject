@@ -120,8 +120,8 @@ public class EnemyCtrl : MonoBehaviour
                     {
                         state = State.ATTACK;
                         hitPlayerPV.GetComponent<Status>().HP -= AttackDamage();
-                    
-                        playerctrl.ChangeState(PlayerCtrl.State.HIT);
+
+                        hitPlayerPV.RPC("UpdatePlayerState", RpcTarget.All, PlayerCtrl.State.HIT); //ChangeState(PlayerCtrl.State.HIT);
                     }
                     else
                     {
