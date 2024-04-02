@@ -11,6 +11,7 @@ using UnityEngine.UI;
 public class UserRegister : MonoBehaviour
 {
     public GameObject EmailRegisterPopup;
+    public GameObject Error_Textbox;
     private int errCode;    //입력 중 발생한 오류의 종류
     //1 : 빈 항목 존재, 2 : 이메일 형식 오류, 3 : 비밀번호 길이, 일치 오류, 4: 존재하는 계정을 생성하려 함
 
@@ -50,12 +51,34 @@ public class UserRegister : MonoBehaviour
     public async void InnerSubmitRegister()
     {
         //값을 알아야 하는 태그의 부모
-        string[] tagList = { "Register_Email_Input", "Register_Password_Input", "Register_Password_Confirm_Input", "Register_Nickname_Input" };
+        string[] tagList = { "Register_Email_Input", "Register_Password_Input", "Register_Password_Confirm_Input" };
         GameObject parent;
         TextMeshProUGUI textComponent;
         string email = "", password = "", passwordConfirm = "", nickname = "";
 
+        //빈 항목이 있는지만 먼저 확인
+        for (int i = 0; i < tagList.Length; i++)
+        {
+            parent = GameObject.Find(tagList[i]);
 
+            if (parent == null)
+                continue;
+
+            textComponent = parent.GetComponentInChildren<TextMeshProUGUI>();
+            //Debug.Log($"textComponent{i} : {textComponent.text.CompareTo("")} {textComponent.text.Length}");
+
+            //1 : 비어있음, 2 : char 1개 입력
+            if (textComponent.text.Length == 1)
+            {
+                //빈 항목이 존재할 수 없음
+                Debug.Log("empty field is exist");
+                errCode = 1;
+                SetErrorMsg(errCode);
+                return;
+            }
+        }
+
+        //각 항목이 유효한 데이터인지 확인
         for (int i = 0; i < tagList.Length; i++)
         {
             parent = GameObject.Find(tagList[i]);
@@ -66,17 +89,11 @@ public class UserRegister : MonoBehaviour
             textComponent = parent.GetComponentInChildren<TextMeshProUGUI>();
             //Debug.Log($"input text of {tagList[i]} : {textComponent.text}");
 
-            if(textComponent.text == "")
-            {
-                //빈 항목이 존재할 수 없음
-                Debug.Log("empty field is exist");
-                errCode = 1;
-                return;
-            }
-            else if(i == 0 && !IsValidEmail(textComponent.text))
+            if(i == 0 && !IsValidEmail(textComponent.text))
             {   //이메일 형식 확인
                 Debug.Log("The email address is badly formatted");
                 errCode = 2;
+                SetErrorMsg(errCode);
                 return;
             }
 
@@ -97,11 +114,20 @@ public class UserRegister : MonoBehaviour
             }
         }
 
-        //비밀번호와 비밀번호 확인의 값은 동일해야 함 & 길이 제한(파이어베이스 기준 6이상)
-        if(!password.Equals(passwordConfirm) && password.Length > 7)
+        //비밀번호와 비밀번호 확인의 값은 동일해야 함
+        if(!password.Equals(passwordConfirm))
         {
             errCode = 3;
+            SetErrorMsg(errCode);
             Debug.Log("password exception");
+            return;
+        }
+
+        //비밀번호 길이 제한(파이어베이스 기준 6이상)
+        if (!(password.Length > 5))
+        {
+            errCode = 4;
+            SetErrorMsg(errCode);
             return;
         }
 
@@ -109,10 +135,14 @@ public class UserRegister : MonoBehaviour
 
         if (!continueRegister)
         {
-            errCode = 4;
+            errCode = 5;
+            SetErrorMsg(errCode);
             Debug.Log("Account is already exist");
             return;
         }
+
+        //에러 메시지가 세팅된 이후 정상 가입을 하는 경우 에러 메시지 삭제
+        SetErrorMsg(-1);
 
         //추가로 등록할 데이터 설정        //닉네임 등
         Dictionary<string, object> additionalData = new Dictionary<string, object>();
@@ -124,6 +154,18 @@ public class UserRegister : MonoBehaviour
         EmailRegisterPopup.SetActive(false);
 
         PhotonManager.ConnectWithRegister();
+    }
+
+    private void SetErrorMsg(int type)
+    {
+        string[] msgList = 
+        { "빈 항목이 존재할 수 없습니다",
+        "잘못된 이메일 형식입니다",
+        "비밀번호가 일치하지 않습니다",
+        "비밀번호는 6자리 이상으로 설정되어야 합니다",
+        "이미 가입된 이메일입니다"};
+
+        Error_Textbox.GetComponent<Text>().text = type != -1 ? msgList[type - 1] : "";
     }
 
     static bool IsValidEmail(string email)
