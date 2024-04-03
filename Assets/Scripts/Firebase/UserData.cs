@@ -125,7 +125,13 @@ public class UserData : MonoBehaviour
         }
         finally
         {
-            Debug.Log($"front of finally : {createUserResult.AdditionalUserInfo}");
+            Debug.Log($"front of finally : {createUserResult.AdditionalUserInfo}");             //Firebase.Auth.AdditionalUserInfo
+            Debug.Log($"front of finally : {createUserResult.AdditionalUserInfo.Profile}");     //System.Collections.Generic.Dictionary`2[System.String,System.Object]
+            Debug.Log($"front of finally : {createUserResult.AdditionalUserInfo.UserName}");    //
+            Debug.Log($"front of finally : {createUserResult.AdditionalUserInfo.ProviderId}");  //
+
+            
+
             //새로운 계정 생성에 성공한 경우 -> 계정 삭제
             if (!isRegisteredAccount)
             {
@@ -152,7 +158,7 @@ public class UserData : MonoBehaviour
         }
     }
 
-    public static void SetNickname(string nickname)
+    public static async Task SetNickname(string nickname)
     {
         FirebaseUser user = auth.CurrentUser;
         if (user == null)
@@ -164,20 +170,19 @@ public class UserData : MonoBehaviour
         // Firestore 인스턴스 생성
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
-        // 해당 사용자의 컬렉션 참조
-        CollectionReference userCollectionRef = db.Collection(GetUserId());
+        // 데이터를 저장할 컬렉션과 문서 참조
+        CollectionReference coll_userdata = db.Collection("User");
 
-        // 해당 사용자의 문서 참조
-        DocumentReference userDocRef = userCollectionRef.Document("User_Data");
+        DocumentReference doc_user = coll_userdata.Document(GetUserId());
 
-        // 데이터를 가져와서 업데이트
-        Dictionary<string, object> userData = new()
+        // 업데이트할 필드와 값 설정
+            Dictionary<string, object> updates = new Dictionary<string, object>
         {
-            { "userName", nickname }
+            { "userData.userName", nickname }
         };
 
-        // 업데이트를 수행
-        userDocRef.UpdateAsync(userData);
+        // 사용자 문서의 userName 필드 업데이트
+        await doc_user.UpdateAsync(updates);
 
         Debug.Log("User name updated successfully!");
     }
