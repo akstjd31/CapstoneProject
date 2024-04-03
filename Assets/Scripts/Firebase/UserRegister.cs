@@ -38,7 +38,7 @@ public class UserRegister : MonoBehaviour
     public async Task<bool> IsExistAccount(string email, string password)
     {
         //이미 존재하는 계정인 경우
-        bool SubmitRegister = await IsValidAccountAsync(email, password);
+        bool SubmitRegister = await IsValidNewAccountAsync(email, password);
         if (!SubmitRegister)
         {
             errCode = 4;
@@ -65,6 +65,7 @@ public class UserRegister : MonoBehaviour
                 continue;
 
             textComponent = parent.GetComponentInChildren<TextMeshProUGUI>();
+            textComponent.text = textComponent.text.Trim();
             //Debug.Log($"textComponent{i} : {textComponent.text.CompareTo("")} {textComponent.text.Length}");
 
             //1 : 비어있음, 2 : char 1개 입력
@@ -89,7 +90,7 @@ public class UserRegister : MonoBehaviour
             textComponent = parent.GetComponentInChildren<TextMeshProUGUI>();
             //Debug.Log($"input text of {tagList[i]} : {textComponent.text}");
 
-            if(i == 0 && !IsValidEmail(textComponent.text))
+            if (i == 0 && !IsValidEmail(textComponent.text))
             {   //이메일 형식 확인
                 Debug.Log("The email address is badly formatted");
                 errCode = 2;
@@ -145,7 +146,7 @@ public class UserRegister : MonoBehaviour
         SetErrorMsg(-1);
 
         //추가로 등록할 데이터 설정        //닉네임 등
-        Dictionary<string, object> additionalData = new Dictionary<string, object>();
+        Dictionary<string, object> additionalData = new();
         additionalData.Add("nickname", nickname);
 
 
@@ -178,7 +179,7 @@ public class UserRegister : MonoBehaviour
     }
 
     //생성 가능한 계정인지 확인
-    public static async Task<bool> IsValidAccountAsync(string email, string password)
+    public static async Task<bool> IsValidNewAccountAsync(string email, string password)
     {
         var auth = FirebaseAuth.DefaultInstance;
 
