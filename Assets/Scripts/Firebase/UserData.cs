@@ -35,7 +35,9 @@ public class UserData : MonoBehaviour
         await auth.CreateUserWithEmailAndPasswordAsync(email, password);
         await auth.SignInWithEmailAndPasswordAsync(email, password);
 
-        MakeDB_New(initData);
+        await MakeDB_New(initData);
+        //캐릭터 별 데이터를 생성
+        //await MakeDB_Char();
 
         Button btn_photon = GameObject.Find("Submit")?.GetComponent<Button>();
         if (btn_photon != null)
@@ -51,13 +53,11 @@ public class UserData : MonoBehaviour
 
     public async void SigninWithEmailAsync()
     {
-        if(auth != null)
+        if(auth == null)
         {
-            Debug.Log($"auth is not null : {auth.CurrentUser}");
-            auth.SignOut();
+            auth = FirebaseAuth.DefaultInstance;
         }
 
-        auth = FirebaseAuth.DefaultInstance;
         isCompleteLoginProgress = false;
 
         string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text.Trim();
@@ -76,6 +76,7 @@ public class UserData : MonoBehaviour
         //create-delete 하지 않고 가입된 이메일인지 판단 필요
         //가입되지 않은 계정이면 종료
         bool isRegisteredAccount = await IsExistAccount(email, password);
+        Debug.Log($"in login process : {isRegisteredAccount}");
 
         //가입된 계정인 경우에만 로그인 시도
         if (isRegisteredAccount)
@@ -83,8 +84,8 @@ public class UserData : MonoBehaviour
             //로그인 시도
             try
             {
-                Debug.Log($"auth : {auth}\n{email}\t{password}");
-                await auth.SignInWithEmailAndPasswordAsync(email, password);
+                Debug.Log($"auth : {auth.CurrentUser}\n{email}\t{password}");
+                var task = await auth.SignInWithEmailAndPasswordAsync(email, password);
                 Debug.Log("end of sign in");
             } catch
             {
@@ -100,7 +101,8 @@ public class UserData : MonoBehaviour
             {
                 btn_photon.onClick.Invoke();
             }
-        } else
+        }
+        else    //가입되지 않은 이메일인 경우
         {
             loginErrorMsg.text = LoginErrorMsg[1];
         }
@@ -114,18 +116,20 @@ public class UserData : MonoBehaviour
         try
         {
             createUserResult = await auth.CreateUserWithEmailAndPasswordAsync(email, password);
-            return true;
         }
         catch
         {
+            Debug.Log("in catch");
             //새로운 계정 생성에 실패 == 이미 가입된 이메일
-            isRegisteredAccount = true;
+            return true;
         }
         finally
         {
+            Debug.Log($"front of finally : {createUserResult.AdditionalUserInfo}");
             //새로운 계정 생성에 성공한 경우 -> 계정 삭제
             if (!isRegisteredAccount)
             {
+                Debug.Log($"DELETE USER : {email}\t{password}");
                 var user = createUserResult.User;
                 await user.DeleteAsync();
             }
@@ -148,43 +152,34 @@ public class UserData : MonoBehaviour
         }
     }
 
-    public async Task SetNickname()
+    public static void SetNickname(string nickname)
     {
-        string name = "";
-        
-        auth = FirebaseAuth.DefaultInstance;
+        FirebaseUser user = auth.CurrentUser;
+        if (user == null)
+        {
+            Debug.Log("failed to update user name: user is null");
+            return;
+        }
+
+        // Firestore 인스턴스 생성
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
-        FirebaseUser user = auth.CurrentUser;
+        // 해당 사용자의 컬렉션 참조
+        CollectionReference userCollectionRef = db.Collection(GetUserId());
 
-        if (user != null)
-        {
-            string uid = user.UserId;
-            
-            DocumentReference docRef = db.Collection(authEmail).Document("User_Data");
+        // 해당 사용자의 문서 참조
+        DocumentReference userDocRef = userCollectionRef.Document("User_Data");
 
-            await docRef.GetSnapshotAsync().ContinueWith(task =>
-            {
-                if (task.IsCompleted)
-                {
-                    DocumentSnapshot snapshot = task.Result;
-                    if (snapshot.Exists)
-                    {
-                        Debug.Log("Document data: " + snapshot.ToDictionary()["userName"]);
-                        name = snapshot.ToDictionary()["userName"].ToString();
-                        PhotonNetwork.NickName = name;
-                    }
-                    else
-                    {
-                        Debug.Log("Document does not exist!");
-                    }
-                }
-            });
-        }
-        else
+        // 데이터를 가져와서 업데이트
+        Dictionary<string, object> userData = new()
         {
-            Debug.Log("No user is currently logged in.");
-        }
+            { "userName", nickname }
+        };
+
+        // 업데이트를 수행
+        userDocRef.UpdateAsync(userData);
+
+        Debug.Log("User name updated successfully!");
     }
 
     public static bool GetLoginState()
@@ -796,7 +791,7 @@ public class UserData : MonoBehaviour
         return userId;
     }
     
-    public static void MakeDB_New(Dictionary<string, object> param = null)
+    public static async Task MakeDB_New(Dictionary<string, object> param = null)
     {
         FirebaseUser user = auth.CurrentUser;
         if (user == null)
@@ -805,17 +800,14 @@ public class UserData : MonoBehaviour
             return;
         }
 
-        Debug.Log("processing makeDB");
-
         // Firestore 인스턴스 생성
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
 
         // 데이터를 저장할 컬렉션과 문서 참조
-        CollectionReference coll_userdata = db.Collection(GetUserId());
+        CollectionReference coll_userdata = db.Collection("User");
 
-        DocumentReference doc_userdata = coll_userdata.Document("User_Data");
-        DocumentReference doc_chardata = coll_userdata.Document("Char_Data");
+        DocumentReference doc_user = coll_userdata.Document(GetUserId());
 
 
         //근접 캐릭터 스킬 정보
@@ -869,14 +861,50 @@ public class UserData : MonoBehaviour
         Dictionary<string, object> charData = new()
         {
             { "type", "null" },   //캐릭터 선택 후 업데이트
-            { "stats", charStats},
-            { "skill",  charSkill},
-            { "itemList", new List<string>()}
+            { "stats", charStats },
+            { "skill",  charSkill },
+            { "itemList", new List<string>() },
+            { "stack", 0 }
+        };
+        
+        Dictionary<string, object> userContainer = new()
+        {
+            { "userData", userData },
+            { "charData", charData }
         };
 
 
         // 데이터를 Firestore에 저장
-        doc_userdata.SetAsync(userData);
-        doc_chardata.SetAsync(charData);
+        await doc_user.SetAsync(userContainer);
+    }
+
+    public static async Task MakeDB_Char()
+    {
+        // Firestore 인스턴스 생성
+        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+
+        // 데이터를 저장할 컬렉션과 문서 참조
+        CollectionReference coll_char = db.Collection("CharData");
+
+        DocumentReference doc_warrior = coll_char.Document("warrior");
+        DocumentReference doc_archer = coll_char.Document("archer");
+
+        Dictionary<string, object> warriorData = new()
+        {
+            { "attackRange", 20 },
+            { "attackDistance", 10 },
+            { "rollingDistance", 10 }
+        };
+        
+        Dictionary<string, object> archerData = new()
+        {
+            { "attackRange", 10 },
+            { "attackDistance", 50 },
+            { "rollingDistance", 20 }
+        };
+
+        await doc_warrior.SetAsync(warriorData);
+        await doc_archer.SetAsync(archerData);
     }
 }
