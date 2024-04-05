@@ -11,6 +11,7 @@ using System.Web;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UserData : MonoBehaviour
@@ -35,15 +36,21 @@ public class UserData : MonoBehaviour
         await auth.CreateUserWithEmailAndPasswordAsync(email, password);
         await auth.SignInWithEmailAndPasswordAsync(email, password);
 
+        UserInfoManager.SetCurrentUser(auth.CurrentUser);
+
         await MakeDB_New(initData);
         //캐릭터 별 데이터를 생성
         //await MakeDB_Char();
 
+        SceneManager.LoadScene("SelectCharacter");
+
+        /*
         Button btn_photon = GameObject.Find("Submit")?.GetComponent<Button>();
         if (btn_photon != null)
         {
             btn_photon.onClick.Invoke();
         }
+        */
     }
 
     public void SigninWithEmail()
@@ -75,7 +82,7 @@ public class UserData : MonoBehaviour
 
         //create-delete 하지 않고 가입된 이메일인지 판단 필요
         //가입되지 않은 계정이면 종료
-        bool isRegisteredAccount = await IsExistAccount(email, password);
+        bool isRegisteredAccount = await IsExistAccount(email);
         Debug.Log($"in login process : {isRegisteredAccount}");
 
         //가입된 계정인 경우에만 로그인 시도
@@ -96,11 +103,15 @@ public class UserData : MonoBehaviour
             loginErrorMsg.text = "";
             isCompleteLoginProgress = true;
 
+
+            SceneManager.LoadScene("SelectCharacter");
+            /*
             Button btn_photon = GameObject.Find("Submit")?.GetComponent<Button>();
             if (btn_photon != null && isRegisteredAccount)
             {
                 btn_photon.onClick.Invoke();
             }
+            */
         }
         else    //가입되지 않은 이메일인 경우
         {
@@ -108,40 +119,29 @@ public class UserData : MonoBehaviour
         }
     }
 
-    private async Task<bool> IsExistAccount(string email, string password)
+    private async Task<bool> IsExistAccount(string email)
     {
         bool isRegisteredAccount = false;
-        AuthResult createUserResult = null;
 
-        try
+        //가입된 이메일인지 확인
+        await auth.FetchProvidersForEmailAsync(email).ContinueWith((authTask) =>
         {
-            createUserResult = await auth.CreateUserWithEmailAndPasswordAsync(email, password);
-        }
-        catch
-        {
-            Debug.Log("in catch");
-            //새로운 계정 생성에 실패 == 이미 가입된 이메일
-            return true;
-        }
-        finally
-        {
-            Debug.Log($"front of finally : {createUserResult.AdditionalUserInfo}");             //Firebase.Auth.AdditionalUserInfo
-            Debug.Log($"front of finally : {createUserResult.AdditionalUserInfo.Profile}");     //System.Collections.Generic.Dictionary`2[System.String,System.Object]
-            Debug.Log($"front of finally : {createUserResult.AdditionalUserInfo.UserName}");    //
-            Debug.Log($"front of finally : {createUserResult.AdditionalUserInfo.ProviderId}");  //
-
-            
-
-            //새로운 계정 생성에 성공한 경우 -> 계정 삭제
-            if (!isRegisteredAccount)
+            if (authTask.IsCanceled)
             {
-                Debug.Log($"DELETE USER : {email}\t{password}");
-                var user = createUserResult.User;
-                await user.DeleteAsync();
+                Debug.Log("Provider fetch canceled.");
             }
-        }
+            else if (authTask.IsFaulted)
+            {
+                Debug.Log("Provider fetch encountered an error.");
+                Debug.Log(authTask.Exception.ToString());
+            }
+            else if (authTask.IsCompleted)
+            {
+                Debug.Log($"Email Providers: {authTask.Result}");
+            }
+        });
 
-        return false;
+        return isRegisteredAccount;
     }
 
     public void LogoutWithEmail_Password()

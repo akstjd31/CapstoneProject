@@ -154,7 +154,7 @@ public class UserRegister : MonoBehaviour
 
         EmailRegisterPopup.SetActive(false);
 
-        PhotonManager.ConnectWithRegister();
+        //PhotonManager.ConnectWithRegister();
     }
 
     private void SetErrorMsg(int type)
