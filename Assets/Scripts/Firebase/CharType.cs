@@ -1,10 +1,12 @@
 using Firebase.Auth;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class CharType : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+public class CharType : MonoBehaviour
 {
     UserInfoManager userInfoManager;
     FirebaseUser currentUser;
@@ -12,9 +14,23 @@ public class CharType : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     private GameObject warrior;
     [SerializeField]
     private GameObject archer;
+    private GameObject explane;
+    private Text explane_Text;
+    private GameObject charType_canvas;
+    private Text charType_input;
+    private GameObject nickname_canvas;
+    private TextMeshProUGUI nickname_input;
 
-    Ray ray;
+    private const string explane_warrior = "전사 직업 설명";
+    private const string explane_archer = "아처 직업 설명";
+
+    private bool isCharTypeCanvas = false;
+    private bool isNicknameCanvas = false;
+    Vector2 pos;
     RaycastHit2D hit;
+    GameObject click_obj;
+
+    private string selectedCharType = "";
 
     // Start is called before the first frame update
     void Start()
@@ -25,72 +41,142 @@ public class CharType : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         // 현재 로그인한 사용자 정보를 가져옴
         //currentUser = userInfoManager.currentUser;
 
-        warrior = GameObject.Find("Field_Warrior");
-        archer = GameObject.Find("Field_Archer");
+        warrior = GameObject.Find("Inner_Field_Warrior");
+        archer = GameObject.Find("Inner_Field_Archer");
+        explane = GameObject.Find("Char_Explanation");
+        explane_Text = explane.GetComponentInChildren<Text>();
+        charType_canvas = GameObject.Find("CharType_Confirm");
+        charType_input = charType_canvas.GetComponentInChildren<Text>();
+        nickname_canvas = GameObject.Find("Nickname");
+        nickname_input = nickname_canvas.GetComponentInChildren<TextMeshProUGUI>();
 
-        if(warrior == null)
-        {
-            Debug.Log("warrior is null");
-        }
-        if(archer == null)
-        {
-            Debug.Log("archer is null");
-        }
 
-        Debug.Log($"is contain collider {warrior.GetComponent<BoxCollider2D>()}, {archer.GetComponent<BoxCollider2D>()}");
-        Debug.Log($"{warrior.transform.position}, {archer.transform.position}");
+        explane.SetActive(false);
+        charType_canvas.SetActive(false);
+        nickname_canvas.SetActive(false);
     }
 
     void Update()
     {
-        Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //해당 좌표에 있는 오브젝트 찾기
-        RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero);
+        hit = Physics2D.Raycast(pos, Vector2.zero);
+        //Debug.Log($"isSelected : {isCharTypeCanvas}");
 
-        if (hit.collider != null)
+        //직업 선택 전
+        if (!isCharTypeCanvas && !isNicknameCanvas)
         {
-            GameObject click_obj = hit.collider.gameObject; //hit.transform.gameObject;
-            Debug.Log($"hit-coll : {click_obj.name}");
-        }
+            charType_canvas.SetActive(false);
+            warrior.GetComponent<BoxCollider2D>().enabled = true;
+            archer.GetComponent<BoxCollider2D>().enabled = true;
 
-        if (Input.GetMouseButton(0))
-        {
             if (hit.collider != null)
             {
-                GameObject clickObject = hit.transform.gameObject; //EventSystem.current.currentSelectedGameObject;
-                Debug.Log($"click : {clickObject.name}");
+                click_obj = hit.collider.gameObject; //hit.transform.gameObject;
+                                                     //Debug.Log($"hit-coll : {click_obj.name}");
 
-                clickObject = EventSystem.current.currentSelectedGameObject;
-                Debug.Log($"EventSystem : {clickObject.name}");
+                //직업 설명 팝업 설정
+                if (hit.collider.gameObject == warrior)
+                {
+                    explane.SetActive(true);
+                    explane.transform.position = pos;
+                    explane_Text.text = explane_warrior;
+                }
+                else if (hit.collider.gameObject == archer)
+                {
+                    explane.SetActive(true);
+                    explane.transform.position = pos;
+                    explane_Text.text = explane_archer;
+                }
             }
             else
             {
-                Debug.Log("click collider is null");
+                explane.SetActive(false);
+            }
+
+            //직업 확정 ui로 로직 변경
+            if (Input.GetMouseButton(0) && hit.collider != null)
+            {
+                explane.SetActive(false);
+                isCharTypeCanvas = true;
             }
         }
+        //직업 선택 후
+        else if (isCharTypeCanvas && !isNicknameCanvas)
+        {
+            explane.SetActive(false);
+            charType_canvas.SetActive(true);
+            warrior.GetComponent<BoxCollider2D>().enabled = false;
+            archer.GetComponent<BoxCollider2D>().enabled = false;
 
+            if (click_obj == warrior)
+            {
+                charType_input.text = "`전사` 직업을 선택하시겠습니까?";
+                selectedCharType = "warrior";
+            }
+            else if (click_obj == archer)
+            {
+                charType_input.text = "`아처` 직업을 선택하시겠습니까?";
+                selectedCharType = "archer";
+            }
+
+            //ui 종료
+            if(Input.GetMouseButton(0) && hit.collider != null && hit.collider.name == "CharType_Exit")
+            {
+                //Debug.Log($"coll : {hit.collider.name}");
+                charType_canvas.SetActive(false);
+                isCharTypeCanvas = false;
+            }
+        }
     }
 
-    // 마우스 클릭시 호출될 함수
-    public void OnPointerClick(PointerEventData eventData)
+    public void SubmitCharType()
     {
-        Debug.Log("빈 GameObject 클릭됨");
+        isNicknameCanvas = true;
+        isCharTypeCanvas = false;
+
+        warrior.GetComponent<BoxCollider2D>().enabled = false;
+        archer.GetComponent<BoxCollider2D>().enabled = false;
+
+        explane.SetActive(false);
+        charType_canvas.SetActive(false);
+        nickname_canvas.SetActive(true);
     }
 
-    // 마우스가 해당 오브젝트에 들어왔을 때 호출될 함수
-    public void OnPointerEnter(PointerEventData eventData)
+    public void CancelSubmit()
     {
-        Debug.Log("빈 GameObject 호버 시작");
+        isCharTypeCanvas = false;
+
+        warrior.GetComponent<BoxCollider2D>().enabled = true;
+        archer.GetComponent<BoxCollider2D>().enabled = true;
+
+        explane.SetActive(false);
+        charType_canvas.SetActive(false);
     }
 
-    // 마우스가 해당 오브젝트에서 나갔을 때 호출될 함수
-    public void OnPointerExit(PointerEventData eventData)
+    public void SubmitNickname()
     {
-        Debug.Log("빈 GameObject 호버 종료");
+        string nickname = nickname_input.text;
+        Debug.Log($"nickname : {nickname}");
+
+        explane.SetActive(false);
+        charType_canvas.SetActive(false);
+        nickname_canvas.SetActive(false);
+
+        //씬 전환 예정
+        //selectedCharType
     }
 
-    void OnGUI()
+    public void CancalSubmitNickname()
     {
-        
+        nickname_input.text = "";
+        isNicknameCanvas = false;
+
+        warrior.GetComponent<BoxCollider2D>().enabled = true;
+        archer.GetComponent<BoxCollider2D>().enabled = true;
+
+        explane.SetActive(false);
+        charType_canvas.SetActive(false);
+        nickname_canvas.SetActive(false);
     }
 }
