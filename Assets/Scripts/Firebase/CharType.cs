@@ -2,12 +2,15 @@ using Firebase.Auth;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class CharType : MonoBehaviour
+public class CharType : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     UserInfoManager userInfoManager;
     FirebaseUser currentUser;
+    [SerializeField]
     private GameObject warrior;
+    [SerializeField]
     private GameObject archer;
 
     Ray ray;
@@ -22,8 +25,8 @@ public class CharType : MonoBehaviour
         // 현재 로그인한 사용자 정보를 가져옴
         //currentUser = userInfoManager.currentUser;
 
-        warrior = GameObject.Find("Warrior");
-        archer = GameObject.Find("Archer");
+        warrior = GameObject.Find("Field_Warrior");
+        archer = GameObject.Find("Field_Archer");
 
         if(warrior == null)
         {
@@ -33,42 +36,61 @@ public class CharType : MonoBehaviour
         {
             Debug.Log("archer is null");
         }
-        
+
+        Debug.Log($"is contain collider {warrior.GetComponent<BoxCollider2D>()}, {archer.GetComponent<BoxCollider2D>()}");
+        Debug.Log($"{warrior.transform.position}, {archer.transform.position}");
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //해당 좌표에 있는 오브젝트 찾기
+        RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero);
+
+        if (hit.collider != null)
         {
-            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //해당 좌표에 있는 오브젝트 찾기
-            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 0f);
-
-            if (hit.collider != null)
-            {
-                GameObject click_obj = hit.transform.gameObject;
-                Debug.Log(click_obj.name);
-
-            }
-
-            /*
-            // 마우스 위치에서 Ray를 발사합니다.
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-            Debug.Log($"coll : {hit.collider}");
-
-            // Ray가 어떤 오브젝트에 부딪혔는지 확인합니다.
-            if (hit.collider != null)
-            {
-                // 부딪힌 오브젝트의 이름을 출력합니다.
-                Debug.Log("Clicked on: " + hit.collider.gameObject.name);
-            }
-            */
+            GameObject click_obj = hit.collider.gameObject; //hit.transform.gameObject;
+            Debug.Log($"hit-coll : {click_obj.name}");
         }
+
+        if (Input.GetMouseButton(0))
+        {
+            if (hit.collider != null)
+            {
+                GameObject clickObject = hit.transform.gameObject; //EventSystem.current.currentSelectedGameObject;
+                Debug.Log($"click : {clickObject.name}");
+
+                clickObject = EventSystem.current.currentSelectedGameObject;
+                Debug.Log($"EventSystem : {clickObject.name}");
+            }
+            else
+            {
+                Debug.Log("click collider is null");
+            }
+        }
+
     }
 
-    private void OnMouseEnter()
+    // 마우스 클릭시 호출될 함수
+    public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("mouse enter");
+        Debug.Log("빈 GameObject 클릭됨");
+    }
+
+    // 마우스가 해당 오브젝트에 들어왔을 때 호출될 함수
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Debug.Log("빈 GameObject 호버 시작");
+    }
+
+    // 마우스가 해당 오브젝트에서 나갔을 때 호출될 함수
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        Debug.Log("빈 GameObject 호버 종료");
+    }
+
+    void OnGUI()
+    {
+        
     }
 }

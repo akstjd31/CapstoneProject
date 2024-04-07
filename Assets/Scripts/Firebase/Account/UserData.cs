@@ -18,7 +18,7 @@ public class UserData : MonoBehaviour
 {
     private static FirebaseAuth auth;
     private static string authEmail;
-    private Text loginErrorMsg;
+    private static Text loginErrorMsg;
     private static bool isCompleteLoginProgress;
     //private string authPassword = "asdf";
     //안드로이드 디지털 지문 //https://www.youtube.com/watch?v=AiXIAe6on5M&t=563s
@@ -53,17 +53,42 @@ public class UserData : MonoBehaviour
         */
     }
 
-    public void SigninWithEmail()
+    public static void SigninWithEmail()
     {
-        SigninWithEmailAsync();
+        SigninWithEmailAsync2();
     }
 
-    public async void SigninWithEmailAsync()
+    public static async void SigninWithEmailAsync2()
     {
-        if(auth == null)
+        auth = FirebaseAuth.DefaultInstance;
+
+        string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text.Trim();
+        string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text.Trim();
+
+        AuthResult result;
+
+        //로그인 시도
+        try
         {
-            auth = FirebaseAuth.DefaultInstance;
+            Debug.Log($"auth2 : {auth.CurrentUser}\n{email}\t{password}");
+            //await auth.SignInWithEmailAndPasswordAsync(email, password);
+
+            // SignInWithEmailAndPasswordAsync 메서드를 비동기적으로 호출하고 결과를 기다림
+            result = await auth.SignInWithEmailAndPasswordAsync(email, password);
+
+            Debug.Log("end of sign in");
         }
+        catch(Exception ex)
+        {
+            Debug.Log($"auth2 failed : {ex.StackTrace}");
+            Debug.Log($"auth2 failed : {ex.Message}");
+            return;
+        }
+    }
+
+    public static async void SigninWithEmailAsync()
+    {
+        auth = FirebaseAuth.DefaultInstance;
 
         isCompleteLoginProgress = false;
 
@@ -88,15 +113,22 @@ public class UserData : MonoBehaviour
         //가입된 계정인 경우에만 로그인 시도
         if (isRegisteredAccount)
         {
+            AuthResult result;
+
             //로그인 시도
             try
             {
                 Debug.Log($"auth : {auth.CurrentUser}\n{email}\t{password}");
-                var task = await auth.SignInWithEmailAndPasswordAsync(email, password);
+                //await auth.SignInWithEmailAndPasswordAsync(email, password);
+
+                // SignInWithEmailAndPasswordAsync 메서드를 비동기적으로 호출하고 결과를 기다림
+                result = await auth.SignInWithEmailAndPasswordAsync(email, password);
+
                 Debug.Log("end of sign in");
             } catch
             {
                 loginErrorMsg.text = LoginErrorMsg[1] + "\n로그인 실패";
+
                 return;
             }
 
@@ -119,9 +151,10 @@ public class UserData : MonoBehaviour
         }
     }
 
-    private async Task<bool> IsExistAccount(string email)
+    private static async Task<bool> IsExistAccount(string email)
     {
         bool isRegisteredAccount = false;
+        Debug.Log($"check accout : {email}");
 
         //가입된 이메일인지 확인
         await auth.FetchProvidersForEmailAsync(email).ContinueWith((authTask) =>
@@ -138,6 +171,7 @@ public class UserData : MonoBehaviour
             else if (authTask.IsCompleted)
             {
                 Debug.Log($"Email Providers: {authTask.Result}");
+                isRegisteredAccount = true;
             }
         });
 
