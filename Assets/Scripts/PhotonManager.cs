@@ -33,7 +33,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         inputText.onEndEdit.AddListener(
             (string s) =>
             {
-                Debug.Log(s + "님이 입장하셨습니다.");
+                Debug.Log(s + "님이 입장하셨습니다. temp");
             }
         );
         inputButton.onClick.AddListener(OnClickConnect);
@@ -73,6 +73,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     public void OnClickConnect()
     {
+        /*
         //다른 로그인 방법을 사용 중인지
         if(isSocialLogin == 1)
         {
@@ -93,6 +94,12 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
         // 마스터 서버 접속 요청
         if(UserData.CanEnter())
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
+        */
+
+        if(UserData.GetLoginState())
         {
             PhotonNetwork.ConnectUsingSettings();
         }
