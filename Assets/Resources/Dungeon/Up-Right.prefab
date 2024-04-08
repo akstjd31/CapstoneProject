@@ -1536,6 +1536,9 @@ MonoBehaviour:
   downRooms: []
   leftRooms: []
   mapSpawnPoints: []
+  mapArray:
+  - {fileID: 1139048143582174535, guid: abda1820e48a031458fabb3d5cd3f47b, type: 3}
+  doorList: 00000000
 --- !u!1 &8414772924176955518
 GameObject:
   m_ObjectHideFlags: 0

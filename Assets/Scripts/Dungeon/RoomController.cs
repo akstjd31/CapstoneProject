@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Realtime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -11,12 +12,14 @@ public class RoomController : MonoBehaviour
 	public GameObject[] downRooms;
 	public GameObject[] leftRooms;
     public Transform[] mapSpawnPoints;
+    int mapSize = 3;
+    public GameObject[] mapArray = new GameObject[1];
 
     public bool[] doorList = new bool[4];
 
-    float roomCreateDelay = 0.1f;
     bool makeDoor = false;
     bool doorCheck = false;
+    bool makePlayMap = false;
 
     // Start is called before the first frame update
     void Start()
@@ -136,6 +139,14 @@ public class RoomController : MonoBehaviour
                 Debug.Log(doorList[i]);
             } 
         }
+        if(DungeonManager.isMapCreate && makeDoor && doorCheck && !makePlayMap)
+        {
+            GameObject playMap = Instantiate(mapArray[0]);
+            //playMap.transform.position = new Vector2((this.transform.position.x - 500.0f) * 25.0f, (this.transform.position.y - 500.0f) * 9.0f);
+            playMap.transform.position = new Vector2(this.transform.position.x * 25.0f, this.transform.position.y * 9.0f);
+            playMap.transform.SetParent(GameObject.Find("Grid").transform);
+            makePlayMap = true;
+        }
     }
 
     private IEnumerator CreateRoom()
@@ -253,7 +264,7 @@ public class RoomController : MonoBehaviour
             }
             for(int i = 2; i < mapSpawnPoints.Length; i++)
             {
-                yield return new WaitForSeconds(roomCreateDelay);
+                yield return new WaitForSeconds(Random.Range(0.01f, 0.2f));
                 GameObject roomtemp;
                 if(mapSpawnPoints[i].name.Contains("Up"))
                 {

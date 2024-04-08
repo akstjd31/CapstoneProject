@@ -596,6 +596,9 @@ MonoBehaviour:
   - {fileID: 4454642603423900606}
   - {fileID: 5898966326096641058}
   - {fileID: 0}
+  mapArray:
+  - {fileID: 1139048143582174535, guid: abda1820e48a031458fabb3d5cd3f47b, type: 3}
+  doorList: 00000000
 --- !u!1 &3813004485244992789
 GameObject:
   m_ObjectHideFlags: 0
