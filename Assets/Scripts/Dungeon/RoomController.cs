@@ -141,10 +141,10 @@ public class RoomController : MonoBehaviour
         }
         if(DungeonManager.isMapCreate && makeDoor && doorCheck && !makePlayMap)
         {
-            GameObject playMap = Instantiate(mapArray[0]);
+            GameObject gridMap = Instantiate(mapArray[0]);
             //playMap.transform.position = new Vector2((this.transform.position.x - 500.0f) * 25.0f, (this.transform.position.y - 500.0f) * 9.0f);
-            playMap.transform.position = new Vector2(this.transform.position.x * 25.0f, this.transform.position.y * 9.0f);
-            playMap.transform.SetParent(GameObject.Find("Grid").transform);
+            gridMap.transform.position = new Vector2(this.transform.position.x * 25.0f, this.transform.position.y * 9.0f);
+            gridMap.transform.SetParent(GameObject.Find("Grid").transform);
             makePlayMap = true;
         }
     }
