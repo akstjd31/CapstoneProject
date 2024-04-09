@@ -26,11 +26,17 @@ public class UserData : MonoBehaviour
 
     public static async void RegisterWithEmail_Password(string email, string password, Dictionary<string, object> initData = null)
     {
-        auth = FirebaseAuth.DefaultInstance;
-        authEmail = email;
-
-        await auth.CreateUserWithEmailAndPasswordAsync(email, password);
+        FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+        //회원가입
+        auth.CreateUserWithEmailAndPasswordAsync(email, password);
+        //로그인
         await auth.SignInWithEmailAndPasswordAsync(email, password);
+
+        //auth = FirebaseAuth.DefaultInstance;
+        //authEmail = email;
+
+        //await auth.CreateUserWithEmailAndPasswordAsync(email, password);
+        //await auth.SignInWithEmailAndPasswordAsync(email, password);
 
         MakeDB(initData);
 
