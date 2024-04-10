@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Slug
   attackDamage: 7
+  attackDelayTime: 0
   enemyType: 0
   prefab: {fileID: 1645474551591086265, guid: c5540a338dd81428da4df798067fb58c, type: 3}

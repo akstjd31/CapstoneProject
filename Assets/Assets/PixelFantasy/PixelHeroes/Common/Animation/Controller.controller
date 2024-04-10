@@ -26,8 +26,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2237f12a7a453b843a3763b514bf7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Continuous: 0
-  Active: 0
 --- !u!1101 &-8794343676053351727
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -385,8 +383,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2237f12a7a453b843a3763b514bf7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Continuous: 0
-  Active: 0
 --- !u!1101 &-3027872142030881603
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -857,8 +853,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2237f12a7a453b843a3763b514bf7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Continuous: 0
-  Active: 0
 --- !u!91 &9100000
 AnimatorController:
   m_ObjectHideFlags: 0
@@ -1055,8 +1049,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2237f12a7a453b843a3763b514bf7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Continuous: 0
-  Active: 0
 --- !u!1101 &87709782460576640
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1191,8 +1183,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2237f12a7a453b843a3763b514bf7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Continuous: 0
-  Active: 0
 --- !u!1107 &3007215386161293610
 AnimatorStateMachine:
   serializedVersion: 6
@@ -1442,8 +1432,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2237f12a7a453b843a3763b514bf7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Continuous: 0
-  Active: 0
 --- !u!1102 &4602458092277031176
 AnimatorState:
   serializedVersion: 6
@@ -1507,8 +1495,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2237f12a7a453b843a3763b514bf7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Continuous: 0
-  Active: 0
 --- !u!1101 &5093772695851868839
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1815,8 +1801,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2237f12a7a453b843a3763b514bf7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Continuous: 0
-  Active: 0
 --- !u!1102 &8429332732643563830
 AnimatorState:
   serializedVersion: 6

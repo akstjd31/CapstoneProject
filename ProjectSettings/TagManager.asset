@@ -13,6 +13,7 @@ TagManager:
   - Door
   - InputBox
   - PartyRoom
+  - Bullet
   layers:
   - Default
   - TransparentFX
