@@ -11,6 +11,8 @@ TagManager:
   - Chatting
   - StatInfo
   - Door
+  - InputBox
+  - PartyRoom
   layers:
   - Default
   - TransparentFX

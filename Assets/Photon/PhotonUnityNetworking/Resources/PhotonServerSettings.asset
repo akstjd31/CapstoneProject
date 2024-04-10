@@ -74,6 +74,8 @@ MonoBehaviour:
   - HandlePlayerGameExit
   - OnLeavePartyRPC
   - InitSettingRPC
+  - PartyRoomSetting
+  - AddPartyRoomList
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
