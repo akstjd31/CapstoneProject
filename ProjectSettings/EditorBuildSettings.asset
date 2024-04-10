@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LobbyScene.unity
     guid: bf4ac24e2c73a41ac91c64b4285e497d
+  - enabled: 1
+    path: Assets/Scenes/DungeonScene.unity
+    guid: 411f974a66dee2a40bc14892d79402ad
   m_configObjects: {}
