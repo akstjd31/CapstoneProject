@@ -51,6 +51,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public Party party;
 
+    private bool isLobbyScene = false;  //DungeonEntrance와 플레이어의 충돌을 감지하기 위해 현재 씬이 LobbyScene인지 확인하는 변수
+
     // 상태 변경을 위한 함수
     [PunRPC]
     public void UpdatePlayerState(State newState)
@@ -79,6 +81,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         state = State.NORMAL;
         weaponPV = null;
         party = null;
+
+        isLobbyScene = SceneManager.GetActiveScene().name == "LobbyScene";
 
         //partySystemScript.partyCreator.transform.GetComponentInChildren<Button>().onClick.AddListener(OnPartyCreationComplete);
 
@@ -395,6 +399,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if(isLobbyScene && other.name == "DungeonEntrance" && DungeonEnterCondition())
+        {
+            //던전 선택창 출력 예정
+
+        }
+
         if (other.CompareTag("Weapon"))
         {
             weaponPV = other.GetComponent<PhotonView>();
@@ -407,5 +417,34 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             weaponPV = null;
         }
+    }
+
+    private bool DungeonEnterCondition()
+    {
+        Debug.Log($"name : {pv.name}");
+
+        //파티에 속하지 않은 경우
+        if (!isPartyMember)
+        {
+            Debug.Log("파티가 없습니다");
+        }
+        //2인 파티가 아닌 경우
+        else if (party.GetPartyHeadCount() != 2)
+        {
+            Debug.Log("2인 파티가 아닙니다");
+        }
+        //모든 인원이 준비 완료 상태인지
+        else if (false)     //준비 기능 미구현 상태
+        {
+
+        }
+        //본인이 파티장이 아닌 경우
+        else if (!PhotonNetwork.NickName.Equals(party.GetPartyLeaderID()))
+        {
+            Debug.Log("파티장이 아닙니다");
+        }
+        
+
+        return false;
     }
 }
