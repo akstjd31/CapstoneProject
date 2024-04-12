@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LoginProgress : MonoBehaviour
@@ -63,5 +64,11 @@ public class LoginProgress : MonoBehaviour
             Debug.Log($"auth2 failed : {ex.Message}");
             return;
         }
+    }
+
+    public void BreakLogin()
+    {
+        //SceneManager.LoadScene("SelectCharacter");
+        PhotonManager.ConnectWithRegister();
     }
 }

@@ -20,7 +20,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     [SerializeField]
     Button inputButton;
 
-    private int isSocialLogin = 0;
+    //private int isSocialLogin = 0;
 
     void Start()
     {

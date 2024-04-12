@@ -164,7 +164,7 @@ public class CharType : MonoBehaviour
         nickname_canvas.SetActive(false);
 
         //씬 전환 예정
-        //selectedCharType
+        Debug.Log(selectedCharType);
     }
 
     public void CancalSubmitNickname()
