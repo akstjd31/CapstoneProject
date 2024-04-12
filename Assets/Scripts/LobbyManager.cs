@@ -55,7 +55,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         //방 옵션
         RoomOptions options = new RoomOptions();
-        options.MaxPlayers = 2;
+        options.MaxPlayers = 10;
 
         //방 목록에 보이게 할것인가?
         options.IsVisible = true;
@@ -68,6 +68,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             //방 생성
             PhotonNetwork.CreateRoom("Lobby", options);
         }
+    }
+
+    // 새 플레이어가 접속했을 때 호출되는 함수
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        Debug.Log("새로운 플레이어가 입장했습니다: " + newPlayer.NickName);
+        // 새로운 플레이어에게 환영 메시지 표시 등의 처리
+
+
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -97,15 +106,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         // 특정 플레이어가 게임을 종료하게 되면 챗에 남김.
-        canvasPV.RPC("GetMessage", RpcTarget.AllBuffered, otherPlayer.NickName + " 님이 떠났습니다!");
+        //canvasPV.RPC("GetMessage", RpcTarget.AllBuffered, otherPlayer.NickName + " 님이 떠났습니다!");
     
         // 특정 파티에 속해있는 상태로 탈주 시 해당 파티에서 제거
         canvasPV.RPC("HandlePlayerGameExit", RpcTarget.AllBuffered, otherPlayer.NickName);
 
-        //Debug.Log(otherPlayer.NickName + " 님이 떠났습니다!");
+        Debug.Log(otherPlayer.NickName + " 님이 떠났습니다!");
 
         // 로비에 있는 플레이어 목록에 제거
         PlayerCtrl leftPlayer = partySystemScript.GetPlayerCtrlByNickname(otherPlayer.NickName);
+
         lobbyPlayerViewID.Remove(leftPlayer.GetComponent<PhotonView>().ViewID);
 
         // 여기에 다른 플레이어가 방을 나갈 때 실행하고 싶은 로직을 추가

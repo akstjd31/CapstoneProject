@@ -734,7 +734,7 @@ SpriteRenderer:
   m_Size: {x: 100, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &896909225
@@ -773,7 +773,7 @@ GameObject:
   m_IsActive: 1
 --- !u!95 &1056345547
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -790,8 +790,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!4 &1056345548
 Transform:
   m_ObjectHideFlags: 0
@@ -901,7 +900,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6368189611599080986, guid: 3ec9d51c8cd646fb8ace563d872a60f1, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6368189611599080986, guid: 3ec9d51c8cd646fb8ace563d872a60f1, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1036,7 +1035,7 @@ BoxCollider:
   m_Center: {x: -0.03125, y: 0.28125, z: 0}
 --- !u!95 &1639963654
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1053,8 +1052,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &1639963656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1368,7 +1366,7 @@ BoxCollider:
   m_Center: {x: 0.03125, y: 0.3125, z: 0}
 --- !u!95 &2100404433
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1385,8 +1383,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &2100404435
 MonoBehaviour:
   m_ObjectHideFlags: 0

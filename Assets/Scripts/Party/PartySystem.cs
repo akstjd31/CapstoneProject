@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Photon.Pun;
+using Photon.Realtime;
 
 
 public class PartySystem : MonoBehaviourPunCallbacks
@@ -24,11 +25,41 @@ public class PartySystem : MonoBehaviourPunCallbacks
 
     private int partyRoomID = 100;
 
+    private const string PartiesKey = "Parties";
+
     private void Start()
     {
         lobbyManager = GameObject.Find("LobbyManager").GetComponent<LobbyManager>();
         canvasPV = GetComponent<PhotonView>();
+
+        //StartCoroutine(WaitForSecond());
     }
+
+    public void FindPartyRoom()
+    {
+        if (GameObject.FindGameObjectWithTag("PartyRoom") && GameObject.FindGameObjectWithTag("PartyRoom").transform.parent != content.transform)
+        {
+            GameObject[] party = GameObject.FindGameObjectsWithTag("PartyRoom");
+            for (int i = 0; i < party.Length; i++)
+            {
+                parties.Add(party[i].GetComponent<Party>());
+                party[i].transform.parent = content.transform;
+                party[i].GetComponent<Button>().onClick.AddListener(OnClickJoinPartyButton);
+            }
+        }
+    }
+
+    IEnumerator WaitForSecond()
+    {
+        yield return new WaitForSeconds(2f);
+        FindPartyRoom();
+    }
+
+    private void Update()
+    {
+        FindPartyRoom();
+    }
+
 
     public void OpenPartyViewer()
     {
@@ -48,8 +79,8 @@ public class PartySystem : MonoBehaviourPunCallbacks
 
     public void CreatorOnExitButtonClick()
     {
-        partyCreator.SetActive(false);
         inputField.text = "";
+        partyCreator.SetActive(false);
     }
 
     public void ViewerOnExitButtonClick()
@@ -98,8 +129,8 @@ public class PartySystem : MonoBehaviourPunCallbacks
                 // 만약 해당 플레이어가 어느 파티에 속하지 않을 때
                 if (!playerCtrl.isPartyMember)
                 {
-                    // 방 생성
-                    canvasPV.RPC("GetPartyRoom", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID);
+
+                    canvasPV.RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID);
                     Debug.Log(PhotonNetwork.NickName + " 파티가 생성되었습니다.");
                     partyCreator.SetActive(false); // 파티 만들기 창 비활성화
 
@@ -138,6 +169,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
             else
             {
                 PlayerCtrl secondPlayerCtrl = GetPlayerCtrlByNickname(PhotonNetwork.NickName);
+                //PhotonView partyPV = party.GetComponent<PhotonView>();
 
                 if (secondPlayerCtrl != null)
                 {
@@ -154,12 +186,11 @@ public class PartySystem : MonoBehaviourPunCallbacks
     {
         int partyIdx = -1;
 
-        for (var i = 0; i < parties.Count; i++)
+        for (int i = 0; i < parties.Count; i++)
         {
             if (parties[i].partyID == partyID)
             {
                 partyIdx = i;
-                break;
             }
         }
 
@@ -168,9 +199,16 @@ public class PartySystem : MonoBehaviourPunCallbacks
         // 파티 멤버가 아닌 경우
         if (!playerCtrl.isPartyMember)
         {
-            playerCtrl.isPartyMember = true;
-            playerCtrl.party = parties[partyIdx];
-            playerCtrl.party.SetPartyMemberID(playerViewID);
+            if (partyIdx != -1)
+            {
+                playerCtrl.isPartyMember = true;
+                playerCtrl.party = parties[partyIdx];
+                playerCtrl.party.SetPartyMemberID(playerViewID);
+            }
+            else
+            {
+                Debug.Log("파티를 찾을 수 없습니다!");
+            }
         }
         else
         {
@@ -272,6 +310,10 @@ public class PartySystem : MonoBehaviourPunCallbacks
                         parties[partyIdx].SetPartyLeaderID(parties[partyIdx].GetPartyMemberID());
                         parties[partyIdx].SetPartyMemberID(-1);
                     }
+                    else if (parties[partyIdx].GetPartyMemberID() == viewID)
+                    {
+                        parties[partyIdx].SetPartyMemberID(-1);
+                    }
                 }
 
                 playerCtrl.isPartyMember = false;
@@ -284,23 +326,34 @@ public class PartySystem : MonoBehaviourPunCallbacks
         }
     }
 
+    //[PunRPC]
+    //private void AddPartyRoomList(int partyRoomViewID)
+    //{
+    //    parties.Add(PhotonView.Find(partyRoomViewID).GetComponent<Party>());
+    //}
+
     // 파티 방 생성
     [PunRPC]
-    public void GetPartyRoom(string receiveMessage, int ViewID)
+    public void PartyRoomSetting(string receiveMessage, int playerViewID)
     {
-        GameObject room = PhotonNetwork.Instantiate(partyRoom.name, Vector3.zero, Quaternion.identity);
-        //GameObject room = Instantiate(partyRoom, Vector3.zero, Quaternion.identity, content.transform);
+        // 방 생성
+        GameObject room = Instantiate(partyRoom, Vector3.zero, Quaternion.identity, content.transform);
         room.transform.parent = content.transform;
 
+        //PhotonView partyPV = PhotonView.Find(partyRoomViewID);
         Party newParty = room.GetComponent<Party>();
         newParty.SetContext(receiveMessage);
-        newParty.SetPartyLeaderID(ViewID);
+        newParty.SetPartyLeaderID(playerViewID);
         newParty.partyID = partyRoomID;
         partyRoomID++;
-        parties.Add(room.GetComponent<Party>());
-        parties[parties.Count - 1].GetComponent<Button>().onClick.AddListener(OnClickJoinPartyButton);
 
-        PhotonView.Find(ViewID).GetComponent<PlayerCtrl>().party = parties[parties.Count - 1];
-        PhotonView.Find(ViewID).GetComponent<PlayerCtrl>().isPartyMember = true;
+        newParty.GetComponent<Button>().onClick.AddListener(OnClickJoinPartyButton);
+        parties.Add(newParty);
+        //parties[parties.Count - 1].GetComponent<Button>().onClick.AddListener(OnClickJoinPartyButton);
+
+        PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>().party = newParty;
+        PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>().isPartyMember = true;
+
+        //canvasPV.RPC("AddPartyRoomList", RpcTarget.AllBuffered, partyRoomViewID);
     }
 }

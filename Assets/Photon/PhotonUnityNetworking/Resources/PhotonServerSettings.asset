@@ -73,6 +73,11 @@ MonoBehaviour:
   - AddPartyMemberRPC
   - HandlePlayerGameExit
   - OnLeavePartyRPC
+  - InitSettingRPC
+  - PartyRoomSetting
+  - AddPartyRoomList
+  - RequestSceneSwitch
+  - SwitchScene
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

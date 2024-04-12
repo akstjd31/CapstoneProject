@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class DungeonManager : MonoBehaviour
 {
-    public static int roomNum = 10;
+    public static int roomNum = 5;
     //public static GameObject[] endRooms = new GameObject[roomNum];
     public static List<GameObject> endRooms = new List<GameObject>();
     public static int endRoomIndexChecker = 0;

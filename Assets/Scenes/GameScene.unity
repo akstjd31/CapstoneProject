@@ -267,12 +267,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e42b8e46370a344af9d6ac09e0853696, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smoothSpeed: 3
-  offset: {x: 0, y: 0}
-  limitMinX: 0
-  limitMaxX: 0
-  limitMinY: 0
-  limitMaxY: 0
 --- !u!1 &699210939
 GameObject:
   m_ObjectHideFlags: 0
