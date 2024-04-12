@@ -6429,6 +6429,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3bbb01e260e1bb45aaafa7214af651c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  createPartyButton: {fileID: 1774347567}
+  readyButton:
+  - {fileID: 1065034721}
+  - {fileID: 2009161941}
   partyView: {fileID: 971911545}
   partyCreator: {fileID: 1492832244}
   inputField: {fileID: 1553011377}

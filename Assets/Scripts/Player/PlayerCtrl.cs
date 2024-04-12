@@ -48,6 +48,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     [SerializeField] private State state; // enum 클래스 변수
 
     public bool isPartyMember = false; // 파티에 이미 속해있는 상태인지 아닌지 확인하는 변수
+    public bool isReady = false; // 파티에 이미 속해있고 던전 입장 준비가 됐는지 확인하는 변수
 
     public Party party;
 
