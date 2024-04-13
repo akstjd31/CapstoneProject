@@ -281,10 +281,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
                 partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[0].SetActive(true);
 
-                // if (partySystemScript.partyMemberHUD[1].activeSelf)
-                // {
-                //     partySystemScript.partyMemberHUD[1].SetActive(false);
-                // }
+                if (partySystemScript.partyMemberHUD[1].activeSelf)
+                {
+                    partySystemScript.partyMemberHUD[1].SetActive(false);
+                }
             }
             else
             {
