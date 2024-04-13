@@ -63,6 +63,7 @@ MonoBehaviour:
   weaponName: None
   state: 0
   isPartyMember: 0
+  isReady: 0
   party: {fileID: 0}
 --- !u!50 &8046936801387676651
 Rigidbody2D:

@@ -3367,7 +3367,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2024133612}
         m_TargetAssemblyTypeName: PartySystem, Assembly-CSharp
-        m_MethodName: OpenPartyCreator
+        m_MethodName: Ready
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6156,7 +6156,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2024133612}
         m_TargetAssemblyTypeName: PartySystem, Assembly-CSharp
-        m_MethodName: OpenPartyCreator
+        m_MethodName: Ready
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

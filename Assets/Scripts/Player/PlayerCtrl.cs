@@ -52,6 +52,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public Party party;
 
+    public int GetViewId(PhotonView pv)
+    {
+        return pv.ViewID;
+    }
+
     // 상태 변경을 위한 함수
     [PunRPC]
     public void UpdatePlayerState(State newState)
@@ -298,11 +303,18 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 PhotonView partyLeaderPhotonView = PhotonView.Find(party.GetPartyLeaderID());
                 partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[0].SetActive(true);
-
-                if (partySystemScript.partyMemberHUD[1].activeSelf)
-                {
-                    partySystemScript.partyMemberHUD[1].SetActive(false);
-                }
+                // if(isReady)
+                // {
+                //     partySystemScript.partyMemberHUD[0].transform.GetChild(2).gameObject.SetActive(true);
+                // }
+                // else
+                // {
+                //     partySystemScript.partyMemberHUD[0].transform.GetChild(2).gameObject.SetActive(false);
+                // }
+                // if (partySystemScript.partyMemberHUD[1].activeSelf)
+                // {
+                //     partySystemScript.partyMemberHUD[1].SetActive(false);
+                // }
             }
             else
             {
