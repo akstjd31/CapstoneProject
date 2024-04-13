@@ -58,11 +58,15 @@ MonoBehaviour:
   attackDistanceSpeed: 0
   rollCoolTime: 0
   attackIdleTime: 0
+  isPlayerInRangeOfEnemy: 0
+  isAttackCooldownOver: 1
+  attackCoolTime: 1
   animController:
   - {fileID: 9100000, guid: d8556f5b98723490eb1c755de8797b30, type: 2}
   weaponName: None
   state: 0
   isPartyMember: 0
+  isReady: 0
   party: {fileID: 0}
 --- !u!50 &8046936801387676651
 Rigidbody2D:

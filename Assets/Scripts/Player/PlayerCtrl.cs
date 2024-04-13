@@ -15,18 +15,24 @@ using Photon.Realtime;
 ///// 3. 매개변수가 꼭 필요한 경우 photonview에 있는 ViewID(int형)로 접근하여 하이에라키에 존재하는 ViewID와 비교하여 찾을 수 있다.
 
 
-public class PlayerCtrl : MonoBehaviourPunCallbacks
+public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
 {
     // enum 클래스 플레이어 상태
     public enum State
     {
-        NORMAL, ROLLING, ATTACK, ATTACKIDLE, HIT, DIE
+        NORMAL, MOVE, ROLLING, ATTACK, ATTACKIDLE, HIT, DIE
     }
     public float movePower = 5f; // 이동에 필요한 힘
     public float rollSpeed;  // 구르는 속도
     public float attackDistanceSpeed; // 공격 시 이동하는 속도
     public float rollCoolTime = 0.0f; // 구르기 쿨타임
-    public float attackIdleTime = 0.0f; // 공격 시 공격준비상태
+    public float attackIdleTime = 1.0f; // 공격 시 공격준비상태
+
+    [SerializeField] private bool isPlayerInRangeOfEnemy = false; // 공격가능한 범위인지 아닌지?
+    private EnemyCtrl enemyCtrl = null; // 공격한 적의 정보
+
+    [SerializeField] private bool isAttackCooldownOver = true;
+    [SerializeField] private float attackCoolTime = 1.0f;
 
     //[SerializeField] private GameObject playerStat;
 
@@ -48,6 +54,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     [SerializeField] private State state; // enum 클래스 변수
 
     public bool isPartyMember = false; // 파티에 이미 속해있는 상태인지 아닌지 확인하는 변수
+    public bool isReady = false; // 파티에 이미 속해있고 던전 입장 준비가 됐는지 확인하는 변수
 
     public Party party;
 
@@ -59,7 +66,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         state = newState;
     }
+    GameObject inventory;
 
+    Vector3 mouseWorldPosition;
     // Getter
     public State GetState()
     {
@@ -75,139 +84,153 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         anim = this.GetComponent<Animator>();
         status = this.GetComponent<Status>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
-        chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
-        partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
+        //chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
+        //partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
 
         state = State.NORMAL;
-        weaponPV = null;
-        party = null;
+        //weaponPV = null;
+        //party = null;
 
         isLobbyScene = SceneManager.GetActiveScene().name == "LobbyScene";
 
         //partySystemScript.partyCreator.transform.GetComponentInChildren<Button>().onClick.AddListener(OnPartyCreationComplete);
 
+        // 임시로 캔버스 자식 직접 지정(수정 필요)
+        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.GetChild(0).gameObject;
+
     }
 
-    void FixedUpdate()
-    {   
-        if (pv.IsMine)
-        {
-            // 아이템 줍기
-            if (weaponPV != null && Input.GetKeyDown(KeyCode.G))
-            {
-                PickUp();
-            }
-            
-            // 구르기
-            // if (rollCoolTime <= 0.0f)
-            // {
-            // 	rollCoolTime = 0.0f;
-            // 	if (Input.GetKeyDown(KeyCode.Space))
-            // 	{
-            // 		rollCoolTime = 2.0f;
-            //     	rollDir = moveDir;
-            //     	rollSpeed = 40f;
-            //     	state = State.ROLLING;
-            // 	}
-            // }
-            // else
-            // {
-            // 	rollCoolTime -= Time.deltaTime;
-            // }
-            
-            // 공격
-            
-            if (Input.GetMouseButtonDown(0) &&
-                !chatScript.inputField.isFocused &&
-                !partySystemScript.partyCreator.activeSelf &&
-                !partySystemScript.partyView.activeSelf &&
-                !EventSystem.current.IsPointerOverGameObject())
-            {
-                state = State.ATTACK;
-                anim.SetTrigger("Attack");
-
-                // 플레이어가 보고 있는 방향에 따른 공격방향
-                SetDirection();
-
-                attackDistanceSpeed = 6f;
-            }
-
-            IsPartyHUDActive();
-        }
-    }
     //Graphic & Input Updates	
     void Update()
     {
         if (pv.IsMine)
         {
-            // 상태에 따른 애니메이션 실행
-            switch (state)
+            moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+
+            if (state != State.ATTACK)
             {
-                case State.NORMAL:
-                    break;
-                case State.ROLLING:
-                    anim.SetTrigger("Rolling");
-                    break;
-                case State.ATTACK:
-                    anim.SetBool("isMove", false);
-                    break;
-                case State.ATTACKIDLE:
-                    anim.SetBool("AttackIdle", true);
-                    break;
-                case State.HIT:
-                    break;
-                case State.DIE:
-                    break;
+                if (moveDir.x != 0 || moveDir.y != 0)
+                {
+                    state = State.MOVE;
+                }
+                else
+                {
+                    rigid.velocity = Vector2.zero;
+
+                    if (state != State.ATTACKIDLE)
+                        state = State.NORMAL;
+                }
+            }
+
+            // 공격 & 공격 쿨타임 끝나면
+            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver)
+            {
+                state = State.ATTACK;
+
+                Vector3 mouseScreenPosition = Input.mousePosition;
+
+                // 마우스의 스크린 좌표를 월드 좌표로 변환합니다.
+                mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+                // 플레이어가 보고 있는 방향에 따른 공격방향
+                //SetDirection();
+
+                attackDistanceSpeed = 10f;
+                isAttackCooldownOver = false;
+
+                // 적을 공격한 상태.
+                if (isPlayerInRangeOfEnemy)
+                {
+                    enemyCtrl.GetComponent<PhotonView>().RPC("EnemyAttackedPlayer", RpcTarget.All, status.attackDamage);
+                }
+            }
+
+            if (!isAttackCooldownOver)
+            {
+                if (attackCoolTime > 0.0f)
+                {
+                    attackCoolTime -= Time.deltaTime;
+                }
+                else
+                {
+                    isAttackCooldownOver = true;
+                    attackCoolTime = 1.0f;
+                }
+            }
+
+            //인벤토리 열기
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                inventory.SetActive(!inventory.activeSelf);
             }
         }
+
     }
 
     void LateUpdate()
     {
-        if (pv.IsMine && 
-            !chatScript.inputField.isFocused &&
-            !partySystemScript.partyCreator.activeSelf &&
-            !partySystemScript.partyView.activeSelf)
+        if (pv.IsMine)
         {
             // 상태에 따른 함수 실행
             switch (state)
             {
                 case State.NORMAL:
-                    Move();
+                    IdleAnimation();
                     break;
-                case State.ROLLING:
-                    StartCoroutine(Roll());
+                case State.MOVE:
+                    Move();
+                    MoveAnimation();
                     break;
                 case State.ATTACK:
-                    StartCoroutine(Attack());
+                    AttackAnimation();
+                    Attack();
                     break;
                 case State.ATTACKIDLE:
-                    StartCoroutine(AttackIdle());
-                    break;
-                case State.HIT:
-                    StartCoroutine(OnDamaged());
-                    break;
-                case State.DIE:
+                    AttackIdle();
+                    AttackIdleAnimation();
                     break;
             }
         }
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // 클릭된 UI 요소에 대한 정보를 출력합니다.
+        Debug.Log(eventData.pointerPress.gameObject.name);
+    }
+
+    void IdleAnimation()
+    {
+        anim.SetBool("isMove", false);
+        anim.SetBool("isAttack", false);
+        anim.SetBool("AttackIdle", false);
+    }
+
+    void MoveAnimation()
+    {
+        anim.SetBool("isMove", true);
+        anim.SetBool("isAttack", false);
+        anim.SetBool("AttackIdle", false);
+    }
+
+    void AttackAnimation()
+    {
+        anim.SetBool("isAttack", true);
+        anim.SetBool("AttackIdle", false);
+        anim.SetBool("isMove", false);
+    }
+
+    void AttackIdleAnimation()
+    {
+        anim.SetBool("AttackIdle", true);
+        anim.SetBool("isAttack", false);
+        anim.SetBool("isMove", false);
+    }
+
+
     // 이동
     void Move()
     {
-        if (!chatScript.inputField.isFocused)
-            moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-
-        if (moveDir.x != 0 || moveDir.y != 0 || anim.GetBool("AttackIdle"))
-        {
-            anim.SetBool("AttackIdle", false);
-            anim.SetBool("isMove", true);
-        }
-        else
-        {
-            anim.SetBool("isMove", false);
-        }
+        moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
         // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
         if (moveDir.x > 0.0f)
@@ -222,64 +245,58 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         rigid.velocity = moveDir * movePower;
     }
 
-    // 2D 캐릭터 방향 결정
-    void SetDirection()
+    void Attack()
     {
-        if (this.transform.localScale.x == 1)
+        // 방향벡터 x좌표의 값에 따른 캐릭터 반전
+        if (mouseWorldPosition.x - this.transform.position.x > 0)
         {
-            attackDir = transform.right;
+            this.transform.localScale = new Vector3(1, 1, 1);
         }
         else
         {
-            attackDir = -transform.right;
-        }
-    }
+            this.transform.localScale = new Vector3(-1, 1, 1);
 
-    IEnumerator Attack()
-    {
-        yield return new WaitForSeconds(0.2f);
-        rigid.velocity = attackDir.normalized * attackDistanceSpeed;
-        
-        
-        float attackSpeedDropMultiplier = 7f; // 감소되는 정도
+        }
+
+        // 문제점 : 현재 마우스 위치가 가까우면 플레이어가 조금만 이동함.
+        rigid.velocity = (mouseWorldPosition - this.transform.position).normalized * attackDistanceSpeed;
+
+        float attackSpeedDropMultiplier = 5f; // 감소되는 정도
         attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // 실제 나아가는 거리 계산
 
-        float attackSpeedMinimum = 3f;
-
-
-        if (attackDistanceSpeed < attackSpeedMinimum)
+        if (attackDistanceSpeed < 0.5f)
         {
+            rigid.velocity = Vector2.zero;
+            attackIdleTime = 1.0f;
             state = State.ATTACKIDLE;
         }
     }
 
-    // 공격 이후 공격준비상태
-    IEnumerator AttackIdle()
+    void AttackIdle()
     {
-        yield return new WaitForSeconds(1.0f);
-        attackIdleTime = 0.0f;
-
-        anim.SetBool("AttackIdle", false);
-        state = State.NORMAL;
-    }
-
-
-    // 구르기 (계산은 공격하고 동일)
-    IEnumerator Roll()
-    {
-        yield return new WaitForSeconds(0.1f);
-        rigid.velocity = rollDir.normalized * rollSpeed;
-
-
-        float rollSpeedDropMultiplier = 5f;
-        rollSpeed -= rollSpeed * rollSpeedDropMultiplier * Time.deltaTime;
-
-        float rollSpeedMinimum = 10f;
-        if (rollSpeed < rollSpeedMinimum)
+        if (attackIdleTime > 0.0f)
+        {
+            attackIdleTime -= Time.deltaTime;
+        }
+        else
         {
             state = State.NORMAL;
         }
     }
+
+    //// 2D 캐릭터 방향 결정
+    //void SetDirection()
+    //{
+
+    //    if (Input.mousePosition.x - this.transform.position.x > 0)
+    //    {
+    //        attackDir = -transform.right * (Input.mousePosition - this.transform.position);
+    //    }
+    //    else
+    //    {
+    //        attackDir = transform.right * (Input.mousePosition - this.transform.position);
+    //    }
+    //}
 
     // 플레이어가 파티 방에 속해있는지 확인 후에 정보를 전달해주는 함수
     public void IsPartyHUDActive()
@@ -320,11 +337,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
-    // 아이템 줍기
-    void PickUp()
-    {
-        pv.RPC("GetWeapon", RpcTarget.All, weaponPV.ViewID);
-    }
 
     [PunRPC]
     void GetWeapon(int viewID)
@@ -335,10 +347,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 해당 viewID가 존재하는 경우
         if (targetPhotonView != null)
         {
-            string targetName = targetPhotonView.gameObject.name; 
+            string targetName = targetPhotonView.gameObject.name;
 
             // 현 무기이름을 저장 (-7을 한 이유는 Clone 부분의 문자열을 빼주기 위함
-            weaponName = targetName.Substring(0, targetName.Length - 7); 
+            weaponName = targetName.Substring(0, targetName.Length - 7);
 
             // 무기교체 시 애니메이터 교체 (수정 필요)
             SetAnimationController(weaponName);
@@ -362,32 +374,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
-    // 피격 시 일정 시간 동안 색 변경
-    IEnumerator OnDamaged()
-    {
-        state = State.NORMAL;
-        yield return new WaitForSeconds(0.25f);
-        spriteRenderer.color = new Color(1, 0, 0, 1);
-        yield return new WaitForSeconds(0.15f);
-
-        spriteRenderer.color = new Color(1, 1, 1, 1);
-        if (status.HP <= 0)
-        {
-            anim.SetTrigger("Die");
-            StartCoroutine(Death());
-            state = State.DIE;
-        }
-    }
-
-    // 사망
-    IEnumerator Death()
-    {
-        yield return new WaitForSeconds(2f);
-        this.transform.position = Vector2.zero;
-        anim.SetTrigger("Idle");
-        state = State.NORMAL;
-    }
-
     // 애니메이터 교체
     void SetAnimationController(string name)
     {
@@ -405,18 +391,21 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
         }
 
-        if (other.CompareTag("Weapon"))
+        if (other.CompareTag("Weapon")) {
+            
+        }
+        if (other.CompareTag("Enemy"))
         {
-            weaponPV = other.GetComponent<PhotonView>();
+            isPlayerInRangeOfEnemy = true;
+            enemyCtrl = other.GetComponent<EnemyCtrl>();
+
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Weapon"))
-        {
-            weaponPV = null;
-        }
+        isPlayerInRangeOfEnemy = false;
+        enemyCtrl = null;
     }
 
     private bool DungeonEnterCondition()

@@ -78,6 +78,10 @@ MonoBehaviour:
   - AddPartyRoomList
   - RequestSceneSwitch
   - SwitchScene
+  - ReadyRPC
+  - DestroyEnemy
+  - EnemyAttackedPlayer
+  - EnemyCreator
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
