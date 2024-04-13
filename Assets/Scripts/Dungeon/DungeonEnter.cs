@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 public class DungeonEnter : MonoBehaviourPunCallbacks
 {
@@ -40,12 +41,23 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
         
     }
 
-    void OnCollisionEnter2D()
+    void OnTriggerEnter2D(Collider2D other)
     {
-        partyUserID[0] = GetComponent<Party>().GetPartyLeaderID();
-        partyUserID[1] = GetComponent<Party>().GetPartyMemberID();
-        //SceneManager.LoadScene("DungeonScene");
-        RequestSceneSwitch(partyUserID);
+        Debug.Log("Enter Trigger");
+        this.transform.localScale = new Vector3(this.transform.localScale.x + 0.1f, this.transform.localScale.y + 0.1f, this.transform.localScale.z + 0.1f);
+        PlayerCtrl playerCtrl = other.GetComponent<PlayerCtrl>();
+        if(playerCtrl.isPartyMember)
+        {
+            this.transform.localScale = new Vector3(this.transform.localScale.x - 0.1f, this.transform.localScale.y - 0.1f, this.transform.localScale.z - 0.1f);
+            if(playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2 
+            && playerCtrl.party.partyMembers[0].GetComponent<PhotonView>().ViewID == playerCtrl.GetComponent<PhotonView>().ViewID)
+            {
+                partyUserID[0] = playerCtrl.party.GetPartyLeaderID();
+                partyUserID[1] = playerCtrl.party.GetPartyMemberID();
+                //SceneManager.LoadScene("DungeonScene");
+                RequestSceneSwitch(partyUserID);
+            }
+        }
     }
 
     // 특정 플레이어들에게만 씬 전환을 요청하는 RPC 메서드
