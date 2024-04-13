@@ -127,7 +127,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
             if (targetPhotonView.Owner.NickName.Equals(PhotonNetwork.NickName))
             {
                 PlayerCtrl playerCtrl = targetPhotonView.GetComponent<PlayerCtrl>();
-                
+
                 // ???? ??? ?????? ??? ????? ?????? ???? ??
                 if (!playerCtrl.isPartyMember)
                 {
@@ -164,14 +164,14 @@ public class PartySystem : MonoBehaviourPunCallbacks
     public void ReadyRPC(int playerViewID)
     {
         PlayerCtrl playerCtrl = PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>();
-        if(playerCtrl.isReady)
+        if (playerCtrl.isReady)
         {
             playerCtrl.isReady = false;
-            if(playerViewID == playerCtrl.party.GetPartyLeaderID())
+            if (playerViewID == playerCtrl.party.GetPartyLeaderID())//
             {
                 partyMemberHUD[0].transform.GetChild(2).gameObject.SetActive(false);
             }
-            else if(playerViewID == playerCtrl.party.GetPartyMemberID())
+            else if (playerViewID == playerCtrl.party.GetPartyMemberID())
             {
                 partyMemberHUD[1].transform.GetChild(2).gameObject.SetActive(false);
             }
@@ -179,11 +179,11 @@ public class PartySystem : MonoBehaviourPunCallbacks
         else
         {
             playerCtrl.isReady = true;
-            if(playerViewID == playerCtrl.party.GetPartyLeaderID())
+            if (playerViewID == playerCtrl.party.GetPartyLeaderID())
             {
                 partyMemberHUD[0].transform.GetChild(2).gameObject.SetActive(true);
             }
-            else if(playerViewID == playerCtrl.party.GetPartyMemberID())
+            else if (playerViewID == playerCtrl.party.GetPartyMemberID())
             {
                 partyMemberHUD[1].transform.GetChild(2).gameObject.SetActive(true);
             }

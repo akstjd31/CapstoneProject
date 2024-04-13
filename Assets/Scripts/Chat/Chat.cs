@@ -21,6 +21,21 @@ public class Chat : MonoBehaviour
         {
             chatView.SetActive(true);
         }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                if (inputField.text != "")
+                {
+                   SendMessage();
+                }
+                else
+                {
+                    inputField.interactable = false;
+                    CloseChatWindowOnButtonClick();
+                }
+            }
+        }
     }
 
     //
