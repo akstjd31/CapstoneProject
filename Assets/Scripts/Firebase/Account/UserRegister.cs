@@ -150,7 +150,7 @@ public class UserRegister : MonoBehaviour
         additionalData.Add("nickname", nickname);
 
 
-        UserData.RegisterWithEmail_Password(email, password, additionalData);
+        await UserData.RegisterWithEmail_Password(email, password, additionalData);
 
         EmailRegisterPopup.SetActive(false);
 

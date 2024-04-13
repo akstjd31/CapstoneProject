@@ -28,4 +28,9 @@ public class UserInfoManager : MonoBehaviour
         currentUser = user;
         //Debug.Log($"set user {currentUser}");
     }
+
+    public static FirebaseUser GetCurrentUser()
+    {
+        return currentUser;
+    }
 }

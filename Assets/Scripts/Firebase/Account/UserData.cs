@@ -28,7 +28,7 @@ public class UserData : MonoBehaviour
         return auth != null;
     }
 
-    public static async void RegisterWithEmail_Password(string email, string password, Dictionary<string, object> initData = null)
+    public static async Task RegisterWithEmail_Password(string email, string password, Dictionary<string, object> initData = null)
     {
         auth = FirebaseAuth.DefaultInstance;
         authEmail = email;
@@ -206,17 +206,27 @@ public class UserData : MonoBehaviour
 
         // 데이터를 저장할 컬렉션과 문서 참조
         CollectionReference coll_userdata = db.Collection("User");
+        CollectionReference coll_nickname = db.Collection("Nickname");
 
         DocumentReference doc_user = coll_userdata.Document(GetUserId());
+        DocumentReference doc_nickname = coll_nickname.Document(GetUserId());
 
         // 업데이트할 필드와 값 설정
-            Dictionary<string, object> updates = new Dictionary<string, object>
+        Dictionary<string, object> updates = new Dictionary<string, object>
         {
             { "userData.userName", nickname }
         };
 
         // 사용자 문서의 userName 필드 업데이트
         await doc_user.UpdateAsync(updates);
+
+
+        // 닉네임 컬렉션에 새로운 닉네임 값을 저장
+        Dictionary<string, object> nicknameData = new Dictionary<string, object>
+        {
+            { "nickname", nickname }
+        };
+        await doc_nickname.SetAsync(nicknameData);
 
         Debug.Log("User name updated successfully!");
     }

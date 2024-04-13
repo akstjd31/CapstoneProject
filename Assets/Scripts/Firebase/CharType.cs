@@ -1,9 +1,13 @@
 using Firebase.Auth;
+using Firebase.Firestore;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class CharType : MonoBehaviour
@@ -20,6 +24,7 @@ public class CharType : MonoBehaviour
     private Text charType_input;
     private GameObject nickname_canvas;
     private TextMeshProUGUI nickname_input;
+    private Text nickname_Error_Text;
 
     private const string explane_warrior = "전사 직업 설명";
     private const string explane_archer = "아처 직업 설명";
@@ -49,6 +54,7 @@ public class CharType : MonoBehaviour
         charType_input = charType_canvas.GetComponentInChildren<Text>();
         nickname_canvas = GameObject.Find("Nickname");
         nickname_input = nickname_canvas.GetComponentInChildren<TextMeshProUGUI>();
+        nickname_Error_Text = GameObject.Find("nickname_errMsg").GetComponent<Text>();
 
 
         explane.SetActive(false);
@@ -156,15 +162,73 @@ public class CharType : MonoBehaviour
 
     public void SubmitNickname()
     {
+        InnerSubmitNickname();
+    }
+
+    private async void InnerSubmitNickname()
+    {
         string nickname = nickname_input.text;
-        Debug.Log($"nickname : {nickname}");
+        //Debug.Log($"nickname : {nickname}");
+
+        //입력된 닉네임이 중복인 경우
+        if(!await IsDuplicationNickname_Async(nickname))
+        {
+            //Debug.Log("중복된 닉네임");
+            nickname_Error_Text.text = "중복된 닉네임입니다";
+            return;
+        }
+
+        nickname_Error_Text.text = "";
+        await UserData.SetNickname(nickname);
 
         explane.SetActive(false);
         charType_canvas.SetActive(false);
         nickname_canvas.SetActive(false);
 
-        //씬 전환 예정
-        Debug.Log(selectedCharType);
+        PhotonAccess();
+    }
+
+    private async Task<bool> IsDuplicationNickname_Async(string input)
+    {
+        bool result = true;
+
+        FirebaseUser user = FirebaseAuth.DefaultInstance.CurrentUser;
+        if (user == null)
+        {
+            Debug.Log("failed makeDB : user is null");
+            return false;
+        }
+
+        // Firestore 인스턴스 생성
+        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+        // 컬렉션 "A"의 모든 문서를 가져옵니다.
+        await db.Collection("Nickname").GetSnapshotAsync().ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                QuerySnapshot snapshot = task.Result;
+
+                // 모든 문서에 대해 반복하면서 필드 이름을 읽어옵니다.
+                foreach (DocumentSnapshot document in snapshot.Documents)
+                {
+                    IDictionary<string, object> data = document.ToDictionary();
+                    Debug.Log($"data : {data}");
+                    
+                    if(data["nickname"].Equals(input))
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+            }
+            else if (task.IsFaulted)
+            {
+                Debug.LogError("Failed to fetch documents: " + task.Exception);
+            }
+        });
+
+        return result;
     }
 
     public void CancalSubmitNickname()
@@ -178,5 +242,11 @@ public class CharType : MonoBehaviour
         explane.SetActive(false);
         charType_canvas.SetActive(false);
         nickname_canvas.SetActive(false);
+    }
+
+    private void PhotonAccess()
+    {
+        PhotonManager.ConnectWithRegister();
+        //PhotonNetwork.ConnectUsingSettings();
     }
 }
