@@ -135,6 +135,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     canvasPV.RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID);
                     Debug.Log(PhotonNetwork.NickName + " ????? ????????????.");
                     partyCreator.SetActive(false); // ??? ????? ? ??????
+                    playerCtrl.party.partyMembers[0] = playerCtrl;
                     createPartyButton.SetActive(false);
                     readyButton[0].SetActive(true);
 
@@ -219,6 +220,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
                 {
                     // ?? ??? ???????? ??? ?????? ?????????? ???? RPC ???
                     canvasPV.RPC("JoinPartyRPC", RpcTarget.AllBuffered, party.partyID, secondPlayerCtrl.GetComponent<PhotonView>().ViewID);
+                    secondPlayerCtrl.party.partyMembers[1] = secondPlayerCtrl;
                     createPartyButton.SetActive(false);
                     readyButton[0].SetActive(true);
                 }
@@ -346,6 +348,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
                 // ????? ????? ????? 1????? ????? ?????.
                 if (parties[partyIdx].GetPartyHeadCount() == 1)
                 {
+                    playerCtrl.party.partyMembers[0] = null;
                     parties[partyIdx].GetComponent<Button>().onClick.RemoveListener(OnClickJoinPartyButton);
                     Destroy(parties[partyIdx].gameObject);
                     parties.Remove(parties[partyIdx]);
@@ -357,10 +360,13 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     {
                         parties[partyIdx].SetPartyLeaderID(parties[partyIdx].GetPartyMemberID());
                         parties[partyIdx].SetPartyMemberID(-1);
+                        playerCtrl.party.partyMembers[0] = playerCtrl.party.partyMembers[1];
+                        playerCtrl.party.partyMembers[0] = null;
                     }
                     else if (parties[partyIdx].GetPartyMemberID() == viewID)
                     {
                         parties[partyIdx].SetPartyMemberID(-1);
+                        playerCtrl.party.partyMembers[1] = null;
                     }
                 }
                 playerCtrl.isReady = false;

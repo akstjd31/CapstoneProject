@@ -168,7 +168,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 inventory.SetActive(!inventory.activeSelf);
             }
-
             IsPartyHUDActive();
         }
     }
@@ -295,6 +294,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 PhotonView partyLeaderPhotonView = PhotonView.Find(party.GetPartyLeaderID());
                 partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[0].SetActive(true);
+                if(partySystemScript.partyMemberHUD[1].activeSelf)
+                {
+                    partySystemScript.partyMemberHUD[1].SetActive(false);
+                }
             }
             else
             {
@@ -354,7 +357,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             anim.runtimeAnimatorController = animController[0];
         }
     }
-
     //private void OnTriggerEnter2D(Collider2D other)
     //{
     //    if (other.CompareTag("Enemy"))
