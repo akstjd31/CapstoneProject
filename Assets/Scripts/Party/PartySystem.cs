@@ -138,7 +138,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     createPartyButton.SetActive(false);
                     readyButton[0].SetActive(true);
 
-                   //partyMemberHUD[0].GetComponentInChildren<Text>().text = PhotonNetwork.NickName;
+                    partyMemberHUD[0].GetComponentInChildren<Text>().text = PhotonNetwork.NickName;
 
                     break;
                 }
@@ -162,6 +162,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
         PlayerCtrl playerCtrl = PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>();
         if(playerCtrl.isReady)
         {
+            playerCtrl.isReady = false;
             if(playerViewID == playerCtrl.party.GetPartyLeaderID())
             {
                 partyMemberHUD[0].transform.GetChild(2).gameObject.SetActive(false);
@@ -170,7 +171,6 @@ public class PartySystem : MonoBehaviourPunCallbacks
             {
                 partyMemberHUD[1].transform.GetChild(2).gameObject.SetActive(false);
             }
-            playerCtrl.isReady = false;
         }
         else
         {
