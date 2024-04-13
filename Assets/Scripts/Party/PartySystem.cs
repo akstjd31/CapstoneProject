@@ -135,6 +135,8 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     canvasPV.RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID);
                     Debug.Log(PhotonNetwork.NickName + " ????? ????????????.");
                     partyCreator.SetActive(false); // ??? ????? ? ??????
+                    createPartyButton.SetActive(false);
+                    readyButton[0].SetActive(true);
 
                    //partyMemberHUD[0].GetComponentInChildren<Text>().text = PhotonNetwork.NickName;
 
@@ -160,15 +162,31 @@ public class PartySystem : MonoBehaviourPunCallbacks
         PlayerCtrl playerCtrl = PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>();
         if(playerCtrl.isReady)
         {
+            if(playerViewID == playerCtrl.party.GetPartyLeaderID())
+            {
+                partyMemberHUD[0].transform.GetChild(2).gameObject.SetActive(false);
+            }
+            else if(playerViewID == playerCtrl.party.GetPartyMemberID())
+            {
+                partyMemberHUD[1].transform.GetChild(2).gameObject.SetActive(false);
+            }
             playerCtrl.isReady = false;
         }
         else
         {
             playerCtrl.isReady = true;
+            if(playerViewID == playerCtrl.party.GetPartyLeaderID())
+            {
+                partyMemberHUD[0].transform.GetChild(2).gameObject.SetActive(true);
+            }
+            else if(playerViewID == playerCtrl.party.GetPartyMemberID())
+            {
+                partyMemberHUD[1].transform.GetChild(2).gameObject.SetActive(true);
+            }
         }
 
         readyButton[0].SetActive(!playerCtrl.isReady);
-        readyButton[1].SetActive(!playerCtrl.isReady);
+        readyButton[1].SetActive(playerCtrl.isReady);
     }
 
 
