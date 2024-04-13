@@ -118,6 +118,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PlayerCtrl leftPlayer = partySystemScript.GetPlayerCtrlByNickname(otherPlayer.NickName);
 
         lobbyPlayerViewID.Remove(leftPlayer.GetComponent<PhotonView>().ViewID);
+        PhotonNetwork.Destroy(leftPlayer.gameObject);
 
         // 여기에 다른 플레이어가 방을 나갈 때 실행하고 싶은 로직을 추가
     }
