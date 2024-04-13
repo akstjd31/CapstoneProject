@@ -6,11 +6,11 @@ using UnityEngine;
 public class UserInfoManager : MonoBehaviour
 {
     public static UserInfoManager instance;
-    public static FirebaseUser currentUser; // Firebase »ç¿ëÀÚ Á¤º¸¸¦ ÀúÀåÇÒ º¯¼ö
+    public static FirebaseUser currentUser; // Firebase ì‚¬ìš©ì ì •ë³´ë¥¼ ì €ì¥í•  ë³€ìˆ˜
 
     void Awake()
     {
-        // UserInfoManager°¡ ´Ù¸¥ ¾ÀÀ¸·Î ÀüÈ¯µÇ¾îµµ ÆÄ±«µÇÁö ¾Êµµ·Ï ÇÔ
+        // UserInfoManagerê°€ ë‹¤ë¥¸ ì”¬ìœ¼ë¡œ ì „í™˜ë˜ì–´ë„ íŒŒê´´ë˜ì§€ ì•Šë„ë¡ í•¨
         if (instance == null)
         {
             instance = this;
@@ -22,13 +22,13 @@ public class UserInfoManager : MonoBehaviour
         }
     }
 
-    // »ç¿ëÀÚ Á¤º¸¸¦ ¼³Á¤ÇÏ´Â ¸Ş¼­µå
+    // ì‚¬ìš©ì ì •ë³´ë¥¼ ì„¤ì •í•˜ëŠ” ë©”ì„œë“œ
     public static void SetCurrentUser(FirebaseUser user)
     {
         currentUser = user;
         //Debug.Log($"set user {currentUser}");
     }
-
+    
     public static FirebaseUser GetCurrentUser()
     {
         return currentUser;

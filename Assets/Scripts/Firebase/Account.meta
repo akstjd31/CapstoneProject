@@ -1,12 +1,10 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Scripts/Firebase/Account.meta
 guid: 90fc4f520cb17b442b18bb144789c9a5
 folderAsset: yes
 DefaultImporter:
-========
-guid: 7cbddb48ff27e3543ad9fe0930e228f8
-PrefabImporter:
->>>>>>>> upstream/main:Assets/Resources/Message.prefab.meta
+guid: 90fc4f520cb17b442b18bb144789c9a5
+folderAsset: yes
+DefaultImporter:
   externalObjects: {}
   userData: 
   assetBundleName: 

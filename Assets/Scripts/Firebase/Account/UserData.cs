@@ -220,7 +220,6 @@ public class UserData : MonoBehaviour
         // 사용자 문서의 userName 필드 업데이트
         await doc_user.UpdateAsync(updates);
 
-
         // 닉네임 컬렉션에 새로운 닉네임 값을 저장
         Dictionary<string, object> nicknameData = new Dictionary<string, object>
         {

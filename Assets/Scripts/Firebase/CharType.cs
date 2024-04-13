@@ -26,8 +26,8 @@ public class CharType : MonoBehaviour
     private TextMeshProUGUI nickname_input;
     private Text nickname_Error_Text;
 
-    private const string explane_warrior = "Àü»ç Á÷¾÷ ¼³¸í";
-    private const string explane_archer = "¾ÆÃ³ Á÷¾÷ ¼³¸í";
+    private const string explane_warrior = "ì „ì‚¬ ì§ì—… ì„¤ëª…";
+    private const string explane_archer = "ì•„ì²˜ ì§ì—… ì„¤ëª…";
 
     private bool isCharTypeCanvas = false;
     private bool isNicknameCanvas = false;
@@ -40,10 +40,10 @@ public class CharType : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // UserInfoManager ÀÎ½ºÅÏ½º¸¦ °¡Á®¿È
+        // UserInfoManager ì¸ìŠ¤í„´ìŠ¤ë¥¼ ê°€ì ¸ì˜´
         userInfoManager = UserInfoManager.instance;
 
-        // ÇöÀç ·Î±×ÀÎÇÑ »ç¿ëÀÚ Á¤º¸¸¦ °¡Á®¿È
+        // í˜„ì¬ ë¡œê·¸ì¸í•œ ì‚¬ìš©ì ì •ë³´ë¥¼ ê°€ì ¸ì˜´
         //currentUser = userInfoManager.currentUser;
 
         warrior = GameObject.Find("Inner_Field_Warrior");
@@ -65,11 +65,11 @@ public class CharType : MonoBehaviour
     void Update()
     {
         pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //ÇØ´ç ÁÂÇ¥¿¡ ÀÖ´Â ¿ÀºêÁ§Æ® Ã£±â
+        //í•´ë‹¹ ì¢Œí‘œì— ìˆëŠ” ì˜¤ë¸Œì íŠ¸ ì°¾ê¸°
         hit = Physics2D.Raycast(pos, Vector2.zero);
         //Debug.Log($"isSelected : {isCharTypeCanvas}");
 
-        //Á÷¾÷ ¼±ÅÃ Àü
+        //ì§ì—… ì„ íƒ ì „
         if (!isCharTypeCanvas && !isNicknameCanvas)
         {
             charType_canvas.SetActive(false);
@@ -81,7 +81,7 @@ public class CharType : MonoBehaviour
                 click_obj = hit.collider.gameObject; //hit.transform.gameObject;
                                                      //Debug.Log($"hit-coll : {click_obj.name}");
 
-                //Á÷¾÷ ¼³¸í ÆË¾÷ ¼³Á¤
+                //ì§ì—… ì„¤ëª… íŒì—… ì„¤ì •
                 if (hit.collider.gameObject == warrior)
                 {
                     explane.SetActive(true);
@@ -100,14 +100,14 @@ public class CharType : MonoBehaviour
                 explane.SetActive(false);
             }
 
-            //Á÷¾÷ È®Á¤ ui·Î ·ÎÁ÷ º¯°æ
+            //ì§ì—… í™•ì • uië¡œ ë¡œì§ ë³€ê²½
             if (Input.GetMouseButton(0) && hit.collider != null)
             {
                 explane.SetActive(false);
                 isCharTypeCanvas = true;
             }
         }
-        //Á÷¾÷ ¼±ÅÃ ÈÄ
+        //ì§ì—… ì„ íƒ í›„
         else if (isCharTypeCanvas && !isNicknameCanvas)
         {
             explane.SetActive(false);
@@ -117,16 +117,16 @@ public class CharType : MonoBehaviour
 
             if (click_obj == warrior)
             {
-                charType_input.text = "`Àü»ç` Á÷¾÷À» ¼±ÅÃÇÏ½Ã°Ú½À´Ï±î?";
+                charType_input.text = "`ì „ì‚¬` ì§ì—…ì„ ì„ íƒí•˜ì‹œê² ìŠµë‹ˆê¹Œ?";
                 selectedCharType = "warrior";
             }
             else if (click_obj == archer)
             {
-                charType_input.text = "`¾ÆÃ³` Á÷¾÷À» ¼±ÅÃÇÏ½Ã°Ú½À´Ï±î?";
+                charType_input.text = "`ì•„ì²˜` ì§ì—…ì„ ì„ íƒí•˜ì‹œê² ìŠµë‹ˆê¹Œ?";
                 selectedCharType = "archer";
             }
 
-            //ui Á¾·á
+            //ui ì¢…ë£Œ
             if(Input.GetMouseButton(0) && hit.collider != null && hit.collider.name == "CharType_Exit")
             {
                 //Debug.Log($"coll : {hit.collider.name}");
@@ -170,11 +170,11 @@ public class CharType : MonoBehaviour
         string nickname = nickname_input.text;
         //Debug.Log($"nickname : {nickname}");
 
-        //ÀÔ·ÂµÈ ´Ğ³×ÀÓÀÌ Áßº¹ÀÎ °æ¿ì
+        //ì…ë ¥ëœ ë‹‰ë„¤ì„ì´ ì¤‘ë³µì¸ ê²½ìš°
         if(!await IsDuplicationNickname_Async(nickname))
         {
-            //Debug.Log("Áßº¹µÈ ´Ğ³×ÀÓ");
-            nickname_Error_Text.text = "Áßº¹µÈ ´Ğ³×ÀÓÀÔ´Ï´Ù";
+            //Debug.Log("ì¤‘ë³µëœ ë‹‰ë„¤ì„");
+            nickname_Error_Text.text = "ì¤‘ë³µëœ ë‹‰ë„¤ì„ì…ë‹ˆë‹¤";
             return;
         }
 
@@ -186,7 +186,7 @@ public class CharType : MonoBehaviour
         charType_canvas.SetActive(false);
         nickname_canvas.SetActive(false);
 
-        Debug.Log("´Ğ³×ÀÓ ¼³Á¤ ºñµ¿±â ÀÛ¾÷ ¿Ï·á");
+        Debug.Log("ë‹‰ë„¤ì„ ì„¤ì • ë¹„ë™ê¸° ì‘ì—… ì™„ë£Œ");
         PhotonManager.ConnectWithRegister();
     }
 
@@ -201,17 +201,17 @@ public class CharType : MonoBehaviour
             return false;
         }
 
-        // Firestore ÀÎ½ºÅÏ½º »ı¼º
+        // Firestore ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
-        // ÄÃ·º¼Ç "A"ÀÇ ¸ğµç ¹®¼­¸¦ °¡Á®¿É´Ï´Ù.
+        // ì»¬ë ‰ì…˜ "A"ì˜ ëª¨ë“  ë¬¸ì„œë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
         await db.Collection("Nickname").GetSnapshotAsync().ContinueWith(task =>
         {
             if (task.IsCompleted)
             {
                 QuerySnapshot snapshot = task.Result;
 
-                // ¸ğµç ¹®¼­¿¡ ´ëÇØ ¹İº¹ÇÏ¸é¼­ ÇÊµå ÀÌ¸§À» ÀĞ¾î¿É´Ï´Ù.
+                // ëª¨ë“  ë¬¸ì„œì— ëŒ€í•´ ë°˜ë³µí•˜ë©´ì„œ í•„ë“œ ì´ë¦„ì„ ì½ì–´ì˜µë‹ˆë‹¤.
                 foreach (DocumentSnapshot document in snapshot.Documents)
                 {
                     IDictionary<string, object> data = document.ToDictionary();

@@ -1,11 +1,8 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Scenes/SelectCharacter.unity.meta
 guid: 45f4a545c89f71d418ceb3f876d5c50d
 DefaultImporter:
-========
-guid: abda1820e48a031458fabb3d5cd3f47b
-PrefabImporter:
->>>>>>>> upstream/main:Assets/Resources/Dungeon/Map.prefab.meta
+guid: 45f4a545c89f71d418ceb3f876d5c50d
+DefaultImporter:
   externalObjects: {}
   userData: 
   assetBundleName: 
