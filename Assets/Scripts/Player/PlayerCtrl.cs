@@ -20,13 +20,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
     // enum 클래스 플레이어 상태
     public enum State
     {
-        NORMAL, MOVE, ROLLING, ATTACK, ATTACKIDLE, HIT, DIE
+        NORMAL, MOVE, ROLLING, ATTACK, HIT, DIE
     }
     public float movePower = 5f; // 이동에 필요한 힘
     public float rollSpeed;  // 구르는 속도
     public float attackDistanceSpeed; // 공격 시 이동하는 속도
     public float rollCoolTime = 0.0f; // 구르기 쿨타임
-    public float attackIdleTime = 1.0f; // 공격 시 공격준비상태
 
     [SerializeField] private bool isPlayerInRangeOfEnemy = false; // 공격가능한 범위인지 아닌지?
     private EnemyCtrl enemyCtrl = null; // 공격한 적의 정보
@@ -106,9 +105,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
                 else
                 {
                     rigid.velocity = Vector2.zero;
-
-                    if (state != State.ATTACKIDLE)
-                        state = State.NORMAL;
+                    state = State.NORMAL;
                 }
             }
 
@@ -124,7 +121,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
                 // 플레이어가 보고 있는 방향에 따른 공격방향
                 //SetDirection();
 
-                attackDistanceSpeed = 10f;
+                attackDistanceSpeed = 14f;
                 isAttackCooldownOver = false;
 
                 // 적을 공격한 상태.
@@ -174,10 +171,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
                     AttackAnimation();
                     Attack();
                     break;
-                case State.ATTACKIDLE:
-                    AttackIdle();
-                    AttackIdleAnimation();
-                    break;
             }
         }
     }
@@ -192,30 +185,22 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
     {
         anim.SetBool("isMove", false);
         anim.SetBool("isAttack", false);
-        anim.SetBool("AttackIdle", false);
+        //anim.SetBool("AttackIdle", false);
     }
 
     void MoveAnimation()
     {
         anim.SetBool("isMove", true);
         anim.SetBool("isAttack", false);
-        anim.SetBool("AttackIdle", false);
+        //anim.SetBool("AttackIdle", false);
     }
 
     void AttackAnimation()
     {
         anim.SetBool("isAttack", true);
-        anim.SetBool("AttackIdle", false);
+        //anim.SetBool("AttackIdle", false);
         anim.SetBool("isMove", false);
     }
-
-    void AttackIdleAnimation()
-    {
-        anim.SetBool("AttackIdle", true);
-        anim.SetBool("isAttack", false);
-        anim.SetBool("isMove", false);
-    }
-
 
     // 이동
     void Move()
@@ -251,25 +236,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
         // 문제점 : 현재 마우스 위치가 가까우면 플레이어가 조금만 이동함.
         rigid.velocity = (mouseWorldPosition - this.transform.position).normalized * attackDistanceSpeed;
 
-        float attackSpeedDropMultiplier = 5f; // 감소되는 정도
+        float attackSpeedDropMultiplier = 7f; // 감소되는 정도
         attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // 실제 나아가는 거리 계산
 
-        if (attackDistanceSpeed < 0.5f)
+        if (attackDistanceSpeed < 0.8f)
         {
             rigid.velocity = Vector2.zero;
-            attackIdleTime = 1.0f;
-            state = State.ATTACKIDLE;
-        }
-    }
-
-    void AttackIdle()
-    {
-        if (attackIdleTime > 0.0f)
-        {
-            attackIdleTime -= Time.deltaTime;
-        }
-        else
-        {
             state = State.NORMAL;
         }
     }
