@@ -179,13 +179,15 @@ public class CharType : MonoBehaviour
         }
 
         nickname_Error_Text.text = "";
+        PhotonManager.SetNickname(nickname);
         await UserData.SetNickname(nickname);
 
         explane.SetActive(false);
         charType_canvas.SetActive(false);
         nickname_canvas.SetActive(false);
 
-        PhotonAccess();
+        Debug.Log("닉네임 설정 비동기 작업 완료");
+        PhotonManager.ConnectWithRegister();
     }
 
     private async Task<bool> IsDuplicationNickname_Async(string input)
@@ -242,11 +244,5 @@ public class CharType : MonoBehaviour
         explane.SetActive(false);
         charType_canvas.SetActive(false);
         nickname_canvas.SetActive(false);
-    }
-
-    private void PhotonAccess()
-    {
-        PhotonManager.ConnectWithRegister();
-        //PhotonNetwork.ConnectUsingSettings();
     }
 }
