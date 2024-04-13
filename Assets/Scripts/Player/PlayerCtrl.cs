@@ -76,7 +76,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
         status = this.GetComponent<Status>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         //chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
-        //partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
+        partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
 
         state = State.NORMAL;
         //weaponPV = null;
@@ -150,7 +150,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
                 inventory.SetActive(!inventory.activeSelf);
             }
         }
-
+        IsPartyHUDActive();
     }
 
     void LateUpdate()
