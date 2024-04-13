@@ -15,7 +15,7 @@ using Photon.Realtime;
 ///// 3. 매개변수가 꼭 필요한 경우 photonview에 있는 ViewID(int형)로 접근하여 하이에라키에 존재하는 ViewID와 비교하여 찾을 수 있다.
 
 
-public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
+public class PlayerCtrl : MonoBehaviourPunCallbacks
 {
     // enum 클래스 플레이어 상태
     public enum State
@@ -75,7 +75,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
         anim = this.GetComponent<Animator>();
         status = this.GetComponent<Status>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
-        //chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
+        chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
         partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
 
         state = State.NORMAL;
@@ -96,7 +96,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
         {
             moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-            if (state != State.ATTACK)
+            if (state != State.ATTACK && !chatScript.inputField.isFocused)
             {
                 if (moveDir.x != 0 || moveDir.y != 0)
                 {
@@ -110,7 +110,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
             }
 
             // 공격 & 공격 쿨타임 끝나면
-            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver)
+            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && !EventSystem.current.currentSelectedGameObject)
             {
                 state = State.ATTACK;
 
@@ -144,13 +144,33 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
                 }
             }
 
-            //인벤토리 열기
-            if (Input.GetKeyDown(KeyCode.I))
+            // 채팅 입력
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                if (!chatScript.inputField.isFocused)
+                {
+                    chatScript.inputField.interactable = true;
+                    chatScript.inputField.ActivateInputField();
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                chatScript.inputField.text = "";
+                chatScript.inputField.DeactivateInputField();
+                chatScript.inputField.interactable = false;
+
+                chatScript.CloseChatWindowOnButtonClick();
+            }
+            
+            // 인벤토리 열기
+            if (Input.GetKeyDown(KeyCode.I) && !chatScript.inputField.isFocused)
             {
                 inventory.SetActive(!inventory.activeSelf);
             }
+
+            IsPartyHUDActive();
         }
-        IsPartyHUDActive();
     }
 
     void LateUpdate()
@@ -175,11 +195,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
         }
     }
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        // 클릭된 UI 요소에 대한 정보를 출력합니다.
-        Debug.Log(eventData.pointerPress.gameObject.name);
-    }
 
     void IdleAnimation()
     {
@@ -280,11 +295,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
                 PhotonView partyLeaderPhotonView = PhotonView.Find(party.GetPartyLeaderID());
                 partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[0].SetActive(true);
-
-                if (partySystemScript.partyMemberHUD[1].activeSelf)
-                {
-                    partySystemScript.partyMemberHUD[1].SetActive(false);
-                }
             }
             else
             {
@@ -345,19 +355,19 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Enemy"))
-        {
-            isPlayerInRangeOfEnemy = true;
-            enemyCtrl = other.GetComponent<EnemyCtrl>();
+    //private void OnTriggerEnter2D(Collider2D other)
+    //{
+    //    if (other.CompareTag("Enemy"))
+    //    {
+    //        isPlayerInRangeOfEnemy = true;
+    //        enemyCtrl = other.GetComponent<EnemyCtrl>();
 
-        }
-    }
+    //    }
+    //}
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        isPlayerInRangeOfEnemy = false;
-        enemyCtrl = null;
-    }
+    //private void OnTriggerExit2D(Collider2D other)
+    //{
+    //    isPlayerInRangeOfEnemy = false;
+    //    enemyCtrl = null;
+    //}
 }
