@@ -96,7 +96,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         base.OnJoinedRoom();
 
         Debug.Log("방 입장 성공");
-        PhotonNetwork.Instantiate("Player", Vector2.zero, Quaternion.identity);
+        //PhotonNetwork.Instantiate("Player", Vector2.zero, Quaternion.identity);
+        PhotonNetwork.Instantiate("Unit000", Vector2.zero, Quaternion.identity);
     }
 
     public override void OnLeftLobby()

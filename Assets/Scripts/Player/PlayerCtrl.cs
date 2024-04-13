@@ -89,7 +89,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
 
     }
 
-    //Graphic & Input Updates   
+    //Graphic & Input Updates	
     void Update()
     {
         if (pv.IsMine)
