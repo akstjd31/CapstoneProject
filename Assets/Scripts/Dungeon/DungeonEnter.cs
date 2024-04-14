@@ -14,7 +14,7 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
 
     PlayerCtrl playerCtrl;
     string roomName;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,18 +44,19 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("Enter Trigger");
         this.transform.localScale = new Vector3(this.transform.localScale.x + 0.1f, this.transform.localScale.y + 0.1f, this.transform.localScale.z + 0.1f);
-        PlayerCtrl playerCtrl = other.GetComponent<PlayerCtrl>();
-        if(playerCtrl.isPartyMember)
+        playerCtrl = other.GetComponent<PlayerCtrl>();
+        if (playerCtrl.isPartyMember)
         {
             this.transform.localScale = new Vector3(this.transform.localScale.x - 0.2f, this.transform.localScale.y - 0.2f, this.transform.localScale.z - 0.2f);
-            if(playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2 
+            if (playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2
+
             && playerCtrl.party.partyMembers[0].GetComponent<PhotonView>().ViewID == playerCtrl.GetComponent<PhotonView>().ViewID)
             {
                 partyPlayerIDs[0] = playerCtrl.party.GetPartyLeaderID();
@@ -70,13 +71,6 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
         string roomName = playerCtrl.GetComponent<PhotonView>().Controller.NickName;
         // 방 생성
         PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 2 });
-    }
-
-    public override void OnCreatedRoom()
-    {
-        // 방이 성공적으로 생성되었을 때 호출됨
-        Debug.Log("Room created: " + roomName);
-        // 방 생성 후, 파티로 묶인 두 명의 플레이어를 방에 입장시킴
         foreach (int playerID in partyPlayerIDs)
         {
             PhotonView playerView = PhotonView.Find(playerID);
@@ -91,23 +85,24 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
     public void JoinRoom(string roomName)
     {
         PhotonNetwork.JoinRoom(roomName);
+        PhotonNetwork.LoadLevel(sceneName);
     }
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("Joined Room: " + roomName);
-        // 모든 플레이어가 방에 입장하면 새로운 씬으로 이동
-        if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
-        {
-            PhotonNetwork.LoadLevel(sceneName);
-        }
-    }
+    // public override void OnJoinedRoom()
+    // {
+    //     Debug.Log("Joined Room: " + roomName);
+    //     // 모든 플레이어가 방에 입장하면 새로운 씬으로 이동
+    //     //if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+    //     //{
+    //     //    
+    //     //}
+    // }
 
-    public override void OnCreateRoomFailed(short returnCode, string message)
-    {
-        // 방 생성 실패했을 때 호출됨
-        message = "asdf";
-        Debug.Log("Failed to create Room: " + roomName + ", Reason: " + message);
-    }
+    // public override void OnCreateRoomFailed(short returnCode, string message)
+    // {
+    //     // 방 생성 실패했을 때 호출됨
+    //     message = "asdf";
+    //     Debug.Log("Failed to create Room: " + roomName + ", Reason: " + message);
+    // }
 
     // // 특정 플레이어들에게만 씬 전환을 요청하는 RPC 메서드
     // [PunRPC]
