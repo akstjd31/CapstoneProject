@@ -11,6 +11,7 @@ public class Party : MonoBehaviourPun, IPunObservable
 
     [SerializeField] private int partyLeaderID = -1;
     [SerializeField] private int partyMemberID = -1;
+    public PlayerCtrl[] partyMembers = new PlayerCtrl[2];
 
     private int MAX_MEMBER = 2;
 

@@ -25,27 +25,8 @@ public class Message : MonoBehaviour
         NickName.text = nickName;
         myMessage.text = receiveMessage; //InsertNewlinesBetweenText(receiveMessage);
 
-        ScaleTextBoxWithTextSize();
+        //ScaleTextBoxWithTextSize();
     }
-
-   // private string InsertNewlinesBetweenText(string receiveMessage)
-   // {
-    //    string formattedMessage = "";
-
-
-        //for (int i = 0; i < receiveMessage.Length; i++)
-        //{
-        //    formattedMessage += receiveMessage[i];
-
-        //    // 전체 길이로 개행 문자 추가 => 텍스트 필드의 폭과 텍스트의 전체 폭을 비교하여 개행 문자를 넣는 식으로 변경해야 함.
-        //    if ((i + 1) % 13 == 0)
-        //    {
-        //        formattedMessage += "\n";
-        //        cnt++;
-        //    }
-        //}
-        //return formattedMessage;
-  //  }
 
     private void ScaleTextBoxWithTextSize()
     {

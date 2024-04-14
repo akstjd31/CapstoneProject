@@ -96,7 +96,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         base.OnJoinedRoom();
 
         Debug.Log("방 입장 성공");
-        PhotonNetwork.Instantiate("Player", Vector2.zero, Quaternion.identity);
+        //PhotonNetwork.Instantiate("Player", Vector2.zero, Quaternion.identity);
+        PhotonNetwork.Instantiate("Unit000", Vector2.zero, Quaternion.identity);
     }
 
     public override void OnLeftLobby()
@@ -117,6 +118,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PlayerCtrl leftPlayer = partySystemScript.GetPlayerCtrlByNickname(otherPlayer.NickName);
 
         lobbyPlayerViewID.Remove(leftPlayer.GetComponent<PhotonView>().ViewID);
+        PhotonNetwork.Destroy(leftPlayer.gameObject);
 
         // 여기에 다른 플레이어가 방을 나갈 때 실행하고 싶은 로직을 추가
     }
