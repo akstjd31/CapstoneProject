@@ -60,7 +60,7 @@ public class UserData : MonoBehaviour
 
     public static async void SigninWithEmailAsync2()
     {
-        auth = FirebaseAuth.DefaultInstance;
+        //auth = FirebaseAuth.DefaultInstance;
 
         string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text.Trim();
         string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text.Trim();

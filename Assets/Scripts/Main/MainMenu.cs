@@ -17,17 +17,15 @@ public class MainMenu : MonoBehaviour
     private GameObject nowPrefab;
     private GameObject spawnedPrefab;
 
+    private SettingValue sv;
+
     private void Start()
     {
+        sv = gameObject.AddComponent<SettingValue>();
+
         settingUI = GameObject.Find("Setting_Panel");
         settingDetailUI = GameObject.Find("Setting_Detail");
         settingUI.SetActive(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void ClickMenuOption()
@@ -49,6 +47,7 @@ public class MainMenu : MonoBehaviour
                 break;
         }
 
+        sv.SaveSettingValue(btn_type);
         ShowMenuDetail(btn_type);
     }
 
@@ -73,6 +72,9 @@ public class MainMenu : MonoBehaviour
         }
 
         spawnedPrefab = Instantiate(nowPrefab, settingDetailUI.transform);
+
+        //변경되는 값을 얻기 위한 클래스
+        sv.LoadSettingValue(opt);
     }
 
     public void LoadSettingUI()

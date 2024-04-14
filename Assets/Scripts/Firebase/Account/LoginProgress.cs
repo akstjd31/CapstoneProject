@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class LoginProgress : MonoBehaviour
 {
     FirebaseAuth auth;
+    Credential credential;
 
     // Start is called before the first frame update
     void Start()
@@ -30,12 +31,37 @@ public class LoginProgress : MonoBehaviour
 
     public void SigninWithEmail()
     {
+        /*
         auth = FirebaseAuth.DefaultInstance;
 
         string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text.Trim();
         string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text.Trim();
 
         auth.SignInWithEmailAndPasswordAsync(email, password);
+        */
+
+        SigninWithEmailAsync2();
+    }
+
+    private async void ForceLoginWithCred()
+    {
+        auth = FirebaseAuth.DefaultInstance;
+        credential = EmailAuthProvider.GetCredential("ggem@gmail.com", "qweqwe123@@qwe");
+        Debug.Log($"credential : {credential.IsValid()}");
+
+        await auth.SignInWithCredentialAsync(credential);
+        Debug.Log("complete login");
+    }
+
+    private async void SigninWithEmailAsync2()
+    {
+        auth = FirebaseAuth.DefaultInstance;
+
+        string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text;
+        string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text;
+
+        var authTask = await auth.SignInWithEmailAndPasswordAsync(email, password);
+        Debug.Log($"authTask : {authTask}");
     }
 
     private async void SigninWithEmailAsync()
@@ -45,8 +71,6 @@ public class LoginProgress : MonoBehaviour
         string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text.Trim();
         string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text.Trim();
 
-        AuthResult result;
-
         //로그인 시도
         try
         {
@@ -54,7 +78,22 @@ public class LoginProgress : MonoBehaviour
             //await auth.SignInWithEmailAndPasswordAsync(email, password);
 
             // SignInWithEmailAndPasswordAsync 메서드를 비동기적으로 호출하고 결과를 기다림
-            result = await auth.SignInWithEmailAndPasswordAsync(email, password);
+            await auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
+                if (task.IsCanceled)
+                {
+                    Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
+                    return;
+                }
+                if (task.IsFaulted)
+                {
+                    Debug.LogError("SignInWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+                    return;
+                }
+
+                AuthResult result = task.Result;
+                Debug.LogFormat("User signed in successfully: {0} ({1})",
+                    result.User.DisplayName, result.User.UserId);
+            });
 
             Debug.Log("end of sign in");
         }
