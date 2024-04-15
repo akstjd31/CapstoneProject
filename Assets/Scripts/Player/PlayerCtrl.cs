@@ -58,6 +58,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public Party party;
 
     private bool isLobbyScene = false;  //DungeonEntrance와 플레이어의 충돌을 감지하기 위해 현재 씬이 LobbyScene인지 확인하는 변수
+    GameObject DungeonCanvas;
+    RawImage DungeonImage;
+    Button destroyButton;
 
     // 상태 변경을 위한 함수
     [PunRPC]
@@ -97,6 +100,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 임시로 캔버스 자식 직접 지정(수정 필요)
         inventory = GameObject.FindGameObjectWithTag("Canvas").transform.GetChild(0).gameObject;
 
+        //던전 선택 canvas 생성
+        MakeDungeonMap();
     }
 
     //Graphic & Input Updates	
@@ -376,10 +381,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(isLobbyScene && other.name == "DungeonEntrance" && DungeonEnterCondition())
+        if(isLobbyScene && other.name == "DungeonEntrance") //&& DungeonEnterCondition()
         {
-            //던전 선택창 출력 예정
-
+            //던전 선택창 출력
+            DungeonCanvas.SetActive(true);
         }
 
         if (other.CompareTag("Weapon")) {
@@ -392,6 +397,50 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
         }
     }
+
+    private void MakeDungeonMap()
+    {
+        DungeonCanvas = new GameObject("RawImage");
+        DungeonImage = DungeonCanvas.AddComponent<RawImage>();
+        DungeonCanvas.transform.SetParent(GameObject.Find("Canvas").transform, false);
+        DungeonCanvas.AddComponent<RectTransform>();
+        DungeonCanvas.GetComponent<RectTransform>().sizeDelta = new Vector2(1920, 1080);
+
+        string imagePath = "dungeon_enter_map";
+        Texture2D texture = Resources.Load<Texture2D>(imagePath);
+        Debug.Log($"texture is null : {texture == null}");
+        DungeonCanvas.GetComponent<RawImage>().texture = texture;
+
+        // 버튼 GameObject 생성
+        GameObject buttonObject = new GameObject("DestroyButton");
+
+        // 생성한 GameObject에 Button 컴포넌트 추가
+        destroyButton = buttonObject.AddComponent<Button>();
+
+        // 버튼에 텍스트 추가
+        Text buttonText = buttonObject.AddComponent<Text>();
+        buttonText.text = "X";
+        buttonText.fontSize = 56;
+        buttonText.color = Color.black;
+
+        // 생성한 GameObject를 Canvas의 자식으로 설정
+        buttonObject.transform.SetParent(GameObject.Find("Canvas").transform, false);
+
+        // RectTransform 컴포넌트 가져오기
+        RectTransform buttonTransform = buttonObject.GetComponent<RectTransform>();
+
+        // 버튼의 위치를 설정 (Canvas의 우측 상단)
+        buttonTransform.anchorMin = new Vector2(1f, 1f);
+        buttonTransform.anchorMax = new Vector2(1f, 1f);
+        buttonTransform.pivot = new Vector2(1f, 1f);
+        buttonTransform.anchoredPosition = new Vector2(-10f, -10f); // 원하는 위치로 조정
+
+        // 버튼이 클릭되었을 때의 동작 설정
+        destroyButton.onClick.AddListener(DisableDungeonCanvas);
+
+        DungeonCanvas.SetActive(false);
+    }
+
 
     // private void OnTriggerExit2D(Collider2D other)
     // {
@@ -426,5 +475,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         
 
         return false;
+    }
+
+    private void DisableDungeonCanvas()
+    {
+        DungeonCanvas.SetActive(false);
     }
 }
