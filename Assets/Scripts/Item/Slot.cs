@@ -29,7 +29,7 @@ public class Slot : MonoBehaviour, IDropHandler
             else
             {
                 Image.sprite = null;
-                Image.color = new Color(0.8f, 0.8f, 0.8f, 1);
+                Image.color = new Color(0, 0, 0, 0);
             }
         }
     }
@@ -49,11 +49,11 @@ public class Slot : MonoBehaviour, IDropHandler
 
         targetDrag.isDraggable = true;
 
-        targetDrag.defaultSize = targetDrag.isEquippedItem ? new Vector2(170, 170) : new Vector2(100, 100);
+        targetDrag.defaultSize = targetDrag.isEquippedItem ? new Vector2(350, 350) : new Vector2(200, 200);
 
         targetDrag.defaultSprite = targetDrag.image.sprite;
 
-        drag.defaultSprite = null;
+        drag.isDraggable = false;
 
         //Drag drag = dropObj.GetComponent<Drag>();
         //Drag targetDrag = this.GetComponent<Drag>();
