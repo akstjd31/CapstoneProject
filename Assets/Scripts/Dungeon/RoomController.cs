@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 
 public class RoomController : MonoBehaviour
 {
+    GameObject startPoint;
 	public GameObject[] upRooms;
 	public GameObject[] rightRooms;
 	public GameObject[] downRooms;
@@ -24,6 +25,7 @@ public class RoomController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        startPoint = GameObject.Find("Spawn");
         //Invoke("CreateRoom", 0.3f);
         StartCoroutine(CreateRoom());
         //CreateRoom();
@@ -49,16 +51,16 @@ public class RoomController : MonoBehaviour
                 else if(hit.transform.CompareTag("Door"))
                 {
                     int ranBin = Random.Range(0, 5);
-                    Debug.Log(ranBin);
+                    //Debug.Log(ranBin);
                     if(ranBin == 0)
                     {
-                        Debug.Log("breakDoor");
+                        //Debug.Log("breakDoor");
                         //hit.transform.localScale = new Vector3(1, 1, 1);
                         hit.transform.gameObject.SetActive(false);
                     }
                     else
                     {
-                        Debug.Log("makeDoor");
+                        //Debug.Log("makeDoor");
 
                         mapSpawnPoints[i].GetChild(0).gameObject.SetActive(true);
                     }
@@ -133,17 +135,17 @@ public class RoomController : MonoBehaviour
                 }
             }
             doorCheck = true;
-            Debug.Log(this.transform.position);
-            for(int i = 0; i < 4; i++)
-            {
-                Debug.Log(doorList[i]);
-            } 
+            // Debug.Log(this.transform.position);
+            // for(int i = 0; i < 4; i++)
+            // {
+            //     Debug.Log(doorList[i]);
+            // } 
         }
         if(DungeonManager.isMapCreate && makeDoor && doorCheck && !makePlayMap)
         {
             GameObject gridMap = Instantiate(mapArray[0]);
-            //playMap.transform.position = new Vector2((this.transform.position.x - 500.0f) * 25.0f, (this.transform.position.y - 500.0f) * 9.0f);
-            gridMap.transform.position = new Vector2(this.transform.position.x * 25.0f, this.transform.position.y * 9.0f);
+            gridMap.transform.position = new Vector2((this.transform.position.x - startPoint.transform.position.x) * 25.0f, (this.transform.position.y - startPoint.transform.position.y) * 9.0f);
+            //gridMap.transform.position = new Vector2(this.transform.position.x * 25.0f, this.transform.position.y * 9.0f);
             gridMap.transform.SetParent(GameObject.Find("Grid").transform);
             makePlayMap = true;
         }

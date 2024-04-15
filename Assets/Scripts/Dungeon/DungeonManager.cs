@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DungeonManager : MonoBehaviour
@@ -95,7 +96,7 @@ public class DungeonManager : MonoBehaviour
             bossRoomMarker_.transform.position = bossRoom.transform.position;
             specialRoomSelect = true;
 
-            Debug.Log(farherstMX +" "+ farherstX +" "+ farherstMY +" "+ farherstY);
+            //Debug.Log(farherstMX +" "+ farherstX +" "+ farherstMY +" "+ farherstY);
         }
     }
 }
