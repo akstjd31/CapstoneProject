@@ -20,7 +20,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DungeonScene.unity
     guid: 411f974a66dee2a40bc14892d79402ad
-  - enabled: 1
-    path: Assets/Scenes/PhotonLobby.unity
-    guid: aef28a006cb71024da26c2b40649eaf8
   m_configObjects: {}
