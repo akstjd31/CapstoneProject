@@ -53,9 +53,21 @@ public class Status : MonoBehaviourPunCallbacks
         stats[(int)TextList.HP].transform.position = new Vector2(playerPos.x + 80, playerPos.y + 40);
         stats[(int)TextList.Weapon].transform.position = new Vector2(playerPos.x + 80, playerPos.y + 20);
 
+
         stats[(int)TextList.NickName].text = nickName;
         stats[(int)TextList.HP].text = "HP: " + HP;
         stats[(int)TextList.Weapon].text = "Weapon: " + playerCtrl.weaponName;
+
+        stats[3].transform.position = new Vector2(playerPos.x + 80, playerPos.y);
+        stats[3].text = "id" + playerCtrl.photonView.ViewID;
+        if(playerCtrl.isPartyMember)
+        {
+            stats[4].transform.position = new Vector2(playerPos.x + 80, playerPos.y - 20);
+            stats[5].transform.position = new Vector2(playerPos.x + 80, playerPos.y - 40);
+            stats[4].text = "Leader" + playerCtrl.party.GetPartyLeaderID();
+            stats[5].text = "Member" + playerCtrl.party.GetPartyMemberID();
+        }
+
         //PrintRollCoolTimeText();
     }
 

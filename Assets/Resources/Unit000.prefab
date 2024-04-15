@@ -1807,6 +1807,7 @@ GameObject:
   - component: {fileID: 4752918066898745463}
   - component: {fileID: 1127464956995650460}
   - component: {fileID: 4917115041854513549}
+  - component: {fileID: 6935311508658866118}
   - component: {fileID: 9018133177964143318}
   m_Layer: 0
   m_Name: UnitRoot
@@ -1993,6 +1994,18 @@ MonoBehaviour:
   attackSpeed: 1
   statInfo: {fileID: 0}
   stats: []
+--- !u!114 &6935311508658866118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4410033845721660709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dabcccb4391b9ac46ae2b97fe5267e7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &9018133177964143318
 MonoBehaviour:
   m_ObjectHideFlags: 0
