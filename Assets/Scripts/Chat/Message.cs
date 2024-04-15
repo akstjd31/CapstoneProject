@@ -17,42 +17,16 @@ public class Message : MonoBehaviour
 
     private void Update()
     {
+
     }
 
-    [PunRPC]
-    public void InitSettingRPC(string nickName, string receiveMessage)
+    public void SetNickName(string nickName)
     {
         NickName.text = nickName;
-        myMessage.text = receiveMessage; //InsertNewlinesBetweenText(receiveMessage);
-
-        //ScaleTextBoxWithTextSize();
     }
 
-    private void ScaleTextBoxWithTextSize()
+    public void SetMessage(string message)
     {
-        RectTransform nickNameRect, messageRect, emptyObjRect, messageBoxRect;
-
-        nickNameRect = NickName.GetComponent<RectTransform>();
-        messageRect = myMessage.GetComponent<RectTransform>();
-        emptyObjRect = this.GetComponent<RectTransform>();
-        messageBoxRect = this.GetComponentInChildren<Image>().GetComponent<RectTransform>();
-
-        messageBoxRect.sizeDelta = new Vector2(messageBoxRect.sizeDelta.x, myMessage.preferredHeight);
-
-        //Vector2 newHeight = messageRect.sizeDelta;
-        //newHeight.y += cnt * increaseHeight;
-
-        //messageRect.sizeDelta = newHeight;
-        //messageBoxRect.sizeDelta = new Vector2(
-        //    messageBoxRect.sizeDelta.x,
-        //    newHeight.y);
-
-        emptyObjRect.sizeDelta = new Vector2(
-            emptyObjRect.sizeDelta.x,
-            nickNameRect.sizeDelta.y + messageBoxRect.sizeDelta.y + 40);
-
-        nickNameRect.position = new Vector2(
-            nickNameRect.position.x,
-            -messageRect.position.y + messageBoxRect.sizeDelta.y / 2);
+        myMessage.text = message;
     }
 }
