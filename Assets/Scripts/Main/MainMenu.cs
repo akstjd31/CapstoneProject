@@ -18,6 +18,7 @@ public class MainMenu : MonoBehaviour
     private GameObject spawnedPrefab;
 
     private int beforeMenuOption = -1;
+    private int nowMenuOption = 0;
 
     private void Start()
     {
@@ -50,6 +51,7 @@ public class MainMenu : MonoBehaviour
             return;
         }
         beforeMenuOption = btn_type;
+        nowMenuOption = btn_type;
 
         SettingValue.SaveSettingValue(btn_type);
         ShowMenuDetail(btn_type);
@@ -63,8 +65,9 @@ public class MainMenu : MonoBehaviour
             SettingValue.SaveSettingValue(opt);
             Destroy(spawnedPrefab);
         }
+        nowMenuOption = opt;
 
-        switch(opt)
+        switch (opt)
         {
             case 0:
                 nowPrefab = detailPrefab_01;
@@ -91,7 +94,7 @@ public class MainMenu : MonoBehaviour
     
     public void CloseSettingUI()
     {
-        
+        SettingValue.SaveSettingValue(nowMenuOption);
         settingUI.SetActive(false);
     }
 }

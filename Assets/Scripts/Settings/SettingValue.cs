@@ -12,30 +12,21 @@ public class SettingValue : MonoBehaviour
     private static int beforeMenuOption = -1;
 
     private static Dictionary<string, dynamic> value;
+    private const float MAX_SLIDER_VALUE = 100f;
 
     private void Awake()
     {
         settingParent = GameObject.Find("Setting_Detail");
+
+        //기본 값
+        value["sound_effect"] = 50f;
+        value["sound_bgm"] = 50f;
     }
 
     //setting detail이 변할 때 마다 실행
     public static void LoadSettingValue(int type)
     {
-        if(beforeMenuOption == type)
-        {
-            return;
-        }
-        //value가 계속 null인 문제 해결 필요
-        if(value == null)
-        {
-            value = new Dictionary<string, dynamic>();
-            value["sound_effect"] = 50;
-            value["sound_bgm"] = 50;
-        }
-        beforeMenuOption = type;
-
         LoadDictionaryData("gameSetting", value);
-        Debug.Log($"load value : {value}");
 
         //각 설정 ui에 value 값을 적용
         switch (type)
@@ -52,10 +43,10 @@ public class SettingValue : MonoBehaviour
 
                         if(innerValue != null)
                         {
-                            //innerValue.value = 10;
-                            Debug.Log($"value : {value["sound_effect"]}");
-                           
-                            //innerValue.value = value.ContainsKey("sound_effect") ? temp : 50;
+                            Debug.Log($"load sound_effect : {value["sound_effect"]} / {innerValue.gameObject.name}");
+                            //innerValue.value = (float)value["sound_effect"] / MAX_SLIDER_VALUE;
+                            //nowSettingObject.GetComponent<Slider>().value = (float)value["sound_effect"];
+                            Canvas.ForceUpdateCanvases();
                         }
                         else
                         {
@@ -82,7 +73,9 @@ public class SettingValue : MonoBehaviour
 
                         if(innerValue != null)
                         {
-                            Debug.Log($"value2 : {value["sound_bgm"]}");
+                            Debug.Log($"load sound_effect : {value["sound_bgm"]} / {innerValue.gameObject.name}");
+                            //innerValue.value = (float)value["sound_bgm"] / MAX_SLIDER_VALUE;
+                            Canvas.ForceUpdateCanvases();
                             //innerValue.value = value.ContainsKey("sound_bgm") ? value["sound_bgm"] : 50;
                         }
                     }
@@ -90,17 +83,14 @@ public class SettingValue : MonoBehaviour
 
                 break;
         }
+
+        //ui 강제 업데이트
+        Canvas.ForceUpdateCanvases();
     }
     
     //창을 닫을 때와 다른 메뉴로 넘어갈 때, 저장
     public static void SaveSettingValue(int type)
     {
-        if (beforeMenuOption == type)
-        {
-            return;
-        }
-        beforeMenuOption = type;
-
         switch (type)
         {
             case 0:
@@ -108,14 +98,17 @@ public class SettingValue : MonoBehaviour
 
                 if (settingEffectSound != null)
                 {
+                    Debug.Log("settingEffectSound");
                     GameObject soundEffectValueObject = settingEffectSound.transform.Find("SoundEffect_Value").gameObject;
 
                     if (soundEffectValueObject != null)
                     {
+                        Debug.Log("soundEffectValueObject");
                         Slider slider = soundEffectValueObject.GetComponent<Slider>();
 
                         if (slider != null)
                         {
+                            Debug.Log($"save sound_effect : {slider.value}");
                             value["sound_effect"] = slider.value;
                         }
                     }
@@ -133,6 +126,7 @@ public class SettingValue : MonoBehaviour
 
                         if (slider != null)
                         {
+                            Debug.Log($"save sound_bgm : {slider.value}");
                             value["sound_bgm"] = slider.value;
                         }
                     }
@@ -142,7 +136,6 @@ public class SettingValue : MonoBehaviour
                 break;
         }
 
-        Debug.Log($"save value : {value}");
         SaveDictionaryData("gameSetting", value);
     }
 
