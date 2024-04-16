@@ -63,7 +63,7 @@ public class MainMenu : MonoBehaviour
     {
         if (spawnedPrefab != null)
         {
-            //º¯°æµÈ °ªÀ» ÀúÀå
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             //SettingValue.SaveSettingValue(beforeMenuOption);
             Destroy(spawnedPrefab);
         }
@@ -84,7 +84,7 @@ public class MainMenu : MonoBehaviour
 
         spawnedPrefab = Instantiate(nowPrefab, settingDetailUI.transform);
 
-        //º¯°æµÇ´Â °ªÀ» ¾ò±â À§ÇÑ Å¬·¡½º
+        //ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
         SettingValue.LoadSettingValue(opt);
     }
 

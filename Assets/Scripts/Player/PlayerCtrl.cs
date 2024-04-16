@@ -15,17 +15,18 @@ using Photon.Realtime;
 ///// 3. 매개변수가 꼭 필요한 경우 photonview에 있는 ViewID(int형)로 접근하여 하이에라키에 존재하는 ViewID와 비교하여 찾을 수 있다.
 
 
-public class PlayerCtrl : MonoBehaviourPunCallbacks
+public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
 {
     // enum 클래스 플레이어 상태
     public enum State
     {
-        NORMAL, MOVE, ROLLING, ATTACK, HIT, DIE
+        NORMAL, MOVE, ROLLING, ATTACK, ATTACKIDLE, HIT, DIE
     }
     public float movePower = 5f; // 이동에 필요한 힘
     public float rollSpeed;  // 구르는 속도
     public float attackDistanceSpeed; // 공격 시 이동하는 속도
     public float rollCoolTime = 0.0f; // 구르기 쿨타임
+    public float attackIdleTime = 1.0f; // 공격 시 공격준비상태
 
     [SerializeField] private bool isPlayerInRangeOfEnemy = false; // 공격가능한 범위인지 아닌지?
     private EnemyCtrl enemyCtrl = null; // 공격한 적의 정보
@@ -86,8 +87,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         anim = this.GetComponent<Animator>();
         status = this.GetComponent<Status>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
-        chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
-        partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
+        //chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
+        //partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
 
         state = State.NORMAL;
         //weaponPV = null;
@@ -121,8 +122,51 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 else
                 {
                     rigid.velocity = Vector2.zero;
-                    state = State.NORMAL;
+
+                    if (state != State.ATTACKIDLE)
+                        state = State.NORMAL;
                 }
+            }
+
+            // 공격 & 공격 쿨타임 끝나면
+            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver)
+            {
+                state = State.ATTACK;
+
+                Vector3 mouseScreenPosition = Input.mousePosition;
+
+                // 마우스의 스크린 좌표를 월드 좌표로 변환합니다.
+                mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+                // 플레이어가 보고 있는 방향에 따른 공격방향
+                //SetDirection();
+
+                attackDistanceSpeed = 10f;
+                isAttackCooldownOver = false;
+
+                // 적을 공격한 상태.
+                if (isPlayerInRangeOfEnemy)
+                {
+                    enemyCtrl.GetComponent<PhotonView>().RPC("EnemyAttackedPlayer", RpcTarget.All, status.attackDamage);
+                }
+            }
+
+            if (!isAttackCooldownOver)
+            {
+                if (attackCoolTime > 0.0f)
+                {
+                    attackCoolTime -= Time.deltaTime;
+                }
+                else
+                {
+                    isAttackCooldownOver = true;
+                    attackCoolTime = 1.0f;
+                }
+            }
+
+            //인벤토리 열기
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                inventory.SetActive(!inventory.activeSelf);
             }
 
             // 공격 & 공격 쿨타임 끝나면
@@ -186,6 +230,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             IsPartyHUDActive();
         }
+
     }
 
     void LateUpdate()
@@ -206,31 +251,48 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     AttackAnimation();
                     Attack();
                     break;
+                case State.ATTACKIDLE:
+                    AttackIdle();
+                    AttackIdleAnimation();
+                    break;
             }
         }
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // 클릭된 UI 요소에 대한 정보를 출력합니다.
+        Debug.Log(eventData.pointerPress.gameObject.name);
+    }
 
     void IdleAnimation()
     {
         anim.SetBool("isMove", false);
         anim.SetBool("isAttack", false);
-        //anim.SetBool("AttackIdle", false);
+        anim.SetBool("AttackIdle", false);
     }
 
     void MoveAnimation()
     {
         anim.SetBool("isMove", true);
         anim.SetBool("isAttack", false);
-        //anim.SetBool("AttackIdle", false);
+        anim.SetBool("AttackIdle", false);
     }
 
     void AttackAnimation()
     {
         anim.SetBool("isAttack", true);
-        //anim.SetBool("AttackIdle", false);
+        anim.SetBool("AttackIdle", false);
         anim.SetBool("isMove", false);
     }
+
+    void AttackIdleAnimation()
+    {
+        anim.SetBool("AttackIdle", true);
+        anim.SetBool("isAttack", false);
+        anim.SetBool("isMove", false);
+    }
+
 
     // 이동
     void Move()
@@ -266,10 +328,24 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 문제점 : 현재 마우스 위치가 가까우면 플레이어가 조금만 이동함.
         rigid.velocity = (mouseWorldPosition - this.transform.position).normalized * attackDistanceSpeed;
 
-        float attackSpeedDropMultiplier = 7f; // 감소되는 정도
+        float attackSpeedDropMultiplier = 5f; // 감소되는 정도
         attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // 실제 나아가는 거리 계산
 
-        if (attackDistanceSpeed < 0.8f)
+        if (attackDistanceSpeed < 0.5f)
+        {
+            rigid.velocity = Vector2.zero;
+            attackIdleTime = 1.0f;
+            state = State.ATTACKIDLE;
+        }
+    }
+
+    void AttackIdle()
+    {
+        if (attackIdleTime > 0.0f)
+        {
+            attackIdleTime -= Time.deltaTime;
+        }
+        else
         {
             rigid.velocity = Vector2.zero;
             state = State.NORMAL;

@@ -71,13 +71,15 @@ public class LoginProgress : MonoBehaviour
         string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text.Trim();
         string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text.Trim();
 
-        //·Î±×ÀÎ ½Ãµµ
+        AuthResult result;
+
+        //ï¿½Î±ï¿½ï¿½ï¿½ ï¿½Ãµï¿½
         try
         {
             Debug.Log($"auth2 : {auth.CurrentUser}\n{email}\t{password}");
             //await auth.SignInWithEmailAndPasswordAsync(email, password);
 
-            // SignInWithEmailAndPasswordAsync ¸Þ¼­µå¸¦ ºñµ¿±âÀûÀ¸·Î È£ÃâÇÏ°í °á°ú¸¦ ±â´Ù¸²
+            // SignInWithEmailAndPasswordAsync ï¿½Þ¼ï¿½ï¿½å¸¦ ï¿½ñµ¿±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù¸ï¿½
             await auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
                 if (task.IsCanceled)
                 {
