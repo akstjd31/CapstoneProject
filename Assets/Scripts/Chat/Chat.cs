@@ -13,8 +13,6 @@ public class Chat : MonoBehaviour
     public GameObject content; // 스크롤 뷰에 존재하는 컨텐트
     public GameObject chatView; // 스크롤 뷰
 
-    private int increaseHeight = 30;
-
     void Update()
     {
         if (inputField.isFocused)
@@ -29,18 +27,14 @@ public class Chat : MonoBehaviour
                 {
                    SendMessage();
                 }
-                else
-                {
-                    inputField.interactable = false;
-                    CloseChatWindowOnButtonClick();
-                }
             }
         }
     }
 
-    //
+    // 채팅 끄기(버튼 이벤트 함수)
     public void CloseChatWindowOnButtonClick()
     {
+        inputField.interactable = false;
         chatView.SetActive(false);
     }
 
@@ -59,8 +53,9 @@ public class Chat : MonoBehaviour
         // 메세지 생성 후 해당 메세지를 받은 메세지로 채우기
         GameObject msg = PhotonNetwork.Instantiate(message.name, Vector3.zero, Quaternion.identity);
         msg.transform.parent = content.transform;
-        PhotonView msgPV = msg.GetComponent<PhotonView>();
 
-        msgPV.RPC("InitSettingRPC", RpcTarget.AllBuffered, nickName, receiveMessage);
+        Message mes = msg.GetComponent<Message>();
+        mes.SetNickName(nickName);
+        mes.SetMessage(receiveMessage);
     }
 }

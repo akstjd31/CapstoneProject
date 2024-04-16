@@ -98,7 +98,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         //partySystemScript.partyCreator.transform.GetComponentInChildren<Button>().onClick.AddListener(OnPartyCreationComplete);
 
         // 임시로 캔버스 자식 직접 지정(수정 필요)
-        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.GetChild(0).gameObject;
+        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").gameObject;
 
         //던전 선택 canvas 생성
         MakeDungeonMap();
@@ -111,8 +111,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-            if (state != State.ATTACK && !chatScript.inputField.isFocused)
+            if (state != State.ATTACK && !chatScript.chatView.activeSelf)
             {
+
                 if (moveDir.x != 0 || moveDir.y != 0)
                 {
                     state = State.MOVE;
@@ -125,7 +126,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
 
             // 공격 & 공격 쿨타임 끝나면
-            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && !EventSystem.current.currentSelectedGameObject)
+            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && !EventSystem.current.currentSelectedGameObject && !inventory.activeSelf)
             {
                 state = State.ATTACK;
 
@@ -173,16 +174,16 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 chatScript.inputField.text = "";
                 chatScript.inputField.DeactivateInputField();
-                chatScript.inputField.interactable = false;
 
                 chatScript.CloseChatWindowOnButtonClick();
             }
             
             // 인벤토리 열기
-            if (Input.GetKeyDown(KeyCode.I) && !chatScript.inputField.isFocused)
+            if (Input.GetKeyDown(KeyCode.I) && !chatScript.chatView.activeSelf)
             {
                 inventory.SetActive(!inventory.activeSelf);
             }
+
             IsPartyHUDActive();
         }
     }

@@ -28,10 +28,11 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 
     void Start()
     {
+        image = this.GetComponent<Image>();
         inventory = this.transform.parent.parent.parent.parent.GetComponent<Inventory>();
 
         defaultPos = Vector2.zero;
-        defaultColor = new Color(0.8f, 0.8f, 0.8f, 1);
+        defaultColor = new Color(0, 0, 0, 0);
         defaultParent = this.transform.parent;
         defaultSprite = this.GetComponent<Image>().sprite;
         defaultSize = this.GetComponent<RectTransform>().sizeDelta;
@@ -61,7 +62,7 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
             Vector2 currentPos = eventData.position;
             this.transform.position = currentPos;
 
-            this.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+            this.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 250);
         }
     }
 
@@ -74,13 +75,23 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 
             //Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            this.GetComponent<RectTransform>().sizeDelta = defaultSize;
-            this.GetComponent<Image>().sprite = defaultSprite;
-            this.GetComponent<Image>().color = defaultColor;
+            defaultColor = new Color(1, 1, 1, 1);
 
-            image.raycastTarget = true;
 
-            isDraggable = defaultSprite == null ? false : true;
         }
+        else
+        {
+            this.transform.SetParent(defaultParent);
+            this.GetComponent<RectTransform>().anchoredPosition = defaultPos;
+
+            defaultColor = new Color(0, 0, 0, 0);
+
+            defaultSprite = null;
+        }
+
+        this.GetComponent<RectTransform>().sizeDelta = defaultSize;
+        this.GetComponent<Image>().sprite = defaultSprite;
+        this.GetComponent<Image>().color = defaultColor;
+        image.raycastTarget = true;
     }
 }
