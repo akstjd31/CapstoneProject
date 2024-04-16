@@ -82,9 +82,6 @@ MonoBehaviour:
   - DestroyEnemy
   - EnemyAttackedPlayer
   - EnemyCreator
-  - JoinRoom
-  - JoinRoom_
-  - OnEnterDungeon
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

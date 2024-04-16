@@ -34,7 +34,7 @@ public class Slot : MonoBehaviour, IDropHandler
         }
     }
 
-    // ÇØ´ç ½½·Ô¿¡ ¹«¾ð°¡°¡ ¸¶¿ì½º µå·Ó µÆÀ» ¶§ ¹ß»ýÇÏ´Â ÀÌº¥Æ®
+    // ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½Ô¿ï¿½ ï¿½ï¿½ï¿½ð°¡°ï¿½ ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï´ï¿½ ï¿½Ìºï¿½Æ®
     public void OnDrop(PointerEventData eventData)
     {
         GameObject targetObj = eventData.pointerDrag;
