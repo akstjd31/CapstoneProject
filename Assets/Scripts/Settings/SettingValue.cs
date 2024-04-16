@@ -8,10 +8,10 @@ public class SettingValue : MonoBehaviour
     private static GameObject settingParent;
     private static GameObject nowSettingOption;
     private static GameObject nowSettingObject;
-    //private dynamic innerValue;
+    //private int innerValue;
     private static int beforeMenuOption = -1;
 
-    private static Dictionary<string, dynamic> value;
+    private static Dictionary<string, int> value;
     private const float MAX_SLIDER_VALUE = 100f;
 
     private void Awake()
@@ -19,21 +19,24 @@ public class SettingValue : MonoBehaviour
         settingParent = GameObject.Find("Setting_Detail");
 
         //기본 값
-        value["sound_effect"] = 50f;
-        value["sound_bgm"] = 50f;
+        value = new Dictionary<string, int>
+        {
+            ["sound_effect"] = 50,
+            ["sound_bgm"] = 50
+        };
     }
 
     //setting detail이 변할 때 마다 실행
     public static void LoadSettingValue(int type)
     {
-        LoadDictionaryData("gameSetting", value);
-
         //각 설정 ui에 value 값을 적용
         switch (type)
         {
             case 0:
+                LoadDictionaryData("gameSetting_01", value);
+
                 //GameObject.Find("SoundEffect_Value");
-                if(value != null && value.ContainsKey("sound_effect"))
+                if (value != null && value.ContainsKey("sound_effect"))
                 {
                     nowSettingObject = GameObject.Find("SoundEffect_Value");
 
@@ -82,6 +85,38 @@ public class SettingValue : MonoBehaviour
                 }
 
                 break;
+            case 1:
+                LoadDictionaryData("gameSetting_02", value);
+                ToggleGroup toggleGroup;
+                Toggle toggleToClick;
+                int num;
+
+                if (value != null && value.ContainsKey("Performance_Toggle"))
+                {
+                    num = value["settingQuality"];
+
+                    toggleGroup = GameObject.Find("Performance_Toggle").GetComponent<ToggleGroup>();
+                    toggleToClick = toggleGroup.transform.GetChild(num).GetComponent<Toggle>();
+                    toggleToClick.isOn = true;
+                }
+                if (value != null && value.ContainsKey("Temp01_Toggle"))
+                {
+                    num = value["Temp01_Toggle"];
+
+                    toggleGroup = GameObject.Find("Temp01_Toggle").GetComponent<ToggleGroup>();
+                    toggleToClick = toggleGroup.transform.GetChild(num).GetComponent<Toggle>();
+                    toggleToClick.isOn = true;
+                }
+                if (value != null && value.ContainsKey("Temp02_Toggle"))
+                {
+                    num = value["Temp02_Toggle"];
+
+                    toggleGroup = GameObject.Find("Temp02_Toggle").GetComponent<ToggleGroup>();
+                    toggleToClick = toggleGroup.transform.GetChild(num).GetComponent<Toggle>();
+                    toggleToClick.isOn = true;
+                }
+
+                break;
         }
 
         //ui 강제 업데이트
@@ -109,7 +144,7 @@ public class SettingValue : MonoBehaviour
                         if (slider != null)
                         {
                             Debug.Log($"save sound_effect : {slider.value}");
-                            value["sound_effect"] = slider.value;
+                            value["sound_effect"] = (int)slider.value;
                         }
                     }
                 }
@@ -127,30 +162,77 @@ public class SettingValue : MonoBehaviour
                         if (slider != null)
                         {
                             Debug.Log($"save sound_bgm : {slider.value}");
-                            value["sound_bgm"] = slider.value;
+                            value["sound_bgm"] = (int)slider.value;
+                        }
+                    }
+                }
+                SaveDictionaryData("gameSetting_01", value);
+
+                break;
+            case 1:
+                Dictionary<string, int> settingValue = new Dictionary<string, int>();
+
+                // 각 토글 그룹을 저장할 변수들
+                ToggleGroup[] toggleGroups = new ToggleGroup[3];
+                toggleGroups[0] = GameObject.Find("Performance_Toggle").GetComponent<ToggleGroup>();
+                toggleGroups[1] = GameObject.Find("Temp01_Toggle").GetComponent<ToggleGroup>();
+                toggleGroups[2] = GameObject.Find("Temp02_Toggle").GetComponent<ToggleGroup>();
+
+                // 각 토글 그룹에 대해 반복
+                for (int i = 0; i < toggleGroups.Length; i++)
+                {
+                    ToggleGroup toggleGroup = toggleGroups[i];
+                    int temp = 0;
+
+                    // 토글 그룹 내의 토글들을 반복하면서 체크된 토글을 찾음
+                    foreach (Toggle toggle in toggleGroup.GetComponentsInChildren<Toggle>())
+                    {
+                        if (toggle.isOn)
+                        {
+                            // 체크된 토글을 찾았을 때 해당 인덱스를 settingValue 딕셔너리에 추가
+                            string name = "";
+                            switch(i)
+                            {
+                                case 0:
+                                    name = "Performance_Toggle";
+                                    break;
+                                case 1:
+                                    name = "Temp01_Toggle";
+                                    break;
+                                case 2:
+                                    name = "Temp02_Toggle";
+                                    break;
+                            }
+
+
+                            settingValue[name] = temp;
+                            break;
+                        }
+                        else
+                        {
+                            temp++;
                         }
                     }
                 }
 
+                SaveDictionaryData("gameSetting_02", value);
 
                 break;
         }
-
-        SaveDictionaryData("gameSetting", value);
     }
 
 
     //직렬화, 역 직렬화
-    private static void SaveDictionaryData(string key, Dictionary<string, dynamic> dictionary)
+    private static void SaveDictionaryData(string key, Dictionary<string, int> dictionary)
     {
         string json = JsonUtility.ToJson(dictionary);
         PlayerPrefs.SetString(key, json);
         PlayerPrefs.Save();
     }
 
-    private static void LoadDictionaryData(string key, Dictionary<string, dynamic> dictionary)
+    private static void LoadDictionaryData(string key, Dictionary<string, int> dictionary)
     {
         string json = PlayerPrefs.GetString(key);
-        dictionary = JsonUtility.FromJson<Dictionary<string, dynamic>>(json);
+        dictionary = JsonUtility.FromJson<Dictionary<string, int>>(json);
     }
 }

@@ -50,10 +50,12 @@ public class MainMenu : MonoBehaviour
         {
             return;
         }
+
+        //SettingValue.SaveSettingValue(beforeMenuOption);
+
         beforeMenuOption = btn_type;
         nowMenuOption = btn_type;
 
-        SettingValue.SaveSettingValue(btn_type);
         ShowMenuDetail(btn_type);
     }
 
@@ -62,7 +64,7 @@ public class MainMenu : MonoBehaviour
         if (spawnedPrefab != null)
         {
             //변경된 값을 저장
-            SettingValue.SaveSettingValue(opt);
+            //SettingValue.SaveSettingValue(beforeMenuOption);
             Destroy(spawnedPrefab);
         }
         nowMenuOption = opt;
