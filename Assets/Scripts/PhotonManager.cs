@@ -21,9 +21,21 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     Button inputButton;
 
     private int isSocialLogin = 0;
+    public static int leavingPlayer = 0;
+    public static int[] dungeonJoiningPlayer = new int[2];
 
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+        if(SceneManager.GetActiveScene().name == "DungeonScene")
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
+        dungeonJoiningPlayer[0] = 0;
+        dungeonJoiningPlayer[1] = 0;
         inputText.ActivateInputField();
         //내용이 변경되었을때
         inputText.onValueChanged.AddListener(OnValueChanged);
@@ -67,7 +79,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         base.OnJoinedLobby();
 
         // OnClickCreateRoom();
-        PhotonNetwork.LoadLevel("LobbyScene");
+        //PhotonNetwork.LoadLevel("LobbyScene");
+        PhotonNetwork.LoadLevel("PhotonLobbyScene");
         print("로비 진입 성공");
     }
 

@@ -1087,7 +1087,9 @@ MonoBehaviour:
   leftRooms: []
   mapSpawnPoints: []
   mapArray:
-  - {fileID: 1139048143582174535, guid: abda1820e48a031458fabb3d5cd3f47b, type: 3}
+  - {fileID: 8896764736808474999, guid: e5b5f13d8f940a14ca2b4307a987a68b, type: 3}
+  - {fileID: 790118025837392789, guid: a7135930b3c129d438ebd34994243a7c, type: 3}
+  - {fileID: 906312298968879362, guid: 8ff42b5d7d9734e4fbbeb537c3be1704, type: 3}
   doorList: 00000000
 --- !u!1 &6889421216743635795
 GameObject:

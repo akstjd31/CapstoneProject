@@ -59,16 +59,21 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
             if(playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2 
             && playerCtrl.party.partyMembers[0].GetComponent<PhotonView>().ViewID == playerCtrl.GetComponent<PhotonView>().ViewID)
             {
-                roomName = playerCtrl.GetComponent<PhotonView>().Controller.NickName;
                 partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
                 partyPlayersID[1] = playerCtrl.party.GetPartyMemberID();
-                dungeonEntrancePV.RPC("OnEnterDungeon", RpcTarget.AllBuffered, true, partyPlayersID, roomName);
+                roomName = PhotonView.Find(partyPlayersID[0]).Controller.NickName;
+                this.transform.localScale = new Vector3(this.transform.localScale.x - 0.2f, this.transform.localScale.y - 0.2f, this.transform.localScale.z - 0.2f);
+                foreach (int playerID in partyPlayersID)
+                {
+                    PhotonView playerView = PhotonView.Find(playerID);
+                    playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID, roomName);
+                }
             }
 
             //for test
             // partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
             // PhotonView playerView = PhotonView.Find(partyPlayersID[0]);
-            // playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, true, partyPlayersID[0], roomName);
+            // playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID[0], roomName);
         }
     }
     void CreateRoom()
