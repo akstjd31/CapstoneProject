@@ -11,7 +11,7 @@ public class Party : MonoBehaviourPun, IPunObservable
 
     [SerializeField] private int partyLeaderID = -1;
     [SerializeField] private int partyMemberID = -1;
-    public PlayerCtrl[] partyMembers = new PlayerCtrl[2];
+    //public PlayerCtrl[] partyMembers = new PlayerCtrl[2];
 
     private int MAX_MEMBER = 2;
 
@@ -69,6 +69,11 @@ public class Party : MonoBehaviourPun, IPunObservable
     // 파티 목록에 보여지는 텍스트 업데이트
     private void Update()
     {
+        if (GetPartyHeadCount() == 0)
+        {
+            PhotonNetwork.Destroy(this.gameObject);
+        }
+
         Title.text = context + " ( " + GetPartyHeadCount() + " / " + MAX_MEMBER + " )";
     }
 

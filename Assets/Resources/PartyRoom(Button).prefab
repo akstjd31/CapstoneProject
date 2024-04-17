@@ -251,9 +251,6 @@ MonoBehaviour:
   Title: {fileID: 7247056707108588929}
   partyLeaderID: -1
   partyMemberID: -1
-  partyMembers:
-  - {fileID: 0}
-  - {fileID: 0}
   partyID: 0
 --- !u!114 &-7818603179170008430
 MonoBehaviour:

@@ -56,8 +56,7 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
         playerCtrl = other.GetComponent<PlayerCtrl>();
         if(playerCtrl.isPartyMember)
         {
-            if(playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2 
-            && playerCtrl.party.partyMembers[0].GetComponent<PhotonView>().ViewID == playerCtrl.GetComponent<PhotonView>().ViewID)
+            if(playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2)
             {
                 roomName = playerCtrl.GetComponent<PhotonView>().Controller.NickName;
                 partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
