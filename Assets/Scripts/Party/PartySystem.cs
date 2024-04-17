@@ -138,8 +138,8 @@ public class PartySystem : MonoBehaviourPunCallbacks
                 // 해당 플레이어가 파티에 가입이 되어있는지
                 if (!playerCtrl.isPartyMember)
                 {
-
-                    canvasPV.RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID);
+                    GameObject room = PhotonNetwork.InstantiateRoomObject(partyRoom.name, Vector3.zero, Quaternion.identity);
+                    this.GetComponent<PhotonView>().RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID, room.GetComponent<PhotonView>().ViewID);
                     Debug.Log(PhotonNetwork.NickName + " 님이 파티를 생성하였습니다.");
                     partyCreator.SetActive(false);
                     playerCtrl.party.partyMembers[0] = playerCtrl;
@@ -227,7 +227,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
                 // 파티원으로 제대로 들어갔다면 
                 if (secondPlayerCtrl != null)
                 {
-                    canvasPV.RPC("JoinPartyRPC", RpcTarget.AllBuffered, party.partyID, secondPlayerCtrl.GetComponent<PhotonView>().ViewID);
+                    canvasPV.RPC("JoinPartyRPC", RpcTarget.AllBuffered, party.GetComponent<PhotonView>().ViewID, secondPlayerCtrl.GetComponent<PhotonView>().ViewID);
                     secondPlayerCtrl.party.partyMembers[1] = secondPlayerCtrl;
                     createPartyButton.SetActive(false);
                     readyButton[0].SetActive(true);
@@ -239,36 +239,37 @@ public class PartySystem : MonoBehaviourPunCallbacks
     [PunRPC]
     public void JoinPartyRPC(int partyID, int playerViewID)
     {
-        int partyIdx = -1;
+        PhotonView target = PhotonView.Find(partyID);
+        Party party = target.GetComponent<Party>();
 
-        // 가입하려는 파티의 ID로 파티리스트에서 찾아 인덱스를 얻어온다.
-        for (int i = 0; i < parties.Count; i++)
+        
+        //int partyIdx = -1;
+
+        //// 가입하려는 파티의 ID로 파티리스트에서 찾아 인덱스를 얻어온다.
+        //for (int i = 0; i < parties.Count; i++)
+        //{
+        //    if (parties[i].partyID == partyID)
+        //    {
+        //        partyIdx = i;
+        //    }
+        //}
+
+        if (target != null)
         {
-            if (parties[i].partyID == partyID)
-            {
-                partyIdx = i;
-            }
-        }
+            PlayerCtrl playerCtrl = PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>();
 
-        PlayerCtrl playerCtrl = PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>();
-
-        // 가입을 원하는 플레이어가 특정 파티에 가입되어 있는지 확인
-        if (!playerCtrl.isPartyMember)
-        {
-            if (partyIdx != -1)
+            // 가입을 원하는 플레이어가 특정 파티에 가입되어 있는지 확인
+            if (!playerCtrl.isPartyMember)
             {
+
                 playerCtrl.isPartyMember = true;
-                playerCtrl.party = parties[partyIdx];
+                playerCtrl.party = party;
                 playerCtrl.party.SetPartyMemberID(playerViewID);
-            }
-            else
-            {
-                Debug.Log("해당 파티를 찾을 수 없습니다!");
             }
         }
         else
         {
-            Debug.Log(PhotonNetwork.NickName + " 님은 특정 파티에 속해 있습니다!");
+            Debug.Log("해당 파티를 찾을 수 없습니다!");
         }
     }
 
@@ -285,33 +286,27 @@ public class PartySystem : MonoBehaviourPunCallbacks
             // 나간 플레이어가 파티에 속해 있었다면
             if (playerCtrl.isPartyMember)
             {
-                for (var i = 0; i < parties.Count; i++)
-                {
-                    if (playerCtrl.party.partyID == parties[i].partyID)
-                    {
-                        // 나간 플레이어가 리더였다면?
-                        if (parties[i].GetPartyLeaderID() == playerPV.ViewID)
-                        {
-                            // 그 파티가 인원이 꽉 찬 파티였다면?
-                            if (parties[i].GetPartyHeadCount() == 2)
-                            {
-                                parties[i].SetPartyLeaderID(parties[i].GetPartyMemberID());
-                                parties[i].SetPartyMemberID(-1);
-                            }
-                            else
-                            {
-                                parties[i].GetComponent<Button>().onClick.RemoveListener(OnClickJoinPartyButton);
-                                Destroy(parties[i].gameObject);
-                                parties.Remove(parties[i]);
-                            }
-                        }
-                        else
-                        {
-                            parties[i].SetPartyMemberID(-1);
-                        }
+                PhotonView partyRoomPV = PhotonView.Find(playerCtrl.party.GetComponent<PhotonView>().ViewID);
+                Party party = partyRoomPV.GetComponent<Party>();
 
-                        break;
+                // 나간 플레이어가 리더였다면?
+                if (party.GetPartyLeaderID() == playerPV.ViewID)
+                {
+                    // 그 파티가 인원이 꽉 찬 파티였다면?
+                    if (party.GetPartyHeadCount() == 2)
+                    {
+                        int tmp = party.GetPartyMemberID();
+                        party.SetPartyLeaderID(tmp);
+                        party.SetPartyMemberID(-1);
                     }
+                    else
+                    {
+                        PhotonNetwork.Destroy(party.gameObject);
+                    }
+                }
+                else if (party.GetPartyMemberID() == playerPV.ViewID)
+                {
+                    party.SetPartyMemberID(-1);
                 }
             }
             else
@@ -370,8 +365,11 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     {
                         parties[partyIdx].SetPartyLeaderID(parties[partyIdx].GetPartyMemberID());
                         parties[partyIdx].SetPartyMemberID(-1);
+
+                        PhotonView.Find(parties[partyIdx].GetPartyLeaderID()).GetComponent<PlayerCtrl>().party.GetComponent<PhotonView>().RequestOwnership();
+
                         playerCtrl.party.partyMembers[0] = playerCtrl.party.partyMembers[1];
-                        playerCtrl.party.partyMembers[0] = null;
+                        playerCtrl.party.partyMembers[1] = null;
                     }
                     else if (parties[partyIdx].GetPartyMemberID() == viewID)
                     {
@@ -398,13 +396,15 @@ public class PartySystem : MonoBehaviourPunCallbacks
 
     // 파티 생성 RPC
     [PunRPC]
-    public void PartyRoomSetting(string receiveMessage, int playerViewID)
+    public void PartyRoomSetting(string receiveMessage, int playerViewID, int partyRoomViewID)
     {
-        GameObject room = Instantiate(partyRoom, Vector3.zero, Quaternion.identity, content.transform);
-        room.transform.parent = content.transform;
+        
+        //GameObject room = Instantiate(partyRoom, Vector2.zero, Quaternion.identity, content.transform);
 
-        //PhotonView partyPV = PhotonView.Find(partyRoomViewID);
-        Party newParty = room.GetComponent<Party>();
+        PhotonView partyPV = PhotonView.Find(partyRoomViewID);
+        partyPV.transform.parent = content.transform;
+
+        Party newParty = partyPV.GetComponent<Party>();
         newParty.SetContext(receiveMessage);
         newParty.SetPartyLeaderID(playerViewID);
         newParty.partyID = partyRoomID;
@@ -416,7 +416,6 @@ public class PartySystem : MonoBehaviourPunCallbacks
 
         PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>().party = newParty;
         PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>().isPartyMember = true;
-
         //canvasPV.RPC("AddPartyRoomList", RpcTarget.AllBuffered, partyRoomViewID);
     }
 }

@@ -17,16 +17,23 @@ public class Party : MonoBehaviourPun, IPunObservable
 
     public int partyID;
 
+    private void Start()
+    {
+        if (context == "" && GetPartyHeadCount() > 0)
+        {
+            PhotonView leaderPV = PhotonView.Find(partyLeaderID);
+            Title.text = leaderPV.GetComponent<PlayerCtrl>().party.GetContext();
+        }
+    }
+
     public int GetPartyHeadCount()
     {
         if (partyLeaderID != -1 && partyMemberID != -1)
         {
             return 2;
         }
-        else
-        {
-            return 1;
-        }
+
+        return 1;
     }
 
     public void SetPartyLeaderID(int leaderID)
@@ -71,11 +78,13 @@ public class Party : MonoBehaviourPun, IPunObservable
         {
             stream.SendNext(partyLeaderID);
             stream.SendNext(partyMemberID);
+            stream.SendNext(context);
         }
         else
         {
             this.partyLeaderID = (int)stream.ReceiveNext();
             this.partyMemberID = (int)stream.ReceiveNext();
+            this.context = (string)stream.ReceiveNext();
         }
     }
 }
