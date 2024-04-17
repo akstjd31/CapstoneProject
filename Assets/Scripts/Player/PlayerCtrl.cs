@@ -70,6 +70,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
     GameObject inventory;
 
+
     Vector3 mouseWorldPosition;
     // Getter
     public State GetState()
@@ -111,7 +112,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-            if (state != State.ATTACK && !chatScript.chatView.activeSelf)
+            if (state != State.ATTACK && !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
             {
 
                 if (moveDir.x != 0 || moveDir.y != 0)
@@ -126,7 +127,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
 
             // 공격 & 공격 쿨타임 끝나면
-            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && !EventSystem.current.currentSelectedGameObject && !inventory.activeSelf)
+            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && !EventSystem.current.currentSelectedGameObject && !inventory.activeSelf && !chatScript.chatView.activeSelf)
             {
                 state = State.ATTACK;
 
@@ -161,7 +162,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
 
             // 채팅 입력
-            if (Input.GetKeyDown(KeyCode.Return))
+            if (Input.GetKeyDown(KeyCode.Return) && !partySystemScript.partyCreator.activeSelf)
             {
                 if (!chatScript.inputField.isFocused)
                 {
@@ -170,7 +171,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape) && !partySystemScript.partyCreator.activeSelf)
             {
                 chatScript.inputField.text = "";
                 chatScript.inputField.DeactivateInputField();
@@ -179,7 +180,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
             
             // 인벤토리 열기
-            if (Input.GetKeyDown(KeyCode.I) && !chatScript.chatView.activeSelf)
+            if (Input.GetKeyDown(KeyCode.I) && !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
             {
                 inventory.SetActive(!inventory.activeSelf);
             }

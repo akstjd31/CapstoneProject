@@ -85,6 +85,9 @@ MonoBehaviour:
   - JoinRoom
   - JoinRoom_
   - OnEnterDungeon
+  - AddNewPlayerViewID
+  - RemoveLeftPlayerViewID
+  - RemovePlayerViewID
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
