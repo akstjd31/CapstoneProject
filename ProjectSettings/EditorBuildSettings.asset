@@ -12,27 +12,12 @@ EditorBuildSettings:
     path: Assets/Scenes/NameScene.unity
     guid: 5ab34c222c5d18d41a5aada2863dfa1e
   - enabled: 1
-    path: Assets/Scenes/SelectCharacter.unity
-    guid: 45f4a545c89f71d418ceb3f876d5c50d
-  - enabled: 1
-    path: Assets/Scenes/DungeonScene.unity
-    guid: 411f974a66dee2a40bc14892d79402ad
-  - enabled: 1
     path: Assets/Scenes/GameScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
-    path: Assets/Scenes/Map1.unity
-    guid: 3aa2472bf581e1f448ff7b1f38438d68
-  - enabled: 1
-    path: Assets/Scenes/Map2.unity
-    guid: fc49792f75c298b44a375aea5016215d
-  - enabled: 1
-    path: Assets/Scenes/Map3.unity
-    guid: 8cd96ea259239d94e891c79094d9a1cf
   - enabled: 1
     path: Assets/Scenes/LobbyScene.unity
     guid: bf4ac24e2c73a41ac91c64b4285e497d
   - enabled: 1
-    path: Assets/Scenes/SelectCharacter.unity
-    guid: 45f4a545c89f71d418ceb3f876d5c50d
+    path: Assets/Scenes/DungeonScene.unity
+    guid: 411f974a66dee2a40bc14892d79402ad
   m_configObjects: {}
