@@ -8,65 +8,174 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using System.Web;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UserData : MonoBehaviour
 {
     private static FirebaseAuth auth;
     private static string authEmail;
+    private static Text loginErrorMsg;
+    private static bool isCompleteLoginProgress;
     //private string authPassword = "asdf";
     //안드로이드 디지털 지문 //https://www.youtube.com/watch?v=AiXIAe6on5M&t=563s
-    
+
     public static bool CanEnter()
     {
         return auth != null;
     }
 
-    public static async void RegisterWithEmail_Password(string email, string password, Dictionary<string, object> initData = null)
+    public static async Task RegisterWithEmail_Password(string email, string password, Dictionary<string, object> initData = null)
     {
-        FirebaseAuth auth = FirebaseAuth.DefaultInstance;
-        //회원가입
-        auth.CreateUserWithEmailAndPasswordAsync(email, password);
-        //로그인
+        auth = FirebaseAuth.DefaultInstance;
+        authEmail = email;
+
+        await auth.CreateUserWithEmailAndPasswordAsync(email, password);
         await auth.SignInWithEmailAndPasswordAsync(email, password);
 
-        //auth = FirebaseAuth.DefaultInstance;
-        //authEmail = email;
+        UserInfoManager.SetCurrentUser(auth.CurrentUser);
 
-        //await auth.CreateUserWithEmailAndPasswordAsync(email, password);
-        //await auth.SignInWithEmailAndPasswordAsync(email, password);
+        await MakeDB_New(initData);
+        //캐릭터 별 데이터를 생성
+        //await MakeDB_Char();
 
-        MakeDB(initData);
+        SceneManager.LoadScene("SelectCharacter");
 
+        /*
         Button btn_photon = GameObject.Find("Submit")?.GetComponent<Button>();
         if (btn_photon != null)
         {
             btn_photon.onClick.Invoke();
         }
+        */
     }
 
-    public void SigninWithEmail()
+    public static void SigninWithEmail()
     {
-        SigninWithEmailAsync();
+        SigninWithEmailAsync2();
     }
 
-    public async void SigninWithEmailAsync()
+    public static async void SigninWithEmailAsync2()
+    {
+        //auth = FirebaseAuth.DefaultInstance;
+
+        string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text.Trim();
+        string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text.Trim();
+
+        AuthResult result;
+
+        //로그인 시도
+        try
+        {
+            Debug.Log($"auth2 : {auth.CurrentUser}\n{email}\t{password}");
+            //await auth.SignInWithEmailAndPasswordAsync(email, password);
+
+            // SignInWithEmailAndPasswordAsync 메서드를 비동기적으로 호출하고 결과를 기다림
+            result = await auth.SignInWithEmailAndPasswordAsync(email, password);
+
+            Debug.Log("end of sign in");
+        }
+        catch(Exception ex)
+        {
+            Debug.Log($"auth2 failed : {ex.StackTrace}");
+            Debug.Log($"auth2 failed : {ex.Message}");
+            return;
+        }
+    }
+
+    public static async void SigninWithEmailAsync()
     {
         auth = FirebaseAuth.DefaultInstance;
 
-        string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text;
-        string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text;
+        isCompleteLoginProgress = false;
 
-        await auth.SignInWithEmailAndPasswordAsync(email, password);
-        await SetNickname();
+        string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text.Trim();
+        string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text.Trim();
+        string[] LoginErrorMsg = {
+            "이메일과 비밀번호를 입력해주세요",
+            "잘못된 이메일 또는 비밀번호 입니다"
+        };
 
-        Button btn_photon = GameObject.Find("Submit")?.GetComponent<Button>();
-        if (btn_photon != null)
+        if (email.Equals("") || password.Equals(""))
         {
-            btn_photon.onClick.Invoke();
+            loginErrorMsg.text = LoginErrorMsg[0]; //종료 시 오류 발생(실행 중 오류 없음), NullReferenceException: Object reference not set to an instance of an object
+            return;
         }
+
+        //create-delete 하지 않고 가입된 이메일인지 판단 필요
+        //가입되지 않은 계정이면 종료
+        bool isRegisteredAccount = await IsExistAccount(email);
+        Debug.Log($"in login process : {isRegisteredAccount}");
+
+        //가입된 계정인 경우에만 로그인 시도
+        if (isRegisteredAccount)
+        {
+            AuthResult result;
+
+            //로그인 시도
+            try
+            {
+                Debug.Log($"auth : {auth.CurrentUser}\n{email}\t{password}");
+                //await auth.SignInWithEmailAndPasswordAsync(email, password);
+
+                // SignInWithEmailAndPasswordAsync 메서드를 비동기적으로 호출하고 결과를 기다림
+                result = await auth.SignInWithEmailAndPasswordAsync(email, password);
+
+                Debug.Log("end of sign in");
+            } catch
+            {
+                loginErrorMsg.text = LoginErrorMsg[1] + "\n로그인 실패";
+
+                return;
+            }
+
+            loginErrorMsg.text = "";
+            isCompleteLoginProgress = true;
+
+
+            SceneManager.LoadScene("SelectCharacter");
+            /*
+            Button btn_photon = GameObject.Find("Submit")?.GetComponent<Button>();
+            if (btn_photon != null && isRegisteredAccount)
+            {
+                btn_photon.onClick.Invoke();
+            }
+            */
+        }
+        else    //가입되지 않은 이메일인 경우
+        {
+            loginErrorMsg.text = LoginErrorMsg[1];
+        }
+    }
+
+    private static async Task<bool> IsExistAccount(string email)
+    {
+        bool isRegisteredAccount = false;
+        Debug.Log($"check accout : {email}");
+
+        //가입된 이메일인지 확인
+        await auth.FetchProvidersForEmailAsync(email).ContinueWith((authTask) =>
+        {
+            if (authTask.IsCanceled)
+            {
+                Debug.Log("Provider fetch canceled.");
+            }
+            else if (authTask.IsFaulted)
+            {
+                Debug.Log("Provider fetch encountered an error.");
+                Debug.Log(authTask.Exception.ToString());
+            }
+            else if (authTask.IsCompleted)
+            {
+                Debug.Log($"Email Providers: {authTask.Result}");
+                isRegisteredAccount = true;
+            }
+        });
+
+        return isRegisteredAccount;
     }
 
     public void LogoutWithEmail_Password()
@@ -83,48 +192,47 @@ public class UserData : MonoBehaviour
         }
     }
 
-    public async Task SetNickname()
+    public static async Task SetNickname(string nickname)
     {
-        string name = "";
-        // Firebase 占쏙옙占쏙옙 占쏙옙 Firestore 占십깍옙화
-        auth = FirebaseAuth.DefaultInstance;
+        FirebaseUser user = auth.CurrentUser;
+        if (user == null)
+        {
+            Debug.Log("failed to update user name: user is null");
+            return;
+        }
+
+        // Firestore 인스턴스 생성
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
-        // 占쏙옙占쏙옙 占쏙옙占쏙옙占 占쏙옙占쏙옙占쏙옙占쏙옙
-        FirebaseUser user = auth.CurrentUser;
+        // 데이터를 저장할 컬렉션과 문서 참조
+        CollectionReference coll_userdata = db.Collection("User");
+        CollectionReference coll_nickname = db.Collection("Nickname");
 
-        // 占쏙옙占쏙옙 占쏙옙占쏙옙微占 占싸깍옙占싸되억옙 占쌍댐옙占쏙옙 확占쏙옙
-        if (user != null)
-        {
-            // 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙占 UID 占쏙옙占쏙옙占쏙옙占쏙옙
-            string uid = user.UserId;
-            
-            // Firestore占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙占 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙
-            DocumentReference docRef = db.Collection(authEmail).Document("User_Data");
+        DocumentReference doc_user = coll_userdata.Document(GetUserId());
+        DocumentReference doc_nickname = coll_nickname.Document(GetUserId());
 
-            // 占쏙옙占쏙옙 占싻깍옙
-            await docRef.GetSnapshotAsync().ContinueWith(task =>
-            {
-                if (task.IsCompleted)
-                {
-                    DocumentSnapshot snapshot = task.Result;
-                    if (snapshot.Exists)
-                    {
-                        Debug.Log("Document data: " + snapshot.ToDictionary()["userName"]);
-                        name = snapshot.ToDictionary()["userName"].ToString();
-                        PhotonNetwork.NickName = name;
-                    }
-                    else
-                    {
-                        Debug.Log("Document does not exist!");
-                    }
-                }
-            });
-        }
-        else
+        // 업데이트할 필드와 값 설정
+        Dictionary<string, object> updates = new Dictionary<string, object>
         {
-            Debug.Log("No user is currently logged in.");
-        }
+            { "userData.userName", nickname }
+        };
+
+        // 사용자 문서의 userName 필드 업데이트
+        await doc_user.UpdateAsync(updates);
+
+        // 닉네임 컬렉션에 새로운 닉네임 값을 저장
+        Dictionary<string, object> nicknameData = new Dictionary<string, object>
+        {
+            { "nickname", nickname }
+        };
+        await doc_nickname.SetAsync(nicknameData);
+
+        Debug.Log("User name updated successfully!");
+    }
+
+    public static bool GetLoginState()
+    {
+        return isCompleteLoginProgress;
     }
 
     /*
@@ -253,6 +361,10 @@ public class UserData : MonoBehaviour
                 return;
             }
         });
+
+        loginErrorMsg = GameObject.Find("Error_msg").GetComponent<Text>();
+        loginErrorMsg.text = "";
+        isCompleteLoginProgress = false;
     }
 
     /*
@@ -703,22 +815,18 @@ public class UserData : MonoBehaviour
     {
         string userId = authEmail;
 
-        // Firebase 占십깍옙화
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             if (task.IsCompleted)
             {
-                // 占쏙옙占쏙옙占 占쏙옙占쏙옙 占쏙옙占쏙옙 확占쏙옙
                 FirebaseUser user = auth.CurrentUser;
                 if (user != null)
                 {
-                    // 占쏙옙占쏙옙微占 占쏙옙占쏙옙占실억옙占쏙옙占쏙옙, 占식븝옙占쌘몌옙 占쏙옙占쏙옙求占.
                     userId = user.UserId;
                     Debug.Log("User ID: " + userId);
                 }
                 else
                 {
-                    // 占쏙옙占쏙옙微占 占쏙옙占쏙옙占쏙옙占쏙옙 占십았쏙옙占싹댐옙.
                     Debug.Log("User is not authenticated.");
                 }
             }
@@ -731,8 +839,7 @@ public class UserData : MonoBehaviour
         return userId;
     }
     
-    /*
-    public void MakeDB_GoogleSocial()
+    public static async Task MakeDB_New(Dictionary<string, object> param = null)
     {
         FirebaseUser user = auth.CurrentUser;
         if (user == null)
@@ -740,145 +847,112 @@ public class UserData : MonoBehaviour
             Debug.Log("failed makeDB : user is null");
             return;
         }
-
-        Debug.Log("processing makeDB");
-
-        //占싱뱄옙 占쏙옙占쏙옙占싶곤옙 占쏙옙占쏙옙占싹댐옙 占쏙옙占쏙옙 占쌕뤄옙 return
-
-
-        // Firestore 占싸쏙옙占싹쏙옙 占쏙옙占쏙옙
-        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-
-
-
-        // 占쏙옙占쏙옙占싶몌옙 占쏙옙占쏙옙占쏙옙 占시뤄옙占실곤옙 占쏙옙占쏙옙 占쏙옙占쏙옙
-        CollectionReference coll_userdata = db.Collection(GetUserId());
-
-        DocumentReference doc_userdata = coll_userdata.Document("User_Data");
-        DocumentReference doc_skill = coll_userdata.Document("Skill");
-
-
-        // 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙
-        Dictionary<string, object> dungeonProgress = new Dictionary<string, object>
-        {
-            { "first", 0 },
-            { "second", 0 }
-        };
-
-        //근접 캐릭터 스킬 정보
-        Dictionary<string, object> char_skill_Melee = new Dictionary<string, object>
-        {
-            { "melee_skill_01", "0" },
-            { "melee_skill_02", "0" },
-            { "melee_skill_03", "0" },
-            { "melee_skill_04", "0" },
-            { "melee_skill_05", "0" }
-        };
-
-        //원거리 캐릭터 스킬 정보
-        Dictionary<string, object> char_skill_Ranged = new Dictionary<string, object>
-        {
-            { "range_skill_01", "0" },
-            { "range_skill_02", "0" },
-            { "range_skill_03", "0" },
-            { "range_skill_04", "0" },
-            { "range_skill_05", "0" }
-        };
-
-        //유저 귀속 스킬 정보
-        Dictionary<string, object> skillData = new Dictionary<string, object>
-        {
-            { "Melee", char_skill_Melee },
-            { "Range", char_skill_Ranged }
-        };
-
-        //유저의 컬랙션
-        Dictionary<string, object> userData = new Dictionary<string, object>
-        {
-            { "isGoogleSocial", true },
-            { "userName", "projecting name" },
-            { "email", GetUserId() },
-            { "photon_ID", "rewrite photon id" },
-            { "dungeon_progress", dungeonProgress },
-        };
-
-        // 유저의 정보를 Firestore DB에 저장
-        doc_userdata.SetAsync(userData);
-        doc_skill.SetAsync(skillData);
-    }
-    */
-    
-    public static void MakeDB(Dictionary<string, object> param)
-    {
-        FirebaseUser user = auth.CurrentUser;
-        if (user == null)
-        {
-            Debug.Log("failed makeDB : user is null");
-            return;
-        }
-
-        Debug.Log("processing makeDB");
-
-        //이미 데이터가 존재하는 경우는 바로 return
-
 
         // Firestore 인스턴스 생성
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
 
         // 데이터를 저장할 컬렉션과 문서 참조
-        CollectionReference coll_userdata = db.Collection(GetUserId());
+        CollectionReference coll_userdata = db.Collection("User");
 
-        DocumentReference doc_userdata = coll_userdata.Document("User_Data");
-        DocumentReference doc_skill = coll_userdata.Document("Skill");
+        DocumentReference doc_user = coll_userdata.Document(GetUserId());
 
-
-        // 저장할 데이터 생성
-        Dictionary<string, object> dungeonProgress = new Dictionary<string, object>
-        {
-            { "first", 0 },
-            { "second", 0 }
-        };
 
         //근접 캐릭터 스킬 정보
-        Dictionary<string, object> char_skill_Melee = new Dictionary<string, object>
+        Dictionary<string, object> char_skill_warrior = new()
         {
-            { "melee_skill_01", "0" },
-            { "melee_skill_02", "0" },
-            { "melee_skill_03", "0" },
-            { "melee_skill_04", "0" },
-            { "melee_skill_05", "0" }
+            { "warrior_skill_01", "0" },
+            { "warrior_skill_02", "0" },
+            { "warrior_skill_03", "0" },
+            { "warrior_skill_04", "0" },
+            { "warrior_skill_05", "0" }
         };
         
         //원거리 캐릭터 스킬 정보
-        Dictionary<string, object> char_skill_Ranged = new Dictionary<string, object>
+        Dictionary<string, object> char_skill_archer = new()
         {
-            { "range_skill_01", "0" },
-            { "range_skill_02", "0" },
-            { "range_skill_03", "0" },
-            { "range_skill_04", "0" },
-            { "range_skill_05", "0" }
+            { "archer_skill_01", "0" },
+            { "archer_skill_02", "0" },
+            { "archer_skill_03", "0" },
+            { "archer_skill_04", "0" },
+            { "archer_skill_05", "0" }
+        };
+        
+        //캐릭터 스텟
+        Dictionary<string, object> charStats = new()
+        {
+            { "moveSpeed", "10" },
+            { "attackSpeed", "10" },
+            { "maxHealth", "100" },
+            { "defence", "100" },
+            { "power", "10" },
+            { "maxEquipNum", "1" }
         };
 
         //유저 귀속 스킬 정보
-        Dictionary<string, object> skillData = new Dictionary<string, object>
+        Dictionary<string, object> charSkill = new()
         {
-            { "Melee", char_skill_Melee },
-            { "Range", char_skill_Ranged }
+            { "warrior", char_skill_warrior },
+            { "archer", char_skill_archer }
         };
 
+
         //유저의 컬랙션
-        Dictionary<string, object> userData = new Dictionary<string, object>
+        Dictionary<string, object> userData = new()
         {
-            { "userName", param["nickname"] != null ? param["nickname"] : "null" },
+            { "userName", "null" },
             { "email", GetUserId() },
-            { "photon_ID", "rewrite photon id" },
-            { "dungeon_progress", dungeonProgress },
+            { "progress", 0 }
+        };
+        
+        //유저의 컬랙션
+        Dictionary<string, object> charData = new()
+        {
+            { "type", "null" },   //캐릭터 선택 후 업데이트
+            { "stats", charStats },
+            { "skill",  charSkill },
+            { "itemList", new List<string>() },
+            { "stack", 0 }
+        };
+        
+        Dictionary<string, object> userContainer = new()
+        {
+            { "userData", userData },
+            { "charData", charData }
         };
 
 
         // 데이터를 Firestore에 저장
-        doc_userdata.SetAsync(userData);
-        doc_skill.SetAsync(skillData);
+        await doc_user.SetAsync(userContainer);
+    }
+
+    public static async Task MakeDB_Char()
+    {
+        // Firestore 인스턴스 생성
+        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+
+        // 데이터를 저장할 컬렉션과 문서 참조
+        CollectionReference coll_char = db.Collection("CharData");
+
+        DocumentReference doc_warrior = coll_char.Document("warrior");
+        DocumentReference doc_archer = coll_char.Document("archer");
+
+        Dictionary<string, object> warriorData = new()
+        {
+            { "attackRange", 20 },
+            { "attackDistance", 10 },
+            { "rollingDistance", 10 }
+        };
+        
+        Dictionary<string, object> archerData = new()
+        {
+            { "attackRange", 10 },
+            { "attackDistance", 50 },
+            { "rollingDistance", 20 }
+        };
+
+        await doc_warrior.SetAsync(warriorData);
+        await doc_archer.SetAsync(archerData);
     }
 }

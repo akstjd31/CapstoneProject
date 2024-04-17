@@ -20,23 +20,33 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     [SerializeField]
     Button inputButton;
 
-    private int isSocialLogin = 0;
+    [SerializeField]
+    private bool usingInputField = true;
+    private static string nickname = "";
 
     void Start()
     {
-        inputText.ActivateInputField();
-        //내용이 변경되었을때
-        inputText.onValueChanged.AddListener(OnValueChanged);
-        //내용을 제출했을때
-        inputText.onSubmit.AddListener(OnSubmit);
-        //커서가 다른곳을 누르면
-        inputText.onEndEdit.AddListener(
-            (string s) =>
-            {
-                Debug.Log(s + "님이 입장하셨습니다.");
-            }
-        );
-        inputButton.onClick.AddListener(OnClickConnect);
+        //NameScene이 아닌 경우 inputField를 사용하지 않음
+        if(!usingInputField)
+        {
+            
+        }
+        else
+        {
+            inputText.ActivateInputField();
+            //내용이 변경되었을때
+            inputText.onValueChanged.AddListener(OnValueChanged);
+            //내용을 제출했을때
+            inputText.onSubmit.AddListener(OnSubmit);
+            //커서가 다른곳을 누르면
+            inputText.onEndEdit.AddListener(
+                (string s) =>
+                {
+                    Debug.Log(s + "님이 입장하셨습니다. temp");
+                }
+            );
+            inputButton.onClick.AddListener(OnClickConnect);
+        }
     }
 
     void OnValueChanged(string s)
@@ -55,7 +65,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("마스터 서버 접속 성공");
 
         //나의 이름을 포톤에 설정
-        PhotonNetwork.NickName = inputText.text;
+        PhotonNetwork.NickName = inputText != null ? inputText.text : nickname;
         PhotonNetwork.AutomaticallySyncScene = true;
         //로비진입
         PhotonNetwork.JoinLobby();
@@ -73,6 +83,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     public void OnClickConnect()
     {
+        /*
         //다른 로그인 방법을 사용 중인지
         if(isSocialLogin == 1)
         {
@@ -96,6 +107,12 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.ConnectUsingSettings();
         }
+        */
+
+        if(UserData.GetLoginState())
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
     }
 
     //회원가입 시 호출되는 메소드
@@ -103,5 +120,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         // 마스터 서버 접속 요청
         PhotonNetwork.ConnectUsingSettings();
+    }
+
+    public static void SetNickname(string nick)
+    {
+        nickname = nick;
     }
 }
