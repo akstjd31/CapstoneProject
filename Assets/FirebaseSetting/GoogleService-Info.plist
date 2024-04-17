@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1016782419124-ute2hmiien81nef1ncrlnki30b1a06a5.apps.googleusercontent.com</string>
+	<string>1049753969677-2q7h4df5jics1lk32vgnnvek35lclnbn.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1016782419124-ute2hmiien81nef1ncrlnki30b1a06a5</string>
+	<string>com.googleusercontent.apps.1049753969677-2q7h4df5jics1lk32vgnnvek35lclnbn</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1049753969677-03d5soahqtdi67f1l82hvhgsfe9qn6cg.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBa571fFz0_MYzDy7P73tjXStPANTPFsmw</string>
+	<string>AIzaSyBFMXKoO26tmcg0pnY2RHKbcDvu4S7cpgQ</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1016782419124</string>
+	<string>1049753969677</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>hallym.capstone.photon</string>
 	<key>PROJECT_ID</key>
-	<string>capstoneproject2-c5a4f</string>
+	<string>capstoneproject-8992c</string>
 	<key>STORAGE_BUCKET</key>
-	<string>capstoneproject2-c5a4f.appspot.com</string>
+	<string>capstoneproject-8992c.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1016782419124:ios:71eb67f89bf04dc3bd13e1</string>
+	<string>1:1049753969677:ios:ce217286c9204547506144</string>
 </dict>
 </plist>

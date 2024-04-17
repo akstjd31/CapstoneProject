@@ -1,12 +1,6 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Assets/Images.meta
-guid: bf78400e6f5a7cd4c9eec7e0f9dfd7c4
-folderAsset: yes
-DefaultImporter:
-========
 guid: d6fea7be6bb23b34ab1cefe09299208b
 PrefabImporter:
->>>>>>>> upstream/main:Assets/Resources/Dungeon/Player4Test.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 
