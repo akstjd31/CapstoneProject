@@ -76,45 +76,4 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
             // playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID[0], roomName);
         }
     }
-    void CreateRoom()
-    {
-        // 방 생성
-        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 2 });
-        // foreach (int playerID in partyPlayerIDs)
-        // {
-        //     PhotonView playerView = PhotonView.Find(playerID);
-        //     if (playerView != null)
-        //     {
-        //         playerView.RPC("JoinRoom", RpcTarget.AllBuffered, roomName);
-        //     }
-        // }
-
-        //for test
-        PhotonView playerView = PhotonView.Find(partyPlayersID[0]);
-        playerView.RPC("JoinRoom_", RpcTarget.AllBuffered, roomName);
-        PhotonNetwork.LoadLevel(sceneName);
-        Debug.Log("방 생성 성공");
-    }
-
-    // public override void OnCreatedRoom()
-    // {
-    //     base.OnCreatedRoom();
-
-    // }
-
-    [PunRPC]
-    public void JoinRoom_(string roomName)
-    {
-        PhotonNetwork.JoinRoom(roomName);
-        Debug.Log("방 입장 성공");
-        PhotonNetwork.Instantiate("Unit000", Vector2.zero, Quaternion.identity);
-    }
-
-    // public override void OnJoinedRoom()
-    // {
-    //     base.OnJoinedRoom();
-
-    //     Debug.Log("방 입장 성공");
-    //     PhotonNetwork.Instantiate("Unit000", Vector2.zero, Quaternion.identity);
-    // }
 }
