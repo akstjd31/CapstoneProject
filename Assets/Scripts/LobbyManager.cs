@@ -22,8 +22,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             // 이미 생성된 방이 하나 이상 존재하는지 확인
             if (roomCount > 0)
             {
-                // 첫 번째로 찾은 방에 들어가기
-                PhotonNetwork.JoinRoom("Lobby");
+                // if(!enteringDungeon)
+                // {
+                    // 첫 번째로 찾은 방에 들어가기
+                    PhotonNetwork.JoinRoom("Lobby");
+                // }
             }
             else
             {
@@ -75,8 +78,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("새로운 플레이어가 입장했습니다: " + newPlayer.NickName);
         // 새로운 플레이어에게 환영 메시지 표시 등의 처리
-
-
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
