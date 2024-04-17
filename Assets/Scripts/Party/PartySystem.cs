@@ -29,8 +29,6 @@ public class PartySystem : MonoBehaviourPunCallbacks
 
     private const string PartiesKey = "Parties";
 
-    private const string PartiesKey = "Parties";
-
     private void Start()
     {
         lobbyManager = GameObject.Find("LobbyManager").GetComponent<LobbyManager>();
