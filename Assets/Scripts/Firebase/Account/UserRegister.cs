@@ -11,8 +11,9 @@ using UnityEngine.UI;
 public class UserRegister : MonoBehaviour
 {
     public GameObject EmailRegisterPopup;
-    private int errCode;    //ÀÔ·Â Áß ¹ß»ıÇÑ ¿À·ùÀÇ Á¾·ù
-    //1 : ºó Ç×¸ñ Á¸Àç, 2 : ÀÌ¸ŞÀÏ Çü½Ä ¿À·ù, 3 : ºñ¹Ğ¹øÈ£ ±æÀÌ, ÀÏÄ¡ ¿À·ù, 4: Á¸ÀçÇÏ´Â °èÁ¤À» »ı¼ºÇÏ·Á ÇÔ
+    public GameObject Error_Textbox;
+    private int errCode;    //ì…ë ¥ ì¤‘ ë°œìƒí•œ ì˜¤ë¥˜ì˜ ì¢…ë¥˜
+    //1 : ë¹ˆ í•­ëª© ì¡´ì¬, 2 : ì´ë©”ì¼ í˜•ì‹ ì˜¤ë¥˜, 3 : ë¹„ë°€ë²ˆí˜¸ ê¸¸ì´, ì¼ì¹˜ ì˜¤ë¥˜, 4: ì¡´ì¬í•˜ëŠ” ê³„ì •ì„ ìƒì„±í•˜ë ¤ í•¨
 
     void Start()
     {
@@ -36,8 +37,8 @@ public class UserRegister : MonoBehaviour
 
     public async Task<bool> IsExistAccount(string email, string password)
     {
-        //ÀÌ¹Ì Á¸ÀçÇÏ´Â °èÁ¤ÀÎ °æ¿ì
-        bool SubmitRegister = await IsValidAccountAsync(email, password);
+        //ì´ë¯¸ ì¡´ì¬í•˜ëŠ” ê³„ì •ì¸ ê²½ìš°
+        bool SubmitRegister = await IsValidNewAccountAsync(email, password);
         if (!SubmitRegister)
         {
             errCode = 4;
@@ -49,13 +50,36 @@ public class UserRegister : MonoBehaviour
 
     public async void InnerSubmitRegister()
     {
-        //°ªÀ» ¾Ë¾Æ¾ß ÇÏ´Â ÅÂ±×ÀÇ ºÎ¸ğ
-        string[] tagList = { "Register_Email_Input", "Register_Password_Input", "Register_Password_Confirm_Input", "Register_Nickname_Input" };
+        //ê°’ì„ ì•Œì•„ì•¼ í•˜ëŠ” íƒœê·¸ì˜ ë¶€ëª¨
+        string[] tagList = { "Register_Email_Input", "Register_Password_Input", "Register_Password_Confirm_Input" };
         GameObject parent;
         TextMeshProUGUI textComponent;
         string email = "", password = "", passwordConfirm = "", nickname = "";
 
+        //ë¹ˆ í•­ëª©ì´ ìˆëŠ”ì§€ë§Œ ë¨¼ì € í™•ì¸
+        for (int i = 0; i < tagList.Length; i++)
+        {
+            parent = GameObject.Find(tagList[i]);
 
+            if (parent == null)
+                continue;
+
+            textComponent = parent.GetComponentInChildren<TextMeshProUGUI>();
+            textComponent.text = textComponent.text.Trim();
+            //Debug.Log($"textComponent{i} : {textComponent.text.CompareTo("")} {textComponent.text.Length}");
+
+            //1 : ë¹„ì–´ìˆìŒ, 2 : char 1ê°œ ì…ë ¥
+            if (textComponent.text.Length == 1)
+            {
+                //ë¹ˆ í•­ëª©ì´ ì¡´ì¬í•  ìˆ˜ ì—†ìŒ
+                Debug.Log("empty field is exist");
+                errCode = 1;
+                SetErrorMsg(errCode);
+                return;
+            }
+        }
+
+        //ê° í•­ëª©ì´ ìœ íš¨í•œ ë°ì´í„°ì¸ì§€ í™•ì¸
         for (int i = 0; i < tagList.Length; i++)
         {
             parent = GameObject.Find(tagList[i]);
@@ -66,17 +90,11 @@ public class UserRegister : MonoBehaviour
             textComponent = parent.GetComponentInChildren<TextMeshProUGUI>();
             //Debug.Log($"input text of {tagList[i]} : {textComponent.text}");
 
-            if(textComponent.text == "")
-            {
-                //ºó Ç×¸ñÀÌ Á¸ÀçÇÒ ¼ö ¾øÀ½
-                Debug.Log("empty field is exist");
-                errCode = 1;
-                return;
-            }
-            else if(i == 0 && !IsValidEmail(textComponent.text))
-            {   //ÀÌ¸ŞÀÏ Çü½Ä È®ÀÎ
+            if (i == 0 && !IsValidEmail(textComponent.text))
+            {   //ì´ë©”ì¼ í˜•ì‹ í™•ì¸
                 Debug.Log("The email address is badly formatted");
                 errCode = 2;
+                SetErrorMsg(errCode);
                 return;
             }
 
@@ -97,11 +115,20 @@ public class UserRegister : MonoBehaviour
             }
         }
 
-        //ºñ¹Ğ¹øÈ£¿Í ºñ¹Ğ¹øÈ£ È®ÀÎÀÇ °ªÀº µ¿ÀÏÇØ¾ß ÇÔ & ±æÀÌ Á¦ÇÑ(ÆÄÀÌ¾îº£ÀÌ½º ±âÁØ 6ÀÌ»ó)
-        if(!password.Equals(passwordConfirm) && password.Length > 7)
+        //ë¹„ë°€ë²ˆí˜¸ì™€ ë¹„ë°€ë²ˆí˜¸ í™•ì¸ì˜ ê°’ì€ ë™ì¼í•´ì•¼ í•¨
+        if(!password.Equals(passwordConfirm))
         {
             errCode = 3;
+            SetErrorMsg(errCode);
             Debug.Log("password exception");
+            return;
+        }
+
+        //ë¹„ë°€ë²ˆí˜¸ ê¸¸ì´ ì œí•œ(íŒŒì´ì–´ë² ì´ìŠ¤ ê¸°ì¤€ 6ì´ìƒ)
+        if (!(password.Length > 5))
+        {
+            errCode = 4;
+            SetErrorMsg(errCode);
             return;
         }
 
@@ -109,34 +136,50 @@ public class UserRegister : MonoBehaviour
 
         if (!continueRegister)
         {
-            errCode = 4;
+            errCode = 5;
+            SetErrorMsg(errCode);
             Debug.Log("Account is already exist");
             return;
         }
 
-        //Ãß°¡·Î µî·ÏÇÒ µ¥ÀÌÅÍ ¼³Á¤        //´Ğ³×ÀÓ µî
-        Dictionary<string, object> additionalData = new Dictionary<string, object>();
+        //ì—ëŸ¬ ë©”ì‹œì§€ê°€ ì„¸íŒ…ëœ ì´í›„ ì •ìƒ ê°€ì…ì„ í•˜ëŠ” ê²½ìš° ì—ëŸ¬ ë©”ì‹œì§€ ì‚­ì œ
+        SetErrorMsg(-1);
+
+        //ì¶”ê°€ë¡œ ë“±ë¡í•  ë°ì´í„° ì„¤ì •        //ë‹‰ë„¤ì„ ë“±
+        Dictionary<string, object> additionalData = new();
         additionalData.Add("nickname", nickname);
 
 
-        UserData.RegisterWithEmail_Password(email, password, additionalData);
+        await UserData.RegisterWithEmail_Password(email, password, additionalData);
 
         EmailRegisterPopup.SetActive(false);
 
-        PhotonManager.ConnectWithRegister();
+        //PhotonManager.ConnectWithRegister();
+    }
+
+    private void SetErrorMsg(int type)
+    {
+        string[] msgList = 
+        { "ë¹ˆ í•­ëª©ì´ ì¡´ì¬í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤",
+        "ì˜ëª»ëœ ì´ë©”ì¼ í˜•ì‹ì…ë‹ˆë‹¤",
+        "ë¹„ë°€ë²ˆí˜¸ê°€ ì¼ì¹˜í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤",
+        "ë¹„ë°€ë²ˆí˜¸ëŠ” 6ìë¦¬ ì´ìƒìœ¼ë¡œ ì„¤ì •ë˜ì–´ì•¼ í•©ë‹ˆë‹¤",
+        "ì´ë¯¸ ê°€ì…ëœ ì´ë©”ì¼ì…ë‹ˆë‹¤"};
+
+        Error_Textbox.GetComponent<Text>().text = type != -1 ? msgList[type - 1] : "";
     }
 
     static bool IsValidEmail(string email)
     {
-        // °£´ÜÇÑ ÀÌ¸ŞÀÏ Çü½ÄÀ» È®ÀÎÇÏ´Â Á¤±Ô Ç¥Çö½Ä
+        // ê°„ë‹¨í•œ ì´ë©”ì¼ í˜•ì‹ì„ í™•ì¸í•˜ëŠ” ì •ê·œ í‘œí˜„ì‹
         string pattern = @"[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?";
 
-        // ÀÌ¸ŞÀÏ Çü½Ä È®ÀÎ
+        // ì´ë©”ì¼ í˜•ì‹ í™•ì¸
         return Regex.IsMatch(email, pattern);
     }
 
-    //»ı¼º °¡´ÉÇÑ °èÁ¤ÀÎÁö È®ÀÎ
-    public static async Task<bool> IsValidAccountAsync(string email, string password)
+    //ìƒì„± ê°€ëŠ¥í•œ ê³„ì •ì¸ì§€ í™•ì¸
+    public static async Task<bool> IsValidNewAccountAsync(string email, string password)
     {
         var auth = FirebaseAuth.DefaultInstance;
 
@@ -144,10 +187,10 @@ public class UserRegister : MonoBehaviour
         {
             var createUserResult = await auth.CreateUserWithEmailAndPasswordAsync(email, password);
 
-            // »ç¿ëÀÚ »ı¼ºÀÌ ¼º°øÀûÀ¸·Î ¿Ï·áµÇ¾úÀ¸¸é
+            // ì‚¬ìš©ì ìƒì„±ì´ ì„±ê³µì ìœ¼ë¡œ ì™„ë£Œë˜ì—ˆìœ¼ë©´
             if (createUserResult != null && createUserResult.User != null)
             {
-                // »ç¿ëÀÚ »èÁ¦
+                // ì‚¬ìš©ì ì‚­ì œ
                 var user = createUserResult.User;
                 await user.DeleteAsync();
 
@@ -156,7 +199,7 @@ public class UserRegister : MonoBehaviour
             }
             else
             {
-                // »ç¿ëÀÚ »ı¼º¿¡ ½ÇÆĞÇÑ °æ¿ì
+                // ì‚¬ìš©ì ìƒì„±ì— ì‹¤íŒ¨í•œ ê²½ìš°
                 Debug.LogError("Failed to create user");
                 return false;
             }
@@ -168,7 +211,7 @@ public class UserRegister : MonoBehaviour
         }
     }
     
-    //»ı¼º °¡´ÉÇÑ °èÁ¤ÀÎÁö È®ÀÎ
+    //ìƒì„± ê°€ëŠ¥í•œ ê³„ì •ì¸ì§€ í™•ì¸
     public static bool IsValidAccount(string email, string password)
     {
         var auth = FirebaseAuth.DefaultInstance;
@@ -186,7 +229,7 @@ public class UserRegister : MonoBehaviour
                 return;
             }
 
-            //È®ÀÎÀ» À§ÇÑ °èÁ¤ÀÌ »ı¼ºµÈ °æ¿ì ¹Ù·Î »èÁ¦
+            //í™•ì¸ì„ ìœ„í•œ ê³„ì •ì´ ìƒì„±ëœ ê²½ìš° ë°”ë¡œ ì‚­ì œ
             FirebaseUser user = task.Result.User;
             user.DeleteAsync().ContinueWith(task =>
             {
@@ -201,7 +244,7 @@ public class UserRegister : MonoBehaviour
                     return;
                 }
 
-                // »ç¿ëÀÚ »èÁ¦°¡ ¼º°øÇÑ °æ¿ì
+                // ì‚¬ìš©ì ì‚­ì œê°€ ì„±ê³µí•œ ê²½ìš°
                 Debug.Log("User deleted successfully!");
             });
 
