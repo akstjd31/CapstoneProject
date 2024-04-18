@@ -168,12 +168,10 @@ public class CharType : MonoBehaviour
     private async void InnerSubmitNickname()
     {
         string nickname = nickname_input.text;
-        //Debug.Log($"nickname : {nickname}");
 
         //입력된 닉네임이 중복인 경우
         if(!await IsDuplicationNickname_Async(nickname))
         {
-            //Debug.Log("중복된 닉네임");
             nickname_Error_Text.text = "중복된 닉네임입니다";
             return;
         }
