@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using Photon.Pun;
+using Photon.Voice.Unity;
 using Photon.Realtime;
 
 
@@ -59,8 +60,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     GameObject inventory;
 
-
     Vector3 mouseWorldPosition;
+
+    Recorder recorder;
+
+
+
     // Getter
     public State GetState()
     {
@@ -78,15 +83,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
         partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
+        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").gameObject;
+        recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
 
         state = State.NORMAL;
-        //weaponPV = null;
-        //party = null;
-
-        //partySystemScript.partyCreator.transform.GetComponentInChildren<Button>().onClick.AddListener(OnPartyCreationComplete);
-
-        // 임시로 캔버스 자식 직접 지정(수정 필요)
-        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").gameObject;
+        
 
     }
 
@@ -156,6 +157,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 }
             }
 
+            // 채팅 끄기
             if (Input.GetKeyDown(KeyCode.Escape) && !partySystemScript.partyCreator.activeSelf)
             {
                 chatScript.inputField.text = "";
@@ -168,6 +170,19 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             if (Input.GetKeyDown(KeyCode.I) && !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
             {
                 inventory.SetActive(!inventory.activeSelf);
+            }
+
+            // 보이스 참가하기
+            if (Input.GetKey(KeyCode.T))
+            {
+                if (!chatScript.chatView.activeSelf)
+                {
+                    recorder.TransmitEnabled = true;
+                }
+            }
+            else
+            {
+                recorder.TransmitEnabled = false;
             }
 
             IsPartyHUDActive();

@@ -16,7 +16,7 @@ MonoBehaviour:
     AppIdRealtime: aea2394d-869e-4ad7-924f-72340db32dfe
     AppIdFusion: 
     AppIdChat: 
-    AppIdVoice: 
+    AppIdVoice: 1c81603f-ab31-4d3f-9312-1e8ce654f4db
     AppVersion: 
     UseNameServer: 1
     FixedRegion: 
@@ -88,6 +88,9 @@ MonoBehaviour:
   - AddNewPlayerViewID
   - RemoveLeftPlayerViewID
   - RemovePlayerViewID
+  - CantHearYou
+  - ChangeColour
+  - HeresWhy
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
