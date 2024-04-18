@@ -14,6 +14,7 @@ public class SelectDungeon : MonoBehaviour
     private Sprite PointOn;
     [SerializeField]
     private Sprite PointOff;
+    private Sprite emptySprite;
 
     private int mapSizeWidth = 1920;
     private int mapSizeHeight = 1080;
@@ -22,14 +23,14 @@ public class SelectDungeon : MonoBehaviour
     void Awake()
     {
         dungeonPoints = new Toggle[2];
+        //PointOn = Resources.Load<Sprite>("backyard.png");
+        //PointOff = Resources.Load<Sprite>("dungeon_enter_map.jpg");
 
         MakeDungeonMap();
     }
 
     private void SetDungeonPoint()
     {
-        Debug.Log("enter set point method");
-
         //position of points
         List<List<int>> points = new()
         {
@@ -37,17 +38,18 @@ public class SelectDungeon : MonoBehaviour
             new List<int> { mapSizeWidth / 4 * 3, mapSizeHeight / 2 }
         };
 
-        Toggle toggle;
-        GameObject bg, checkmark;
-        RectTransform toggleRectTransform;
         int cnt = 0;
 
         foreach (List<int> point in points)
         {
+            Toggle toggle;
+            Image bg, checkmark;
+            RectTransform toggleRectTransform;
+
             //structure
             toggle = new GameObject("Toggle").AddComponent<Toggle>();
-            bg = new GameObject("Background");
-            checkmark = new GameObject("Checkmark");
+            bg = new GameObject("Background").AddComponent<Image>();
+            checkmark = new GameObject("Checkmark").AddComponent<Image>();
 
             toggle.transform.SetParent(DungeonCanvas.transform, false);
             bg.transform.SetParent(toggle.transform, false);
@@ -58,47 +60,54 @@ public class SelectDungeon : MonoBehaviour
             toggleRectTransform.sizeDelta = new Vector2(25, 25);
             toggle.graphic = checkmark.GetComponent<Image>();
 
+            if(emptySprite == null)
+            {
+                emptySprite = bg.sprite;
+            }
+
             SetBackground(bg);
             SetCheckmark(checkmark);
 
             toggle.gameObject.transform.position = new Vector2(point[0], point[1]);
+            //initial sprite
+            checkmark.sprite = emptySprite;
+            bg.sprite = PointOff;
+
+            toggle.onValueChanged.AddListener((bool isOn) =>
+            {
+                checkmark.sprite = isOn ? PointOn : emptySprite;
+                bg.sprite = isOn ? null : PointOff;
+            });
 
             dungeonPoints[cnt++] = toggle;
         }
     }
 
-    private void SetCheckmark(GameObject check)
+    private void SetCheckmark(Image check)
     {
-        Sprite checkSprite = Resources.Load<Sprite>("Checkmark");
-
-        CanvasRenderer canvasRenderer = check.AddComponent<CanvasRenderer>();
+        CanvasRenderer canvasRenderer = check.GetComponent<CanvasRenderer>();
         canvasRenderer.cullTransparentMesh = true;
 
-        Image bgImage = check.AddComponent<Image>();
-        bgImage.sprite = checkSprite;
-        bgImage.color = Color.white;
-        bgImage.material = null;
-        bgImage.raycastTarget = true;
-        bgImage.maskable = true;
-        bgImage.type = Image.Type.Sliced;
-        bgImage.fillCenter = true;
+        check.sprite = PointOff;
+        check.color = Color.white;
+        check.material = null;
+        check.raycastTarget = true;
+        check.maskable = true;
+        check.type = Image.Type.Sliced;
+        check.fillCenter = true;
     }
 
-    private void SetBackground(GameObject bg)
+    private void SetBackground(Image bg)
     {
-        Sprite knobSprite = Resources.Load<Sprite>("knob");
-
-        CanvasRenderer canvasRenderer = bg.AddComponent<CanvasRenderer>();
+        CanvasRenderer canvasRenderer = bg.GetComponent<CanvasRenderer>();
         canvasRenderer.cullTransparentMesh = true;
 
-        Image bgImage = bg.AddComponent<Image>();
-        bgImage.sprite = knobSprite;
-        bgImage.color = Color.white;
-        bgImage.material = null;
-        bgImage.raycastTarget = true;
-        bgImage.maskable = true;
-        bgImage.type = Image.Type.Sliced;
-        bgImage.fillCenter = true;
+        bg.color = Color.white;
+        bg.material = null;
+        bg.raycastTarget = true;
+        bg.maskable = true;
+        bg.type = Image.Type.Sliced;
+        bg.fillCenter = true;
     }
 
     private void MakeDungeonMap()
@@ -106,12 +115,10 @@ public class SelectDungeon : MonoBehaviour
         DungeonCanvas = new GameObject("Dungeon_Select");
         DungeonImage = DungeonCanvas.AddComponent<RawImage>();
         DungeonCanvas.transform.SetParent(GameObject.Find("Canvas").transform, false);
-        DungeonCanvas.AddComponent<RectTransform>();
         DungeonCanvas.GetComponent<RectTransform>().sizeDelta = new Vector2(mapSizeWidth, mapSizeHeight);
 
         string imagePath = "dungeon_enter_map";
         Texture2D texture = Resources.Load<Texture2D>(imagePath);
-        Debug.Log($"texture is null : {texture == null}");
         DungeonCanvas.GetComponent<RawImage>().texture = texture;
 
         // 버튼 GameObject 생성
