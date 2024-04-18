@@ -79,11 +79,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
 
     // 새 플레이어가 접속했을 때 호출되는 함수
-    //public override void OnPlayerEnteredRoom(Player newPlayer)
-    //{
-    //    // 새로운 플레이어
-    //    canvasPV.RPC("GetMessage", RpcTarget.All, "Anonymous", newPlayer.NickName + " 님이 입장했습니다!");
-    //}
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        Debug.Log("새로운 플레이어가 입장했습니다: " + newPlayer.NickName);
+        // 새로운 플레이어에게 환영 메시지 표시 등의 처리
+    }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
