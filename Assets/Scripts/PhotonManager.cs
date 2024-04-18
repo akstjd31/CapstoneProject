@@ -20,33 +20,36 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     [SerializeField]
     Button inputButton;
 
-    [SerializeField]
-    private bool usingInputField = true;
-    private static string nickname = "";
+    private int isSocialLogin = 0;
+    private static string nickname;
+    public static int leavingPlayer = 0;
+    public static int[] dungeonJoiningPlayer = new int[2];
 
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+        if(SceneManager.GetActiveScene().name == "DungeonScene")
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
-        //NameScene이 아닌 경우 inputField를 사용하지 않음
-        if(!usingInputField)
-        {
-            
-        }
-        else
-        {
-            inputText.ActivateInputField();
-            //내용이 변경되었을때
-            inputText.onValueChanged.AddListener(OnValueChanged);
-            //내용을 제출했을때
-            inputText.onSubmit.AddListener(OnSubmit);
-            //커서가 다른곳을 누르면
-            inputText.onEndEdit.AddListener(
-                (string s) =>
-                {
-                    Debug.Log(s + "님이 입장하셨습니다. temp");
-                }
-            );
-            inputButton.onClick.AddListener(OnClickConnect);
-        }
+        dungeonJoiningPlayer[0] = 0;
+        dungeonJoiningPlayer[1] = 0;
+        inputText.ActivateInputField();
+        //내용이 변경되었을때
+        inputText.onValueChanged.AddListener(OnValueChanged);
+        //내용을 제출했을때
+        inputText.onSubmit.AddListener(OnSubmit);
+        //커서가 다른곳을 누르면
+        inputText.onEndEdit.AddListener(
+            (string s) =>
+            {
+                Debug.Log(s + "님이 입장하셨습니다.");
+            }
+        );
+        inputButton.onClick.AddListener(OnClickConnect);
     }
 
     void OnValueChanged(string s)
@@ -77,7 +80,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         base.OnJoinedLobby();
 
         // OnClickCreateRoom();
-        PhotonNetwork.LoadLevel("LobbyScene");
+        //PhotonNetwork.LoadLevel("LobbyScene");
+        PhotonNetwork.LoadLevel("PhotonLobbyScene");
         print("로비 진입 성공");
     }
 

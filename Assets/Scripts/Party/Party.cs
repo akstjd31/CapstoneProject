@@ -11,11 +11,20 @@ public class Party : MonoBehaviourPun, IPunObservable
 
     [SerializeField] private int partyLeaderID = -1;
     [SerializeField] private int partyMemberID = -1;
-    public PlayerCtrl[] partyMembers = new PlayerCtrl[2];
+    //public PlayerCtrl[] partyMembers = new PlayerCtrl[2];
 
     private int MAX_MEMBER = 2;
 
     public int partyID;
+
+    private void Start()
+    {
+        if (context == "" && GetPartyHeadCount() > 0)
+        {
+            PhotonView leaderPV = PhotonView.Find(partyLeaderID);
+            Title.text = leaderPV.GetComponent<PlayerCtrl>().party.GetContext();
+        }
+    }
 
     public int GetPartyHeadCount()
     {
@@ -23,10 +32,8 @@ public class Party : MonoBehaviourPun, IPunObservable
         {
             return 2;
         }
-        else
-        {
-            return 1;
-        }
+
+        return 1;
     }
 
     public void SetPartyLeaderID(int leaderID)
@@ -62,6 +69,11 @@ public class Party : MonoBehaviourPun, IPunObservable
     // 파티 목록에 보여지는 텍스트 업데이트
     private void Update()
     {
+        if (GetPartyHeadCount() == 0)
+        {
+            PhotonNetwork.Destroy(this.gameObject);
+        }
+
         Title.text = context + " ( " + GetPartyHeadCount() + " / " + MAX_MEMBER + " )";
     }
 
@@ -71,11 +83,13 @@ public class Party : MonoBehaviourPun, IPunObservable
         {
             stream.SendNext(partyLeaderID);
             stream.SendNext(partyMemberID);
+            stream.SendNext(context);
         }
         else
         {
             this.partyLeaderID = (int)stream.ReceiveNext();
             this.partyMemberID = (int)stream.ReceiveNext();
+            this.context = (string)stream.ReceiveNext();
         }
     }
 }

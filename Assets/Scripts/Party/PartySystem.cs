@@ -17,7 +17,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
     public GameObject partyRoom;
     public GameObject content;
 
-    public GameObject[] partyMemberHUD; // ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ HP UI
+    public GameObject[] partyMemberHUD; // ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç´ï¿?HP UI
 
     [SerializeField] private List<Party> parties = new List<Party>();   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½Æ®
 
@@ -26,8 +26,6 @@ public class PartySystem : MonoBehaviourPunCallbacks
     PhotonView canvasPV;
 
     private int partyRoomID = 100;  // ï¿½ï¿½Æ¼ ï¿½ï¿½ IDï¿½ï¿½ ï¿½Î¿ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ID
-
-    private const string PartiesKey = "Parties";
 
     private const string PartiesKey = "Parties";
 
@@ -89,7 +87,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
         partyCreator.SetActive(false);
     }
 
-    // ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ Ã¢ ï¿½ï¿½ï¿½ï¿½
+    // ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿?Ã¢ ï¿½ï¿½ï¿½ï¿½
     public void ViewerOnExitButtonClick()
     {
         partyView.SetActive(false);
@@ -125,7 +123,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
     // ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
     public void OnClickCompleteButton()
     {
-        // ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ß¿ï¿½
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ß¿ï¿?
         foreach (int playerViewID in lobbyManager.lobbyPlayerViewID)
         {
             PhotonView targetPhotonView = PhotonView.Find(playerViewID);
@@ -138,15 +136,13 @@ public class PartySystem : MonoBehaviourPunCallbacks
                 // ???? ??? ?????? ??? ????? ?????? ???? ??
                 if (!playerCtrl.isPartyMember)
                 {
+                    // ¸¶½ºÅÍ Å¬¶óÀÌ¾ðÆ®¿¡ ¿µÇâÀ» ¹ÞÁö ¾Ê´Â ¿ÀºêÁ§Æ® »ý¼º¹ý
+                    GameObject room = PhotonNetwork.InstantiateRoomObject(partyRoom.name, Vector3.zero, Quaternion.identity);
 
-                    canvasPV.RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID);
-                    Debug.Log(PhotonNetwork.NickName + " ????? ????????????.");
-                    partyCreator.SetActive(false); // ??? ????? ? ??????
-
-                    canvasPV.RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID);
-                    Debug.Log(PhotonNetwork.NickName + " ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
+                    this.GetComponent<PhotonView>().RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID, room.GetComponent<PhotonView>().ViewID);
+                    Debug.Log(PhotonNetwork.NickName + " ´ÔÀÌ ÆÄÆ¼¸¦ »ý¼ºÇÏ¿´½À´Ï´Ù.");
                     partyCreator.SetActive(false);
-                    playerCtrl.party.partyMembers[0] = playerCtrl;
+                    playerCtrl.party.SetPartyLeaderID(playerCtrl.GetComponent<PhotonView>().ViewID);
                     createPartyButton.SetActive(false);
                     readyButton[0].SetActive(true);
 
@@ -228,50 +224,53 @@ public class PartySystem : MonoBehaviourPunCallbacks
                 PlayerCtrl secondPlayerCtrl = GetPlayerCtrlByNickname(PhotonNetwork.NickName);
                 //PhotonView partyPV = party.GetComponent<PhotonView>();
 
-                // ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¬ï¿½Ù¸ï¿½ 
+                // ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½ï¿½î°¬ï¿½Ù¸ï¿?
                 if (secondPlayerCtrl != null)
                 {
-                    // ?? ??? ???????? ??? ?????? ?????????? ???? RPC ???
-                    canvasPV.RPC("JoinPartyRPC", RpcTarget.AllBuffered, party.partyID, secondPlayerCtrl.GetComponent<PhotonView>().ViewID);
+                    int partyMemberViewID = secondPlayerCtrl.GetComponent<PhotonView>().ViewID;
+                    canvasPV.RPC("JoinPartyRPC", RpcTarget.AllBuffered, party.GetComponent<PhotonView>().ViewID, partyMemberViewID);
+                    secondPlayerCtrl.party.SetPartyMemberID(partyMemberViewID);
                     createPartyButton.SetActive(false);
                     readyButton[0].SetActive(true);
                 }
             }
         }
     }
-    // ??? ???? RPC
+
+    // ÆÄÆ¼ °¡ÀÔ RPC
     [PunRPC]
     public void JoinPartyRPC(int partyID, int playerViewID)
     {
-        int partyIdx = -1;
+        PhotonView target = PhotonView.Find(partyID);
+        Party party = target.GetComponent<Party>();
 
-        for (int i = 0; i < parties.Count; i++)
+        //int partyIdx = -1;
+
+        //// °¡ÀÔÇÏ·Á´Â ÆÄÆ¼ÀÇ ID·Î ÆÄÆ¼¸®½ºÆ®¿¡¼­ Ã£¾Æ ÀÎµ¦½º¸¦ ¾ò¾î¿Â´Ù.
+        //for (int i = 0; i < parties.Count; i++)
+        //{
+        //    if (parties[i].partyID == partyID)
+        //    {
+        //        partyIdx = i;
+        //    }
+        //}
+
+        if (target != null)
         {
-            if (parties[i].partyID == partyID)
-            {
-                partyIdx = i;
-            }
-        }
+            PlayerCtrl playerCtrl = PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>();
 
-        PlayerCtrl playerCtrl = PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>();
-
-        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ Æ¯ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ÔµÇ¾ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
-        if (!playerCtrl.isPartyMember)
-        {
-            if (partyIdx != -1)
+            // °¡ÀÔÀ» ¿øÇÏ´Â ÇÃ·¹ÀÌ¾î°¡ Æ¯Á¤ ÆÄÆ¼¿¡ °¡ÀÔµÇ¾î ÀÖ´ÂÁö È®ÀÎ
+            if (!playerCtrl.isPartyMember)
             {
+
                 playerCtrl.isPartyMember = true;
-                playerCtrl.party = parties[partyIdx];
+                playerCtrl.party = party;
                 playerCtrl.party.SetPartyMemberID(playerViewID);
-            }
-            else
-            {
-                Debug.Log("ï¿½Ø´ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½!");
             }
         }
         else
         {
-            Debug.Log(PhotonNetwork.NickName + " ???? ??? ????? ???? ??????!");
+            Debug.Log("ÇØ´ç ÆÄÆ¼¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!");
         }
     }
 
@@ -288,33 +287,28 @@ public class PartySystem : MonoBehaviourPunCallbacks
             // ????? ?????? ??? ???
             if (playerCtrl.isPartyMember)
             {
-                for (var i = 0; i < parties.Count; i++)
-                {
-                    if (playerCtrl.party.partyID == parties[i].partyID)
-                    {
-                        // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¸ï¿½?
-                        if (parties[i].GetPartyLeaderID() == playerPV.ViewID)
-                        {
-                            // ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½Ù¸ï¿½?
-                            if (parties[i].GetPartyHeadCount() == 2)
-                            {
-                                parties[i].SetPartyLeaderID(parties[i].GetPartyMemberID());
-                                parties[i].SetPartyMemberID(-1);
-                            }
-                            else
-                            {
-                                parties[i].GetComponent<Button>().onClick.RemoveListener(OnClickJoinPartyButton);
-                                Destroy(parties[i].gameObject);
-                                parties.Remove(parties[i]);
-                            }
-                        }
-                        else
-                        {
-                            parties[i].SetPartyMemberID(-1);
-                        }
+                PhotonView partyRoomPV = PhotonView.Find(playerCtrl.party.GetComponent<PhotonView>().ViewID);
+                Party party = partyRoomPV.GetComponent<Party>();
 
-                        break;
+                // ³ª°£ ÇÃ·¹ÀÌ¾î°¡ ¸®´õ¿´´Ù¸é?
+                if (party.GetPartyLeaderID() == playerPV.ViewID)
+                {
+                    // ±× ÆÄÆ¼°¡ ÀÎ¿øÀÌ ²Ë Âù ÆÄÆ¼¿´´Ù¸é?
+                    if (party.GetPartyHeadCount() == 2)
+                    {
+                        int tmp = party.GetPartyMemberID();
+                        party.SetPartyLeaderID(tmp);
+                        party.SetPartyMemberID(-1);
+                        partyRoomPV.RequestOwnership();
                     }
+                    else
+                    {
+                        PhotonNetwork.Destroy(party.gameObject);
+                    }
+                }
+                else if (party.GetPartyMemberID() == playerPV.ViewID)
+                {
+                    party.SetPartyMemberID(-1);
                 }
             }
             else
@@ -342,7 +336,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
         PhotonView targetViewID = PhotonView.Find(viewID);
         PlayerCtrl playerCtrl = targetViewID.GetComponent<PlayerCtrl>();
 
-        // Å»ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ñ±³·ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+        // Å»ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ñ±³·ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿?
         if (playerCtrl.isPartyMember)
         {
             int partyIdx = -1;
@@ -361,7 +355,6 @@ public class PartySystem : MonoBehaviourPunCallbacks
                 // Å»ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ö´ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½Ï¶ï¿½
                 if (parties[partyIdx].GetPartyHeadCount() == 1)
                 {
-                    playerCtrl.party.partyMembers[0] = null;
                     parties[partyIdx].GetComponent<Button>().onClick.RemoveListener(OnClickJoinPartyButton);
                     Destroy(parties[partyIdx].gameObject);
                     parties.Remove(parties[partyIdx]);
@@ -373,13 +366,13 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     {
                         parties[partyIdx].SetPartyLeaderID(parties[partyIdx].GetPartyMemberID());
                         parties[partyIdx].SetPartyMemberID(-1);
-                        playerCtrl.party.partyMembers[0] = playerCtrl.party.partyMembers[1];
-                        playerCtrl.party.partyMembers[0] = null;
+
+                        PhotonView.Find(parties[partyIdx].GetPartyLeaderID()).GetComponent<PlayerCtrl>().party.GetComponent<PhotonView>().RequestOwnership();
+
                     }
                     else if (parties[partyIdx].GetPartyMemberID() == viewID)
                     {
                         parties[partyIdx].SetPartyMemberID(-1);
-                        playerCtrl.party.partyMembers[1] = null;
                     }
                     else if (parties[partyIdx].GetPartyMemberID() == viewID)
                     {
@@ -393,7 +386,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
         }
         else
         {
-            Debug.Log("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ÔµÇ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½!");
+            Debug.Log("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿?ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ÔµÇ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½!");
         }
     }
 
@@ -405,13 +398,15 @@ public class PartySystem : MonoBehaviourPunCallbacks
 
     // ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ RPC
     [PunRPC]
-    public void PartyRoomSetting(string receiveMessage, int playerViewID)
+    public void PartyRoomSetting(string receiveMessage, int playerViewID, int partyRoomViewID)
     {
-        GameObject room = Instantiate(partyRoom, Vector3.zero, Quaternion.identity, content.transform);
-        room.transform.parent = content.transform;
+        
+        //GameObject room = Instantiate(partyRoom, Vector2.zero, Quaternion.identity, content.transform);
 
-        //PhotonView partyPV = PhotonView.Find(partyRoomViewID);
-        Party newParty = room.GetComponent<Party>();
+        PhotonView partyPV = PhotonView.Find(partyRoomViewID);
+        partyPV.transform.parent = content.transform;
+
+        Party newParty = partyPV.GetComponent<Party>();
         newParty.SetContext(receiveMessage);
         newParty.SetPartyLeaderID(playerViewID);
         newParty.partyID = partyRoomID;
@@ -423,7 +418,6 @@ public class PartySystem : MonoBehaviourPunCallbacks
 
         PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>().party = newParty;
         PhotonView.Find(playerViewID).GetComponent<PlayerCtrl>().isPartyMember = true;
-
         //canvasPV.RPC("AddPartyRoomList", RpcTarget.AllBuffered, partyRoomViewID);
     }
 }

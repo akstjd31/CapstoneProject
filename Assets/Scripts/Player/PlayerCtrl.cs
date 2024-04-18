@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using Photon.Pun;
+using Photon.Voice.Unity;
 using Photon.Realtime;
 
 
@@ -72,6 +73,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
     GameObject inventory;
 
     Vector3 mouseWorldPosition;
+
+    Recorder recorder;
+
+
+
     // Getter
     public State GetState()
     {
@@ -87,19 +93,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
         anim = this.GetComponent<Animator>();
         status = this.GetComponent<Status>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
-        //chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
-        //partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
+        chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
+        partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
+        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").gameObject;
+        recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
 
         state = State.NORMAL;
-        //weaponPV = null;
-        //party = null;
-
-        isLobbyScene = SceneManager.GetActiveScene().name == "LobbyScene";
-
-        //partySystemScript.partyCreator.transform.GetComponentInChildren<Button>().onClick.AddListener(OnPartyCreationComplete);
-
-        // 임시로 캔버스 자식 직접 지정(수정 필요)
-        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").gameObject;
 
         //던전 선택 canvas 생성
         MakeDungeonMap();
@@ -112,7 +111,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
         {
             moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-            if (state != State.ATTACK && !chatScript.chatView.activeSelf)
+            if (state != State.ATTACK && !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
             {
 
                 if (moveDir.x != 0 || moveDir.y != 0)
@@ -129,48 +128,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
             }
 
             // 공격 & 공격 쿨타임 끝나면
-            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver)
-            {
-                state = State.ATTACK;
-
-                Vector3 mouseScreenPosition = Input.mousePosition;
-
-                // 마우스의 스크린 좌표를 월드 좌표로 변환합니다.
-                mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
-                // 플레이어가 보고 있는 방향에 따른 공격방향
-                //SetDirection();
-
-                attackDistanceSpeed = 10f;
-                isAttackCooldownOver = false;
-
-                // 적을 공격한 상태.
-                if (isPlayerInRangeOfEnemy)
-                {
-                    enemyCtrl.GetComponent<PhotonView>().RPC("EnemyAttackedPlayer", RpcTarget.All, status.attackDamage);
-                }
-            }
-
-            if (!isAttackCooldownOver)
-            {
-                if (attackCoolTime > 0.0f)
-                {
-                    attackCoolTime -= Time.deltaTime;
-                }
-                else
-                {
-                    isAttackCooldownOver = true;
-                    attackCoolTime = 1.0f;
-                }
-            }
-
-            //인벤토리 열기
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                inventory.SetActive(!inventory.activeSelf);
-            }
-
-            // 공격 & 공격 쿨타임 끝나면
-            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && !EventSystem.current.currentSelectedGameObject && !inventory.activeSelf)
+            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && !EventSystem.current.currentSelectedGameObject && !inventory.activeSelf && !chatScript.chatView.activeSelf)
             {
                 state = State.ATTACK;
 
@@ -205,7 +163,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
             }
 
             // 채팅 입력
-            if (Input.GetKeyDown(KeyCode.Return))
+            if (Input.GetKeyDown(KeyCode.Return) && !partySystemScript.partyCreator.activeSelf)
             {
                 if (!chatScript.inputField.isFocused)
                 {
@@ -214,7 +172,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Escape))
+            // 채팅 끄기
+            if (Input.GetKeyDown(KeyCode.Escape) && !partySystemScript.partyCreator.activeSelf)
             {
                 chatScript.inputField.text = "";
                 chatScript.inputField.DeactivateInputField();
@@ -223,9 +182,22 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
             }
             
             // 인벤토리 열기
-            if (Input.GetKeyDown(KeyCode.I) && !chatScript.chatView.activeSelf)
+            if (Input.GetKeyDown(KeyCode.I) && !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
             {
                 inventory.SetActive(!inventory.activeSelf);
+            }
+
+            // 보이스 참가하기
+            if (Input.GetKey(KeyCode.T))
+            {
+                if (!chatScript.chatView.activeSelf)
+                {
+                    recorder.TransmitEnabled = true;
+                }
+            }
+            else
+            {
+                recorder.TransmitEnabled = false;
             }
 
             IsPartyHUDActive();
