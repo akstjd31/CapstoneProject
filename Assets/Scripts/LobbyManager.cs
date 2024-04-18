@@ -43,6 +43,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonView[] allViews = GameObject.FindObjectsOfType<PhotonView>();
         foreach (PhotonView view in allViews)
         {
+            // 1000이 넘으면서 맨 끝 자리에 1이 붙는 ViewID == 플레이어
             if (view.ViewID > 1000 && IsLastCharacterOne(view.ViewID) && !lobbyPlayerViewID.Contains(view.ViewID))
             {
                 lobbyPlayerViewID.Add(view.ViewID);
@@ -50,6 +51,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
     }
 
+    // 마지막 일의 자리가 1인지 확인하는 함수
     private bool IsLastCharacterOne(int viewID)
     {
         string viewIDString = viewID.ToString();

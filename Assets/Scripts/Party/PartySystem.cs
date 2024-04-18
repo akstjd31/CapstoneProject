@@ -138,7 +138,9 @@ public class PartySystem : MonoBehaviourPunCallbacks
                 // 해당 플레이어가 파티에 가입이 되어있는지
                 if (!playerCtrl.isPartyMember)
                 {
+                    // 마스터 클라이언트에 영향을 받지 않는 오브젝트 생성법
                     GameObject room = PhotonNetwork.InstantiateRoomObject(partyRoom.name, Vector3.zero, Quaternion.identity);
+
                     this.GetComponent<PhotonView>().RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID, room.GetComponent<PhotonView>().ViewID);
                     Debug.Log(PhotonNetwork.NickName + " 님이 파티를 생성하였습니다.");
                     partyCreator.SetActive(false);
@@ -236,6 +238,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
             }
         }
     }
+
     // 파티 가입 RPC
     [PunRPC]
     public void JoinPartyRPC(int partyID, int playerViewID)
