@@ -21,6 +21,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     Button inputButton;
 
     private int isSocialLogin = 0;
+    private static string nickname;
     public static int leavingPlayer = 0;
     public static int[] dungeonJoiningPlayer = new int[2];
 
@@ -67,7 +68,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("마스터 서버 접속 성공");
 
         //나의 이름을 포톤에 설정
-        PhotonNetwork.NickName = inputText.text;
+        PhotonNetwork.NickName = inputText != null ? inputText.text : nickname;
         PhotonNetwork.AutomaticallySyncScene = true;
         //로비진입
         PhotonNetwork.JoinLobby();
@@ -86,6 +87,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     public void OnClickConnect()
     {
+        /*
         //다른 로그인 방법을 사용 중인지
         if(isSocialLogin == 1)
         {
@@ -109,6 +111,12 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.ConnectUsingSettings();
         }
+        */
+
+        if(UserData.GetLoginState())
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
     }
 
     //회원가입 시 호출되는 메소드
@@ -116,5 +124,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         // 마스터 서버 접속 요청
         PhotonNetwork.ConnectUsingSettings();
+    }
+
+    public static void SetNickname(string nick)
+    {
+        nickname = nick;
     }
 }

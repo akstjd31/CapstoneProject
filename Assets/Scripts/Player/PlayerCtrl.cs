@@ -16,17 +16,18 @@ using Photon.Realtime;
 ///// 3. 매개변수가 꼭 필요한 경우 photonview에 있는 ViewID(int형)로 접근하여 하이에라키에 존재하는 ViewID와 비교하여 찾을 수 있다.
 
 
-public class PlayerCtrl : MonoBehaviourPunCallbacks
+public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
 {
     // enum 클래스 플레이어 상태
     public enum State
     {
-        NORMAL, MOVE, ROLLING, ATTACK, HIT, DIE
+        NORMAL, MOVE, ROLLING, ATTACK, ATTACKIDLE, HIT, DIE
     }
     public float movePower = 5f; // 이동에 필요한 힘
     public float rollSpeed;  // 구르는 속도
     public float attackDistanceSpeed; // 공격 시 이동하는 속도
     public float rollCoolTime = 0.0f; // 구르기 쿨타임
+    public float attackIdleTime = 1.0f; // 공격 시 공격준비상태
 
     [SerializeField] private bool isPlayerInRangeOfEnemy = false; // 공격가능한 범위인지 아닌지?
     private EnemyCtrl enemyCtrl = null; // 공격한 적의 정보
@@ -58,6 +59,17 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public Party party;
 
+    private bool isLobbyScene = false;  //DungeonEntrance와 플레이어의 충돌을 감지하기 위해 현재 씬이 LobbyScene인지 확인하는 변수
+    GameObject DungeonCanvas;
+    RawImage DungeonImage;
+    Button destroyButton;
+
+    // 상태 변경을 위한 함수
+    [PunRPC]
+    public void UpdatePlayerState(State newState)
+    {
+        state = newState;
+    }
     GameObject inventory;
 
     Vector3 mouseWorldPosition;
@@ -87,8 +99,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
 
         state = State.NORMAL;
-        
 
+        //던전 선택 canvas 생성
+        MakeDungeonMap();
     }
 
     //Graphic & Input Updates	
@@ -108,7 +121,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 else
                 {
                     rigid.velocity = Vector2.zero;
-                    state = State.NORMAL;
+
+                    if (state != State.ATTACKIDLE)
+                        state = State.NORMAL;
                 }
             }
 
@@ -187,6 +202,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             IsPartyHUDActive();
         }
+
     }
 
     void LateUpdate()
@@ -207,31 +223,48 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     AttackAnimation();
                     Attack();
                     break;
+                case State.ATTACKIDLE:
+                    AttackIdle();
+                    AttackIdleAnimation();
+                    break;
             }
         }
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // 클릭된 UI 요소에 대한 정보를 출력합니다.
+        Debug.Log(eventData.pointerPress.gameObject.name);
+    }
 
     void IdleAnimation()
     {
         anim.SetBool("isMove", false);
         anim.SetBool("isAttack", false);
-        //anim.SetBool("AttackIdle", false);
+        anim.SetBool("AttackIdle", false);
     }
 
     void MoveAnimation()
     {
         anim.SetBool("isMove", true);
         anim.SetBool("isAttack", false);
-        //anim.SetBool("AttackIdle", false);
+        anim.SetBool("AttackIdle", false);
     }
 
     void AttackAnimation()
     {
         anim.SetBool("isAttack", true);
-        //anim.SetBool("AttackIdle", false);
+        anim.SetBool("AttackIdle", false);
         anim.SetBool("isMove", false);
     }
+
+    void AttackIdleAnimation()
+    {
+        anim.SetBool("AttackIdle", true);
+        anim.SetBool("isAttack", false);
+        anim.SetBool("isMove", false);
+    }
+
 
     // 이동
     void Move()
@@ -267,10 +300,24 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 문제점 : 현재 마우스 위치가 가까우면 플레이어가 조금만 이동함.
         rigid.velocity = (mouseWorldPosition - this.transform.position).normalized * attackDistanceSpeed;
 
-        float attackSpeedDropMultiplier = 7f; // 감소되는 정도
+        float attackSpeedDropMultiplier = 5f; // 감소되는 정도
         attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // 실제 나아가는 거리 계산
 
-        if (attackDistanceSpeed < 0.8f)
+        if (attackDistanceSpeed < 0.5f)
+        {
+            rigid.velocity = Vector2.zero;
+            attackIdleTime = 1.0f;
+            state = State.ATTACKIDLE;
+        }
+    }
+
+    void AttackIdle()
+    {
+        if (attackIdleTime > 0.0f)
+        {
+            attackIdleTime -= Time.deltaTime;
+        }
+        else
         {
             rigid.velocity = Vector2.zero;
             state = State.NORMAL;
@@ -381,12 +428,106 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     //        isPlayerInRangeOfEnemy = true;
     //        enemyCtrl = other.GetComponent<EnemyCtrl>();
 
-    //    }
-    //}
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(isLobbyScene && other.name == "DungeonEntrance") //&& DungeonEnterCondition()
+        {
+            //던전 선택창 출력
+            DungeonCanvas.SetActive(true);
+        }
 
-    //private void OnTriggerExit2D(Collider2D other)
-    //{
-    //    isPlayerInRangeOfEnemy = false;
-    //    enemyCtrl = null;
-    //}
+        if (other.CompareTag("Weapon")) {
+            
+        }
+        if (other.CompareTag("Enemy"))
+        {
+            isPlayerInRangeOfEnemy = true;
+            enemyCtrl = other.GetComponent<EnemyCtrl>();
+
+        }
+    }
+
+    private void MakeDungeonMap()
+    {
+        DungeonCanvas = new GameObject("RawImage");
+        DungeonImage = DungeonCanvas.AddComponent<RawImage>();
+        DungeonCanvas.transform.SetParent(GameObject.Find("Canvas").transform, false);
+        DungeonCanvas.AddComponent<RectTransform>();
+        DungeonCanvas.GetComponent<RectTransform>().sizeDelta = new Vector2(1920, 1080);
+
+        string imagePath = "dungeon_enter_map";
+        Texture2D texture = Resources.Load<Texture2D>(imagePath);
+        Debug.Log($"texture is null : {texture == null}");
+        DungeonCanvas.GetComponent<RawImage>().texture = texture;
+
+        // 버튼 GameObject 생성
+        GameObject buttonObject = new GameObject("DestroyButton");
+
+        // 생성한 GameObject에 Button 컴포넌트 추가
+        destroyButton = buttonObject.AddComponent<Button>();
+
+        // 버튼에 텍스트 추가
+        Text buttonText = buttonObject.AddComponent<Text>();
+        buttonText.text = "X";
+        buttonText.fontSize = 56;
+        buttonText.color = Color.black;
+
+        // 생성한 GameObject를 Canvas의 자식으로 설정
+        buttonObject.transform.SetParent(GameObject.Find("Canvas").transform, false);
+
+        // RectTransform 컴포넌트 가져오기
+        RectTransform buttonTransform = buttonObject.GetComponent<RectTransform>();
+
+        // 버튼의 위치를 설정 (Canvas의 우측 상단)
+        buttonTransform.anchorMin = new Vector2(1f, 1f);
+        buttonTransform.anchorMax = new Vector2(1f, 1f);
+        buttonTransform.pivot = new Vector2(1f, 1f);
+        buttonTransform.anchoredPosition = new Vector2(-10f, -10f); // 원하는 위치로 조정
+
+        // 버튼이 클릭되었을 때의 동작 설정
+        destroyButton.onClick.AddListener(DisableDungeonCanvas);
+
+        DungeonCanvas.SetActive(false);
+    }
+
+
+    // private void OnTriggerExit2D(Collider2D other)
+    // {
+    //     isPlayerInRangeOfEnemy = false;
+    //     enemyCtrl = null;
+    // }
+
+    private bool DungeonEnterCondition()
+    {
+        Debug.Log($"name : {pv.name}");
+
+        //파티에 속하지 않은 경우
+        if (!isPartyMember)
+        {
+            Debug.Log("파티가 없습니다");
+        }
+        //2인 파티가 아닌 경우
+        else if (party.GetPartyHeadCount() != 2)
+        {
+            Debug.Log("2인 파티가 아닙니다");
+        }
+        //모든 인원이 준비 완료 상태인지
+        else if (false)     //준비 기능 미구현 상태
+        {
+
+        }
+        //본인이 파티장이 아닌 경우
+        else if (!PhotonNetwork.NickName.Equals(party.GetPartyLeaderID()))
+        {
+            Debug.Log("파티장이 아닙니다");
+        }
+        
+
+        return false;
+    }
+
+    private void DisableDungeonCanvas()
+    {
+        DungeonCanvas.SetActive(false);
+    }
 }
