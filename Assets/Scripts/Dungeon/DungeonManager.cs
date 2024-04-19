@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Photon.Realtime;
+using Photon.Pun;
 using UnityEngine;
 
-public class DungeonManager : MonoBehaviour
+public class DungeonManager : MonoBehaviourPunCallbacks
 {
     public static int roomNum = 5;
     //public static GameObject[] endRooms = new GameObject[roomNum];

@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Realtime;
+using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class RoomController : MonoBehaviour
+public class RoomController : MonoBehaviourPunCallbacks
 {
     GameObject startPoint;
 	public GameObject[] upRooms;
@@ -15,6 +16,7 @@ public class RoomController : MonoBehaviour
     public Transform[] mapSpawnPoints;
     public GameObject[] mapArray = new GameObject[3];
     float[] mapSize = new float[2];
+    string mapDir = "Dungeon/";
 
     public bool[] doorList = new bool[4];
 
@@ -145,11 +147,17 @@ public class RoomController : MonoBehaviour
         }
         if(DungeonManager.isMapCreate && makeDoor && doorCheck && !makePlayMap)
         {
-            GameObject gridMap = Instantiate(mapArray[Random.Range(0, mapArray.Length)]);
-            gridMap.transform.position = new Vector2((this.transform.position.x - startPoint.transform.position.x) * mapSize[0], (this.transform.position.y - startPoint.transform.position.y) * mapSize[1]);
+            Debug.Log(mapDir + mapArray[Random.Range(0, mapArray.Length)].name);
+            Vector3 gridMapPosition = new Vector2((this.transform.position.x - startPoint.transform.position.x) * mapSize[0], (this.transform.position.y - startPoint.transform.position.y) * mapSize[1]);
+            GameObject gridMap = PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
             //gridMap.transform.position = new Vector2(this.transform.position.x * 25.0f, this.transform.position.y * 9.0f);
             gridMap.transform.SetParent(GameObject.Find("Grid").transform);
             makePlayMap = true;
+
+            for(int i = 0; i < gameObject.transform.childCount; i++)
+            {
+                gameObject.transform.GetChild(i).gameObject.SetActive(false);
+            }
         }
     }
 
@@ -187,8 +195,9 @@ public class RoomController : MonoBehaviour
                     Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
-                        roomtemp = Instantiate(upRooms[Random.Range(1, upRooms.Length-1)]);
-                        roomtemp.transform.position = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        Debug.Log(mapDir + upRooms[Random.Range(1, upRooms.Length-1)].name);
+                        Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        roomtemp = PhotonNetwork.Instantiate(mapDir + upRooms[Random.Range(1, upRooms.Length-1)].name, roomtempPosition, Quaternion.identity, 0);
                         roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
@@ -206,8 +215,8 @@ public class RoomController : MonoBehaviour
                     Debug.DrawRay(new Vector2(this.transform.position.x + 0.5f, this.transform.position.y), Vector2.right * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
-                        roomtemp = Instantiate(rightRooms[Random.Range(1, rightRooms.Length-1)]);
-                        roomtemp.transform.position = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        roomtemp = PhotonNetwork.Instantiate(mapDir + rightRooms[Random.Range(1, rightRooms.Length-1)].name, roomtempPosition, Quaternion.identity, 0);
                         roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
@@ -225,8 +234,8 @@ public class RoomController : MonoBehaviour
                     Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 0.5f), Vector2.down * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
-                        roomtemp = Instantiate(downRooms[Random.Range(1, downRooms.Length-1)]);
-                        roomtemp.transform.position = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        roomtemp = PhotonNetwork.Instantiate(mapDir + downRooms[Random.Range(1, downRooms.Length-1)].name, roomtempPosition, Quaternion.identity, 0);
                         roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
@@ -244,8 +253,8 @@ public class RoomController : MonoBehaviour
                     Debug.DrawRay(new Vector2(this.transform.position.x - 0.5f, this.transform.position.y), Vector2.left * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
-                        roomtemp = Instantiate(leftRooms[Random.Range(1, leftRooms.Length-1)]);
-                        roomtemp.transform.position = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        roomtemp = PhotonNetwork.Instantiate(mapDir + leftRooms[Random.Range(1, leftRooms.Length-1)].name, roomtempPosition, Quaternion.identity, 0);
                         roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
@@ -276,8 +285,8 @@ public class RoomController : MonoBehaviour
                     Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
-                        roomtemp = Instantiate(upRooms[0]);
-                        roomtemp.transform.position = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        roomtemp = PhotonNetwork.Instantiate(mapDir + upRooms[0].name, roomtempPosition, Quaternion.identity, 0);
                         roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
@@ -295,8 +304,8 @@ public class RoomController : MonoBehaviour
                     Debug.DrawRay(new Vector2(this.transform.position.x + 0.5f, this.transform.position.y), Vector2.right * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
-                        roomtemp = Instantiate(rightRooms[0]);
-                        roomtemp.transform.position = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        roomtemp = PhotonNetwork.Instantiate(mapDir + rightRooms[0].name, roomtempPosition, Quaternion.identity, 0);
                         roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
@@ -314,8 +323,8 @@ public class RoomController : MonoBehaviour
                     Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 0.5f), Vector2.down * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
-                        roomtemp = Instantiate(downRooms[0]);
-                        roomtemp.transform.position = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        roomtemp = PhotonNetwork.Instantiate(mapDir + downRooms[0].name, roomtempPosition, Quaternion.identity, 0);
                         roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
@@ -333,8 +342,8 @@ public class RoomController : MonoBehaviour
                     Debug.DrawRay(new Vector2(this.transform.position.x - 0.5f, this.transform.position.y), Vector2.left * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
-                        roomtemp = Instantiate(leftRooms[0]);
-                        roomtemp.transform.position = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
+                        roomtemp = PhotonNetwork.Instantiate(mapDir + leftRooms[0].name, roomtempPosition, Quaternion.identity, 0);
                         roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
