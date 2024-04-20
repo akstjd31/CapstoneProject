@@ -41,7 +41,7 @@ public class CharType : MonoBehaviour
     void Start()
     {
         // UserInfoManager 인스턴스를 가져옴
-        userInfoManager = UserInfoManager.instance;
+        userInfoManager = UserInfoManager.GetInstance();
 
         // 현재 로그인한 사용자 정보를 가져옴
         //currentUser = userInfoManager.currentUser;

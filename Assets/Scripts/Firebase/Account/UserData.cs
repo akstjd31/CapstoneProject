@@ -857,27 +857,38 @@ public class UserData : MonoBehaviour
 
         DocumentReference doc_user = coll_userdata.Document(GetUserId());
 
+        //공통 스킬
+        Dictionary<string, int> char_common_skill = new()
+        {
+            { "1001", 0 },
+            { "1002", 0 },
+            { "1003", 0 },
+            { "1004", 0 },
+            { "1005", 0 },
+            { "1006", 0 },
+            { "1007", 0 }
+        };
 
         //근접 캐릭터 스킬 정보
-        Dictionary<string, object> char_skill_warrior = new()
+        Dictionary<string, int> char_skill_warrior = new()
         {
-            { "warrior_skill_01", "0" },
-            { "warrior_skill_02", "0" },
-            { "warrior_skill_03", "0" },
-            { "warrior_skill_04", "0" },
-            { "warrior_skill_05", "0" }
+            { "10001", 0 },
+            { "10002", 0 },
+            { "10003", 0 },
+            { "10004", 0 },
+            { "10005", 0 },
         };
-        
+
         //원거리 캐릭터 스킬 정보
-        Dictionary<string, object> char_skill_archer = new()
+        Dictionary<string, int> char_skill_archer = new()
         {
-            { "archer_skill_01", "0" },
-            { "archer_skill_02", "0" },
-            { "archer_skill_03", "0" },
-            { "archer_skill_04", "0" },
-            { "archer_skill_05", "0" }
+            { "20001", 0 },
+            { "20002", 0 },
+            { "20003", 0 },
+            { "20004", 0 },
+            { "20005", 0 },
         };
-        
+
         //캐릭터 스텟
         Dictionary<string, object> charStats = new()
         {
@@ -892,6 +903,7 @@ public class UserData : MonoBehaviour
         //유저 귀속 스킬 정보
         Dictionary<string, object> charSkill = new()
         {
+            { "common", char_common_skill },
             { "warrior", char_skill_warrior },
             { "archer", char_skill_archer }
         };
