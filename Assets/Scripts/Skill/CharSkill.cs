@@ -35,6 +35,7 @@ public class CharSkill : MonoBehaviour
         }
 
         userSkill[skillNum.ToString()] = level;
+        UpdataSkillData();
     }
 
     public static int GetSkillLevel(int skillNum)
@@ -58,6 +59,13 @@ public class CharSkill : MonoBehaviour
         }
 
         userSkill[skillNum.ToString()] = ++userSkill[skillNum.ToString()];
+        UpdataSkillData();
+    }
+
+    //CharSkill.cs (userSkill) => UserInfoManager.cs (skillLevel) & Firestore Server
+    private static void UpdataSkillData()
+    {
+        UserInfoManager.SetSkillLevel(userSkill);
     }
 
     //테스트 용 메소드

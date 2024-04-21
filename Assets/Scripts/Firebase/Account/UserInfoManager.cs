@@ -138,9 +138,38 @@ public class UserInfoManager : MonoBehaviour
     }
 
     //CharSkill.cs에서만 사용
-    public static void SetSkillLevel(Dictionary<int, int> skill)
+    public static void SetSkillLevel(Dictionary<string, int> skill)
     {
+        SetSkillLevel_Async(skill);
+    }
 
+    public static async void SetSkillLevel_Async(Dictionary<string, int> skill)
+    {
+        skillLevel = skill;
+
+        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+        CollectionReference coll_userdata = db.Collection("User");
+        DocumentReference doc_user = coll_userdata.Document(UserData.GetUserId());
+
+        // 기존 문서의 데이터를 가져옵니다.
+        DocumentSnapshot snapshot = await doc_user.GetSnapshotAsync();
+        if (snapshot.Exists)
+        {
+            Dictionary<string, object> userData = snapshot.ToDictionary();
+
+            if (userData.ContainsKey("charData") && userData["charData"] is Dictionary<string, object> charData)
+            {
+                // charSkill을 업데이트할 새로운 값으로 설정합니다.
+                charData["skill"] = skill;
+
+                // 업데이트된 데이터를 문서에 반영합니다.
+                await doc_user.UpdateAsync("charData", charData);
+            }
+        }
+        else
+        {
+            Debug.Log("Document does not exist!");
+        }
     }
 
     public static UserInfoManager GetInstance()

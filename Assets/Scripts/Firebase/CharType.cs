@@ -187,9 +187,9 @@ public class CharType : MonoBehaviour
         nickname_canvas.SetActive(false);
 
         Debug.Log("닉네임 설정 비동기 작업 완료");
-        //PhotonManager.ConnectWithRegister();
+        PhotonManager.ConnectWithRegister();
         //테스트 용 코드
-        SceneManager.LoadScene("TestScene");
+        //SceneManager.LoadScene("TestScene");
     }
 
     private async Task<bool> IsDuplicationNickname_Async(string input)
