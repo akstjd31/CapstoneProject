@@ -70,30 +70,66 @@ public class UserInfoManager : MonoBehaviour
             if (userData.ContainsKey("charData") && userData["charData"] is Dictionary<string, object> charData &&
                 charData.ContainsKey("skill") && charData["skill"] is Dictionary<string, object> charSkill)
             {
-                if (charSkill.ContainsKey("warrior") && charSkill["warrior"] is Dictionary<string, int> commonSkills)
+                //Dictionary<string, object> => Dictionary<string, int>
+                //kvp.Value.GetType()는 System.Int64 == long 타입
+                if (charSkill.ContainsKey("common") && charSkill["common"] is Dictionary<string, object> commonSkills)
                 {
                     foreach (var kvp in commonSkills)
                     {
-                        skill[kvp.Key] = kvp.Value;
+                        //Debug.Log($"in foreach1 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
+
+                        if (kvp.Value is int intValue)
+                        {
+                            skill[kvp.Key] = intValue;
+                        }
+                        else if (kvp.Value is long longValue)
+                        {
+                            skill[kvp.Key] = (int)longValue;
+                        }
                     }
                 }
-                if (charSkill.ContainsKey("warrior") && charSkill["warrior"] is Dictionary<string, int> warriorSkills)
+                if (charSkill.ContainsKey("warrior") && charSkill["warrior"] is Dictionary<string, object> warriorSkills)
                 {
                     foreach (var kvp in warriorSkills)
                     {
-                        skill[kvp.Key] = kvp.Value;
+                        //Debug.Log($"in foreach2 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
+
+                        if (kvp.Value is int intValue)
+                        {
+                            skill[kvp.Key] = intValue;
+                        }
+                        else if (kvp.Value is long longValue)
+                        {
+                            skill[kvp.Key] = (int)longValue;
+                        }
                     }
                 }
-                if (charSkill.ContainsKey("archer") && charSkill["archer"] is Dictionary<string, int> archerSkills)
+                if (charSkill.ContainsKey("archer") && charSkill["archer"] is Dictionary<string, object> archerSkills)
                 {
                     foreach (var kvp in archerSkills)
                     {
-                        skill[kvp.Key] = kvp.Value;
+                        //Debug.Log($"in foreach3 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
+
+                        if (kvp.Value is int intValue)
+                        {
+                            skill[kvp.Key] = intValue;
+                        }
+                        else if (kvp.Value is long longValue)
+                        {
+                            skill[kvp.Key] = (int)longValue;
+                        }
                     }
                 }
             }
 
-            skillLevel = skill;
+            skillLevel = new();
+            foreach (var kvp in skill)
+            {
+                skillLevel[kvp.Key] = kvp.Value;
+            }
+
+            //Debug.Log("in UserInfoManager ");
+            //Show_Dictionary(skillLevel);
         }
         else
         {
@@ -110,5 +146,23 @@ public class UserInfoManager : MonoBehaviour
     public static UserInfoManager GetInstance()
     {
         return instance;
+    }
+
+    private static void Show_Dictionary(Dictionary<string, int> dict)
+    {
+        string data = "";
+
+        if (dict != null)
+        {
+            foreach (var kvp in dict)
+            {
+                data += $"Key: {kvp.Key}, Value: {kvp.Value}\n";
+            }
+            Debug.Log(data);
+        }
+        else
+        {
+            Debug.Log("Skill Level is null.");
+        }
     }
 }

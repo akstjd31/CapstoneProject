@@ -11,57 +11,97 @@ public class CharSkill : MonoBehaviour
     private static Dictionary<string, int> userSkill;  //스킬 데이터의 인스턴스
 
     // Start is called before the first frame update
-    void Start()
+    async void Start()
     {
         currentUser = UserInfoManager.GetCurrentUser();
-        StartCoroutine(InitSkill());
+        await InitSkill();
     }
 
-    private IEnumerator InitSkill()
+    private async Task InitSkill()
     {
-        yield return UserInfoManager.GetCharSkillAsync();
+        await UserInfoManager.GetCharSkillAsync();
         // 여기에 비동기 작업 완료 후 수행할 작업 추가
-        Debug.Log($"Skill level initialized: {UserInfoManager.GetSkillLevel()}");
+        userSkill = UserInfoManager.GetSkillLevel();
+        Debug.Log($"Skill level initialized: ");
+        //Show_Dictionary(userSkill);
     }
 
-    public static void SetSkillLevel(string skillNum, int level)
+    public static void SetSkillLevel(int skillNum, int level)
     {
-        if (!userSkill.ContainsKey(skillNum))
+        if (!userSkill.ContainsKey(skillNum.ToString()))
         {
             // 존재하지 않는 경우 예외 발생
             throw new KeyNotFoundException($"Skill number {skillNum} does not exist.");
         }
 
-        userSkill[skillNum] = level;
+        userSkill[skillNum.ToString()] = level;
     }
 
-    public static int GetSkillLevel(string skillNum)
+    public static int GetSkillLevel(int skillNum)
     {
-        if (!userSkill.ContainsKey(skillNum))
+        if (!userSkill.ContainsKey(skillNum.ToString()))
         {
             // 존재하지 않는 경우 예외 발생
             throw new KeyNotFoundException($"Skill number {skillNum} does not exist.");
         }
 
-        return userSkill[skillNum];
+        return userSkill[skillNum.ToString()];
     }
 
     //스킬의 레벨을 하나 올릴 때 사용
-    public static void LevelUpSkill(string skillNum)
+    public static void LevelUpSkill(int skillNum)
     {
-        if (!userSkill.ContainsKey(skillNum))
+        if (!userSkill.ContainsKey(skillNum.ToString()))
         {
             // 존재하지 않는 경우 예외 발생
             throw new KeyNotFoundException($"Skill number {skillNum} does not exist.");
         }
 
-        userSkill[skillNum] = ++userSkill[skillNum];
+        userSkill[skillNum.ToString()] = ++userSkill[skillNum.ToString()];
+    }
+
+    //테스트 용 메소드
+    public static void Debug_SkillUp_1001()
+    {
+        LevelUpSkill(1001);
+    }
+    public static void Debug_SkillUp_10001()
+    {
+        LevelUpSkill(10001);
+    }
+    public static void Debug_SkillUp_20001()
+    {
+        LevelUpSkill(20001);
+    }
+
+    public static void Debug_ShowSkill()
+    {
+        Show_Dictionary(userSkill);
+    }
+
+    private static void Show_Dictionary(Dictionary<string, int> dict)
+    {
+        string data = "";
+
+        if (dict != null)
+        {
+            Debug.Log("Skill Level :");
+            foreach (var kvp in dict)
+            {
+                data += $"Key: {kvp.Key}, Value: {kvp.Value}\n";
+            }
+            Debug.Log(data);
+        }
+        else
+        {
+            Debug.Log("Skill Level is null.");
+        }
     }
 }
 
 class SkillData
 {
-    static Dictionary<int, string> skill_common = new()
+    private static readonly Dictionary<int, string> skill_common = new()
     {
         {1001, "교만"},
         {1002, "탐욕"},
@@ -71,7 +111,7 @@ class SkillData
         {1006, "분노"},
         {1007, "나태"}
     };
-    static Dictionary<int, string> skill_warrior = new()
+    private static readonly Dictionary<int, string> skill_warrior = new()
     {
         {10001, "전사1" },
         {10002, "전사2" },
@@ -79,7 +119,7 @@ class SkillData
         {10004, "전사4" },
         {10005, "전사5" }
     };
-    static Dictionary<int, string> skill_archer = new()
+    private static readonly Dictionary<int, string> skill_archer = new()
     {
         {20001, "아처1" },
         {20002, "아처2" },
