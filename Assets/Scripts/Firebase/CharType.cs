@@ -41,7 +41,7 @@ public class CharType : MonoBehaviour
     void Start()
     {
         // UserInfoManager 인스턴스를 가져옴
-        userInfoManager = UserInfoManager.instance;
+        userInfoManager = UserInfoManager.GetInstance();
 
         // 현재 로그인한 사용자 정보를 가져옴
         //currentUser = userInfoManager.currentUser;
@@ -188,6 +188,8 @@ public class CharType : MonoBehaviour
 
         Debug.Log("닉네임 설정 비동기 작업 완료");
         PhotonManager.ConnectWithRegister();
+        //테스트 용 코드
+        //SceneManager.LoadScene("TestScene");
     }
 
     private async Task<bool> IsDuplicationNickname_Async(string input)
@@ -215,7 +217,7 @@ public class CharType : MonoBehaviour
                 foreach (DocumentSnapshot document in snapshot.Documents)
                 {
                     IDictionary<string, object> data = document.ToDictionary();
-                    Debug.Log($"data : {data}");
+                    //Debug.Log($"data : {data}");
                     
                     if(data["nickname"].Equals(input))
                     {
