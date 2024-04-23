@@ -7,6 +7,7 @@ public class SelectDungeon : MonoBehaviour
 {
     private HandleMap mapHandler;
 
+    private GameObject MapContainer;
     private GameObject DungeonCanvas;
     private RawImage DungeonImage;
     private Button destroyButton;
@@ -31,19 +32,26 @@ public class SelectDungeon : MonoBehaviour
     {
         gameObject.AddComponent<HandleMap>();
         mapHandler = new();
+        MapContainer = new GameObject("MapContainer");
+        MapContainer.transform.SetParent(GameObject.Find("Canvas").transform, false);
 
         MakeDungeonMap();
     }
 
     private void SetDungeonPoint()
     {
+        Vector2 origin = DungeonCanvas.transform.position;  //center of image
+        Vector2 mapSize = DungeonCanvas.GetComponent<RectTransform>().sizeDelta;
+
         //position of points
-        List<List<int>> points = new()
+        //range of x : origin.x - mapSize.x / 2 ~ origin.x + mapSize.x / 2
+        //range of y : origin.y - mapSize.y / 2 ~ origin.y + mapSize.y / 2
+        List<List<float>> points = new()
         {
-            new List<int> { mapSizeWidth / 4, mapSizeHeight / 2 },
-            new List<int> { mapSizeWidth / 4, mapSizeHeight / 4 },
-            new List<int> { mapSizeWidth / 4 * 3, mapSizeHeight / 4 },
-            new List<int> { mapSizeWidth / 4 * 3, mapSizeHeight / 4 * 3 },
+            new List<float> { origin.x - mapSize.x / 2.5f,      origin.y + mapSize.y / 2.5f },
+            new List<float> { origin.x - mapSize.x / 4,         origin.y - mapSize.y / 4 },
+            new List<float> { origin.x + mapSize.x / 2.5f,      origin.y - mapSize.y / 4 },
+            new List<float> { origin.x + mapSize.x / 4,         origin.y + mapSize.y / 4 },
         };
 
         dungeonPoints = new Toggle[points.Count];
@@ -51,7 +59,7 @@ public class SelectDungeon : MonoBehaviour
         int cnt = 0;
         ToggleGroup toggleGroup = DungeonCanvas.AddComponent<ToggleGroup>();
 
-        foreach (List<int> point in points)
+        foreach (List<float> point in points)
         {
             Toggle toggle;
             Image bg, checkmark;
@@ -68,7 +76,7 @@ public class SelectDungeon : MonoBehaviour
 
             //components
             toggleRectTransform = toggle.GetComponent<RectTransform>();
-            toggleRectTransform.sizeDelta = new Vector2(25, 25);
+            toggleRectTransform.sizeDelta = new Vector2((float)(mapSize.x * 0.13), (float)(mapSize.x * 0.13));
             toggle.graphic = checkmark.GetComponent<Image>();
 
             if (emptySprite == null)
@@ -78,6 +86,7 @@ public class SelectDungeon : MonoBehaviour
 
             SetBackground(bg);
             SetCheckmark(checkmark);
+            SetDesc(toggle);
 
             toggle.gameObject.transform.position = new Vector2(point[0], point[1]);
             //initial sprite
@@ -98,6 +107,50 @@ public class SelectDungeon : MonoBehaviour
 
             dungeonPoints[cnt++] = toggle;
         }
+    }
+
+    private void SetDesc(Toggle toggle)
+    {
+        float boxSize_x = 300;
+        float boxSize_y = 100;
+        float newY = toggle.transform.position.y + toggle.GetComponent<RectTransform>().sizeDelta.y * 0.5f;
+
+        //background
+        GameObject newDescContainer = new GameObject("desc");
+        newDescContainer.AddComponent<RawImage>();
+        newDescContainer.transform.position = new Vector2(toggle.transform.position.x, newY);
+        newDescContainer.transform.SetParent(toggle.transform);
+
+        string imagePath = "backyard";
+        Texture2D texture = Resources.Load<Texture2D>(imagePath);
+        newDescContainer.GetComponent<RawImage>().texture = texture;
+
+        RectTransform descContainerRectTransform = newDescContainer.GetComponent<RectTransform>();
+        if (descContainerRectTransform != null)
+        {
+            descContainerRectTransform.sizeDelta = new Vector2(boxSize_x, boxSize_y); 
+        }
+
+        //text
+        GameObject descTextObject = new("DescText");
+        RectTransform descTextRectTransform = descTextObject.AddComponent<RectTransform>();
+
+        descTextRectTransform.anchorMin = Vector2.zero;
+        descTextRectTransform.anchorMax = Vector2.one;
+        descTextRectTransform.pivot = Vector2.zero;
+        descTextRectTransform.sizeDelta = new Vector2(boxSize_x, boxSize_y);
+
+        descTextObject.transform.SetParent(newDescContainer.transform);
+
+        // Text 컴포넌트 추가
+        Text descText = descTextObject.AddComponent<Text>();
+        descText.text = "토글 위 던전 설명";
+        descText.color = Color.black;
+        descText.fontSize = 32;
+        descText.fontStyle = FontStyle.Bold;
+        descText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+
+        descTextRectTransform.anchoredPosition = Vector2.zero;
     }
 
     private void SetCheckmark(Image check)
@@ -131,7 +184,7 @@ public class SelectDungeon : MonoBehaviour
     {
         DungeonCanvas = new GameObject("Dungeon_Select");
         DungeonImage = DungeonCanvas.AddComponent<RawImage>();
-        DungeonCanvas.transform.SetParent(GameObject.Find("Canvas").transform, false);
+        DungeonCanvas.transform.SetParent(MapContainer.transform, false);
         DungeonCanvas.GetComponent<RectTransform>().sizeDelta = new Vector2(mapSizeWidth, mapSizeHeight);
 
         string imagePath = "dungeon_enter_map";
@@ -168,14 +221,14 @@ public class SelectDungeon : MonoBehaviour
         SetDungeonPoint();
 
         DungeonCanvas.AddComponent<HandleMap>();
-        DungeonCanvas.SetActive(false);
+        MapContainer.SetActive(false);
     }
 
     private void EnterUI()
     {
         //information of selected dungeon UI
         Image EnterDungeonUI = new GameObject("Dungeon_Enter").AddComponent<Image>();
-        EnterDungeonUI.transform.SetParent(DungeonCanvas.transform, false);
+        EnterDungeonUI.transform.SetParent(MapContainer.transform, false);
 
         RectTransform EnterTransform = EnterDungeonUI.GetComponent<RectTransform>();
         EnterTransform.anchorMin = new Vector2(0.5f, 0f);
@@ -183,6 +236,8 @@ public class SelectDungeon : MonoBehaviour
         EnterTransform.pivot = new Vector2(0.5f, 0f);
         EnterTransform.anchoredPosition = new Vector2(0f, mapSizeHeight / 10);
         EnterTransform.sizeDelta = new Vector2((float)(mapSizeWidth * 0.25), (float)(mapSizeHeight * 0.15));
+        EnterTransform.transform.position = new Vector2(MapContainer.transform.position.x, 
+            MapContainer.transform.position.x - mapSizeHeight * 0.85f);
 
         EnterDungeonUI.color = new Color(0f, 0f, 0f, 0.7f);
 
@@ -228,17 +283,17 @@ public class SelectDungeon : MonoBehaviour
 
     public void DisableDungeonCanvas()
     {
-        if (DungeonCanvas != null)
+        if (MapContainer != null)
         {
-            DungeonCanvas.SetActive(false);
+            MapContainer.SetActive(false);
         }
     }
 
     public void EnableDungeonCanvas()
     {
-        if (DungeonCanvas != null)
+        if (MapContainer != null)
         {
-            DungeonCanvas.SetActive(true);
+            MapContainer.SetActive(true);
             DungeonCanvas.AddComponent<HandleMap>();
         }
     }

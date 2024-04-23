@@ -29,9 +29,6 @@ public class HandleMap : MonoBehaviour, IPointerDownHandler, IDragHandler, IScro
     {
         imageSize = new Vector2(1920, 1080) * currentScale;
 
-        //new Vector2(1920, 1080) * currentScale - new Vector2(1920, 1080);
-        //== new Vector2(1920, 1080) * (currentScale - 1)
-
         minPosition = (imageSize - canvasSize) * -0.5f;
         maxPosition = (imageSize - canvasSize) * 0.5f;
     }
@@ -48,8 +45,6 @@ public class HandleMap : MonoBehaviour, IPointerDownHandler, IDragHandler, IScro
         Vector2 pointerDelta = eventData.position - lastPointerPosition;
         Vector2 newPosition = rectTransform.anchoredPosition + pointerDelta;
 
-        Debug.Log($"pointerDelta : {pointerDelta}\tnewPosition : {newPosition}");
-        Debug.Log($"minPosition : {minPosition}\nmaxPosition : {maxPosition}");
         // 이미지가 캔버스보다 작은 경우, 드래그가 이동되지 않도록 합니다.
         if (minPosition.x == 0 && minPosition.y == 0 && maxPosition.x == 0 && maxPosition.y == 0)
         {
@@ -69,5 +64,13 @@ public class HandleMap : MonoBehaviour, IPointerDownHandler, IDragHandler, IScro
         float scrollDelta = eventData.scrollDelta.y;
         currentScale = Mathf.Clamp(currentScale + scrollDelta * 0.05f, minScale, maxScale);
         rectTransform.localScale = new Vector3(currentScale, currentScale, 1.0f);
+
+        CalculateMinMaxPosition();
+
+        // 이미지가 화면을 벗어나면 가장 가까운 위치로 이동합니다.
+        Vector2 newPosition = rectTransform.anchoredPosition;
+        newPosition.x = Mathf.Clamp(newPosition.x, minPosition.x, maxPosition.x);
+        newPosition.y = Mathf.Clamp(newPosition.y, minPosition.y, maxPosition.y);
+        rectTransform.anchoredPosition = newPosition;
     }
 }
