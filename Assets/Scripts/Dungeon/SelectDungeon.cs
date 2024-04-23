@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class SelectDungeon : MonoBehaviour
 {
+    private HandleMap mapHandler;
+
     private GameObject DungeonCanvas;
     private RawImage DungeonImage;
     private Button destroyButton;
@@ -27,6 +29,9 @@ public class SelectDungeon : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        gameObject.AddComponent<HandleMap>();
+        mapHandler = new();
+
         MakeDungeonMap();
     }
 
@@ -162,6 +167,7 @@ public class SelectDungeon : MonoBehaviour
         //make clickable point
         SetDungeonPoint();
 
+        DungeonCanvas.AddComponent<HandleMap>();
         DungeonCanvas.SetActive(false);
     }
 
@@ -233,6 +239,7 @@ public class SelectDungeon : MonoBehaviour
         if (DungeonCanvas != null)
         {
             DungeonCanvas.SetActive(true);
+            DungeonCanvas.AddComponent<HandleMap>();
         }
     }
 }
