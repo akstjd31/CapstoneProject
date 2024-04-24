@@ -11,19 +11,30 @@ public class SettingValue : MonoBehaviour
     //private int innerValue;
     private static int beforeMenuOption = -1;
 
-    private static Dictionary<string, int> value;
+    private static Dictionary<string, int> value1;
+    private static Dictionary<string, int> value2;
     private const float MAX_SLIDER_VALUE = 100f;
 
-    private void Awake()
+    public static void Init()
     {
         settingParent = GameObject.Find("Setting_Detail");
 
         //기본 값
-        value = new Dictionary<string, int>
+        value1 = new Dictionary<string, int>
         {
             ["sound_effect"] = 50,
             ["sound_bgm"] = 50
         };
+        value2 = new Dictionary<string, int>
+        {
+            ["Performance_Toggle"] = 2,
+            ["Temp01_Toggle"] = 2,
+            ["Temp02_Toggle"] = 2
+        };
+
+        SaveDictionaryData("gameSetting_01", value1);
+        SaveDictionaryData("gameSetting_02", value2);
+        Debug.Log("end of settingValue's awake");
     }
 
     //setting detail이 변할 때 마다 실행
@@ -33,10 +44,10 @@ public class SettingValue : MonoBehaviour
         switch (type)
         {
             case 0:
-                LoadDictionaryData("gameSetting_01", value);
+                value1 = LoadDictionaryData("gameSetting_01");
 
                 //GameObject.Find("SoundEffect_Value");
-                if (value != null && value.ContainsKey("sound_effect"))
+                if (value1 != null && value1.ContainsKey("sound_effect"))
                 {
                     nowSettingObject = GameObject.Find("SoundEffect_Value");
 
@@ -46,7 +57,7 @@ public class SettingValue : MonoBehaviour
 
                         if(innerValue != null)
                         {
-                            Debug.Log($"load sound_effect : {value["sound_effect"]} / {innerValue.gameObject.name}");
+                            Debug.Log($"load sound_effect : {value1["sound_effect"]} / {innerValue.gameObject.name}");
                             //innerValue.value = (float)value["sound_effect"] / MAX_SLIDER_VALUE;
                             //nowSettingObject.GetComponent<Slider>().value = (float)value["sound_effect"];
                             Canvas.ForceUpdateCanvases();
@@ -66,7 +77,7 @@ public class SettingValue : MonoBehaviour
                     Debug.Log("value is null");
                 }
 
-                if(value != null && value.ContainsKey("sound_bgm"))
+                if(value1 != null && value1.ContainsKey("sound_bgm"))
                 {
                     nowSettingObject = GameObject.Find("bgSound_Value");
 
@@ -76,7 +87,7 @@ public class SettingValue : MonoBehaviour
 
                         if(innerValue != null)
                         {
-                            Debug.Log($"load sound_effect : {value["sound_bgm"]} / {innerValue.gameObject.name}");
+                            Debug.Log($"load sound_effect : {value1["sound_bgm"]} / {innerValue.gameObject.name}");
                             //innerValue.value = (float)value["sound_bgm"] / MAX_SLIDER_VALUE;
                             Canvas.ForceUpdateCanvases();
                             //innerValue.value = value.ContainsKey("sound_bgm") ? value["sound_bgm"] : 50;
@@ -86,30 +97,34 @@ public class SettingValue : MonoBehaviour
 
                 break;
             case 1:
-                LoadDictionaryData("gameSetting_02", value);
+                value2 = LoadDictionaryData("gameSetting_02");
                 ToggleGroup toggleGroup;
                 Toggle toggleToClick;
                 int num;
 
-                if (value != null && value.ContainsKey("Performance_Toggle"))
+                //KeyNotFoundException: The given key 'Performance_Toggle' was not present in the dictionary.
+                Debug.Log($"value's key : {string.Join(", ", value2.Keys)}");
+                Debug.Log($"load value in case1 : {value2["Performance_Toggle"]}\n{value2["Temp01_Toggle"]}\n{value2["Temp02_Toggle"]}");
+
+                if (value2 != null && value2.ContainsKey("Performance_Toggle"))
                 {
-                    num = value["settingQuality"];
+                    num = value2["Performance_Toggle"];
 
                     toggleGroup = GameObject.Find("Performance_Toggle").GetComponent<ToggleGroup>();
                     toggleToClick = toggleGroup.transform.GetChild(num).GetComponent<Toggle>();
                     toggleToClick.isOn = true;
                 }
-                if (value != null && value.ContainsKey("Temp01_Toggle"))
+                if (value2 != null && value2.ContainsKey("Temp01_Toggle"))
                 {
-                    num = value["Temp01_Toggle"];
+                    num = value2["Temp01_Toggle"];
 
                     toggleGroup = GameObject.Find("Temp01_Toggle").GetComponent<ToggleGroup>();
                     toggleToClick = toggleGroup.transform.GetChild(num).GetComponent<Toggle>();
                     toggleToClick.isOn = true;
                 }
-                if (value != null && value.ContainsKey("Temp02_Toggle"))
+                if (value2 != null && value2.ContainsKey("Temp02_Toggle"))
                 {
-                    num = value["Temp02_Toggle"];
+                    num = value2["Temp02_Toggle"];
 
                     toggleGroup = GameObject.Find("Temp02_Toggle").GetComponent<ToggleGroup>();
                     toggleToClick = toggleGroup.transform.GetChild(num).GetComponent<Toggle>();
@@ -133,18 +148,20 @@ public class SettingValue : MonoBehaviour
 
                 if (settingEffectSound != null)
                 {
-                    Debug.Log("settingEffectSound");
+                    //Debug.Log("settingEffectSound");
                     GameObject soundEffectValueObject = settingEffectSound.transform.Find("SoundEffect_Value").gameObject;
 
                     if (soundEffectValueObject != null)
                     {
-                        Debug.Log("soundEffectValueObject");
+                        //Debug.Log("soundEffectValueObject");
                         Slider slider = soundEffectValueObject.GetComponent<Slider>();
+                        //Debug.Log($"slider {slider}\n{slider.name}\n{slider.maxValue}\n{slider.minValue}\n{slider.value}");
+                        //Debug.Log($"value : {value1}");
 
                         if (slider != null)
                         {
                             Debug.Log($"save sound_effect : {slider.value}");
-                            value["sound_effect"] = (int)slider.value;
+                            //value["sound_effect"] = (int)slider.value;
                         }
                     }
                 }
@@ -162,15 +179,15 @@ public class SettingValue : MonoBehaviour
                         if (slider != null)
                         {
                             Debug.Log($"save sound_bgm : {slider.value}");
-                            value["sound_bgm"] = (int)slider.value;
+                            //value["sound_bgm"] = (int)slider.value;
                         }
                     }
                 }
-                SaveDictionaryData("gameSetting_01", value);
+                SaveDictionaryData("gameSetting_01", value1);
 
                 break;
             case 1:
-                Dictionary<string, int> settingValue = new Dictionary<string, int>();
+                //Dictionary<string, int> settingValue = new Dictionary<string, int>();
 
                 // 각 토글 그룹을 저장할 변수들
                 ToggleGroup[] toggleGroups = new ToggleGroup[3];
@@ -205,7 +222,7 @@ public class SettingValue : MonoBehaviour
                             }
 
 
-                            settingValue[name] = temp;
+                            value2[name] = temp;
                             break;
                         }
                         else
@@ -215,7 +232,8 @@ public class SettingValue : MonoBehaviour
                     }
                 }
 
-                SaveDictionaryData("gameSetting_02", value);
+                //Debug.Log($"settingValue : {settingValue["Performance_Toggle"]}\n{settingValue["Temp01_Toggle"]}\n{settingValue["Temp02_Toggle"]}");
+                SaveDictionaryData("gameSetting_02", value2);
 
                 break;
         }
@@ -228,11 +246,16 @@ public class SettingValue : MonoBehaviour
         string json = JsonUtility.ToJson(dictionary);
         PlayerPrefs.SetString(key, json);
         PlayerPrefs.Save();
+        Debug.Log($"save data origin {json}");
+        Debug.Log($"save data {string.Join(", ", dictionary.Keys)}");
     }
 
-    private static void LoadDictionaryData(string key, Dictionary<string, int> dictionary)
+    private static Dictionary<string, int> LoadDictionaryData(string key)
     {
         string json = PlayerPrefs.GetString(key);
-        dictionary = JsonUtility.FromJson<Dictionary<string, int>>(json);
+        Dictionary<string, int> dictionary = JsonUtility.FromJson<Dictionary<string, int>>(json);
+        Debug.Log($"load data origin {json}");
+        Debug.Log($"load data {string.Join(", ", dictionary.Keys)}");
+        return dictionary;
     }
 }

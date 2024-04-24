@@ -22,6 +22,8 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
+        SettingValue.Init();
+
         settingUI = GameObject.Find("Setting_Panel");
         settingDetailUI = GameObject.Find("Setting_Detail");
         settingUI.SetActive(false);
@@ -30,7 +32,7 @@ public class MainMenu : MonoBehaviour
     public void ClickMenuOption()
     {
         string buttonName = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
-        Debug.Log($"name : {buttonName}");
+        //Debug.Log($"name : {buttonName}");
         int btn_type = 0;
 
         switch(buttonName)
@@ -51,11 +53,6 @@ public class MainMenu : MonoBehaviour
             return;
         }
 
-        //SettingValue.SaveSettingValue(beforeMenuOption);
-
-        beforeMenuOption = btn_type;
-        nowMenuOption = btn_type;
-
         ShowMenuDetail(btn_type);
     }
 
@@ -63,9 +60,11 @@ public class MainMenu : MonoBehaviour
     {
         if (spawnedPrefab != null)
         {
-            //����� ���� ����
-            //SettingValue.SaveSettingValue(beforeMenuOption);
-            Destroy(spawnedPrefab);
+            if(beforeMenuOption != -1)
+            {
+                SettingValue.SaveSettingValue(beforeMenuOption);
+                Destroy(spawnedPrefab);
+            }
         }
         nowMenuOption = opt;
 
@@ -82,7 +81,12 @@ public class MainMenu : MonoBehaviour
                 break;
         }
 
+        //Debug.Log($"ShowDetail {nowPrefab == detailPrefab_01} {nowPrefab == detailPrefab_02} {nowPrefab == detailPrefab_03}");
         spawnedPrefab = Instantiate(nowPrefab, settingDetailUI.transform);
+        //Debug.Log("showDetail instantiate");
+
+        beforeMenuOption = nowMenuOption;
+        nowMenuOption = opt;
 
         //����Ǵ� ���� ��� ���� Ŭ����
         SettingValue.LoadSettingValue(opt);
@@ -97,6 +101,11 @@ public class MainMenu : MonoBehaviour
     public void CloseSettingUI()
     {
         SettingValue.SaveSettingValue(nowMenuOption);
+        if(spawnedPrefab != null)
+        {
+            Destroy(spawnedPrefab);
+        }
+        nowPrefab = null;
         settingUI.SetActive(false);
     }
 }
