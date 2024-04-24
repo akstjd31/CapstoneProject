@@ -16,12 +16,12 @@ using Photon.Realtime;
 ///// 3. 매개변수가 꼭 필요한 경우 photonview에 있는 ViewID(int형)로 접근하여 하이에라키에 존재하는 ViewID와 비교하여 찾을 수 있다.
 
 
-public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
+public class PlayerCtrl : MonoBehaviourPunCallbacks
 {
     // enum 클래스 플레이어 상태
     public enum State
     {
-        NORMAL, MOVE, ROLLING, ATTACK, ATTACKIDLE, HIT, DIE
+        NORMAL, MOVE, ROLLING, ATTACK, HIT, DIE
     }
     public float movePower = 5f; // 이동에 필요한 힘
     public float rollSpeed;  // 구르는 속도
@@ -121,9 +121,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
                 else
                 {
                     rigid.velocity = Vector2.zero;
-
-                    if (state != State.ATTACKIDLE)
-                        state = State.NORMAL;
+                    state = State.NORMAL;
                 }
             }
 
@@ -223,18 +221,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
                     AttackAnimation();
                     Attack();
                     break;
-                case State.ATTACKIDLE:
-                    AttackIdle();
-                    AttackIdleAnimation();
-                    break;
             }
         }
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        // 클릭된 UI 요소에 대한 정보를 출력합니다.
-        Debug.Log(eventData.pointerPress.gameObject.name);
     }
 
     void IdleAnimation()
@@ -307,7 +295,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPointerClickHandler
         {
             rigid.velocity = Vector2.zero;
             attackIdleTime = 1.0f;
-            state = State.ATTACKIDLE;
+            state = State.NORMAL;
         }
     }
 
