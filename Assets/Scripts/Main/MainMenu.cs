@@ -22,6 +22,8 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
+        SettingValue.Init();
+
         settingUI = GameObject.Find("Setting_Panel");
         settingDetailUI = GameObject.Find("Setting_Detail");
         settingUI.SetActive(false);
@@ -51,23 +53,25 @@ public class MainMenu : MonoBehaviour
             return;
         }
 
-        //SettingValue.SaveSettingValue(beforeMenuOption);
-
-        beforeMenuOption = btn_type;
-        nowMenuOption = btn_type;
-
         ShowMenuDetail(btn_type);
     }
 
     private void ShowMenuDetail(int opt = 0)
     {
+        Debug.Log($"call detail(1) : {opt}");
         if (spawnedPrefab != null)
         {
-            //����� ���� ����
-            //SettingValue.SaveSettingValue(beforeMenuOption);
-            Destroy(spawnedPrefab);
+            Debug.Log($"call save");
+            if(beforeMenuOption != -1)
+            {
+                SettingValue.SaveSettingValue(beforeMenuOption);
+                Debug.Log($"call destroy");
+                Destroy(spawnedPrefab);
+            }
         }
+        Debug.Log("set nowMenuOption");
         nowMenuOption = opt;
+        Debug.Log($"nowMenuOption : {nowMenuOption}");
 
         switch (opt)
         {
@@ -82,7 +86,12 @@ public class MainMenu : MonoBehaviour
                 break;
         }
 
+        Debug.Log($"ShowDetail {nowPrefab == detailPrefab_01} {nowPrefab == detailPrefab_02} {nowPrefab == detailPrefab_03}");
         spawnedPrefab = Instantiate(nowPrefab, settingDetailUI.transform);
+        Debug.Log("showDetail instantiate");
+
+        beforeMenuOption = nowMenuOption;
+        nowMenuOption = opt;
 
         //����Ǵ� ���� ��� ���� Ŭ����
         SettingValue.LoadSettingValue(opt);
@@ -97,6 +106,11 @@ public class MainMenu : MonoBehaviour
     public void CloseSettingUI()
     {
         SettingValue.SaveSettingValue(nowMenuOption);
+        if(spawnedPrefab != null)
+        {
+            Destroy(spawnedPrefab);
+        }
+        nowPrefab = null;
         settingUI.SetActive(false);
     }
 }

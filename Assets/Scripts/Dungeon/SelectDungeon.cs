@@ -121,7 +121,7 @@ public class SelectDungeon : MonoBehaviour
         newDescContainer.transform.position = new Vector2(toggle.transform.position.x, newY);
         newDescContainer.transform.SetParent(toggle.transform);
 
-        string imagePath = "backyard";
+        string imagePath = "PixelArtGUI/Textures/Panels/TitleBar";
         Texture2D texture = Resources.Load<Texture2D>(imagePath);
         newDescContainer.GetComponent<RawImage>().texture = texture;
 
@@ -193,7 +193,6 @@ public class SelectDungeon : MonoBehaviour
 
         //button
         GameObject buttonObject = new GameObject("DestroyButton");
-
         destroyButton = buttonObject.AddComponent<Button>();
 
         Text buttonText = buttonObject.AddComponent<Text>();
@@ -211,12 +210,10 @@ public class SelectDungeon : MonoBehaviour
         buttonTransform.pivot = new Vector2(1f, 1f);
         buttonTransform.anchoredPosition = new Vector2(-10f, -10f);
 
-        
         destroyButton.onClick.AddListener(DisableDungeonCanvas);
 
         //information of selected dungeon
         EnterUI();
-
         //make clickable point
         SetDungeonPoint();
 
