@@ -32,7 +32,7 @@ public class MainMenu : MonoBehaviour
     public void ClickMenuOption()
     {
         string buttonName = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
-        Debug.Log($"name : {buttonName}");
+        //Debug.Log($"name : {buttonName}");
         int btn_type = 0;
 
         switch(buttonName)
@@ -58,20 +58,15 @@ public class MainMenu : MonoBehaviour
 
     private void ShowMenuDetail(int opt = 0)
     {
-        Debug.Log($"call detail(1) : {opt}");
         if (spawnedPrefab != null)
         {
-            Debug.Log($"call save");
             if(beforeMenuOption != -1)
             {
                 SettingValue.SaveSettingValue(beforeMenuOption);
-                Debug.Log($"call destroy");
                 Destroy(spawnedPrefab);
             }
         }
-        Debug.Log("set nowMenuOption");
         nowMenuOption = opt;
-        Debug.Log($"nowMenuOption : {nowMenuOption}");
 
         switch (opt)
         {
@@ -86,9 +81,9 @@ public class MainMenu : MonoBehaviour
                 break;
         }
 
-        Debug.Log($"ShowDetail {nowPrefab == detailPrefab_01} {nowPrefab == detailPrefab_02} {nowPrefab == detailPrefab_03}");
+        //Debug.Log($"ShowDetail {nowPrefab == detailPrefab_01} {nowPrefab == detailPrefab_02} {nowPrefab == detailPrefab_03}");
         spawnedPrefab = Instantiate(nowPrefab, settingDetailUI.transform);
-        Debug.Log("showDetail instantiate");
+        //Debug.Log("showDetail instantiate");
 
         beforeMenuOption = nowMenuOption;
         nowMenuOption = opt;
