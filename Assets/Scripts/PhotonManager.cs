@@ -45,7 +45,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         inputText.onEndEdit.AddListener(
             (string s) =>
             {
-                Debug.Log(s + "님이 입장하셨습니다.");
+                //Debug.Log(s + "님이 입장하셨습니다.");
             }
         );
         inputButton.onClick.AddListener(OnClickConnect);
@@ -86,7 +86,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     public void OnClickConnect()
     {
-        PhotonNetwork.ConnectUsingSettings();        
+        //PhotonNetwork.ConnectUsingSettings();        
     }
 
     //회원가입 시 호출되는 메소드
