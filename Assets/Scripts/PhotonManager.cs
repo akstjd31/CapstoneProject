@@ -20,7 +20,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     [SerializeField]
     Button inputButton;
 
-    private int isSocialLogin = 0;
     private static string nickname;
     public static int leavingPlayer = 0;
     public static int[] dungeonJoiningPlayer = new int[2];
@@ -46,7 +45,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         inputText.onEndEdit.AddListener(
             (string s) =>
             {
-                Debug.Log(s + "님이 입장하셨습니다.");
+                //Debug.Log(s + "님이 입장하셨습니다.");
             }
         );
         inputButton.onClick.AddListener(OnClickConnect);
@@ -87,36 +86,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     public void OnClickConnect()
     {
-        /*
-        //다른 로그인 방법을 사용 중인지
-        if(isSocialLogin == 1)
-        {
-            PhotonNetwork.ConnectUsingSettings();
-        }
-
-        //이메일과 비밀번호가 정상적으로 입력 되었는지 확인
-        if(inputText.text == "" || inputPassword.text == "")
-        {
-            return;
-        }
-        //입력한 이메일과 비밀번호로 로그인이 되는지
-        else if(!UserRegister.IsValidAccount(inputText.text, inputPassword.text))
-        {
-            //이메일과 비밀번호가 잘 못 입력된 경우
-            return;
-        }
-
-        // 마스터 서버 접속 요청
-        if(UserData.CanEnter())
-        {
-            PhotonNetwork.ConnectUsingSettings();
-        }
-        */
-
-        if(UserData.GetLoginState())
-        {
-            PhotonNetwork.ConnectUsingSettings();
-        }
+        //PhotonNetwork.ConnectUsingSettings();        
     }
 
     //회원가입 시 호출되는 메소드
