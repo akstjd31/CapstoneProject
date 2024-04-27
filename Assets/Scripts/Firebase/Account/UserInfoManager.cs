@@ -1,5 +1,6 @@
 using Firebase.Auth;
 using Firebase.Firestore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -40,6 +41,41 @@ public class UserInfoManager : MonoBehaviour
     public static Dictionary<string, int> GetSkillLevel()
     {
         return skillLevel;
+    }
+
+    public static void SetUserMoney(int change)
+    {
+
+    }
+
+    public static async Task<int> GetUserMoney()
+    {
+        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+        CollectionReference coll_userdata = db.Collection("User");
+        DocumentReference doc_user = coll_userdata.Document(UserData.GetUserId());
+
+        DocumentSnapshot snapshot = await doc_user.GetSnapshotAsync();
+
+        if (snapshot.Exists)
+        {
+            Dictionary<string, object> userData = snapshot.ToDictionary();
+            if (userData != null && userData.ContainsKey("money"))
+            {
+                return Convert.ToInt32(userData["money"]);
+            }
+            else
+            {
+                Debug.Log("userData does not contain money key or is null");
+                return -1; // 혹은 다른 기본값
+            }
+        }
+        else
+        {
+            Debug.Log("Document does not exist\nMake User DB now...");
+            await UserData.MakeDB_New();
+            return 0;
+        }
     }
 
     public static async Task GetCharSkillAsync()
