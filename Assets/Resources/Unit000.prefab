@@ -1905,6 +1905,7 @@ MonoBehaviour:
   rollSpeed: 0
   attackDistanceSpeed: 0
   rollCoolTime: 0
+  attackIdleTime: 1
   isPlayerInRangeOfEnemy: 0
   isAttackCooldownOver: 1
   attackCoolTime: 1
