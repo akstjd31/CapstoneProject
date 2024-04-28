@@ -198,9 +198,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 recorder.TransmitEnabled = false;
             }
 
-            IsPartyHUDActive();
+            if (SceneManager.GetActiveScene().Equals("LobbyScene"))
+            {
+                IsPartyHUDActive();
+            }
         }
-
     }
 
     void LateUpdate()
