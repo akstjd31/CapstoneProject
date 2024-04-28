@@ -229,27 +229,17 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         anim.SetBool("isMove", false);
         anim.SetBool("isAttack", false);
-        anim.SetBool("AttackIdle", false);
     }
 
     void MoveAnimation()
     {
         anim.SetBool("isMove", true);
         anim.SetBool("isAttack", false);
-        anim.SetBool("AttackIdle", false);
     }
 
     void AttackAnimation()
     {
         anim.SetBool("isAttack", true);
-        anim.SetBool("AttackIdle", false);
-        anim.SetBool("isMove", false);
-    }
-
-    void AttackIdleAnimation()
-    {
-        anim.SetBool("AttackIdle", true);
-        anim.SetBool("isAttack", false);
         anim.SetBool("isMove", false);
     }
 
