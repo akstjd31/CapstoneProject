@@ -27,7 +27,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public float rollSpeed;  // 구르는 속도
     public float attackDistanceSpeed; // 공격 시 이동하는 속도
     public float rollCoolTime = 0.0f; // 구르기 쿨타임
-    public float attackIdleTime = 1.0f; // 공격 시 공격준비상태
+
 
     [SerializeField] private bool isPlayerInRangeOfEnemy = false; // 공격가능한 범위인지 아닌지?
     private EnemyCtrl enemyCtrl = null; // 공격한 적의 정보
@@ -157,7 +157,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && 
                 !EventSystem.current.currentSelectedGameObject &&
                 chatScript != null && partySystemScript != null && 
-                !inventory.activeSelf && !chatScript.chatView.activeSelf)
+                !inventory.activeSelf && !chatScript.chatView.activeSelf &&
+                !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf)
             {
                 state = State.ATTACK;
 
@@ -320,20 +321,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         if (attackDistanceSpeed < 0.5f)
         {
             rigid.velocity = Vector2.zero;
-            attackIdleTime = 1.0f;
-            state = State.NORMAL;
-        }
-    }
-
-    void AttackIdle()
-    {
-        if (attackIdleTime > 0.0f)
-        {
-            attackIdleTime -= Time.deltaTime;
-        }
-        else
-        {
-            rigid.velocity = Vector2.zero;
             state = State.NORMAL;
         }
     }
@@ -382,6 +369,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             partySystemScript.partyMemberHUD[0].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
             partySystemScript.partyMemberHUD[1].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
+
+            partySystemScript.partyMemberHUD[0].transform.Find("Ready").gameObject.SetActive(false);
+            partySystemScript.partyMemberHUD[1].transform.Find("Ready").gameObject.SetActive(false);
 
             partySystemScript.partyMemberHUD[0].SetActive(false);
             partySystemScript.partyMemberHUD[1].SetActive(false);

@@ -15,6 +15,8 @@ public class Party : MonoBehaviourPun, IPunObservable
 
     private int MAX_MEMBER = 2;
 
+    public int partyID;
+
     private void Start()
     {
         if (context == "" && GetPartyHeadCount() > 0)
@@ -64,7 +66,6 @@ public class Party : MonoBehaviourPun, IPunObservable
         this.context = context;
     }
 
-    // 파티원이 없으면 없얜다.
     private void Update()
     {
         if (GetPartyHeadCount() == 0)
