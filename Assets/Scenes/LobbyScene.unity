@@ -21172,13 +21172,14 @@ GameObject:
   - component: {fileID: 1717852995}
   - component: {fileID: 1717852994}
   - component: {fileID: 1717852996}
+  - component: {fileID: 1717852997}
   m_Layer: 0
   m_Name: DungeonEntrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1717852994
 SpriteRenderer:
   m_ObjectHideFlags: 0

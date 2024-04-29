@@ -10,6 +10,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     PhotonView canvasPV;
     PartySystem partySystemScript;
+
     void Start()
     {
         canvasPV = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PhotonView>();

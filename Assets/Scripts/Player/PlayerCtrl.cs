@@ -89,6 +89,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 변수 초기화
         rigid = gameObject.GetComponent<Rigidbody2D>();
         pv = this.GetComponent<PhotonView>();
+
+        PhotonNetwork.NickName = pv.ViewID.ToString();
+
         //playerStat = GameObject.FindGameObjectWithTag("PlayerStat");
         anim = this.GetComponent<Animator>();
         status = this.GetComponent<Status>();
@@ -198,7 +201,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 recorder.TransmitEnabled = false;
             }
 
-            if (SceneManager.GetActiveScene().Equals("LobbyScene"))
+            if (SceneManager.GetActiveScene().name == "LobbyScene")
             {
                 IsPartyHUDActive();
             }
@@ -419,12 +422,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         if (other.CompareTag("Weapon")) {
             
         }
-        if (other.CompareTag("Enemy"))
-        {
-            isPlayerInRangeOfEnemy = true;
-            enemyCtrl = other.GetComponent<EnemyCtrl>();
+        //if (other.CompareTag("Enemy"))
+        //{
+        //    isPlayerInRangeOfEnemy = true;
+        //    enemyCtrl = other.GetComponent<EnemyCtrl>();
 
-        }
+        //}
     }
 
     private void MakeDungeonMap()
