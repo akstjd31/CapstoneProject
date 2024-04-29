@@ -53,8 +53,9 @@ public class Chat : MonoBehaviour
         // 메세지 생성 후 해당 메세지를 받은 메세지로 채우기
         GameObject msg = PhotonNetwork.Instantiate(message.name, Vector3.zero, Quaternion.identity);
         msg.transform.parent = content.transform;
-        PhotonView msgPV = msg.GetComponent<PhotonView>();
 
-        msgPV.RPC("InitSettingRPC", RpcTarget.AllBuffered, nickName, receiveMessage);
+        Message mes = msg.GetComponent<Message>();
+        mes.SetNickName(nickName);
+        mes.SetMessage(receiveMessage);
     }
 }
