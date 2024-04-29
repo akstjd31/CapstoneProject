@@ -153,6 +153,8 @@ GameObject:
   m_Component:
   - component: {fileID: 648065787066708715}
   - component: {fileID: -1311448846621621016}
+  - component: {fileID: 4374404639654757022}
+  - component: {fileID: -4718607323872760273}
   m_Layer: 0
   m_Name: Right-Down
   m_TagString: Untagged
@@ -223,6 +225,42 @@ MonoBehaviour:
   - {fileID: 790118025837392789, guid: a7135930b3c129d438ebd34994243a7c, type: 3}
   - {fileID: 906312298968879362, guid: 8ff42b5d7d9734e4fbbeb537c3be1704, type: 3}
   doorList: 00000000
+--- !u!114 &4374404639654757022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2384933279783592005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &-4718607323872760273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2384933279783592005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53d597d245c19484ea49a30c454c035e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridMap: 0
+  Tool: {fileID: 0}
 --- !u!1 &2648809025636642904
 GameObject:
   m_ObjectHideFlags: 0
