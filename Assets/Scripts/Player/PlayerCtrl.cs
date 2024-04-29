@@ -39,6 +39,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public RuntimeAnimatorController[] animController; // 아이템 획득 시 변경할 애니메이터
 
+    GameObject canvas;
+
     PhotonView pv, weaponPV; // 플레이어 pv, 무기 pv
     Rigidbody2D rigid; // 플레이어 리지드 바디
 
@@ -64,19 +66,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     RawImage DungeonImage;
     Button destroyButton;
 
-    // 상태 변경을 위한 함수
-    [PunRPC]
-    public void UpdatePlayerState(State newState)
-    {
-        state = newState;
-    }
     GameObject inventory;
 
     Vector3 mouseWorldPosition;
 
     Recorder recorder;
 
-
+    UIManager uiManager;
 
     // Getter
     public State GetState()
@@ -90,21 +86,49 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         rigid = gameObject.GetComponent<Rigidbody2D>();
         pv = this.GetComponent<PhotonView>();
 
-        PhotonNetwork.NickName = pv.ViewID.ToString();
+        PhotonNetwork.NickName = pv.ViewID.ToString(); // 임시로 플레이어 닉네임을 ViewID로 설정. (다른 클래스에서 닉네임을 비교하기 때문에)
 
+        // 공용
         //playerStat = GameObject.FindGameObjectWithTag("PlayerStat");
         anim = this.GetComponent<Animator>();
         status = this.GetComponent<Status>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
-        chatScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Chat>();
-        partySystemScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PartySystem>();
-        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").gameObject;
-        recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
+        canvas = GameObject.FindGameObjectWithTag("Canvas");
+        inventory = canvas.transform.Find("Inventory").gameObject;
+        
 
         state = State.NORMAL;
 
-        //던전 선택 canvas 생성
-        MakeDungeonMap();
+        // 로비 씬
+        if (SceneManager.GetActiveScene().name == "LobbyScene")
+        {
+            chatScript = canvas.GetComponent<Chat>();
+            partySystemScript = canvas.GetComponent<PartySystem>();
+
+            //던전 선택 canvas 생성
+            MakeDungeonMap();
+        }
+
+        // 던전 씬
+        else if (SceneManager.GetActiveScene().name == "DungeonScene")
+        {
+            recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
+            uiManager = canvas.GetComponent<UIManager>();
+
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            GameObject otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
+
+            HUD hud1 = uiManager.hud1.GetComponent<HUD>();
+
+            // HUD1은 로컬 플레이어
+            hud1.nickName.text = PhotonNetwork.NickName;
+            hud1.hpBar.value = status.HP;
+
+            // HUD2 == otherPlayer
+            HUD hud2 = uiManager.hud2.GetComponent<HUD>();
+            hud2.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
+            hud2.hpBar.value = otherPlayer.GetComponent<Status>().HP;
+        }
     }
 
     //Graphic & Input Updates	
@@ -114,7 +138,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-            if (state != State.ATTACK && !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
+            if (state != State.ATTACK && chatScript != null && partySystemScript != null &&
+                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
             {
 
                 if (moveDir.x != 0 || moveDir.y != 0)
@@ -129,7 +154,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
 
             // 공격 & 공격 쿨타임 끝나면
-            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && !EventSystem.current.currentSelectedGameObject && !inventory.activeSelf && !chatScript.chatView.activeSelf)
+            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && 
+                !EventSystem.current.currentSelectedGameObject &&
+                chatScript != null && partySystemScript != null && 
+                !inventory.activeSelf && !chatScript.chatView.activeSelf)
             {
                 state = State.ATTACK;
 
@@ -164,7 +192,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
 
             // 채팅 입력
-            if (Input.GetKeyDown(KeyCode.Return) && !partySystemScript.partyCreator.activeSelf)
+            if (Input.GetKeyDown(KeyCode.Return) && partySystemScript != null &&
+                !partySystemScript.partyCreator.activeSelf)
             {
                 if (!chatScript.inputField.isFocused)
                 {
@@ -174,7 +203,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
 
             // 채팅 끄기
-            if (Input.GetKeyDown(KeyCode.Escape) && !partySystemScript.partyCreator.activeSelf)
+            if (Input.GetKeyDown(KeyCode.Escape) && partySystemScript != null &&
+                !partySystemScript.partyCreator.activeSelf)
             {
                 chatScript.inputField.text = "";
                 chatScript.inputField.DeactivateInputField();
@@ -183,25 +213,26 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
             
             // 인벤토리 열기
-            if (Input.GetKeyDown(KeyCode.I) && !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
+            if (Input.GetKeyDown(KeyCode.I) && chatScript != null && partySystemScript != null &&
+                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
             {
                 inventory.SetActive(!inventory.activeSelf);
             }
 
             // 보이스 참가하기
-            if (Input.GetKey(KeyCode.T))
+            if (recorder != null)
             {
-                if (!chatScript.chatView.activeSelf)
+                if (Input.GetKey(KeyCode.T))
                 {
                     recorder.TransmitEnabled = true;
                 }
-            }
-            else
-            {
-                recorder.TransmitEnabled = false;
+                else
+                {
+                    recorder.TransmitEnabled = false;
+                }
             }
 
-            if (SceneManager.GetActiveScene().name == "LobbyScene")
+            if (partySystemScript != null)
             {
                 IsPartyHUDActive();
             }
@@ -324,22 +355,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 플레이어가 파티 방에 속해있는지 확인 후에 정보를 전달해주는 함수
     public void IsPartyHUDActive()
     {
-        if (!isPartyMember)
-        {
-            partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = "";
-            partySystemScript.partyMemberHUD[1].GetComponentInChildren<Text>().text = "";
-
-            partySystemScript.partyMemberHUD[0].SetActive(false);
-            partySystemScript.partyMemberHUD[1].SetActive(false);
-            return;
-        }
-
         if (party != null)
         {
             if (party.GetPartyHeadCount() == 1)
             {
                 PhotonView partyLeaderPhotonView = PhotonView.Find(party.GetPartyLeaderID());
-                partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
+                partySystemScript.partyMemberHUD[0].transform.GetChild(0).GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[0].SetActive(true);
                 if(partySystemScript.partyMemberHUD[1].activeSelf)
                 {
@@ -349,13 +370,22 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             else
             {
                 PhotonView partyLeaderPhotonView = PhotonView.Find(party.GetPartyLeaderID());
-                partySystemScript.partyMemberHUD[0].GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
+                partySystemScript.partyMemberHUD[0].transform.GetChild(0).GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[0].SetActive(true);
 
                 PhotonView partyMemberPhotonView = PhotonView.Find(party.GetPartyMemberID());
-                partySystemScript.partyMemberHUD[1].GetComponentInChildren<Text>().text = partyMemberPhotonView.Owner.NickName;
+                partySystemScript.partyMemberHUD[1].transform.GetChild(0).GetComponentInChildren<Text>().text = partyMemberPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[1].SetActive(true);
             }
+        }
+        else
+        {
+            partySystemScript.partyMemberHUD[0].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
+            partySystemScript.partyMemberHUD[1].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
+
+            partySystemScript.partyMemberHUD[0].SetActive(false);
+            partySystemScript.partyMemberHUD[1].SetActive(false);
+            return;
         }
     }
 

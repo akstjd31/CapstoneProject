@@ -15,8 +15,6 @@ public class Party : MonoBehaviourPun, IPunObservable
 
     private int MAX_MEMBER = 2;
 
-    public int partyID;
-
     private void Start()
     {
         if (context == "" && GetPartyHeadCount() > 0)

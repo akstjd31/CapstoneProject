@@ -146,7 +146,6 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     readyButton[0].SetActive(true);
 
                     partyMemberHUD[0].GetComponentInChildren<Text>().text = PhotonNetwork.NickName;
-
                     break;
                 }
                 else

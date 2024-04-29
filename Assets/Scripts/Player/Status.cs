@@ -31,8 +31,8 @@ public class Status : MonoBehaviourPunCallbacks
         pv = this.GetComponent<PhotonView>();
 
         // 태그로 찾은 후에 텍스트 집어넣기
-        statInfo = GameObject.FindGameObjectWithTag("StatInfo").transform;
-        stats = statInfo.GetChild(0).GetComponentsInChildren<Text>();
+        //statInfo = GameObject.FindGameObjectWithTag("StatInfo").transform;
+        //stats = statInfo.GetChild(0).GetComponentsInChildren<Text>();
     }
 
     private void Update()
@@ -42,7 +42,7 @@ public class Status : MonoBehaviourPunCallbacks
         {
             Vector3 playerPos = Camera.main.WorldToScreenPoint(playerCtrl.transform.position);
 
-            UpdateText(playerPos);
+            //UpdateText(playerPos);
         }
     }
 
