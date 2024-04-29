@@ -66,7 +66,6 @@ public class Party : MonoBehaviourPun, IPunObservable
         this.context = context;
     }
 
-    // 파티원이 없으면 없얜다.
     private void Update()
     {
         if (GetPartyHeadCount() == 0)
