@@ -66,7 +66,7 @@ public class Party : MonoBehaviourPun, IPunObservable
         this.context = context;
     }
 
-    // ÆÄÆ¼ ¸ñ·Ï¿¡ º¸¿©Áö´Â ÅØ½ºÆ® ¾÷µ¥ÀÌÆ®
+    // íŒŒí‹°ì›ì´ ì—†ìœ¼ë©´ ì—†ì–œë‹¤.
     private void Update()
     {
         if (GetPartyHeadCount() == 0)
