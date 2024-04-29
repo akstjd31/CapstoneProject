@@ -45,59 +45,59 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         }
         if(isMapCreate && !specialRoomSelect)
         {
-            for(int i = 0; i < endRoomIndexChecker; i++)
-            {
-                if(endRooms[i] == null)
-                {
-                    continue;
-                }
-                float endRoomDistance = Mathf.Sqrt(Mathf.Pow(endRooms[i].transform.position.x,2) + Mathf.Pow(endRooms[i].transform.position.y,2));
-                if(bossRoomDistance < endRoomDistance)
-                {
-                    bossRoomDistance = endRoomDistance;
-                    bossRoom = endRooms[i];
-                    endRooms[i] = null;
-                }
-            }
-            while(true)
-            {
-                int rannum = Random.Range(0, endRoomIndexChecker);
-                if(endRooms[rannum] == null)
-                {
-                    continue;
-                }
-                else
-                {
-                    shopRoom = endRooms[rannum];
-                    endRooms[rannum] = null;
-                    break;
-                }
-            }
-            while(true)
-            {
-                int rannum = Random.Range(0, endRoomIndexChecker);
-                if(endRooms[rannum] == null)
-                {
-                    continue;
-                }
-                else
-                {
-                    healRoom = endRooms[rannum];
-                    endRooms[rannum] = null;
-                    break;
-                }
-            }
-            GameObject healRoomMarker_ = Instantiate(healRoomMarker, this.transform);
-            healRoomMarker_.transform.position = healRoom.transform.position;
+            // for(int i = 0; i < endRoomIndexChecker; i++)
+            // {
+            //     if(endRooms[i] == null)
+            //     {
+            //         continue;
+            //     }
+            //     float endRoomDistance = Mathf.Sqrt(Mathf.Pow(endRooms[i].transform.position.x,2) + Mathf.Pow(endRooms[i].transform.position.y,2));
+            //     if(bossRoomDistance < endRoomDistance)
+            //     {
+            //         bossRoomDistance = endRoomDistance;
+            //         bossRoom = endRooms[i];
+            //         endRooms[i] = null;
+            //     }
+            // }
+            // while(true)
+            // {
+            //     int rannum = Random.Range(0, endRoomIndexChecker);
+            //     if(endRooms[rannum] == null)
+            //     {
+            //         continue;
+            //     }
+            //     else
+            //     {
+            //         shopRoom = endRooms[rannum];
+            //         endRooms[rannum] = null;
+            //         break;
+            //     }
+            // }
+            // while(true)
+            // {
+            //     int rannum = Random.Range(0, endRoomIndexChecker);
+            //     if(endRooms[rannum] == null)
+            //     {
+            //         continue;
+            //     }
+            //     else
+            //     {
+            //         healRoom = endRooms[rannum];
+            //         endRooms[rannum] = null;
+            //         break;
+            //     }
+            // }
+            // GameObject healRoomMarker_ = Instantiate(healRoomMarker, this.transform);
+            // healRoomMarker_.transform.position = healRoom.transform.position;
 
-            GameObject shopRoomMarker_ = Instantiate(shopRoomMarker, this.transform);
-            shopRoomMarker_.transform.position = shopRoom.transform.position;
+            // GameObject shopRoomMarker_ = Instantiate(shopRoomMarker, this.transform);
+            // shopRoomMarker_.transform.position = shopRoom.transform.position;
             
-            GameObject bossRoomMarker_ = Instantiate(bossRoomMarker, this.transform);
-            bossRoomMarker_.transform.position = bossRoom.transform.position;
-            specialRoomSelect = true;
+            // GameObject bossRoomMarker_ = Instantiate(bossRoomMarker, this.transform);
+            // bossRoomMarker_.transform.position = bossRoom.transform.position;
+            // specialRoomSelect = true;
 
-            Debug.Log(farherstMX +" "+ farherstX +" "+ farherstMY +" "+ farherstY);
+            // Debug.Log(farherstMX +" "+ farherstX +" "+ farherstMY +" "+ farherstY);
         }
     }
 }

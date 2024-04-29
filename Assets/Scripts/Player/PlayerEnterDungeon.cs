@@ -57,7 +57,6 @@ public class PlayerEnterDungeon : MonoBehaviourPunCallbacks
     // [PunRPC]
     // public IEnumerator OnEnterDungeon(int partyPlayersID, string roomName)
     // {
-    //     // PhotonView PartyPV = PhotonView.Find(partyPlayersID);
     //     PhotonView PartyPV = PhotonView.Find(partyPlayersID);
     //     if (PartyPV.IsMine)
     //     {
