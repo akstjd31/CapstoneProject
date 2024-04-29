@@ -22,6 +22,7 @@ public class NpcShop : MonoBehaviour
         SellItem(102, 1004, 1);
     }
 
+    //semaphore for getting or setting money
     private static SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
     public static void ReleaseSemaphore()
@@ -75,6 +76,7 @@ public class NpcShop : MonoBehaviour
         }
         finally
         {
+            //Release in UserInfoManager
             //semaphore.Release();
         }
     }
@@ -93,7 +95,7 @@ public class NpcShop : MonoBehaviour
             int npcType = await GetNpcType(npcKey);
             int money = 0;
 
-            Debug.Log($"npcType : {npcType}");
+            //Debug.Log($"npcType : {npcType}");
             //판매 가능한 npc
             if (npcType == 0 || npcType == 2)
             {
@@ -115,13 +117,13 @@ public class NpcShop : MonoBehaviour
         }
         finally
         {
+            //Release in UserInfoManager
             //semaphore.Release();
         }
     }
     
     private static void AdjustMoney(int value)
     {
-        Debug.Log($"call AdjustMoney : {value}");
         UserInfoManager.SetUserMoney_Async(value);
     }
 

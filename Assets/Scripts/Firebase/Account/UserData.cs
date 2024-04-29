@@ -112,7 +112,7 @@ public class UserData : MonoBehaviour
                 if (user != null)
                 {
                     userId = user.UserId;
-                    Debug.Log("User ID: " + userId);
+                    //Debug.Log("User ID: " + userId);
                 }
                 else
                 {
