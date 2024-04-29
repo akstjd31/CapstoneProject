@@ -87,7 +87,7 @@ public class LoginProgress : MonoBehaviour
     {
         auth = FirebaseAuth.DefaultInstance;
 
-        string email = GameObject.Find("InputEmaiil").GetComponentInChildren<Text>().text;
+        string email = GameObject.Find("InputEmail").GetComponentInChildren<Text>().text;
         string password = GameObject.Find("InputPassword").GetComponentInChildren<Text>().text;
 
         try
@@ -134,6 +134,8 @@ public class LoginProgress : MonoBehaviour
             auth.SignOut();
         }
 
+        Debug.Log("front of try");
+
         try
         {
             // 이메일과 비밀번호로 사용자 인증 시도
@@ -147,7 +149,7 @@ public class LoginProgress : MonoBehaviour
         catch (Exception e)
         {
             // 인증 실패 시 오류 처리
-            Debug.LogError($"Sign in failed: {e.Message}");
+            Debug.LogError($"Sign in failed with condition : {e.Message}");
             //Debug.Log($"show errMsg 1 - 02 : {inputField_email.text}, {inputField_password.text}");
             loginErrorMsg.text = errMsg[1];
             return;

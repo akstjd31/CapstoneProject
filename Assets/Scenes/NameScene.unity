@@ -648,7 +648,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uBE44\uBC00\uBC88\uD638 \uCC3E\uAE30\n"
+  m_Text: "\uB2E8\uC21C \uB85C\uADF8\uC778"
 --- !u!222 &212803571
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1556,7 +1556,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 656804749}
         m_TargetAssemblyTypeName: LoginProgress, Assembly-CSharp
-        m_MethodName: BreakLogin
+        m_MethodName: SigninWithEmail
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

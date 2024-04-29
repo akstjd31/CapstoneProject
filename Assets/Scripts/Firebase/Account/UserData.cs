@@ -33,7 +33,8 @@ public class UserData : MonoBehaviour
         //캐릭터 별 데이터를 생성
         //await MakeDB_Char();
 
-        SceneManager.LoadScene("SelectCharacter");
+        //SceneManager.LoadScene("SelectCharacter");
+        SceneManager.LoadScene("TestScene");
     }
 
     public static async Task SetNickname(string nickname)

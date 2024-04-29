@@ -2,6 +2,7 @@ using Firebase.Firestore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -10,95 +11,150 @@ public class NpcShop : MonoBehaviour
     //npcKey : 101~
     //sellType : 0,1,2 (buy&sell, only buy, only sell)
     //shopKind : 1001~, 2001~
+    //itemKey : 1001~, 2001~
 
-    private static void BuyItem(int npcKey, int itemKey, int count)
+    public static void Test_Buy()
     {
+        BuyItem(101, 1001, 1);
+    }
+    public static void Test_Sell()
+    {
+        SellItem(102, 1004, 1);
+    }
+
+    private static SemaphoreSlim semaphore = new SemaphoreSlim(1);
+
+    public static void ReleaseSemaphore()
+    {
+        semaphore.Release();
+    } 
+
+    public static void BuyItem(int npcKey, int itemKey, int count)
+    {
+        Debug.Log($"Buy item : npc({npcKey}), item({itemKey}), count({count})");
         BuyItem_Async(npcKey, itemKey, count);
     }
 
     private static async void BuyItem_Async(int npcKey, int itemKey, int count)
     {
-        int npcType = await GetNpcType(npcKey);
-        int money = 0;
+        await semaphore.WaitAsync();
 
-        //구매 가능한 npc
-        if (npcType == 0 || npcType == 1)
+        try
         {
-            int itemCost = ItemSell.BuyItem(itemKey);
+            int npcType = await GetNpcType(npcKey);
+            int money = 0;
 
-            if(itemCost == -1)
+            //Debug.Log($"npcType : {npcType}");
+            //구매 가능한 npc
+            if (npcType == 0 || npcType == 1)
             {
-                throw new NpcStoreException("you can't buy this item");
-            }
+                int itemCost = ItemSell.BuyItemCost(itemKey);
 
-            //구매를 완료하고 유저의 돈을 증감시킴
-            money = itemCost * count;
-            AdjustMoney(-money);
+                if (itemCost == -1)
+                {
+                    throw new NpcStoreException("you can't buy this item");
+                }
+
+                money = itemCost * count;
+
+                //유저의 돈이 충분한지 검사
+                int userMoney = await UserInfoManager.GetUserMoney_Async();
+                //Debug.Log($"userMoney : {userMoney}");
+                if (userMoney < money)
+                {
+                    throw new NpcStoreException("No money, you can't buy this item");
+                }
+
+                //구매를 완료하고 유저의 돈을 증감시킴
+                AdjustMoney(-money);
+            }
+            else
+            {
+                throw new NpcStoreException("you can't buy item with this npc");
+            }
         }
-        else
+        finally
         {
-            throw new NpcStoreException("you can't buy item with this npc");
+            //semaphore.Release();
         }
     }
-    private static void SellItem(int npcKey, int itemKey, int count)
+    public static void SellItem(int npcKey, int itemKey, int count)
     {
+        Debug.Log($"Sell item : npc({npcKey}), item({itemKey}), count({count})");
         SellItem_Async(npcKey, itemKey, count);
     }
 
     private static async void SellItem_Async(int npcKey, int itemKey, int count)
     {
-        int npcType = await GetNpcType(npcKey);
-        int money = 0;
+        await semaphore.WaitAsync();
 
-        //판매 가능한 npc
-        if (npcType == 0 || npcType == 2)
+        try
         {
-            int itemCost = ItemSell.BuyItem(itemKey);
+            int npcType = await GetNpcType(npcKey);
+            int money = 0;
 
-            if (itemCost == -1)
+            Debug.Log($"npcType : {npcType}");
+            //판매 가능한 npc
+            if (npcType == 0 || npcType == 2)
             {
-                throw new NpcStoreException("you can't sell this item");
-            }
+                int itemCost = ItemSell.SellItemCost(itemKey);
 
-            //판매를 완료하고 유저의 돈을 증감시킴
-            money = itemCost * count;
-            AdjustMoney(money);
+                if (itemCost == -1)
+                {
+                    throw new NpcStoreException("you can't sell this item");
+                }
+
+                //판매를 완료하고 유저의 돈을 증감시킴
+                money = itemCost * count;
+                AdjustMoney(money);
+            }
+            else
+            {
+                throw new NpcStoreException("you can't sell item with this npc");
+            }
         }
-        else
+        finally
         {
-            throw new NpcStoreException("you can't sell item with this npc");
+            //semaphore.Release();
         }
     }
     
-    private static async void AdjustMoney(int value)
+    private static void AdjustMoney(int value)
     {
-
+        Debug.Log($"call AdjustMoney : {value}");
+        UserInfoManager.SetUserMoney_Async(value);
     }
 
     private static async Task<int> GetNpcType(int npcKey)
     {
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
-        CollectionReference coll_npc = db.Collection("Npc");
+        CollectionReference coll_npc = db.Collection("NpcInfo");
 
-        DocumentReference doc_info = coll_npc.Document("Info");
+        DocumentReference doc_npc = coll_npc.Document(npcKey.ToString());
 
         // npc의 키에 해당하는 문서 가져오기
-        DocumentSnapshot npcSnapshot = await doc_info.GetSnapshotAsync();
+        DocumentSnapshot npcSnapshot = await doc_npc.GetSnapshotAsync();
 
         if (npcSnapshot.Exists)
         {
-            // npc의 키에 해당하는 데이터가 존재하는 경우
+            // npcKey에 해당하는 데이터가 존재하는 경우
             Dictionary<string, object> npcData = npcSnapshot.ToDictionary();
 
-            // npc의 키에 해당하는 데이터에서 sellType 가져오기
-            if (npcData.ContainsKey(npcKey.ToString()))
+            // npcKey에 해당하는 데이터에서 sellType 가져오기
+            if (npcData.ContainsKey("sellType"))
             {
-                Dictionary<string, object> npcInfo = (Dictionary<string, object>)npcData[npcKey.ToString()];
-                if (npcInfo.ContainsKey("sellType"))
+                // sellType 값을 반환
+                object sellTypeObj = npcData["sellType"];
+                if (sellTypeObj is long sellTypeLong)
                 {
-                    // sellType 값을 반환
-                    return (int)npcInfo["sellType"];
+                    // long으로 캐스팅한 뒤 int로 변환
+                    return (int)sellTypeLong;
+                }
+                else
+                {
+                    // 캐스팅 불가능한 경우 null 반환
+                    throw new NpcStoreException("Failed GetNpcType : npcData[\"sellType\"] can't be cast to int");
                 }
             }
         }

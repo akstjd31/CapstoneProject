@@ -3,6 +3,7 @@ using Firebase.Firestore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class UserInfoManager : MonoBehaviour
     private static UserInfoManager instance;
     private static FirebaseUser currentUser; // Firebase 사용자 정보를 저장할 변수
     private static Dictionary<string, int> skillLevel; //스킬 데이터의 원본
+    //private static bool isLockMoney = false;
 
     void Awake()
     {
@@ -43,38 +45,151 @@ public class UserInfoManager : MonoBehaviour
         return skillLevel;
     }
 
-    public static void SetUserMoney(int change)
+    //private static readonly object moneyLock = new object();
+    //private static SemaphoreSlim semaphore = new SemaphoreSlim(1);
+    
+    //use for publish
+    public static async Task SetUserMoney_Async(int change)
     {
+        //await semaphore.WaitAsync();
 
-    }
-
-    public static async Task<int> GetUserMoney()
-    {
-        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-
-        CollectionReference coll_userdata = db.Collection("User");
-        DocumentReference doc_user = coll_userdata.Document(UserData.GetUserId());
-
-        DocumentSnapshot snapshot = await doc_user.GetSnapshotAsync();
-
-        if (snapshot.Exists)
+        try
         {
-            Dictionary<string, object> userData = snapshot.ToDictionary();
-            if (userData != null && userData.ContainsKey("money"))
+            int nowMoney = await GetUserMoney_Async();
+
+            if (nowMoney < 0)
             {
-                return Convert.ToInt32(userData["money"]);
+                Debug.Log($"user money is not valid => {nowMoney}");
+                return;
+            }
+
+            //update DB
+            FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+            FirebaseUser user = auth.CurrentUser;
+
+            if (user == null)
+            {
+                Debug.Log("Failed to update money: User is null");
+                return;
+            }
+
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+            // 해당 사용자의 문서 참조
+            DocumentReference docUser = db.Collection("User").Document(UserData.GetUserId());
+
+            // 문서를 가져와서 userData를 업데이트
+            DocumentSnapshot snapshot = await docUser.GetSnapshotAsync();
+
+            Debug.Log("set isLockMoney true");
+            //isLockMoney = true;
+            if (snapshot.Exists)
+            {
+                Dictionary<string, object> userData = snapshot.ToDictionary();
+
+                if (userData != null && userData.ContainsKey("userData"))
+                {
+                    Dictionary<string, object> userContainer = (Dictionary<string, object>)userData["userData"];
+
+                    int updateMoney = userContainer.ContainsKey("money") ? Convert.ToInt32(userContainer["money"]) : 0;
+                    updateMoney += change;
+                    userContainer["money"] = updateMoney;
+
+                    // 업데이트된 userData를 다시 Firestore에 저장
+                    await docUser.SetAsync(userContainer, SetOptions.MergeAll);
+                    Debug.Log($"now money is Set : {updateMoney}");
+                }
+                else
+                {
+                    Debug.Log("Failed to update money: userData is null or does not contain 'userData'");
+                }
             }
             else
             {
-                Debug.Log("userData does not contain money key or is null");
-                return -1; // 혹은 다른 기본값
+                Debug.Log("Failed to update money: User document does not exist");
             }
         }
-        else
+        finally
         {
-            Debug.Log("Document does not exist\nMake User DB now...");
-            await UserData.MakeDB_New();
-            return 0;
+            //semaphore.Release();
+            //isLockMoney = false;
+            Debug.Log("call NpcShop.ReleaseSemaPhore in SetMoney");
+            NpcShop.ReleaseSemaphore();
+            Debug.Log("@@@@@@@@@@@");
+        }
+    }
+
+    public static void GetUserMoney()
+    {
+        GetUserMoney_Async();
+    }
+
+    /*
+    public static async Task<int> Inner_GetUserMoney()
+    {
+        Debug.Log($"in Inner_GetUserMoney - isLockMoney : {isLockMoney}");
+
+        while (isLockMoney)
+        {
+            //wait Semaphore Release
+            Debug.Log("wait semaphore unlock");
+            await Task.Delay(1000); // 일정 시간 대기 후 다시 확인
+        }
+
+        return await GetUserMoney_Async();
+    }
+    */
+
+    public static async Task<int> GetUserMoney_Async()
+    {
+        try
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+            CollectionReference coll_userdata = db.Collection("User");
+            DocumentReference doc_user = coll_userdata.Document(UserData.GetUserId());
+
+            DocumentSnapshot snapshot = await doc_user.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                Dictionary<string, object> userData = snapshot.ToDictionary();
+                if (userData != null && userData.ContainsKey("userData"))
+                {
+                    Dictionary<string, object> userDataMap = (Dictionary<string, object>)userData["userData"];
+                    if (userDataMap.ContainsKey("money"))
+                    {
+                        Debug.Log($"userDataMap[\"money\"] : {userDataMap["money"]}");
+                        int money = Convert.ToInt32(userDataMap["money"]);
+                        Debug.Log($"get money from server : {money} {FirebaseAuth.DefaultInstance.CurrentUser.Email}");
+                        return money;
+                    }
+                    else
+                    {
+                        Debug.Log("userDataMap does not contain money key or is null");
+
+                        return -1;
+                    }
+                }
+                else
+                {
+                    Debug.Log("userData does not contain \'userData\' key or is null");
+
+                    return -2;
+                }
+            }
+            else
+            {
+                Debug.Log("Document does not exist\nMake User DB now...");
+                await UserData.MakeDB_New();
+                return 0;
+            }
+        }
+        finally
+        {
+            Debug.Log("call NpcShop.ReleaseSemaPhore in GetMoney");
+            NpcShop.ReleaseSemaphore();
+            Debug.Log("@@@@@@@@@@@");
         }
     }
 
