@@ -10,7 +10,7 @@ using Photon.Realtime;
 
 public enum State
 { 
-    NORMAL, MOVE, ATTACK, ATTACKIDLE, DIE
+    NORMAL, MOVE, ATTACK, DIE
 }
 
 public class EnemyCtrl : MonoBehaviour
@@ -33,19 +33,21 @@ public class EnemyCtrl : MonoBehaviour
 
     [SerializeField] private State state;
 
-    [SerializeField] private float attackDelay;
-
     public bool onHit = false;
 
-    private float attackDistanceSpeed = 5f;
+    private float attackDistanceSpeed = 10f;
     private float attackedDistanceSpeed = 3f;
 
     private bool isEnemyDead = false;
 
     private Status status;
+
+    private Vector3 targetPos;
     // Start is called before the first frame update
     private void Start()
     {
+        enemy.InitSetting();
+
         collider = GetComponent<BoxCollider2D>();
 
         enemyPV = this.GetComponent<PhotonView>();
@@ -54,7 +56,7 @@ public class EnemyCtrl : MonoBehaviour
         enemyAIScript = this.GetComponent<EnemyAI>();
         rigid = this.GetComponent<Rigidbody2D>();
 
-        enemyManagerScript = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+        //enemyManagerScript = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
 
         canvas = GameObject.FindGameObjectWithTag("Canvas");
 
@@ -62,13 +64,10 @@ public class EnemyCtrl : MonoBehaviour
 
         state = State.NORMAL;
 
-        attackDelay = 999;
-
         status = null;
-
     }
 
-    // ∏ÛΩ∫≈Õ HPπŸ ºº∆√
+    // HP UI ÏÉùÏÑ± Î∞è ÏÑ∏ÌåÖ
     public void HPInitSetting()
     {
         hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
@@ -86,51 +85,37 @@ public class EnemyCtrl : MonoBehaviour
         return enemy;
     }
 
-    // ¿˚¿« ªÛ≈¬(state)∏¶ √≥∏Æ«œ¥¬ ∫Œ∫–
     private void FixedUpdate()
     {
         if (!isEnemyDead)
         {
-            // ¡◊¿Ω 
+            // Ï£ΩÏùå
             if (enemy.enemyData.hp <= 0)
             {
                 StartCoroutine(Death());
             }
 
-            // ¿Ãµø
-            if (agent.velocity != Vector3.zero)
+            // ÏÜçÎèÑÍ∞Ä 0Ïù¥ ÏïÑÎãàÎ©¥ Ïù¥ÎèôÏÉÅÌÉú
+            if (agent.velocity != Vector3.zero && state != State.ATTACK)
             {
-                attackDelay = 999;
                 state = State.MOVE;
             }
-            // ∞¯∞› or ∞¯∞›¡ÿ∫Ò
-            else
-            {
-                // º≥¡§«ÿ≥ı¿∫ ≈∏±Í¿Ã ¡∏¿Á«“ ∂ß
-                if (!enemyAIScript.IsFocusTargetNull())
-                {
-                    // ∏ÛΩ∫≈Õ∏∂¥Ÿ ¡÷æÓ¡¯ ∞¯∞›µÙ∑π¿Ã ¿˚øÎ
-                    if (attackDelay > enemy.enemyData.attackDelayTime)
-                    {
-                        // ≈∏±Í∞˙ ¿˚¿Ã ∞°±ı¥Ÿ∞Ì ∆«¥‹«œ∏È ∞¯∞›
-                        if (enemyAIScript.IsEnemyClosetPlayer())
-                        {
-                            state = State.ATTACK;
-                            attackDelay = 0.0f;
-                        }
-                    }
-                    else
-                    {
-                        state = State.ATTACKIDLE;
 
-                        attackDelay += Time.deltaTime;
-                    }
+            // Ï†ÅÏùò ÌÉÄÍ≤üÏù¥ Ï°¥Ïû¨Ìï† Îïå
+            if (!enemyAIScript.IsFocusTargetNull())
+            {
+                // Ï†ÅÏù¥ ÌîåÎ†àÏù¥Ïñ¥ÏôÄ Ïñ¥ÎäêÏ†ïÎèÑ Í∞ÄÍπåÏù¥ ÏûàÏúºÎ©¥ Í≥µÍ≤©
+                if (enemyAIScript.IsEnemyClosetPlayer() && state != State.ATTACK)
+                {
+                    state = State.ATTACK;
+                    targetPos = enemyAIScript.GetTarget().position;
+                    agent.isStopped = true;
+                    enemyAIScript.isLookingAtPlayer = false;
                 }
             }
         }
     }
 
-    // æ÷¥œ∏ﬁ¿Ãº« π◊ ±‚≈∏«‘ºˆ Ω««‡
     private void Update()
     {
         switch (state)
@@ -142,41 +127,36 @@ public class EnemyCtrl : MonoBehaviour
                 MoveAnimation();
                 break;
             case State.ATTACK:
-                //Attack();
+                Attack();
                 AttackAnimation();
-                break;
-            case State.ATTACKIDLE:
-                AttackIdleAnimation();
                 break;
             case State.DIE:
                 break;
         }
 
-        // √º∑¬πŸ∞° ¡∏¿Á«“∂ß∏∏ ¿˚ µ˚∂Û¥Ÿ¥‘.
-        if (hpBar != null)
-            FollowEnemyHPBar();
+        //if (hpBar != null)
+        //    FollowEnemyHPBar();
 
-        // ≥ÀπÈ
+        // ÎÑâÎ∞±
         KnockBack();
     }
 
     IEnumerator Death()
     {
-        // ¿˚¿Ã æ≤∑Ø¡ˆ±‚ ¡˜¿¸ «ÿæﬂ«œ¥¬ ∞ÕµÈ
+        // Ï£ΩÍ∏∞Ï†ÑÏóê Ï≤òÎ¶¨Ìï¥ÏïºÌï† Í≤ÉÎì§
         isEnemyDead = true;
 
         enemyAIScript.enabled = false;
-        anim.SetTrigger("Die");
+        //anim.SetTrigger("Die");
 
         yield return new WaitForSeconds(3.0f);
 
-        // ¿Ã»ƒ √≥∏Æ
         DestroyHPBar();
         enemyManagerScript.RemoveEnemy(this.gameObject);
         PhotonNetwork.Destroy(this.gameObject);
     }
 
-    // «√∑π¿ÃæÓø°∞‘ ∏¬æ“¿ª ãö
+    // ÌîºÍ≤©
     [PunRPC]
     public void EnemyAttackedPlayer(int damagedHP)
     {
@@ -184,43 +164,33 @@ public class EnemyCtrl : MonoBehaviour
         onHit = true;
     }
 
-    // ¿Ãµø ∞¯∞›
+    // Í≥µÍ≤©
     private void Attack()
     {
-        // ∞¯∞› πÊ«‚ ∞·¡§
-        //if (this.transform.localScale.x > 0)
-        //{
-        //    rigid.velocity = transform.right * attackedDistanceSpeed;
-        //}
-        //else
-        //{
-        //    rigid.velocity = -transform.right * attackedDistanceSpeed;
-        //}
+        rigid.velocity = (targetPos - this.transform.position).normalized * attackedDistanceSpeed;
 
-        rigid.velocity = (enemyAIScript.GetTarget().position - this.transform.position).normalized * attackedDistanceSpeed;
+        float attackSpeedDropMultiplier = 6f;
 
-        float attackSpeedDropMultiplier = 6f; // ∞®º“µ«¥¬ ¡§µµ
+        attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime;
 
-        attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // Ω«¡¶ ≥™æ∆∞°¥¬ ∞≈∏Æ ∞ËªÍ
-
-        if (attackDistanceSpeed < 0.3f)
+        if (attackDistanceSpeed < 0.05f)
         {
             rigid.velocity = Vector2.zero;
-            attackDistanceSpeed = 5f;
-
-            state = State.ATTACKIDLE;
+            attackDistanceSpeed = 10f;
+            state = State.NORMAL;
+            agent.isStopped = false;
+            enemyAIScript.isLookingAtPlayer = true;
         }
 
     }
 
-    // ≥ÀπÈ
     private void KnockBack()
     {
         if (onHit && enemy.enemyData.hp > 0)
         {
             anim.speed = 0f;
 
-            // ø¿∏•¬  / øﬁ¬ ¿ª πŸ∂Û∫∏¥¬ ±‚¡ÿ¿∏∑Œ µ⁄∑Œ ≥ÀπÈ
+            // Î∞îÎùºÎ≥¥Îäî Î∞©Ìñ• Îí§Î°ú
             if (this.transform.localScale.x > 0)
             {
                 rigid.velocity = -transform.right * attackedDistanceSpeed;
@@ -230,8 +200,8 @@ public class EnemyCtrl : MonoBehaviour
                 rigid.velocity = transform.right * attackedDistanceSpeed;
             }
 
-            float attackedSpeedDropMultiplier = 6f; // ∞®º“µ«¥¬ ¡§µµ
-            attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime; // Ω«¡¶ ≥™æ∆∞°¥¬ ∞≈∏Æ ∞ËªÍ
+            float attackedSpeedDropMultiplier = 6f;
+            attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime;
 
             if (attackedDistanceSpeed < 0.6f)
             {
@@ -248,7 +218,7 @@ public class EnemyCtrl : MonoBehaviour
         Destroy(hpBar.gameObject);
     }
 
-    // HPπŸ∞° ¿˚¿ª µ˚∂Û¥Ÿ¥‘.
+    // HP UIÍ∞Ä Ï†ÅÏùÑ Îî∞ÎùºÎã§Îãò.
     private void FollowEnemyHPBar()
     {
         Vector3 enemyPos = Camera.main.WorldToScreenPoint(this.transform.position);
@@ -259,29 +229,19 @@ public class EnemyCtrl : MonoBehaviour
     private void IdleAnimation()
     {
         anim.SetBool("isAttack", false);
-        anim.SetBool("AttackIdle", false);
         anim.SetBool("isMove", false);
     }
 
     private void MoveAnimation()
     {
         anim.SetBool("isAttack", false);
-        anim.SetBool("AttackIdle", false);
         anim.SetBool("isMove", true);
     }
 
     private void AttackAnimation()
     {
         anim.SetBool("isMove", false);
-        anim.SetBool("AttackIdle", false);
         anim.SetBool("isAttack", true);
-    }
-
-    private void AttackIdleAnimation()
-    {
-        anim.SetBool("isMove", false);
-        anim.SetBool("isAttack", false);
-        anim.SetBool("AttackIdle", true);
     }
 
     private void OnTriggerStay2D(Collider2D other)

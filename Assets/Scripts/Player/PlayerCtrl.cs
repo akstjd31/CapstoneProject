@@ -138,8 +138,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-            if (state != State.ATTACK && chatScript != null && partySystemScript != null &&
-                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
+            if ((state != State.ATTACK && chatScript != null && partySystemScript != null &&
+                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf) ||
+                (state != State.ATTACK && SceneManager.GetActiveScene().name == "DungeonScene"))
             {
 
                 if (moveDir.x != 0 || moveDir.y != 0)

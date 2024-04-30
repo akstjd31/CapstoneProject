@@ -6,18 +6,20 @@ using Photon.Pun;
 
 public class EnemyAI : MonoBehaviour
 {
-    public SpriteRenderer spriteRenderer;
+    //public SpriteRenderer spriteRenderer;
     public EnemySO enemySO;
 
     private NavMeshAgent agent;
 
-    [SerializeField] private Transform target1, target2; // ÇÃ·¹ÀÌ¾î
+    [SerializeField] private Transform target1, target2; // 2ì¸ ë©€í‹° í”Œë ˆì´ì–´
 
     [SerializeField] private float waitForSec = 1f;
 
     private PhotonView enemyPV;
 
     private Transform focusTarget = null;
+
+    public bool isLookingAtPlayer = false;
 
     // Start is called before the first frame update
     void Start()
@@ -28,59 +30,58 @@ public class EnemyAI : MonoBehaviour
 
         enemyPV = this.GetComponent<PhotonView>();
 
-        GameObject[] targets = GameObject.FindGameObjectsWithTag("Player");
-
-        // ÇÃ·¹ÀÌ¾î°¡ ´øÀü¿¡ È¥ÀÚ µé¾î¿À´Â °æ¿ì °í·Á
-        if (targets.Length > 1)
-        {
-            target1 = targets[0].transform;
-            target2 = targets[1].transform;
-        }
-        else
-        {
-            target1 = targets[0].transform;
-        }
-
         StartCoroutine(GetTimeToFacePlayer());
     }
 
     // Update is called once per frame
     void Update()
     {
+        // ì•„ì§ í•´ë‹¹ ë˜ì „ì— í”Œë ˆì´ì–´ê°€ íƒ€ê²Ÿì— í• ë‹¹ë˜ì§€ ì•Šì•˜ë‹¤ë©´
+        if (target1 == null && target2 == null)
+        {
+            if (GameObject.FindGameObjectsWithTag("Player").Length == 2)
+            {
+                GameObject[] targets = GameObject.FindGameObjectsWithTag("Player");
+
+                target1 = targets[0].transform;
+                target2 = targets[1].transform;
+            }
+            else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
+            {
+                GameObject target = GameObject.FindGameObjectWithTag("Player");
+
+                target1 = target.transform;
+            }
+        }
+
         if (focusTarget != null)
         {
-            // Æ¯Á¤ Å¸°ÙÀ¸·Î ÁöÁ¤ÇÑ ´ë»óÀÌ Æ¯Á¤ ÀÌÀ¯(°ÔÀÓ Á¾·á)·Î null »óÅÂ°¡ µÇ¾úÀ» ¶§
+            // ë§Œì•½ focusë¡œ ì„¤ì •í•´ë†¨ë˜ í”Œë ˆì´ì–´ê°€ ì‚¬ë§ ì‹œ ë‚¨ì€ í”Œë ˆì´ì–´ë¥¼ í¬ì»¤ì‹±
             if (agent.destination == null)
             {
                 focusTarget = GameObject.FindGameObjectWithTag("Player").transform;
             }
 
-            // Å¸°Ù1ÀÌ Æ÷Ä¿½Ì »óÅÂÀÏ ¶§
+            // í¬ì»¤ì‹± == íƒ€ê²Ÿ1ì¼ë•Œ
             if (focusTarget == target1)
             {
                 agent.SetDestination(target1.position);
-                FlipHorizontalRelativeToTarget(target1.position);
+
+                if (isLookingAtPlayer)
+                    FlipHorizontalRelativeToTarget(target1.position);
             }
-            // Å¸°Ù2°¡ Æ÷Ä¿½Ì »óÅÂÀÏ ¶§
+            // í¬ì»¤ì‹± == íƒ€ê²Ÿ2
             else
             {
                 agent.SetDestination(target2.position);
-                FlipHorizontalRelativeToTarget(target2.position);
-            }
 
-            // ÀÏÁ¤ °Å¸®°¡ Á¼ÇôÁö¸é ¸ØÃã
-            if (IsEnemyClosetPlayer())
-            {
-                agent.SetDestination(this.transform.position);
-            }
-            else
-            {
-                agent.SetDestination(focusTarget.position);
+                if (isLookingAtPlayer)
+                    FlipHorizontalRelativeToTarget(target2.position);
             }
         }
     }
 
-    // ÇöÀç Å¸°ÙÀÌ ¾øÀ» ¶§
+    // íƒ€ê²Ÿì´ ì—†ì„ ë•Œ
     public bool IsFocusTargetNull()
     {
         if (focusTarget == null)
@@ -98,13 +99,13 @@ public class EnemyAI : MonoBehaviour
         return focusTarget;
     }
 
-    // ÀûÀÌ ÇÃ·¹ÀÌ¾î¸¦ °ø°İÇÒ ¼ö ÀÖ´Â À§Ä¡ÀÎ°¡?
+    // ì ê³¼ í”Œë ˆì´ì–´ì˜ ê±°ë¦¬ê°€ ì–´ëŠì •ë„ ì¢í˜€ì¡ŒëŠ”ê°€?
     public bool IsEnemyClosetPlayer()
     {
         //float dist = Vector2.Distance(this.transform.position, focusTarget.position);
         float xAbs = Mathf.Abs(this.transform.position.x - focusTarget.position.x);
         float yAbs = Mathf.Abs(this.transform.position.y - focusTarget.position.y);
-        if (xAbs < 2.5f && yAbs < 0.7f)
+        if (xAbs < 2.5f && yAbs < 1f)
         {
             return true;
         }
@@ -114,16 +115,16 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // ÇÃ·¹ÀÌ¾î¸¦ ¹ß°ß
+    // ì²˜ìŒì— ì ì´ ì¼ì •ì‹œê°„ì„ ê¸°ë‹¤ë ¸ë‹¤ê°€ í”Œë ˆì´ì–´ë¥¼ ì«’ì•„ê°.
     IEnumerator GetTimeToFacePlayer()
     {
         yield return new WaitForSeconds(waitForSec);
-        FollowClosestPlayer();
+        FollowClosetPlayer();
 
-        spriteRenderer.color = Color.red;
+        //spriteRenderer.color = Color.red;
     }
 
-    // Å¸°Ù À§Ä¡¿¡ µû¸¥ ÁÂ¿ì ¹İÀü
+    // ì ì˜ ìœ„ì¹˜ì— ë”°ë¥¸ ìŠ¤ì¼€ì¼ ë’¤ì§‘ê¸°
     private void FlipHorizontalRelativeToTarget(Vector2 target)
     {
         if (target.x - this.transform.position.x > 0)
@@ -136,15 +137,14 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // Ã³À½ ´øÀü¿¡ ÀÔÀåÇÒ ¶§ µÎ ÇÃ·¹ÀÌ¾îÀÇ °Å¸®¸¦ ºñ±³ÇÏ¿© Æ÷Ä¿½º ÇÔ.
-    private void FollowClosestPlayer()
+    // í¬ì»¤ì‹± ëŒ€ìƒ ì •í•˜ê¸° (ì ê³¼ í”Œë ˆì´ì–´ì™€ ê°€ê¹Œìš°ë©´ í¬ì»¤ì‹±)
+    public void FollowClosetPlayer()
     {
         if (target1 != null && target2 != null)
         {
             float dist1 = Vector2.Distance(this.transform.position, target1.position);
             float dist2 = Vector2.Distance(this.transform.position, target2.position);
 
-            // dist°ªÀÌ Å©´Ù = °Å¸®°¡ ¸Ö´Ù
             if (dist1 > dist2)
             {
                 focusTarget = target2;
@@ -158,5 +158,7 @@ public class EnemyAI : MonoBehaviour
         {
             focusTarget = target1;
         }
+
+        isLookingAtPlayer = true;
     }
 }
