@@ -130,7 +130,9 @@ public class UserData : MonoBehaviour
 
     public static void CallFixDB()
     {
+#pragma warning disable CS4014
         FixDB();
+#pragma warning restore CS4014
     }
 
     public static async Task FixDB(Dictionary<string, object> param = null)

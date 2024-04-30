@@ -80,9 +80,9 @@ public class LoginProgress : MonoBehaviour
     //정상 동작하는 이메일 로그인 메소드 (##수정 금지##)
     public void SigninWithEmail()
     {
-#pragma warning disable CS4014 // 이 호출을 대기하지 않으므로 호출이 완료되기 전에 현재 메서드가 계속 실행됩니다.
+#pragma warning disable CS4014
         SignInWithEmailAndPassword();
-#pragma warning restore CS4014 // 이 호출을 대기하지 않으므로 호출이 완료되기 전에 현재 메서드가 계속 실행됩니다.
+#pragma warning restore CS4014
     }
 
     private async Task SignInWithEmailAndPassword()
@@ -112,7 +112,9 @@ public class LoginProgress : MonoBehaviour
     //정상 동작 + 가입 진행도에 따른 조건 추가
     public void SigninWithEmail_Condition()
     {
+#pragma warning disable CS4014
         SignInWithEmailAndPassword_Condition();
+#pragma warning restore CS4014
     }
 
     private async Task SignInWithEmailAndPassword_Condition()

@@ -106,7 +106,9 @@ public class UserInfoManager : MonoBehaviour
 
     public static void GetUserMoney()
     {
+#pragma warning disable CS4014
         GetUserMoney_Async();
+#pragma warning restore CS4014
     }
 
     public static async Task<int> GetUserMoney_Async()
