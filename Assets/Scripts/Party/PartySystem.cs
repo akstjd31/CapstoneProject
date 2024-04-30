@@ -146,7 +146,6 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     readyButton[0].SetActive(true);
 
                     partyMemberHUD[0].GetComponentInChildren<Text>().text = PhotonNetwork.NickName;
-
                     break;
                 }
                 else
@@ -173,13 +172,13 @@ public class PartySystem : MonoBehaviourPunCallbacks
         if (playerCtrl.isReady)
         {
             playerCtrl.isReady = false;
-            if (playerViewID == playerCtrl.party.GetPartyLeaderID())//
+            if (playerViewID == playerCtrl.party.GetPartyLeaderID())
             {
-                partyMemberHUD[0].transform.GetChild(2).gameObject.SetActive(false);
+                partyMemberHUD[0].transform.Find("Ready").gameObject.SetActive(false);
             }
             else if (playerViewID == playerCtrl.party.GetPartyMemberID())
             {
-                partyMemberHUD[1].transform.GetChild(2).gameObject.SetActive(false);
+                partyMemberHUD[1].transform.Find("Ready").gameObject.SetActive(false);
             }
         }
         else
@@ -187,11 +186,11 @@ public class PartySystem : MonoBehaviourPunCallbacks
             playerCtrl.isReady = true;
             if (playerViewID == playerCtrl.party.GetPartyLeaderID())
             {
-                partyMemberHUD[0].transform.GetChild(2).gameObject.SetActive(true);
+                partyMemberHUD[0].transform.Find("Ready").gameObject.SetActive(true);
             }
             else if (playerViewID == playerCtrl.party.GetPartyMemberID())
             {
-                partyMemberHUD[1].transform.GetChild(2).gameObject.SetActive(true);
+                partyMemberHUD[1].transform.Find("Ready").gameObject.SetActive(true);
             }
         }
     }

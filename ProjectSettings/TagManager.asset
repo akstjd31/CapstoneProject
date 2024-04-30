@@ -14,6 +14,8 @@ TagManager:
   - InputBox
   - PartyRoom
   - Bullet
+  - Inventory
+  - VoiceManager
   layers:
   - Default
   - TransparentFX
