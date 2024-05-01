@@ -10,13 +10,11 @@ using Photon.Realtime;
 
 public enum State
 { 
-    NORMAL, MOVE, ATTACK, DIE
+    NORMAL, MOVE, ATTACK, ATTACKED, DIE
 }
 
 public class EnemyCtrl : MonoBehaviour
 {
-    private BoxCollider2D collider;
-
     private PhotonView enemyPV;
     private Animator anim;
     private NavMeshAgent agent;
@@ -43,12 +41,26 @@ public class EnemyCtrl : MonoBehaviour
     private Status status;
 
     private Vector3 targetPos;
+
+    public Vector3 playerAttackDirection;
+
+    public Transform detectionPoint;
+    public float detectionRange = 3f;
+    public LayerMask playerLayers;
+
+    [SerializeField] private float restTime = 0.0f;
+
+    // 공격 포인트와 범위
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public LayerMask enemyLayers;
+
+    Collider2D hitPlayers;
+
     // Start is called before the first frame update
     private void Start()
     {
         enemy.InitSetting();
-
-        collider = GetComponent<BoxCollider2D>();
 
         enemyPV = this.GetComponent<PhotonView>();
         anim = this.GetComponent<Animator>();
@@ -72,7 +84,12 @@ public class EnemyCtrl : MonoBehaviour
     {
         hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
         hpBar.maxValue = enemy.enemyData.hp;
-        hpBar.value = hpBar.maxValue;
+        hpBar.value = enemy.enemyData.hp;
+    }
+
+    public void SetState(State state)
+    {
+        this.state = state;
     }
 
     public void SetEnemy(Enemy enemy)
@@ -80,9 +97,9 @@ public class EnemyCtrl : MonoBehaviour
         this.enemy = enemy;
     }
 
-    public Enemy GetEnemy()
+    public Slider GetHPSlider()
     {
-        return enemy;
+        return hpBar;
     }
 
     private void FixedUpdate()
@@ -90,27 +107,30 @@ public class EnemyCtrl : MonoBehaviour
         if (!isEnemyDead)
         {
             // 죽음
-            if (enemy.enemyData.hp <= 0)
+            if (hpBar.value <= 0)
             {
                 StartCoroutine(Death());
             }
 
             // 속도가 0이 아니면 이동상태
-            if (agent.velocity != Vector3.zero && state != State.ATTACK)
+            if (agent.velocity != Vector3.zero && 
+                state != State.ATTACK && 
+                state != State.ATTACKED &&
+                restTime >= 1.0f)
             {
                 state = State.MOVE;
             }
 
             // 적의 타겟이 존재할 때
-            if (!enemyAIScript.IsFocusTargetNull())
+            if (enemyAIScript.GetTarget() != null)
             {
                 // 적이 플레이어와 어느정도 가까이 있으면 공격
-                if (enemyAIScript.IsEnemyClosetPlayer() && state != State.ATTACK)
+                if (IsEnemyClosetPlayer() && state != State.ATTACK && state != State.NORMAL && !onHit)
                 {
                     state = State.ATTACK;
                     targetPos = enemyAIScript.GetTarget().position;
                     agent.isStopped = true;
-                    enemyAIScript.isLookingAtPlayer = false;
+                    enemyAIScript.isLookingAtPlayer = false;    // 공격할 때 플레이어가 움직여도 그 방향 유지
                 }
             }
         }
@@ -121,6 +141,7 @@ public class EnemyCtrl : MonoBehaviour
         switch (state)
         {
             case State.NORMAL:
+                attackAndRest();
                 IdleAnimation();
                 break;
             case State.MOVE:
@@ -128,17 +149,45 @@ public class EnemyCtrl : MonoBehaviour
                 break;
             case State.ATTACK:
                 Attack();
+                AttackDirection();
                 AttackAnimation();
+                break;
+            case State.ATTACKED:
+                KnockBack();
                 break;
             case State.DIE:
                 break;
         }
 
-        //if (hpBar != null)
-        //    FollowEnemyHPBar();
+        if (hpBar != null)
+            FollowEnemyHPBar();
 
         // 넉백
-        KnockBack();
+        
+    }
+
+    // 플레이어가 소유한 범위포인트에 따른 반환
+    private bool IsEnemyClosetPlayer()
+    {
+        // 만약 근거리 몹이라면
+        if (enemy.enemyData.enemyType == EnemyType.SHORT_DISTANCE && enemyAIScript.GetTarget() != null && state != State.ATTACK)
+        {
+            // 공격 범위에 들어간 적
+            Collider2D players = Physics2D.OverlapCircle(detectionPoint.position, detectionRange, playerLayers);
+
+            if (players != null)
+            {
+                return true;
+            }
+
+        }
+
+        // 원거리 몹일 경우 ..
+        else
+        {
+
+        }
+        return false;
     }
 
     IEnumerator Death()
@@ -147,13 +196,13 @@ public class EnemyCtrl : MonoBehaviour
         isEnemyDead = true;
 
         enemyAIScript.enabled = false;
-        //anim.SetTrigger("Die");
-
-        yield return new WaitForSeconds(3.0f);
+        agent.isStopped = true;
+        anim.SetTrigger("Death");
+        yield return new WaitForSeconds(1.0f);
 
         DestroyHPBar();
-        enemyManagerScript.RemoveEnemy(this.gameObject);
-        PhotonNetwork.Destroy(this.gameObject);
+        //enemyManagerScript.RemoveEnemy(this.gameObject);
+        Destroy(this.gameObject);
     }
 
     // 피격
@@ -164,51 +213,75 @@ public class EnemyCtrl : MonoBehaviour
         onHit = true;
     }
 
-    // 공격
+
     private void Attack()
     {
-        rigid.velocity = (targetPos - this.transform.position).normalized * attackedDistanceSpeed;
+        // 공격 범위에 포함된 플레이어
+        hitPlayers = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayers);
+    }
+
+
+    // 공격 방향
+    private void AttackDirection()
+    {
+        rigid.velocity = (targetPos - this.transform.position) * attackedDistanceSpeed;
 
         float attackSpeedDropMultiplier = 6f;
 
         attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime;
 
-        if (attackDistanceSpeed < 0.05f)
+        if (attackDistanceSpeed < 0.3f)
         {
+            if (hitPlayers != null)
+            {
+                hitPlayers.GetComponent<Status>().HP -= enemy.enemyData.attackDamage;
+                Debug.Log(hitPlayers.GetComponent<Status>().HP);
+            }
+
             rigid.velocity = Vector2.zero;
             attackDistanceSpeed = 10f;
             state = State.NORMAL;
+            restTime = 0.0f;
+
+        }
+    }
+
+    // 공격이나 피격당할 때 1초 쉬기
+    private void attackAndRest()
+    {
+        if (restTime <= 1.0f)
+        {
+            restTime += Time.deltaTime;
+        }
+        else
+        {
             agent.isStopped = false;
             enemyAIScript.isLookingAtPlayer = true;
         }
-
     }
 
     private void KnockBack()
     {
         if (onHit && enemy.enemyData.hp > 0)
         {
-            anim.speed = 0f;
+            anim.Play("Idle", -1, 0f);
+            anim.speed = 0;
+            rigid.velocity = Vector2.zero;
+            agent.isStopped = true;
 
-            // 바라보는 방향 뒤로
-            if (this.transform.localScale.x > 0)
-            {
-                rigid.velocity = -transform.right * attackedDistanceSpeed;
-            }
-            else
-            {
-                rigid.velocity = transform.right * attackedDistanceSpeed;
-            }
+            rigid.velocity = playerAttackDirection * attackedDistanceSpeed;
 
             float attackedSpeedDropMultiplier = 6f;
             attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime;
 
-            if (attackedDistanceSpeed < 0.6f)
+            if (attackedDistanceSpeed < 0.05f)
             {
                 rigid.velocity = Vector2.zero;
                 onHit = false;
                 attackedDistanceSpeed = 3f;
                 anim.speed = 1f;
+                state = State.NORMAL;
+                restTime = 0.0f;
             }
         }
     }
@@ -222,8 +295,7 @@ public class EnemyCtrl : MonoBehaviour
     private void FollowEnemyHPBar()
     {
         Vector3 enemyPos = Camera.main.WorldToScreenPoint(this.transform.position);
-        hpBar.transform.position = new Vector2(enemyPos.x, enemyPos.y - 100);
-        hpBar.value = enemy.enemyData.hp;
+        hpBar.transform.position = new Vector2(enemyPos.x, enemyPos.y - 30);
     }
 
     private void IdleAnimation()
@@ -244,19 +316,32 @@ public class EnemyCtrl : MonoBehaviour
         anim.SetBool("isAttack", true);
     }
 
-    private void OnTriggerStay2D(Collider2D other)
+    private void OnDrawGizmosSelected()
     {
-        if (other.CompareTag("Player") && state == State.ATTACK)
-        {
-            status = other.GetComponent<Status>();
-            //BoxCollider2D boxCol = other.GetComponent<BoxCollider2D>();
+        if (detectionPoint == null)
+            return;
 
-            status.HP -= enemy.enemyData.attackDamage;
-        }
+        Gizmos.DrawWireSphere(detectionPoint.position, detectionRange);
+
+        if (attackPoint == null)
+            return;
+
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        status = null;
-    }
+    //private void OnTriggerStay2D(Collider2D other)
+    //{
+    //    if (other.CompareTag("Player") && state == State.ATTACK)
+    //    {
+    //        status = other.GetComponent<Status>();
+    //        //BoxCollider2D boxCol = other.GetComponent<BoxCollider2D>();
+
+    //        status.HP -= enemy.enemyData.attackDamage;
+    //    }
+    //}
+
+    //private void OnTriggerExit2D(Collider2D other)
+    //{
+    //    status = null;
+    //}
 }

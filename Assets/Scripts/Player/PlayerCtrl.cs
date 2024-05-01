@@ -21,7 +21,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // enum 클래스 플레이어 상태
     public enum State
     {
-        NORMAL, MOVE, ROLLING, ATTACK, HIT, DIE
+        NORMAL, MOVE, ROLLING, ATTACK, DIE
     }
     public float movePower = 5f; // 이동에 필요한 힘
     public float rollSpeed;  // 구르는 속도
@@ -74,6 +74,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     UIManager uiManager;
 
+    // 공격 포인트와 범위
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public LayerMask enemyLayers;
+
+    Collider2D hitEnemies;  // 공격 대상
+
     // Getter
     public State GetState()
     {
@@ -95,8 +102,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").gameObject;
-        
 
+        recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
         state = State.NORMAL;
 
         // 로비 씬
@@ -112,7 +119,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 던전 씬
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
-            recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
             uiManager = canvas.GetComponent<UIManager>();
 
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
@@ -257,6 +263,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     break;
                 case State.ATTACK:
                     AttackAnimation();
+                    AttackDirection();
                     Attack();
                     break;
             }
@@ -301,6 +308,25 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     void Attack()
+    {
+        // 공격 범위에 포함된 적
+        hitEnemies = Physics2D.OverlapCircle(attackPoint.position, attackRange, enemyLayers);
+
+        if (hitEnemies != null)
+        {
+            EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+
+            if (enemyCtrl != null && !enemyCtrl.onHit)
+            {
+                enemyCtrl.onHit = true;
+                enemyCtrl.SetState(global::State.ATTACKED);
+                enemyCtrl.playerAttackDirection = (mouseWorldPosition - this.transform.position);
+                enemyCtrl.GetHPSlider().value -= status.attackDamage;
+            }
+        }
+    }
+
+    void AttackDirection()
     {
         // 방향벡터 x좌표의 값에 따른 캐릭터 반전
         if (mouseWorldPosition.x - this.transform.position.x > 0)
@@ -533,5 +559,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private void DisableDungeonCanvas()
     {
         DungeonCanvas.SetActive(false);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null)
+            return;
+
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        
     }
 }

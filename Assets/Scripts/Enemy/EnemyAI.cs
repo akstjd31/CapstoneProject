@@ -81,38 +81,9 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // 타겟이 없을 때
-    public bool IsFocusTargetNull()
-    {
-        if (focusTarget == null)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     public Transform GetTarget()
     {
         return focusTarget;
-    }
-
-    // 적과 플레이어의 거리가 어느정도 좁혀졌는가?
-    public bool IsEnemyClosetPlayer()
-    {
-        //float dist = Vector2.Distance(this.transform.position, focusTarget.position);
-        float xAbs = Mathf.Abs(this.transform.position.x - focusTarget.position.x);
-        float yAbs = Mathf.Abs(this.transform.position.y - focusTarget.position.y);
-        if (xAbs < 2.5f && yAbs < 1f)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
     // 처음에 적이 일정시간을 기다렸다가 플레이어를 쫒아감.
