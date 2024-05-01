@@ -114,6 +114,7 @@ public class LoginProgress : MonoBehaviour
     {
 #pragma warning disable CS4014
         SignInWithEmailAndPassword_Condition();
+        //SignUpAndIn();
 #pragma warning restore CS4014
     }
 
@@ -121,8 +122,8 @@ public class LoginProgress : MonoBehaviour
     {
         auth = FirebaseAuth.DefaultInstance;
 
-        string email = inputField_email.text;
-        string password = inputField_password.text;
+        string email = inputField_email.text.Trim();
+        string password = inputField_password.text.Trim();
 
         if (string.IsNullOrEmpty(inputField_email.text) || string.IsNullOrEmpty(inputField_password.text))
         {
@@ -140,24 +141,133 @@ public class LoginProgress : MonoBehaviour
 
         Debug.Log("front of try");
 
-        try
+        // 이메일과 비밀번호로 사용자 인증 시도
+        //var authResult = await FirebaseAuth.DefaultInstance.SignInWithEmailAndPasswordAsync(email, password);
+        await auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
+            Debug.Log($"{task.IsCompleted}, {task.IsCompletedSuccessfully}, {task.Id}, {task.Result.User.Email}");
+
+            if (task.IsCanceled)
+            {
+                Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
+                return;
+            }
+            else if (task.IsFaulted)
+            {
+                Debug.LogError("SignInWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+                return;
+            }
+            else if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log($"IsCompletedSuccessfully : {auth.CurrentUser}");
+
+                Firebase.Auth.AuthResult result = task.Result;
+                Debug.LogFormat("User signed in successfully: {0} ({1})",
+                    result.User.DisplayName, result.User.UserId);
+
+                UserInfoManager.SetCurrentUser(auth.CurrentUser);
+
+                Check_Condition(email);
+            }
+            else if (task.IsCompleted)
+            {
+                Debug.Log($"IsCompleted : {auth.CurrentUser}");
+
+                Firebase.Auth.AuthResult result = task.Result;
+                Debug.LogFormat("User signed in successfully: {0} ({1})",
+                    result.User.DisplayName, result.User.UserId);
+
+                UserInfoManager.SetCurrentUser(auth.CurrentUser);
+
+                Check_Condition(email);
+            }
+            else
+            {
+                Debug.Log($"task => {task.IsCanceled}, {task.IsFaulted}, {task.IsCompletedSuccessfully}, {task.IsCompleted}");
+            }
+        });
+    }
+
+    //더미 메일로 회원가입을 시키고, 그 뒤 입력받은 데이터로 로그인을 수행
+    //Firebase.FirebaseException: An internal error has occurred.
+    private async Task SignUpAndIn()
+    {
+        auth = FirebaseAuth.DefaultInstance;
+
+        string email = inputField_email.text.Trim();
+        string password = inputField_password.text.Trim();
+
+        if (string.IsNullOrEmpty(inputField_email.text) || string.IsNullOrEmpty(inputField_password.text))
         {
-            // 이메일과 비밀번호로 사용자 인증 시도
-            var authResult = await FirebaseAuth.DefaultInstance.SignInWithEmailAndPasswordAsync(email, password);
-            Debug.Log($"User signed in successfully: {authResult.User.Email}");
-            // 로그인 성공 시 추가 작업 수행
-            UserInfoManager.SetCurrentUser(auth.CurrentUser);
-            
-            Check_Condition(email);
-        }
-        catch (Exception e)
-        {
-            // 인증 실패 시 오류 처리
-            Debug.LogError($"Sign in failed with condition : {e.Message}");
-            //Debug.Log($"show errMsg 1 - 02 : {inputField_email.text}, {inputField_password.text}");
-            loginErrorMsg.text = errMsg[1];
+            loginErrorMsg.text = errMsg[0];
+            //Debug.Log($"show errMsg 0 - 01 : {inputField_email.text}, {inputField_password.text}");
             return;
         }
+        loginErrorMsg.text = "";
+
+
+        if (auth.CurrentUser != null)
+        {
+            auth.SignOut();
+        }
+
+        Debug.Log("SignUpAndIn");
+
+        string dum_email = "dummyMail";
+        string dum_password = "qweqwe123!@#";
+
+        var random = new System.Random();
+        string randomNumber = random.Next(1000000, 9999999).ToString();
+        dum_email = dum_email + randomNumber + "@gmail.com";
+
+        await auth.CreateUserWithEmailAndPasswordAsync(dum_email, dum_password).ContinueWith(async task =>
+        {
+            if(task.IsCompletedSuccessfully)
+            {
+                Debug.Log("SignUpAndIn create user success");
+
+                // 이메일과 비밀번호로 사용자 인증 시도
+                await auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
+                    if (task.IsCanceled)
+                    {
+                        Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
+                        return;
+                    }
+                    else if (task.IsFaulted)
+                    {
+                        Debug.LogError("SignInWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+                        return;
+                    }
+                    else if (task.IsCompletedSuccessfully)
+                    {
+                        Debug.Log($"IsCompletedSuccessfully : {auth.CurrentUser}");
+
+                        Firebase.Auth.AuthResult result = task.Result;
+                        Debug.LogFormat("User signed in successfully: {0} ({1})",
+                            result.User.DisplayName, result.User.UserId);
+
+                        UserInfoManager.SetCurrentUser(auth.CurrentUser);
+
+                        Check_Condition(email);
+                    }
+                    else if (task.IsCompleted)
+                    {
+                        Debug.Log($"IsCompleted : {auth.CurrentUser}");
+
+                        Firebase.Auth.AuthResult result = task.Result;
+                        Debug.LogFormat("User signed in successfully: {0} ({1})",
+                            result.User.DisplayName, result.User.UserId);
+
+                        UserInfoManager.SetCurrentUser(auth.CurrentUser);
+
+                        Check_Condition(email);
+                    }
+                    else
+                    {
+                        Debug.Log($"task => {task.IsCanceled}, {task.IsFaulted}, {task.IsCompletedSuccessfully}, {task.IsCompleted}");
+                    }
+                });
+            }
+        });
     }
 
     private async void Check_Condition(string email)
