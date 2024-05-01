@@ -15,6 +15,7 @@ public class RoomController : MonoBehaviourPunCallbacks
 	public GameObject[] leftRooms;
     public Transform[] mapSpawnPoints;
     public GameObject[] mapArray = new GameObject[3];
+    PhotonView roomView;
     float[] mapSize = new float[2];
     string mapDir = "Dungeon/";
 
@@ -27,6 +28,7 @@ public class RoomController : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        roomView = GetComponent<PhotonView>();
         mapSize[0] = 36.0f;
         mapSize[1] = 20.0f;
         startPoint = GameObject.Find("Spawn");
@@ -60,13 +62,14 @@ public class RoomController : MonoBehaviourPunCallbacks
                     {
                         //Debug.Log("breakDoor");
                         //hit.transform.localScale = new Vector3(1, 1, 1);
-                        hit.transform.gameObject.SetActive(false);
+                        //hit.transform.gameObject.SetActive(false);
+                        roomView.RPC("SetActiveRPC",RpcTarget.AllBuffered, hit.transform.gameObject, false);
                     }
                     else
                     {
                         //Debug.Log("makeDoor");
-
-                        mapSpawnPoints[i].GetChild(0).gameObject.SetActive(true);
+                        //mapSpawnPoints[i].GetChild(0).gameObject.SetActive(true);
+                        roomView.RPC("SetActiveRPC",RpcTarget.AllBuffered, mapSpawnPoints[i].GetChild(0).gameObject, true);
                     }
                 }
             }
@@ -159,7 +162,11 @@ public class RoomController : MonoBehaviourPunCallbacks
             // }
         }
     }
-
+    [PunRPC]
+    void SetActiveRPC(GameObject gameObject, bool active)
+    {
+        gameObject.SetActive(active);
+    }
     private IEnumerator CreateRoom()
     {
         if(this.transform.position.x > DungeonManager.farherstX)

@@ -23,13 +23,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestScene.unity
     guid: 985e79ad54da6664fbd982611ea107bf
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Map1.unity
     guid: 3aa2472bf581e1f448ff7b1f38438d68
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Map2.unity
     guid: fc49792f75c298b44a375aea5016215d
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Map3.unity
     guid: 8cd96ea259239d94e891c79094d9a1cf
   - enabled: 1
