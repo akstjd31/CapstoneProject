@@ -20,7 +20,7 @@ public class SetParent : MonoBehaviour
         }
         else
         {
-            parent = this.transform.parent;
+            parent = GameObject.Find("Map").transform;
         }
         return parent;
     }

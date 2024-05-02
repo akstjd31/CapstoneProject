@@ -32,6 +32,12 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         //GetComponent<RoomController>().Invoke("CreateRoom", 0.3f);
     }
 
+    
+    public override void OnCreatedRoom()
+    {
+        this.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+    }
+
     // Update is called once per frame
     void Update()
     {
