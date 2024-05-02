@@ -17,7 +17,7 @@ public class CharSkill : MonoBehaviour
         await InitSkill();
     }
 
-    private async Task InitSkill()
+    private static async Task InitSkill()
     {
         await UserInfoManager.GetCharSkillAsync();
         // 여기에 비동기 작업 완료 후 수행할 작업 추가
@@ -38,8 +38,13 @@ public class CharSkill : MonoBehaviour
         UpdataSkillData();
     }
 
-    public static int GetSkillLevel(int skillNum)
+    public async static Task<int> GetSkillLevel(int skillNum)
     {
+        if (userSkill == null)
+        {
+            await InitSkill();
+        }
+
         if (!userSkill.ContainsKey(skillNum.ToString()))
         {
             // 존재하지 않는 경우 예외 발생
@@ -47,6 +52,24 @@ public class CharSkill : MonoBehaviour
         }
 
         return userSkill[skillNum.ToString()];
+    }
+
+    public async static Task<List<int>> GetSkillLevelAll(int type)
+    {
+        if (userSkill == null)
+        {
+            await InitSkill();
+        }
+
+        List<int> keyList = SkillData.GetSkillKeyList(type);
+        List<int> levels = new();
+        
+        for(int i = 0; i < keyList.Count; i++)
+        {
+            levels.Add(await GetSkillLevel(keyList[i]));
+        }
+
+        return levels;
     }
 
     //스킬의 레벨을 하나 올릴 때 사용
@@ -199,7 +222,28 @@ class SkillData
         return count;
     }
 
-    public static List<string> GetSkillList(int type = 0)
+    public static List<int> GetSkillKeyList(int type = 0)
+    {
+        List<int> rtList = new();
+
+        switch(type)
+        {
+            case 0:
+                rtList = skill_common.Keys.ToList();
+                break;
+            case 1:
+                rtList = skill_warrior.Keys.ToList();
+                break;
+            case 2:
+                rtList = skill_archer.Keys.ToList();
+                break;
+
+        }
+
+        return rtList;
+    }
+    
+    public static List<string> GetSkillNameList(int type = 0)
     {
         List<string> rtList = new();
 

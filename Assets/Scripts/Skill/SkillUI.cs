@@ -1,5 +1,6 @@
     using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,7 @@ public class SkillUI : MonoBehaviour
 
     private Transform contentTransform;
     List<string> skillNameList = new();
+    List<int> skillLevelList = new();
 
     private int nowSkillClassify = 0;   //0 : common, 1 : warrior/archer
 
@@ -54,7 +56,7 @@ public class SkillUI : MonoBehaviour
         classMenu.GetComponent<Toggle>().onValueChanged.AddListener(delegate { ClickSkillMenu(); });
 
         //GameObject.Find("Menu_Common").GetComponentInChildren<Image>().color = HexToColor("#FFFFFFCC");
-        skillNameList = SkillData.GetSkillList(nowSkillClassify);
+        //GetSkillData();
 
         SummonUI_Sub();
     }
@@ -89,7 +91,7 @@ public class SkillUI : MonoBehaviour
             nowSkillClassify = 1;
         }
 
-        skillNameList = SkillData.GetSkillList(nowSkillClassify);
+        //GetSkillData();
         Re_Init();
     }
 
@@ -100,31 +102,68 @@ public class SkillUI : MonoBehaviour
             skillRow[i] = Instantiate(skillContainer);
             skillRow[i].transform.SetParent(contentTransform.transform, false);
             skillRow[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -250 * i);
+
+            Button upgrade_btn = skillRow[i].transform.Find("Skill_Upgrade").GetComponent<Button>();
+            if(upgrade_btn == null)
+            {
+                Debug.Log($"btn is null");
+            }
+
+            int index = i;
+            upgrade_btn.onClick.AddListener(delegate { UpgradeSkill(index); });
         }
 
         SetData();
     }
 
-    public void ClickSkill()
+    private async void UpgradeSkill(int index)
     {
-        
+        string skillName = skillNameList[index];
+        int skillNum = SkillData.Skill_NameToNum(skillName);
+
+        Debug.Log($"pressed Upgrade => index : {index} {skillName} {skillNum}");
+        CharSkill.LevelUpSkill(skillNum);
     }
 
-    private void SetData()
+    public void ClickSkill()
     {
-        Transform title;
+
+    }
+
+    //로그인을 해야 값을 불러올 수 있음
+    private async Task GetSkillData()
+    {
+        skillNameList = SkillData.GetSkillNameList(nowSkillClassify);
+        skillLevelList = await CharSkill.GetSkillLevelAll(nowSkillClassify);
+
+        //Debug.Log($"GetSkillData // skillNameList {skillNameList.Count}, skillLevelList {skillLevelList.Count}");
+    }
+
+    private async void SetData()
+    {
+        await GetSkillData();
+
+        Transform title, level;
+        string text_level = "레벨 ";
+        int maxSkillLevel = 5;
+        //Debug.Log($"setdata skillLevelList len : {skillLevelList.Count}");
 
         //이미지, 이름, 레벨, 설명
         for (int i = 0; i < skillRow.Length; i++)
         {
+            //name
             title = skillRow[i].transform.Find("SkillName");
+            level = skillRow[i].transform.Find("Skill_Level");
+            maxSkillLevel = 5;
 
-            if(title == null)
+            if (title == null)
             {
                 Debug.Log($"title {i} is null");
             }
 
             title.GetComponent<Text>().text = skillNameList[i];
+            level.GetComponent<Text>().text = text_level + skillLevelList[i] + "/" + maxSkillLevel;
+
         }
     }
 
