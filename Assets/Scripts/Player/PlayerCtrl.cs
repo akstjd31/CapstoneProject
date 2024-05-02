@@ -86,7 +86,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         rigid = gameObject.GetComponent<Rigidbody2D>();
         pv = this.GetComponent<PhotonView>();
 
-        PhotonNetwork.NickName = pv.ViewID.ToString(); // 임시로 플레이어 닉네임을 ViewID로 설정. (다른 클래스에서 닉네임을 비교하기 때문에)
+        //PhotonNetwork.NickName = pv.ViewID.ToString(); // 임시로 플레이어 닉네임을 ViewID로 설정. (다른 클래스에서 닉네임을 비교하기 때문에)
 
         // 공용
         //playerStat = GameObject.FindGameObjectWithTag("PlayerStat");
@@ -120,14 +120,17 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             HUD hud1 = uiManager.hud1.GetComponent<HUD>();
 
-            // HUD1은 로컬 플레이어
-            hud1.nickName.text = PhotonNetwork.NickName;
-            hud1.hpBar.value = status.HP;
+            if (pv.IsMine)
+            {
+                // HUD1은 로컬 플레이어
+                hud1.nickName.text = PhotonNetwork.NickName;
+                hud1.hpBar.value = status.HP;
 
-            // HUD2 == otherPlayer
-            HUD hud2 = uiManager.hud2.GetComponent<HUD>();
-            hud2.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
-            hud2.hpBar.value = otherPlayer.GetComponent<Status>().HP;
+                // HUD2 == otherPlayer
+                HUD hud2 = uiManager.hud2.GetComponent<HUD>();
+                hud2.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
+                hud2.hpBar.value = otherPlayer.GetComponent<Status>().HP;
+            }
         }
     }
 
