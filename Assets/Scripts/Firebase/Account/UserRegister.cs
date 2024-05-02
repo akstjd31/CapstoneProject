@@ -15,14 +15,82 @@ public class UserRegister : MonoBehaviour
     private int errCode;    //입력 중 발생한 오류의 종류
     //1 : 빈 항목 존재, 2 : 이메일 형식 오류, 3 : 비밀번호 길이, 일치 오류, 4: 존재하는 계정을 생성하려 함
 
+    private TMP_InputField inputField_email;
+    private TMP_InputField inputField_password;
+    private TMP_InputField inputField_password_confirm;
+    private Button btn_submit;
+
     void Start()
     {
         EmailRegisterPopup.SetActive(false);
     }
 
+    private void Update()
+    {
+        if(EmailRegisterPopup.activeSelf)
+        {
+            if (inputField_email.isFocused)
+            {
+                if (Input.GetKeyDown(KeyCode.Tab))
+                {
+                    inputField_password.Select();
+                    inputField_password.ActivateInputField();
+                }
+            }
+            else if (inputField_password.isFocused)
+            {
+                if (Input.GetKeyDown(KeyCode.Tab) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+                {
+                    inputField_password_confirm.Select();
+                    inputField_password_confirm.ActivateInputField();
+                }
+
+                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                {
+                    if (Input.GetKeyDown(KeyCode.Tab))
+                    {
+                        inputField_email.Select();
+                        inputField_email.ActivateInputField();
+                    }
+                }
+            }
+            else if (inputField_password_confirm.isFocused)
+            {
+                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                {
+                    if (Input.GetKeyDown(KeyCode.Tab))
+                    {
+                        inputField_password.Select();
+                        inputField_password.ActivateInputField();
+                    }
+                }
+            }
+        }
+    }
+
+    public void OnEndEdit()
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            if (!string.IsNullOrEmpty(inputField_email.text) && !string.IsNullOrEmpty(inputField_password.text) && !string.IsNullOrEmpty(inputField_password_confirm.text))
+            {
+                btn_submit.onClick.Invoke();
+            }
+        }
+    }
+
     public void ShowPopup()
     {
         EmailRegisterPopup.SetActive(true);
+
+        inputField_email = GameObject.Find("Register_Email_Input").GetComponent<TMP_InputField>();
+        inputField_password = GameObject.Find("Register_Password_Input").GetComponent<TMP_InputField>();
+        inputField_password_confirm = GameObject.Find("Register_Password_Confirm_Input").GetComponent<TMP_InputField>();
+        btn_submit = GameObject.Find("Submit_Register").GetComponent<Button>();
+
+        inputField_email.onEndEdit.AddListener(delegate { OnEndEdit(); });
+        inputField_password.onEndEdit.AddListener(delegate { OnEndEdit(); });
+        inputField_password_confirm.onEndEdit.AddListener(delegate { OnEndEdit(); });
     }
 
     public void ClosePopup()
