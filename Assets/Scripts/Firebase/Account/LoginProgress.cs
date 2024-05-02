@@ -144,7 +144,7 @@ public class LoginProgress : MonoBehaviour
         // 이메일과 비밀번호로 사용자 인증 시도
         //var authResult = await FirebaseAuth.DefaultInstance.SignInWithEmailAndPasswordAsync(email, password);
         await auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
-            Debug.Log($"{task.IsCompleted}, {task.IsCompletedSuccessfully}, {task.Id}, {task.Result.User.Email}");
+            //Debug.Log($"{task.IsCompleted}, {task.IsCompletedSuccessfully}, {task.Id}, {task.Result.User.Email}");
 
             if (task.IsCanceled)
             {

@@ -179,6 +179,47 @@ class SkillData
         }
     }
 
+    public static int GetSkillCount(int type = 0)
+    {
+        int count = 0;
+
+        switch (type)
+        {
+            case 0:
+                count = skill_common.Count;
+                break;
+            case 1:
+                count = skill_warrior.Count;
+                break;
+            case 2:
+                count = skill_archer.Count;
+                break;
+
+        }
+        return count;
+    }
+
+    public static List<string> GetSkillList(int type = 0)
+    {
+        List<string> rtList = new();
+
+        switch(type)
+        {
+            case 0:
+                rtList = skill_common.Values.ToList();
+                break;
+            case 1:
+                rtList = skill_warrior.Values.ToList();
+                break;
+            case 2:
+                rtList = skill_archer.Values.ToList();
+                break;
+
+        }
+
+        return rtList;
+    }
+
     private static Dictionary<string, int> ReverseSkillDictionary(Dictionary<int, string> dictionary)
     {
         return dictionary.ToDictionary(x => x.Value, x => x.Key);
