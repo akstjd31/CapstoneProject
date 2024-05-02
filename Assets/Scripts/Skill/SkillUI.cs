@@ -20,6 +20,8 @@ public class SkillUI : MonoBehaviour
     List<string> skillNameList = new();
     List<int> skillLevelList = new();
 
+    Text skillTitle, skillDesc;
+
     private int nowSkillClassify = 0;   //0 : common, 1 : warrior/archer
 
     void Start()
@@ -99,9 +101,17 @@ public class SkillUI : MonoBehaviour
     {
         for (int i = 0; i < skillCount; i++)
         {
+            int index = i;
+
             skillRow[i] = Instantiate(skillContainer);
             skillRow[i].transform.SetParent(contentTransform.transform, false);
             skillRow[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -250 * i);
+
+            Button skill_detail = skillRow[i].GetComponent<Button>();
+            if (skill_detail == null)
+            {
+                Debug.Log($"detail btn is null");
+            }
 
             Button upgrade_btn = skillRow[i].transform.Find("Skill_Upgrade").GetComponent<Button>();
             if(upgrade_btn == null)
@@ -109,25 +119,33 @@ public class SkillUI : MonoBehaviour
                 Debug.Log($"btn is null");
             }
 
-            int index = i;
+            skill_detail.onClick.AddListener(delegate { ShowSkillDesc(index); });
             upgrade_btn.onClick.AddListener(delegate { UpgradeSkill(index); });
         }
 
         SetData();
     }
 
-    private async void UpgradeSkill(int index)
+    private void UpgradeSkill(int index)
     {
         string skillName = skillNameList[index];
         int skillNum = SkillData.Skill_NameToNum(skillName);
 
-        Debug.Log($"pressed Upgrade => index : {index} {skillName} {skillNum}");
+        //Debug.Log($"pressed Upgrade => index : {index} {skillName} {skillNum}");
         CharSkill.LevelUpSkill(skillNum);
+        SetData();
     }
 
-    public void ClickSkill()
+    private void ShowSkillDesc(int index)
     {
+        string skillName = skillNameList[index];
+        int skillNum = SkillData.Skill_NameToNum(skillName);
 
+        skillTitle = GameObject.Find("SkillDescTitle").GetComponent<Text>();
+        skillDesc = GameObject.Find("SkillDesc").GetComponent<Text>();
+
+        skillTitle.text = skillNameList[index];
+        skillDesc.text = SkillData.GetSkillDesc(skillNum);
     }
 
     //로그인을 해야 값을 불러올 수 있음
