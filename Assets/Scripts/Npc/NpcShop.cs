@@ -124,7 +124,9 @@ public class NpcShop : MonoBehaviour
     
     private static void AdjustMoney(int value)
     {
+#pragma warning disable CS4014
         UserInfoManager.SetUserMoney_Async(value);
+#pragma warning restore CS4014
     }
 
     private static async Task<int> GetNpcType(int npcKey)
