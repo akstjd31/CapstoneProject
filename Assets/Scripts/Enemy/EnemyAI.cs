@@ -21,6 +21,8 @@ public class EnemyAI : MonoBehaviour
 
     public bool isLookingAtPlayer = false;
 
+    private bool isTargetPathMissing = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,8 +31,6 @@ public class EnemyAI : MonoBehaviour
         agent.updateUpAxis = false;
 
         enemyPV = this.GetComponent<PhotonView>();
-
-        StartCoroutine(GetTimeToFacePlayer());
     }
 
     // Update is called once per frame
@@ -52,31 +52,44 @@ public class EnemyAI : MonoBehaviour
 
                 target1 = target.transform;
             }
+
+            StartCoroutine(GetTimeToFacePlayer());
         }
 
         if (focusTarget != null)
         {
-            // 만약 focus로 설정해놨던 플레이어가 사망 시 남은 플레이어를 포커싱
-            if (agent.destination == null)
+            // 만약 타겟으로 향하는 path가 존재하지 않을 경우
+            if (agent.pathStatus == NavMeshPathStatus.PathInvalid)
             {
-                focusTarget = GameObject.FindGameObjectWithTag("Player").transform;
+                agent.isStopped = true;
+                isTargetPathMissing = true;
             }
-
-            // 포커싱 == 타겟1일때
-            if (focusTarget == target1)
-            {
-                agent.SetDestination(target1.position);
-
-                if (isLookingAtPlayer)
-                    FlipHorizontalRelativeToTarget(target1.position);
-            }
-            // 포커싱 == 타겟2
             else
             {
-                agent.SetDestination(target2.position);
+                // path가 존재하지 않다가 생기면 다시 타겟을 설정한다.
+                if (agent.isStopped && isTargetPathMissing)
+                {
+                    StartCoroutine(GetTimeToFacePlayer());
+                    agent.isStopped = false;
+                    isTargetPathMissing = false;
+                }
 
-                if (isLookingAtPlayer)
-                    FlipHorizontalRelativeToTarget(target2.position);
+                // 포커싱 == 타겟1
+                if (focusTarget == target1)
+                {
+                    agent.SetDestination(target1.position);
+
+                    if (isLookingAtPlayer)
+                        FlipHorizontalRelativeToTarget(target1.position);
+                }
+                // 포커싱 == 타겟2
+                else
+                {
+                    agent.SetDestination(target2.position);
+
+                    if (isLookingAtPlayer)
+                        FlipHorizontalRelativeToTarget(target2.position);
+                }
             }
         }
     }

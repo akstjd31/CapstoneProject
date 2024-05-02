@@ -81,6 +81,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     Collider2D hitEnemies;  // 공격 대상
 
+    private bool isDeactiveUI;
+
+    GameObject otherPlayer;
     // Getter
     public State GetState()
     {
@@ -122,18 +125,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             uiManager = canvas.GetComponent<UIManager>();
 
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            GameObject otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
+            otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
 
+            uiManager.hpBar.value = this.status.HP;
+
+            // HUD1 == otherPlayer
             HUD hud1 = uiManager.hud1.GetComponent<HUD>();
-
-            // HUD1은 로컬 플레이어
-            hud1.nickName.text = PhotonNetwork.NickName;
-            hud1.hpBar.value = status.HP;
-
-            // HUD2 == otherPlayer
-            HUD hud2 = uiManager.hud2.GetComponent<HUD>();
-            hud2.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
-            hud2.hpBar.value = otherPlayer.GetComponent<Status>().HP;
+            hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
+            hud1.hpBar.value = otherPlayer.GetComponent<Status>().HP;
         }
     }
 
@@ -142,13 +141,25 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         if (pv.IsMine)
         {
+            if (SceneManager.GetActiveScene().name == "LobbyScene")
+            {
+                isDeactiveUI = chatScript != null && partySystemScript != null &&
+                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf;
+            }
+            else
+            {
+                isDeactiveUI = true;
+                
+                if (uiManager != null)
+                {
+                    uiManager.hpText.text = string.Format("{0} / {1}", this.status.HP, this.status.MAXHP);
+                }
+            }
+
             moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-            if ((state != State.ATTACK && chatScript != null && partySystemScript != null &&
-                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf) ||
-                (state != State.ATTACK && SceneManager.GetActiveScene().name == "DungeonScene"))
+            if (state != State.ATTACK && isDeactiveUI)
             {
-
                 if (moveDir.x != 0 || moveDir.y != 0)
                 {
                     state = State.MOVE;
@@ -162,10 +173,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             // 공격 & 공격 쿨타임 끝나면
             if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && 
-                !EventSystem.current.currentSelectedGameObject &&
-                chatScript != null && partySystemScript != null && 
-                !inventory.activeSelf && !chatScript.chatView.activeSelf &&
-                !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf)
+                !EventSystem.current.currentSelectedGameObject && isDeactiveUI)
             {
                 state = State.ATTACK;
 
@@ -200,8 +208,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
 
             // 채팅 입력
-            if (Input.GetKeyDown(KeyCode.Return) && partySystemScript != null &&
-                !partySystemScript.partyCreator.activeSelf)
+            if (Input.GetKeyDown(KeyCode.Return) && chatScript != null &&
+                !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf)
             {
                 if (!chatScript.inputField.isFocused)
                 {
@@ -211,8 +219,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
 
             // 채팅 끄기
-            if (Input.GetKeyDown(KeyCode.Escape) && partySystemScript != null &&
-                !partySystemScript.partyCreator.activeSelf)
+            if (Input.GetKeyDown(KeyCode.Escape) && chatScript != null &&
+                !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf)
             {
                 chatScript.inputField.text = "";
                 chatScript.inputField.DeactivateInputField();
@@ -221,8 +229,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
             
             // 인벤토리 열기
-            if (Input.GetKeyDown(KeyCode.I) && chatScript != null && partySystemScript != null &&
-                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
+            if (Input.GetKeyDown(KeyCode.I) && isDeactiveUI)
             {
                 inventory.SetActive(!inventory.activeSelf);
             }

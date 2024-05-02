@@ -235,14 +235,12 @@ public class EnemyCtrl : MonoBehaviour
             if (hitPlayers != null)
             {
                 hitPlayers.GetComponent<Status>().HP -= enemy.enemyData.attackDamage;
-                Debug.Log(hitPlayers.GetComponent<Status>().HP);
             }
 
             rigid.velocity = Vector2.zero;
             attackDistanceSpeed = 10f;
             state = State.NORMAL;
             restTime = 0.0f;
-
         }
     }
 
