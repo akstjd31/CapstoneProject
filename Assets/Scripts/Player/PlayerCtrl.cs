@@ -138,8 +138,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-            if (state != State.ATTACK && chatScript != null && partySystemScript != null &&
-                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
+            if ((state != State.ATTACK && chatScript != null && partySystemScript != null &&
+                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf) ||
+                (state != State.ATTACK && SceneManager.GetActiveScene().name == "DungeonScene"))
             {
 
                 if (moveDir.x != 0 || moveDir.y != 0)
@@ -154,11 +155,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
 
             // 공격 & 공격 쿨타임 끝나면
-            if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && 
+            if ((Input.GetMouseButtonDown(0) && isAttackCooldownOver && 
                 !EventSystem.current.currentSelectedGameObject &&
                 chatScript != null && partySystemScript != null && 
                 !inventory.activeSelf && !chatScript.chatView.activeSelf &&
-                !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf)
+                !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf) ||
+                (Input.GetMouseButtonDown(0) && SceneManager.GetActiveScene().name == "DungeonScene"))
             {
                 state = State.ATTACK;
 
