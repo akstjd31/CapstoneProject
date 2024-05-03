@@ -68,7 +68,7 @@ public class EnemyCtrl : MonoBehaviour
 
     }
 
-    // ¸ó½ºÅÍ HP¹Ù ¼¼ÆÃ
+    // ï¿½ï¿½ï¿½ï¿½ HPï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public void HPInitSetting()
     {
         hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
@@ -86,33 +86,33 @@ public class EnemyCtrl : MonoBehaviour
         return enemy;
     }
 
-    // ÀûÀÇ »óÅÂ(state)¸¦ Ã³¸®ÇÏ´Â ºÎºÐ
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(state)ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Îºï¿½
     private void FixedUpdate()
     {
         if (!isEnemyDead)
         {
-            // Á×À½ 
+            // ï¿½ï¿½ï¿½ï¿½ 
             if (enemy.enemyData.hp <= 0)
             {
                 StartCoroutine(Death());
             }
 
-            // ÀÌµ¿
+            // ï¿½Ìµï¿½
             if (agent.velocity != Vector3.zero)
             {
                 attackDelay = 999;
                 state = State.MOVE;
             }
-            // °ø°Ý or °ø°ÝÁØºñ
+            // ï¿½ï¿½ï¿½ï¿½ or ï¿½ï¿½ï¿½ï¿½ï¿½Øºï¿½
             else
             {
-                // ¼³Á¤ÇØ³õÀº Å¸±êÀÌ Á¸ÀçÇÒ ¶§
+                // ï¿½ï¿½ï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
                 if (!enemyAIScript.IsFocusTargetNull())
                 {
-                    // ¸ó½ºÅÍ¸¶´Ù ÁÖ¾îÁø °ø°Ýµô·¹ÀÌ Àû¿ë
+                    // ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                     if (attackDelay > enemy.enemyData.attackDelayTime)
                     {
-                        // Å¸±ê°ú ÀûÀÌ °¡±õ´Ù°í ÆÇ´ÜÇÏ¸é °ø°Ý
+                        // Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ù°ï¿½ ï¿½Ç´ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½
                         if (enemyAIScript.IsEnemyClosetPlayer())
                         {
                             state = State.ATTACK;
@@ -130,7 +130,7 @@ public class EnemyCtrl : MonoBehaviour
         }
     }
 
-    // ¾Ö´Ï¸ÞÀÌ¼Ç ¹× ±âÅ¸ÇÔ¼ö ½ÇÇà
+    // ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
     private void Update()
     {
         switch (state)
@@ -152,17 +152,17 @@ public class EnemyCtrl : MonoBehaviour
                 break;
         }
 
-        // Ã¼·Â¹Ù°¡ Á¸ÀçÇÒ¶§¸¸ Àû µû¶ó´Ù´Ô.
+        // Ã¼ï¿½Â¹Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ù´ï¿½.
         if (hpBar != null)
             FollowEnemyHPBar();
 
-        // ³Ë¹é
+        // ï¿½Ë¹ï¿½
         KnockBack();
     }
 
     IEnumerator Death()
     {
-        // ÀûÀÌ ¾²·¯Áö±â Á÷Àü ÇØ¾ßÇÏ´Â °Íµé
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¾ï¿½ï¿½Ï´ï¿½ ï¿½Íµï¿½
         isEnemyDead = true;
 
         enemyAIScript.enabled = false;
@@ -170,13 +170,13 @@ public class EnemyCtrl : MonoBehaviour
 
         yield return new WaitForSeconds(3.0f);
 
-        // ÀÌÈÄ Ã³¸®
+        // ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
         DestroyHPBar();
         enemyManagerScript.RemoveEnemy(this.gameObject);
         PhotonNetwork.Destroy(this.gameObject);
     }
 
-    // ÇÃ·¹ÀÌ¾î¿¡°Ô ¸Â¾ÒÀ» ‹š
+    // ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½Â¾ï¿½ï¿½ï¿½ ï¿½ï¿½
     [PunRPC]
     public void EnemyAttackedPlayer(int damagedHP)
     {
@@ -184,10 +184,10 @@ public class EnemyCtrl : MonoBehaviour
         onHit = true;
     }
 
-    // ÀÌµ¿ °ø°Ý
+    // ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½
     private void Attack()
     {
-        // °ø°Ý ¹æÇâ °áÁ¤
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         //if (this.transform.localScale.x > 0)
         //{
         //    rigid.velocity = transform.right * attackedDistanceSpeed;
@@ -199,9 +199,9 @@ public class EnemyCtrl : MonoBehaviour
 
         rigid.velocity = (enemyAIScript.GetTarget().position - this.transform.position).normalized * attackedDistanceSpeed;
 
-        float attackSpeedDropMultiplier = 6f; // °¨¼ÒµÇ´Â Á¤µµ
+        float attackSpeedDropMultiplier = 6f; // ï¿½ï¿½ï¿½ÒµÇ´ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // ½ÇÁ¦ ³ª¾Æ°¡´Â °Å¸® °è»ê
+        attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½
 
         if (attackDistanceSpeed < 0.3f)
         {
@@ -213,14 +213,14 @@ public class EnemyCtrl : MonoBehaviour
 
     }
 
-    // ³Ë¹é
+    // ï¿½Ë¹ï¿½
     private void KnockBack()
     {
         if (onHit && enemy.enemyData.hp > 0)
         {
             anim.speed = 0f;
 
-            // ¿À¸¥ÂÊ / ¿ÞÂÊÀ» ¹Ù¶óº¸´Â ±âÁØÀ¸·Î µÚ·Î ³Ë¹é
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ / ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú·ï¿½ ï¿½Ë¹ï¿½
             if (this.transform.localScale.x > 0)
             {
                 rigid.velocity = -transform.right * attackedDistanceSpeed;
@@ -230,8 +230,8 @@ public class EnemyCtrl : MonoBehaviour
                 rigid.velocity = transform.right * attackedDistanceSpeed;
             }
 
-            float attackedSpeedDropMultiplier = 6f; // °¨¼ÒµÇ´Â Á¤µµ
-            attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime; // ½ÇÁ¦ ³ª¾Æ°¡´Â °Å¸® °è»ê
+            float attackedSpeedDropMultiplier = 6f; // ï¿½ï¿½ï¿½ÒµÇ´ï¿½ ï¿½ï¿½ï¿½ï¿½
+            attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½
 
             if (attackedDistanceSpeed < 0.6f)
             {
@@ -248,7 +248,7 @@ public class EnemyCtrl : MonoBehaviour
         Destroy(hpBar.gameObject);
     }
 
-    // HP¹Ù°¡ ÀûÀ» µû¶ó´Ù´Ô.
+    // HPï¿½Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ù´ï¿½.
     private void FollowEnemyHPBar()
     {
         Vector3 enemyPos = Camera.main.WorldToScreenPoint(this.transform.position);

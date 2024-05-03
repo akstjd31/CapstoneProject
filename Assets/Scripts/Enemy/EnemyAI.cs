@@ -11,7 +11,7 @@ public class EnemyAI : MonoBehaviour
 
     private NavMeshAgent agent;
 
-    [SerializeField] private Transform target1, target2; // ÇÃ·¹ÀÌ¾î
+    [SerializeField] private Transform target1, target2; // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½
 
     [SerializeField] private float waitForSec = 1f;
 
@@ -30,7 +30,7 @@ public class EnemyAI : MonoBehaviour
 
         GameObject[] targets = GameObject.FindGameObjectsWithTag("Player");
 
-        // ÇÃ·¹ÀÌ¾î°¡ ´øÀü¿¡ È¥ÀÚ µé¾î¿À´Â °æ¿ì °í·Á
+        // ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         if (targets.Length > 1)
         {
             target1 = targets[0].transform;
@@ -49,26 +49,26 @@ public class EnemyAI : MonoBehaviour
     {
         if (focusTarget != null)
         {
-            // Æ¯Á¤ Å¸°ÙÀ¸·Î ÁöÁ¤ÇÑ ´ë»óÀÌ Æ¯Á¤ ÀÌÀ¯(°ÔÀÓ Á¾·á)·Î null »óÅÂ°¡ µÇ¾úÀ» ¶§
+            // Æ¯ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ null ï¿½ï¿½ï¿½Â°ï¿½ ï¿½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½
             if (agent.destination == null)
             {
                 focusTarget = GameObject.FindGameObjectWithTag("Player").transform;
             }
 
-            // Å¸°Ù1ÀÌ Æ÷Ä¿½Ì »óÅÂÀÏ ¶§
+            // Å¸ï¿½ï¿½1ï¿½ï¿½ ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
             if (focusTarget == target1)
             {
                 agent.SetDestination(target1.position);
                 FlipHorizontalRelativeToTarget(target1.position);
             }
-            // Å¸°Ù2°¡ Æ÷Ä¿½Ì »óÅÂÀÏ ¶§
+            // Å¸ï¿½ï¿½2ï¿½ï¿½ ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
             else
             {
                 agent.SetDestination(target2.position);
                 FlipHorizontalRelativeToTarget(target2.position);
             }
 
-            // ÀÏÁ¤ °Å¸®°¡ Á¼ÇôÁö¸é ¸ØÃã
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (IsEnemyClosetPlayer())
             {
                 agent.SetDestination(this.transform.position);
@@ -80,7 +80,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // ÇöÀç Å¸°ÙÀÌ ¾øÀ» ¶§
+    // ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
     public bool IsFocusTargetNull()
     {
         if (focusTarget == null)
@@ -98,7 +98,7 @@ public class EnemyAI : MonoBehaviour
         return focusTarget;
     }
 
-    // ÀûÀÌ ÇÃ·¹ÀÌ¾î¸¦ °ø°ÝÇÒ ¼ö ÀÖ´Â À§Ä¡ÀÎ°¡?
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½Ä¡ï¿½Î°ï¿½?
     public bool IsEnemyClosetPlayer()
     {
         //float dist = Vector2.Distance(this.transform.position, focusTarget.position);
@@ -114,7 +114,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // ÇÃ·¹ÀÌ¾î¸¦ ¹ß°ß
+    // ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ß°ï¿½
     IEnumerator GetTimeToFacePlayer()
     {
         yield return new WaitForSeconds(waitForSec);
@@ -123,7 +123,7 @@ public class EnemyAI : MonoBehaviour
         spriteRenderer.color = Color.red;
     }
 
-    // Å¸°Ù À§Ä¡¿¡ µû¸¥ ÁÂ¿ì ¹ÝÀü
+    // Å¸ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½
     private void FlipHorizontalRelativeToTarget(Vector2 target)
     {
         if (target.x - this.transform.position.x > 0)
@@ -136,7 +136,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // Ã³À½ ´øÀü¿¡ ÀÔÀåÇÒ ¶§ µÎ ÇÃ·¹ÀÌ¾îÀÇ °Å¸®¸¦ ºñ±³ÇÏ¿© Æ÷Ä¿½º ÇÔ.
+    // Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½.
     private void FollowClosestPlayer()
     {
         if (target1 != null && target2 != null)
@@ -144,7 +144,7 @@ public class EnemyAI : MonoBehaviour
             float dist1 = Vector2.Distance(this.transform.position, target1.position);
             float dist2 = Vector2.Distance(this.transform.position, target2.position);
 
-            // dist°ªÀÌ Å©´Ù = °Å¸®°¡ ¸Ö´Ù
+            // distï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ = ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½
             if (dist1 > dist2)
             {
                 focusTarget = target2;

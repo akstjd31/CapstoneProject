@@ -1578,7 +1578,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridMap: 0
-  Tool: {fileID: 0}
 --- !u!1 &8414772924176955518
 GameObject:
   m_ObjectHideFlags: 0
