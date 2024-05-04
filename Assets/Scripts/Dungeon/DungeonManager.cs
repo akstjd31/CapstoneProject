@@ -4,10 +4,13 @@ using System.Runtime.CompilerServices;
 using Photon.Realtime;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class DungeonManager : MonoBehaviourPunCallbacks
 {
+    public static float[] mapSize = new float[2] {36.0f, 20.0f};
     public static int roomNum = 5;
+    public static Vector3 playerRoomPos = new Vector3(0.0f, 0.0f ,0.0f);
     //public static GameObject[] endRooms = new GameObject[roomNum];
     public static List<GameObject> endRooms = new List<GameObject>();
     public static int endRoomIndexChecker = 0;

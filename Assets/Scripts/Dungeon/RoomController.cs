@@ -14,9 +14,8 @@ public class RoomController : MonoBehaviourPunCallbacks
 	public GameObject[] downRooms;
 	public GameObject[] leftRooms;
     public Transform[] mapSpawnPoints;
-    public GameObject[] mapArray = new GameObject[3];
+    public GameObject[] mapArray = new GameObject[1];
     PhotonView roomView;
-    float[] mapSize = new float[2];
     string mapDir = "Dungeon/";
 
     public bool[] doorList = new bool[4];
@@ -30,8 +29,6 @@ public class RoomController : MonoBehaviourPunCallbacks
     void Start()
     {
         roomView = GetComponent<PhotonView>();
-        mapSize[0] = 36.0f;
-        mapSize[1] = 20.0f;
         startPoint = GameObject.Find("Spawn");
         //Invoke("CreateRoom", 0.3f);
         StartCoroutine(CreateRoom());
@@ -171,7 +168,8 @@ public class RoomController : MonoBehaviourPunCallbacks
         if(DungeonManager.isMapCreate && makeDoor && doorCheck && !makePlayMap)
         {
             Debug.Log(mapDir + mapArray[Random.Range(0, mapArray.Length)].name);
-            Vector3 gridMapPosition = new Vector2((this.transform.position.x - startPoint.transform.position.x) * mapSize[0], (this.transform.position.y - startPoint.transform.position.y) * mapSize[1]);
+            Vector3 gridMapPosition = new Vector2((this.transform.position.x - startPoint.transform.position.x) * DungeonManager.mapSize[0]
+            , (this.transform.position.y - startPoint.transform.position.y) * DungeonManager.mapSize[1]);
             PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
             //gridMap.transform.position = new Vector2(this.transform.position.x * 25.0f, this.transform.position.y * 9.0f);
             makePlayMap = true;
