@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DunGeonPhotonManager : MonoBehaviourPunCallbacks
+public class DungeonPhotonMananger : MonoBehaviourPunCallbacks
 {
     public List<int> lobbyPlayerViewID;
 
@@ -17,7 +17,7 @@ public class DunGeonPhotonManager : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        AddPlayersWithPhotonViewToList();
+        //AddPlayersWithPhotonViewToList();
     }
 
     // 하이에라키에 존재하는 모든 플레이어의 ViewID
@@ -79,7 +79,6 @@ public class DunGeonPhotonManager : MonoBehaviourPunCallbacks
         base.OnJoinedRoom();
 
         Debug.Log("방 입장 성공");
-        //PhotonNetwork.Instantiate("Player", Vector2.zero, Quaternion.identity);
         PhotonNetwork.Instantiate("Unit000", Vector2.zero, Quaternion.identity);
     }
 

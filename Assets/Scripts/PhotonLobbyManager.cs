@@ -29,12 +29,10 @@ public class PhotonLobbyManager : MonoBehaviourPunCallbacks
             // 이미 생성된 방이 하나 이상 존재하는지 확인
             if (roomCount > 0)
             {
-                Debug.Log("dfgh");
                 PhotonNetwork.JoinRoom("Lobby");
             }
             else
             {
-                Debug.Log("asdf");
                 CreateRoom();
             }
         }
