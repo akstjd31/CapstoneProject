@@ -6,7 +6,7 @@ using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using Unity.VisualScripting;
 
-public class PlayerEnterDungeon : MonoBehaviourPunCallbacks
+public class PlayerDungeonEnter : MonoBehaviourPunCallbacks
 {
     PhotonView pv;
     string sceneName = "DungeonScene";
@@ -91,7 +91,7 @@ public class PlayerEnterDungeon : MonoBehaviourPunCallbacks
     public void JoinRoom(string roomName)
     {
         PhotonNetwork.JoinRoom(roomName);
-        PhotonNetwork.Instantiate("Unit000", Vector2.zero, Quaternion.identity);
+        //PhotonNetwork.Instantiate("Unit000", Vector2.zero, Quaternion.identity);
         Debug.Log("방 입장 성공");
     }
 }
