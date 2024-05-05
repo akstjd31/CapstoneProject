@@ -272,7 +272,7 @@ RectTransform:
   m_GameObject: {fileID: 497418044}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1457087280}
@@ -283,7 +283,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: -10}
+  m_AnchoredPosition: {x: -200, y: -10}
   m_SizeDelta: {x: 600, y: 730}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &504602517
@@ -1094,7 +1094,7 @@ RectTransform:
   m_GameObject: {fileID: 790243088}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1479841518}
@@ -2053,7 +2053,7 @@ RectTransform:
   m_GameObject: {fileID: 1191783636}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 570478646}
@@ -2254,7 +2254,7 @@ RectTransform:
   m_GameObject: {fileID: 1266753198}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1361845080}
@@ -3557,7 +3557,7 @@ RectTransform:
   m_GameObject: {fileID: 1772355410}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1559917952}
@@ -3568,7 +3568,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 400, y: -10}
+  m_AnchoredPosition: {x: 200, y: -10}
   m_SizeDelta: {x: 600, y: 730}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!61 &1772355414
@@ -3629,7 +3629,6 @@ MonoBehaviour:
   inputText: {fileID: 0}
   inputPassword: {fileID: 0}
   inputButton: {fileID: 0}
-  usingInputField: 0
 --- !u!4 &1894923728
 Transform:
   m_ObjectHideFlags: 0
