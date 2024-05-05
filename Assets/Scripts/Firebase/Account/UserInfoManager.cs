@@ -13,6 +13,8 @@ public class UserInfoManager : MonoBehaviour
     private static FirebaseUser currentUser; // Firebase 사용자 정보를 저장할 변수
     private static Dictionary<string, int> skillLevel; //스킬 데이터의 원본
 
+    private bool isDebug = true;
+
     void Awake()
     {
         // UserInfoManager가 다른 씬으로 전환되어도 파괴되지 않도록 함
@@ -24,6 +26,15 @@ public class UserInfoManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    //디버그인 경우 유저를 FirebaseAuth에서 자동 삭제
+    private void OnApplicationQuit()
+    {
+        if(isDebug && currentUser != null)
+        {
+            currentUser.DeleteAsync();
         }
     }
 
