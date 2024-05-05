@@ -21,7 +21,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // enum 클래스 플레이어 상태
     public enum State
     {
-        NORMAL, MOVE, ROLLING, ATTACK, DIE
+        NORMAL, MOVE, ATTACK, ATTACKED, DIE
     }
     public float movePower = 5f; // 이동에 필요한 힘
     public float rollSpeed;  // 구르는 속도
@@ -51,7 +51,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private Status status; // 플레이어 상태 스크립트
     private Chat chatScript;
     private PartySystem partySystemScript;
-
+    
     public string weaponName = "None"; // 초기에는 아무 무기가 없음.
 
     [SerializeField] private State state; // enum 클래스 변수
@@ -73,6 +73,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     Recorder recorder;
 
     UIManager uiManager;
+    private bool isDeactiveUI;
 
     // 공격 포인트와 범위
     public Transform attackPoint;
@@ -81,13 +82,15 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     Collider2D hitEnemies;  // 공격 대상
 
-    private bool isDeactiveUI;
-
     GameObject otherPlayer;
-    // Getter
-    public State GetState()
+
+    public bool onHit = false;
+    public Vector3 enemyAttackDirection;
+    private float attackedDistanceSpeed = 5f;
+
+    public void SetState(State state)
     {
-        return state;
+        this.state = state;
     }
 
     void Start()
@@ -158,7 +161,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-            if (state != State.ATTACK && isDeactiveUI)
+            if (state != State.ATTACK && !onHit && isDeactiveUI)
             {
                 if (moveDir.x != 0 || moveDir.y != 0)
                 {
@@ -173,7 +176,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             // 공격 & 공격 쿨타임 끝나면
             if (Input.GetMouseButtonDown(0) && isAttackCooldownOver && 
-                !EventSystem.current.currentSelectedGameObject && isDeactiveUI)
+                !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit)
             {
                 state = State.ATTACK;
 
@@ -249,7 +252,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             if (partySystemScript != null)
             {
-                IsPartyHUDActive();
+                PartyHUDActive();
             }
         }
     }
@@ -273,6 +276,43 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     AttackDirection();
                     Attack();
                     break;
+                case State.ATTACKED:
+                    KnockBack();
+                    break;
+            }
+        }
+    }
+
+    // 넉백
+    private void KnockBack()
+    {
+        if (onHit && status.HP > 0)
+        {
+            if (enemyAttackDirection.x < 0f)
+            {
+                this.transform.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                this.transform.localScale = new Vector3(-1, 1, 1);
+            }
+
+            anim.Play("Idle", -1, 0f);
+            anim.speed = 0;
+            rigid.velocity = Vector2.zero;
+
+            rigid.velocity = enemyAttackDirection.normalized * attackedDistanceSpeed;
+
+            float attackedSpeedDropMultiplier = 6f;
+            attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime;
+
+            if (attackedDistanceSpeed < 0.1f)
+            {
+                rigid.velocity = Vector2.zero;
+                onHit = false;
+                attackedDistanceSpeed = 5f;
+                anim.speed = 1f;
+                state = State.NORMAL;
             }
         }
     }
@@ -326,9 +366,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             if (enemyCtrl != null && !enemyCtrl.onHit)
             {
                 enemyCtrl.onHit = true;
-                enemyCtrl.SetState(global::State.ATTACKED);
+                enemyCtrl.SetState(EnemyCtrl.State.ATTACKED);
                 enemyCtrl.playerAttackDirection = (mouseWorldPosition - this.transform.position);
-                enemyCtrl.GetHPSlider().value -= status.attackDamage;
+
+                enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHit", RpcTarget.All, status.attackDamage);
+               //enemyCtrl.GetHPSlider().value -= status.attackDamage;
             }
         }
     }
@@ -374,7 +416,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     //}
 
     // 플레이어가 파티 방에 속해있는지 확인 후에 정보를 전달해주는 함수
-    public void IsPartyHUDActive()
+    public void PartyHUDActive()
     {
         if (party != null)
         {
@@ -398,18 +440,27 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 partySystemScript.partyMemberHUD[1].transform.GetChild(0).GetComponentInChildren<Text>().text = partyMemberPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[1].SetActive(true);
             }
+
+            partySystemScript.leavingParty.gameObject.SetActive(true);
         }
         else
         {
-            partySystemScript.partyMemberHUD[0].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
-            partySystemScript.partyMemberHUD[1].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
+            if (partySystemScript.partyMemberHUD[0].activeSelf || partySystemScript.partyMemberHUD[1].activeSelf)
+            {
+                partySystemScript.partyMemberHUD[0].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
+                partySystemScript.partyMemberHUD[1].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
 
-            partySystemScript.partyMemberHUD[0].transform.Find("Ready").gameObject.SetActive(false);
-            partySystemScript.partyMemberHUD[1].transform.Find("Ready").gameObject.SetActive(false);
+                partySystemScript.partyMemberHUD[0].transform.Find("Ready").gameObject.SetActive(false);
+                partySystemScript.partyMemberHUD[1].transform.Find("Ready").gameObject.SetActive(false);
 
-            partySystemScript.partyMemberHUD[0].SetActive(false);
-            partySystemScript.partyMemberHUD[1].SetActive(false);
-            return;
+                partySystemScript.partyMemberHUD[0].SetActive(false);
+                partySystemScript.partyMemberHUD[1].SetActive(false);
+            }
+
+            if (partySystemScript.leavingParty.gameObject.activeSelf)
+            {
+                partySystemScript.leavingParty.gameObject.SetActive(false);
+            }
         }
     }
 

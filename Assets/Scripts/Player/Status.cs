@@ -46,6 +46,13 @@ public class Status : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void DamageEnemyOnHit(int damage)
+    {
+        HP -= damage;
+        playerCtrl.onHit = true;
+    }
+
     // 플레이어 위치에 따른 텍스트 위치 조절
     void UpdateText(Vector3 playerPos)
     {

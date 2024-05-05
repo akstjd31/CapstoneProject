@@ -8,13 +8,13 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
-public enum State
-{ 
-    NORMAL, MOVE, ATTACK, ATTACKED, DIE
-}
-
 public class EnemyCtrl : MonoBehaviour
 {
+    public enum State
+    {
+        NORMAL, MOVE, ATTACK, ATTACKED, DIE
+    }
+
     private PhotonView enemyPV;
     private Animator anim;
     private NavMeshAgent agent;
@@ -45,36 +45,35 @@ public class EnemyCtrl : MonoBehaviour
     public Vector3 playerAttackDirection;
 
     public Transform detectionPoint;
-    public float detectionRange = 3f;
+    public float detectionRange;
     public LayerMask playerLayers;
 
     [SerializeField] private float restTime = 0.0f;
 
-    // 공격 포인트와 범위
+    // 근접 공격 포인트와 범위
     public Transform attackPoint;
     public float attackRange = 0.5f;
-    public LayerMask enemyLayers;
 
-    Collider2D hitPlayers;
+    // 원거리 발사 위치와 발사체
+    public Transform firePoint;
+    public Transform projectile;
 
     // Start is called before the first frame update
     private void Start()
     {
-        enemy.InitSetting();
-
         enemyPV = this.GetComponent<PhotonView>();
         anim = this.GetComponent<Animator>();
         agent = this.GetComponent<NavMeshAgent>();
         enemyAIScript = this.GetComponent<EnemyAI>();
         rigid = this.GetComponent<Rigidbody2D>();
-
-        //enemyManagerScript = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
-
         canvas = GameObject.FindGameObjectWithTag("Canvas");
 
-        HPInitSetting();
+        enemy.InitSetting();
 
-        state = State.NORMAL;
+        detectionRange = enemy.enemyData.enemyType == EnemyType.LONG_DISTANCE ? 7 : 3;  // 원거리, 근거리몹에 따라 범위가 다름.
+
+        HPInitSetting();
+        SetState(State.NORMAL);
 
         status = null;
     }
@@ -97,9 +96,13 @@ public class EnemyCtrl : MonoBehaviour
         this.enemy = enemy;
     }
 
-    public Slider GetHPSlider()
+    [PunRPC]
+    public void DamagePlayerOnHit(int damage)
     {
-        return hpBar;
+        if (hpBar != null)
+        {
+            hpBar.value -= damage;
+        }
     }
 
     private void FixedUpdate()
@@ -116,9 +119,9 @@ public class EnemyCtrl : MonoBehaviour
             if (agent.velocity != Vector3.zero && 
                 state != State.ATTACK && 
                 state != State.ATTACKED &&
-                restTime >= 1.0f)
+                restTime >= enemy.enemyData.attackDelayTime)
             {
-                state = State.MOVE;
+                SetState(State.MOVE);
             }
 
             // 적의 타겟이 존재할 때
@@ -127,10 +130,11 @@ public class EnemyCtrl : MonoBehaviour
                 // 적이 플레이어와 어느정도 가까이 있으면 공격
                 if (IsEnemyClosetPlayer() && state != State.ATTACK && state != State.NORMAL && !onHit)
                 {
-                    state = State.ATTACK;
+                    SetState(State.ATTACK);
                     targetPos = enemyAIScript.GetTarget().position;
                     agent.isStopped = true;
                     enemyAIScript.isLookingAtPlayer = false;    // 공격할 때 플레이어가 움직여도 그 방향 유지
+
                 }
             }
         }
@@ -169,8 +173,7 @@ public class EnemyCtrl : MonoBehaviour
     // 플레이어가 소유한 범위포인트에 따른 반환
     private bool IsEnemyClosetPlayer()
     {
-        // 만약 근거리 몹이라면
-        if (enemy.enemyData.enemyType == EnemyType.SHORT_DISTANCE && enemyAIScript.GetTarget() != null && state != State.ATTACK)
+        if (enemyAIScript.GetTarget() != null && state != State.ATTACK)
         {
             // 공격 범위에 들어간 적
             Collider2D players = Physics2D.OverlapCircle(detectionPoint.position, detectionRange, playerLayers);
@@ -179,14 +182,8 @@ public class EnemyCtrl : MonoBehaviour
             {
                 return true;
             }
-
         }
 
-        // 원거리 몹일 경우 ..
-        else
-        {
-
-        }
         return false;
     }
 
@@ -210,44 +207,77 @@ public class EnemyCtrl : MonoBehaviour
     public void EnemyAttackedPlayer(int damagedHP)
     {
         enemy.enemyData.hp -= damagedHP;
-        onHit = true;
     }
 
 
     private void Attack()
     {
-        // 공격 범위에 포함된 플레이어
-        hitPlayers = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayers);
+        // 근접
+        if (enemy.enemyData.enemyType == EnemyType.SHORT_DISTANCE)
+        {
+            // 공격 범위에 포함된 플레이어
+            Collider2D hitPlayers = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayers);
+
+            if (hitPlayers != null)
+            {
+                PlayerCtrl player = hitPlayers.GetComponent<PlayerCtrl>();
+                if (player != null && !player.onHit)
+                {
+                    player.SetState(PlayerCtrl.State.ATTACKED);
+                    player.enemyAttackDirection = targetPos - this.transform.position;
+
+                    // 몹의 데미지만큼 플레이어에게 피해를 입힘.
+                    player.GetComponent<PhotonView>().RPC("DamageEnemyOnHit", RpcTarget.All, enemy.enemyData.attackDamage);
+                    player.onHit = true;
+                }
+            }
+        }
+        else
+        {
+        }
     }
 
 
     // 공격 방향
     private void AttackDirection()
     {
-        rigid.velocity = (targetPos - this.transform.position) * attackedDistanceSpeed;
-
-        float attackSpeedDropMultiplier = 6f;
-
-        attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime;
-
-        if (attackDistanceSpeed < 0.3f)
+        // 근접
+        if (enemy.enemyData.enemyType == EnemyType.SHORT_DISTANCE)
         {
-            if (hitPlayers != null)
-            {
-                hitPlayers.GetComponent<Status>().HP -= enemy.enemyData.attackDamage;
-            }
+            rigid.velocity = (targetPos - this.transform.position) * attackedDistanceSpeed;
 
-            rigid.velocity = Vector2.zero;
-            attackDistanceSpeed = 10f;
-            state = State.NORMAL;
-            restTime = 0.0f;
+            float attackSpeedDropMultiplier = 6f;
+
+            attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime;
+
+            if (attackDistanceSpeed < 0.3f)
+            {
+                rigid.velocity = Vector2.zero;
+                attackDistanceSpeed = 10f;
+                SetState(State.NORMAL);
+                restTime = 0.0f;
+            }
+        }
+        // 원거리
+        else
+        {
         }
     }
 
-    // 공격이나 피격당할 때 1초 쉬기
+    public void Fire()
+    {
+        GameObject arrow = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+        arrow.GetComponent<Arrow>().SetTarget(targetPos);
+        arrow.GetComponent<Arrow>().SetDamage(enemy.enemyData.attackDamage);
+
+        SetState(State.NORMAL);
+        restTime = 0.0f;
+    }
+
+    // 공격이나 피격당할 때 몹마다 가지고 있는 딜레이타임별로 쉬기
     private void attackAndRest()
     {
-        if (restTime <= 1.0f)
+        if (restTime <= enemy.enemyData.attackDelayTime)
         {
             restTime += Time.deltaTime;
         }
@@ -278,7 +308,7 @@ public class EnemyCtrl : MonoBehaviour
                 onHit = false;
                 attackedDistanceSpeed = 3f;
                 anim.speed = 1f;
-                state = State.NORMAL;
+                SetState(State.NORMAL);
                 restTime = 0.0f;
             }
         }
