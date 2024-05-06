@@ -25,6 +25,9 @@ public class EnemyAI : MonoBehaviour
 
     private bool focusTargetSetting = false;
 
+    [SerializeField] private GameObject onTriggerCheckObj;
+    [SerializeField] private TriggerCheck triggerCheck;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,52 +41,57 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // 아직 해당 던전에 플레이어가 타겟에 할당되지 않았다면
-        if (target1 == null && target2 == null)
+        // 현재 플레이어가 해당 방에 존재할 때
+        if (triggerCheck != null && triggerCheck.isPlayerInRoom)
         {
-            if (GameObject.FindGameObjectsWithTag("Player").Length == 2)
+            // 아직 해당 던전에 플레이어가 타겟에 할당되지 않았다면
+            if (target1 == null && target2 == null)
             {
-                GameObject[] targets = GameObject.FindGameObjectsWithTag("Player");
+                if (GameObject.FindGameObjectsWithTag("Player").Length == 2)
+                {
+                    GameObject[] targets = GameObject.FindGameObjectsWithTag("Player");
 
-                target1 = targets[0].transform;
-                target2 = targets[1].transform;
+                    target1 = targets[0].transform;
+                    target2 = targets[1].transform;
 
-                status1 = target1.gameObject.GetComponent<Status>();
-                status2 = target2.gameObject.GetComponent<Status>();
+                    status1 = target1.gameObject.GetComponent<Status>();
+                    status2 = target2.gameObject.GetComponent<Status>();
 
-                StartCoroutine(GetTimeToFacePlayer());
+                    StartCoroutine(GetTimeToFacePlayer());
+                }
+                else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
+                {
+                    GameObject target = GameObject.FindGameObjectWithTag("Player");
+
+                    target1 = target.transform;
+
+                    status1 = target1.gameObject.GetComponent<Status>();
+
+                    StartCoroutine(GetTimeToFacePlayer());
+                }
+                else
+                {
+                    agent.isStopped = true;
+                }
             }
-            else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
+
+
+            if (focusTarget != null)
             {
-                GameObject target = GameObject.FindGameObjectWithTag("Player");
+                agent.SetDestination(focusTarget.position);
 
-                target1 = target.transform;
+                if (isLookingAtPlayer)
+                    FlipHorizontalRelativeToTarget(focusTarget.position);
 
-                status1 = target1.gameObject.GetComponent<Status>();
-
-                StartCoroutine(GetTimeToFacePlayer());
+                CheckAggroMeterAndChangeFocus();
             }
             else
             {
-                agent.isStopped = true;
-            }
-        }
-
-        if (focusTarget != null)
-        {
-            agent.SetDestination(focusTarget.position);
-
-            if (isLookingAtPlayer)
-                FlipHorizontalRelativeToTarget(focusTarget.position);
-
-            CheckAggroMeterAndChangeFocus();
-        }
-        else
-        {
-            // path가 존재하지 않다가 생기면 다시 타겟을 설정한다.
-            if (isLookingAtPlayer && focusTargetSetting)
-            {
-                FollowClosetPlayer();
+                // 포커스했던 플레이어가 죽을 시 다시 체크
+                if (isLookingAtPlayer && focusTargetSetting)
+                {
+                    FollowClosetPlayer();
+                }
             }
         }
     }
@@ -137,7 +145,6 @@ public class EnemyAI : MonoBehaviour
         // 남아있는 플레이어가 존재하지 않은 경우
         if (target1 == null && target2 == null)
         {
-            Debug.Log("!");
             focusTargetSetting = false;
             isLookingAtPlayer = false;
             return;
@@ -165,5 +172,14 @@ public class EnemyAI : MonoBehaviour
         isLookingAtPlayer = true;
         focusTargetSetting = true;
         agent.isStopped = false;
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("TriggerObj") && onTriggerCheckObj == null)
+        {
+            onTriggerCheckObj = other.gameObject;
+            triggerCheck = onTriggerCheckObj.GetComponent<TriggerCheck>();
+        }
     }
 }

@@ -164,7 +164,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     if (uiManager != null)
                     {
                         uiManager.hpText.text = string.Format("{0} / {1}", this.status.HP, this.status.MAXHP);
-                        uiManager.hpBar.value = status.HP;
+                        uiManager.hpBar.value = status.HP / 100;
 
                         if (otherPlayer != null)
                         {
@@ -191,7 +191,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                 // 공격 & 공격 쿨타임 끝나면
                 if (Input.GetMouseButtonDown(0) && isAttackCooldownOver &&
-                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit)
+                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.activeSelf)
                 {
                     state = State.ATTACK;
 
