@@ -1650,8 +1650,17 @@ MonoBehaviour:
   - {fileID: 2997502024977182186, guid: 414be9fc43350e74abc5a54dc26d01b4, type: 3}
   mapSpawnPoints: []
   mapArray:
-  - {fileID: 4309532895442696112, guid: 4f8cb1183e8bc9549b261d8dc904a838, type: 3}
+  - {fileID: 6610912550597531676, guid: e5b5f13d8f940a14ca2b4307a987a68b, type: 3}
+  - {fileID: 3181342428140593967, guid: a7135930b3c129d438ebd34994243a7c, type: 3}
+  - {fileID: 8966001500081246785, guid: 8ff42b5d7d9734e4fbbeb537c3be1704, type: 3}
+  - {fileID: 6671084173881694252, guid: 8e1c4d25b56ce404f84c1e7f8ccc88ba, type: 3}
+  - {fileID: 8874482460912848076, guid: bca5178407759fa458a369bd43f82e71, type: 3}
   doorList: 00000000
+  doorObject:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &-8298389530327044145
 MonoBehaviour:
   m_ObjectHideFlags: 0
