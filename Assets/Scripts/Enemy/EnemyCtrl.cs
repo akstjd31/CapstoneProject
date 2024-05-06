@@ -73,7 +73,7 @@ public class EnemyCtrl : MonoBehaviour
         detectionRange = enemy.enemyData.enemyType == EnemyType.LONG_DISTANCE ? 7 : 3;  // 원거리, 근거리몹에 따라 범위가 다름.
 
         HPInitSetting();
-        SetState(State.NORMAL);
+        state = State.NORMAL;
 
         status = null;
     }
@@ -96,13 +96,24 @@ public class EnemyCtrl : MonoBehaviour
         this.enemy = enemy;
     }
 
+    // 플레이어한테 피격당했을 떄 RPC
     [PunRPC]
-    public void DamagePlayerOnHit(int damage)
+    public void DamagePlayerOnHitRPC(int playerViewID, Vector3 attackDirection)
     {
+        PhotonView playerPV = PhotonView.Find(playerViewID);
+        Status status = playerPV.GetComponent<Status>();
+
+        // 플레이어의 공격력만큼 체력에서 깎음
         if (hpBar != null)
         {
-            hpBar.value -= damage;
+            enemy.enemyData.hp -= status.attackDamage;
         }
+
+        status.agroMeter += status.attackDamage;    // 어그로미터 값 증가
+
+        playerAttackDirection = attackDirection;
+        onHit = true;
+        state = State.ATTACKED;
     }
 
     private void FixedUpdate()
@@ -118,10 +129,10 @@ public class EnemyCtrl : MonoBehaviour
             // 속도가 0이 아니면 이동상태
             if (agent.velocity != Vector3.zero && 
                 state != State.ATTACK && 
-                state != State.ATTACKED &&
+                !onHit &&
                 restTime >= enemy.enemyData.attackDelayTime)
             {
-                SetState(State.MOVE);
+                state = State.MOVE;
             }
 
             // 적의 타겟이 존재할 때
@@ -130,7 +141,7 @@ public class EnemyCtrl : MonoBehaviour
                 // 적이 플레이어와 어느정도 가까이 있으면 공격
                 if (IsEnemyClosetPlayer() && state != State.ATTACK && state != State.NORMAL && !onHit)
                 {
-                    SetState(State.ATTACK);
+                    state = State.ATTACK;
                     targetPos = enemyAIScript.GetTarget().position;
                     agent.isStopped = true;
                     enemyAIScript.isLookingAtPlayer = false;    // 공격할 때 플레이어가 움직여도 그 방향 유지
@@ -164,7 +175,9 @@ public class EnemyCtrl : MonoBehaviour
         }
 
         if (hpBar != null)
+        {
             FollowEnemyHPBar();
+        }
 
         // 넉백
         
@@ -202,13 +215,6 @@ public class EnemyCtrl : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    // 피격
-    [PunRPC]
-    public void EnemyAttackedPlayer(int damagedHP)
-    {
-        enemy.enemyData.hp -= damagedHP;
-    }
-
 
     private void Attack()
     {
@@ -223,12 +229,8 @@ public class EnemyCtrl : MonoBehaviour
                 PlayerCtrl player = hitPlayers.GetComponent<PlayerCtrl>();
                 if (player != null && !player.onHit)
                 {
-                    player.SetState(PlayerCtrl.State.ATTACKED);
-                    player.enemyAttackDirection = targetPos - this.transform.position;
-
                     // 몹의 데미지만큼 플레이어에게 피해를 입힘.
-                    player.GetComponent<PhotonView>().RPC("DamageEnemyOnHit", RpcTarget.All, enemy.enemyData.attackDamage);
-                    player.onHit = true;
+                    player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, enemy.enemyData.attackDamage, targetPos - this.transform.position);
                 }
             }
         }
@@ -254,7 +256,7 @@ public class EnemyCtrl : MonoBehaviour
             {
                 rigid.velocity = Vector2.zero;
                 attackDistanceSpeed = 10f;
-                SetState(State.NORMAL);
+                state = State.NORMAL;
                 restTime = 0.0f;
             }
         }
@@ -264,13 +266,14 @@ public class EnemyCtrl : MonoBehaviour
         }
     }
 
+    // 애내메이션 이벤트 호출 함수
     public void Fire()
     {
         GameObject arrow = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
         arrow.GetComponent<Arrow>().SetTarget(targetPos);
         arrow.GetComponent<Arrow>().SetDamage(enemy.enemyData.attackDamage);
 
-        SetState(State.NORMAL);
+        state = State.NORMAL;
         restTime = 0.0f;
     }
 
@@ -308,7 +311,7 @@ public class EnemyCtrl : MonoBehaviour
                 onHit = false;
                 attackedDistanceSpeed = 3f;
                 anim.speed = 1f;
-                SetState(State.NORMAL);
+                state = State.NORMAL;
                 restTime = 0.0f;
             }
         }
@@ -324,6 +327,7 @@ public class EnemyCtrl : MonoBehaviour
     {
         Vector3 enemyPos = Camera.main.WorldToScreenPoint(this.transform.position);
         hpBar.transform.position = new Vector2(enemyPos.x, enemyPos.y - 30);
+        hpBar.value = enemy.enemyData.hp;
     }
 
     private void IdleAnimation()

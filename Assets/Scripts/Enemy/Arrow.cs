@@ -51,12 +51,9 @@ public class Arrow : MonoBehaviour
         {
             PlayerCtrl player = other.GetComponent<PlayerCtrl>();
 
-            if (player != null)
+            if (player != null && !player.onHit)
             {
-                player.SetState(PlayerCtrl.State.ATTACKED);
-                player.enemyAttackDirection = targetPos - this.transform.position;
-                player.GetComponent<PhotonView>().RPC("DamageEnemyOnHit", RpcTarget.All, damage);
-                player.onHit = true;
+                player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, damage, targetPos - this.transform.position);
             }
 
             Destroy(this.gameObject);

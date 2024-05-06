@@ -93,6 +93,9 @@ MonoBehaviour:
   - HeresWhy
   - DamageEnemyOnHit
   - DamagePlayerOnHit
+  - DamageEnemyOnHitRPC
+  - EnemyAttackedPlayerRPC
+  - DamagePlayerOnHitRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

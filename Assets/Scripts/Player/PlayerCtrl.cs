@@ -365,12 +365,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             if (enemyCtrl != null && !enemyCtrl.onHit)
             {
-                enemyCtrl.onHit = true;
-                enemyCtrl.SetState(EnemyCtrl.State.ATTACKED);
-                enemyCtrl.playerAttackDirection = (mouseWorldPosition - this.transform.position);
-
-                enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHit", RpcTarget.All, status.attackDamage);
-               //enemyCtrl.GetHPSlider().value -= status.attackDamage;
+                enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, mouseWorldPosition - this.transform.position);
             }
         }
     }

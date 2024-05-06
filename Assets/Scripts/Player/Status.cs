@@ -16,6 +16,7 @@ public class Status : MonoBehaviourPunCallbacks
     public float MAXHP = 100; // 최대 체력
     public int attackDamage = 5; // 공격력
     public float attackSpeed = 1.0f; // 공격 속도
+    public int agroMeter = 0; // 어그로 미터기
 
     [SerializeField] private Transform statInfo; // 플레이어의 스탯 정보
     public Text[] stats; // 스탯 정보가 담긴 텍스트
@@ -47,10 +48,12 @@ public class Status : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void DamageEnemyOnHit(int damage)
+    public void DamageEnemyOnHitRPC(int damage, Vector3 attackDirection)
     {
         HP -= damage;
         playerCtrl.onHit = true;
+        playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
+        playerCtrl.enemyAttackDirection = attackDirection;
     }
 
     // 플레이어 위치에 따른 텍스트 위치 조절

@@ -13,6 +13,8 @@ public class EnemyAI : MonoBehaviour
 
     [SerializeField] private Transform target1, target2; // 2인 멀티 플레이어
 
+    private Status status1, status2;
+
     [SerializeField] private float waitForSec = 1f;
 
     private PhotonView enemyPV;
@@ -45,12 +47,17 @@ public class EnemyAI : MonoBehaviour
 
                 target1 = targets[0].transform;
                 target2 = targets[1].transform;
+
+                status1 = target1.gameObject.GetComponent<Status>();
+                status2 = target2.gameObject.GetComponent<Status>();
             }
             else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
             {
                 GameObject target = GameObject.FindGameObjectWithTag("Player");
 
                 target1 = target.transform;
+
+                status1 = target1.gameObject.GetComponent<Status>();
             }
 
             StartCoroutine(GetTimeToFacePlayer());
@@ -90,6 +97,25 @@ public class EnemyAI : MonoBehaviour
                     if (isLookingAtPlayer)
                         FlipHorizontalRelativeToTarget(target2.position);
                 }
+            }
+
+            CheckAggroMeterAndChangeFocus();
+        }
+    }
+
+    private void CheckAggroMeterAndChangeFocus()
+    {
+        if (target1 != null && target2 != null)
+        {
+            // 어그로 미터에 따른 타겟 변경
+            if (status1.agroMeter > status2.agroMeter)
+            {
+
+                focusTarget = target1;
+            }
+            else
+            {
+                focusTarget = target2;
             }
         }
     }
