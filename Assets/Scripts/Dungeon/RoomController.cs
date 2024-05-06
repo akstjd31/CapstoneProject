@@ -20,7 +20,6 @@ public class RoomController : MonoBehaviourPunCallbacks
     DungeonManager dungeonManager;
 
     public bool[] doorList = new bool[4];
-    public GameObject[] doorObject = new GameObject[4];
 
     bool isNameChanged = false;
     bool makeDoor = false;
@@ -107,10 +106,8 @@ public class RoomController : MonoBehaviourPunCallbacks
                 RaycastHit2D hit;
                 if (i == 0)
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y + 1 * 0.2f),
-                    Vector2.up, 0.5f);
-                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 1 * 0.2f),
-                    Vector2.up * 0.5f, Color.blue);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y + 1 * 0.2f), Vector2.up, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 1 * 0.2f), Vector2.up * 0.5f, Color.blue);
                     if(hit.collider == null)
                     {
                         doorList[i] = true;
@@ -122,10 +119,8 @@ public class RoomController : MonoBehaviourPunCallbacks
                 }
                 else if (i == 1)
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x + 1 * 0.2f, this.transform.position.y),
-                    Vector2.right, 0.5f);
-                    Debug.DrawRay(new Vector2(this.transform.position.x + 1 * 0.2f, this.transform.position.y),
-                    Vector2.right * 0.5f, Color.blue);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x + 1 * 0.2f, this.transform.position.y), Vector2.right, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x + 1 * 0.2f, this.transform.position.y), Vector2.right * 0.5f, Color.blue);
                     if(hit.collider == null)
                     {
                         doorList[i] = true;
@@ -137,10 +132,8 @@ public class RoomController : MonoBehaviourPunCallbacks
                 }
                 else if (i == 2)
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1 * 0.2f),
-                    Vector2.down, 0.5f);
-                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 1 * 0.2f),
-                    Vector2.down * 0.5f, Color.blue);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1 * 0.2f), Vector2.down, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 1 * 0.2f), Vector2.down * 0.5f, Color.blue);
                     if(hit.collider == null)
                     {
                         doorList[i] = true;
@@ -152,10 +145,8 @@ public class RoomController : MonoBehaviourPunCallbacks
                 }
                 else if (i == 3)
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x - 1 * 0.2f, this.transform.position.y),
-                    Vector2.left, 0.5f);
-                    Debug.DrawRay(new Vector2(this.transform.position.x - 1 * 0.2f, this.transform.position.y),
-                    Vector2.left * 0.5f, Color.blue);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x - 1 * 0.2f, this.transform.position.y), Vector2.left, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x - 1 * 0.2f, this.transform.position.y), Vector2.left * 0.5f, Color.blue);
                     if(hit.collider == null)
                     {
                         doorList[i] = true;
@@ -167,11 +158,6 @@ public class RoomController : MonoBehaviourPunCallbacks
                 }
             }
             doorCheck = true;
-            //Debug.Log(this.transform.position);
-            // for(int i = 0; i < 4; i++)
-            // {
-            //     Debug.Log(doorList[i]);
-            // } 
         }
         if(dungeonManager.isMapCreate && dungeonManager.specialRoomSelect && makeDoor && doorCheck && !makePlayMap)
         {
@@ -180,18 +166,84 @@ public class RoomController : MonoBehaviourPunCallbacks
                 Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
                 PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
+                for(int i = 0; i < 4; i++)
+                {
+                    if(doorList[i])
+                    {
+                        if(i == 0)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
+                        }
+                        else if(i == 1)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
+                        }
+                        else if(i == 2)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
+                        }
+                        else if(i == 3)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
+                        }
+                    }
+                }
             }
             else if(this.name == dungeonManager.shopRoom.name)
             {
                 Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
                 PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
+                for(int i = 0; i < 4; i++)
+                {
+                    if(doorList[i])
+                    {
+                        if(i == 0)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
+                        }
+                        else if(i == 1)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
+                        }
+                        else if(i == 2)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
+                        }
+                        else if(i == 3)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
+                        }
+                    }
+                }
             }
             else if(this.name == dungeonManager.healRoom.name)
             {
                 Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
                 PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
+                for(int i = 0; i < 4; i++)
+                {
+                    if(doorList[i])
+                    {
+                        if(i == 0)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
+                        }
+                        else if(i == 1)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
+                        }
+                        else if(i == 2)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
+                        }
+                        else if(i == 3)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
+                        }
+                    }
+                }
             }
             else
             {
@@ -199,6 +251,28 @@ public class RoomController : MonoBehaviourPunCallbacks
                 Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
                 PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
+                for(int i = 0; i < 4; i++)
+                {
+                    if(doorList[i])
+                    {
+                        if(i == 0)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
+                        }
+                        else if(i == 1)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
+                        }
+                        else if(i == 2)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
+                        }
+                        else if(i == 3)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
+                        }
+                    }
+                }
             }
             makePlayMap = true;
         }
