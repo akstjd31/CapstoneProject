@@ -21,7 +21,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // enum 클래스 플레이어 상태
     public enum State
     {
-        NORMAL, MOVE, ROLLING, ATTACK, HIT, DIE
+        NORMAL, MOVE, ATTACK, ATTACKED, DIE
     }
     public float movePower = 5f; // 이동에 필요한 힘
     public float rollSpeed;  // 구르는 속도
@@ -51,7 +51,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private Status status; // 플레이어 상태 스크립트
     private Chat chatScript;
     private PartySystem partySystemScript;
-
+    
     public string weaponName = "None"; // 초기에는 아무 무기가 없음.
 
     [SerializeField] private State state; // enum 클래스 변수
@@ -73,11 +73,27 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     Recorder recorder;
 
     UIManager uiManager;
+    private bool isDeactiveUI;
 
-    // Getter
-    public State GetState()
+    // 공격 포인트와 범위
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public LayerMask enemyLayers;
+
+    Collider2D hitEnemies;  // 공격 대상
+
+    GameObject otherPlayer;
+
+    public bool onHit = false;
+    public Vector3 enemyAttackDirection;
+    private float attackedDistanceSpeed = 5f;
+
+    private bool isDeath = false;
+    private float deathTime = 1.0f;
+
+    public void SetState(State state)
     {
-        return state;
+        this.state = state;
     }
 
     void Start()
@@ -86,7 +102,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         rigid = gameObject.GetComponent<Rigidbody2D>();
         pv = this.GetComponent<PhotonView>();
 
-        //PhotonNetwork.NickName = pv.ViewID.ToString(); // 임시로 플레이어 닉네임을 ViewID로 설정. (다른 클래스에서 닉네임을 비교하기 때문에)
+        PhotonNetwork.NickName = pv.ViewID.ToString(); // 임시로 플레이어 닉네임을 ViewID로 설정. (다른 클래스에서 닉네임을 비교하기 때문에)
 
         // 공용
         //playerStat = GameObject.FindGameObjectWithTag("PlayerStat");
@@ -95,8 +111,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").gameObject;
-        
 
+        recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
         state = State.NORMAL;
 
         // 로비 씬
@@ -112,25 +128,17 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 던전 씬
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
-            recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
             uiManager = canvas.GetComponent<UIManager>();
 
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            GameObject otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
+            otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
 
+            uiManager.hpBar.value = this.status.HP;
+
+            // HUD1 == otherPlayer
             HUD hud1 = uiManager.hud1.GetComponent<HUD>();
-
-            if (pv.IsMine)
-            {
-                // HUD1은 로컬 플레이어
-                hud1.nickName.text = PhotonNetwork.NickName;
-                hud1.hpBar.value = status.HP;
-
-                // HUD2 == otherPlayer
-                HUD hud2 = uiManager.hud2.GetComponent<HUD>();
-                hud2.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
-                hud2.hpBar.value = otherPlayer.GetComponent<Status>().HP;
-            }
+            hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
+            hud1.hpBar.value = otherPlayer.GetComponent<Status>().HP;
         }
     }
 
@@ -139,108 +147,129 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         if (pv.IsMine)
         {
-            moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-
-            if ((state != State.ATTACK && chatScript != null && partySystemScript != null &&
-                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf) ||
-                (state != State.ATTACK && SceneManager.GetActiveScene().name == "DungeonScene"))
+            if (!isDeath)
             {
-
-                if (moveDir.x != 0 || moveDir.y != 0)
+                if (status.HP <= 0)
                 {
-                    state = State.MOVE;
-                }
-                else
-                {
+                    anim.SetTrigger("Death");
                     rigid.velocity = Vector2.zero;
-                    state = State.NORMAL;
+                    isDeath = true;
                 }
-            }
 
-            // 공격 & 공격 쿨타임 끝나면
-            if ((Input.GetMouseButtonDown(0) && isAttackCooldownOver && 
-                !EventSystem.current.currentSelectedGameObject &&
-                chatScript != null && partySystemScript != null && 
-                !inventory.activeSelf && !chatScript.chatView.activeSelf &&
-                !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf) ||
-                (Input.GetMouseButtonDown(0) && SceneManager.GetActiveScene().name == "DungeonScene"))
-            {
-                state = State.ATTACK;
-
-                Vector3 mouseScreenPosition = Input.mousePosition;
-
-                // 마우스의 스크린 좌표를 월드 좌표로 변환합니다.
-                mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
-                // 플레이어가 보고 있는 방향에 따른 공격방향
-                //SetDirection();
-
-                attackDistanceSpeed = 14f;
-                isAttackCooldownOver = false;
-
-                // 적을 공격한 상태.
-                if (isPlayerInRangeOfEnemy)
+                if (SceneManager.GetActiveScene().name == "LobbyScene")
                 {
-                    enemyCtrl.GetComponent<PhotonView>().RPC("EnemyAttackedPlayer", RpcTarget.All, status.attackDamage);
-                }
-            }
-
-            if (!isAttackCooldownOver)
-            {
-                if (attackCoolTime > 0.0f)
-                {
-                    attackCoolTime -= Time.deltaTime;
+                    isDeactiveUI = chatScript != null && partySystemScript != null &&
+                    !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf;
                 }
                 else
                 {
-                    isAttackCooldownOver = true;
-                    attackCoolTime = 1.0f;
-                }
-            }
+                    isDeactiveUI = true;
 
-            // 채팅 입력
-            if (Input.GetKeyDown(KeyCode.Return) && partySystemScript != null &&
-                !partySystemScript.partyCreator.activeSelf)
-            {
-                if (!chatScript.inputField.isFocused)
+                    if (uiManager != null)
+                    {
+                        uiManager.hpText.text = string.Format("{0} / {1}", this.status.HP, this.status.MAXHP);
+                    }
+                }
+
+                moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+
+                if (state != State.ATTACK && state != State.ATTACKED && !onHit && isDeactiveUI)
                 {
-                    chatScript.inputField.interactable = true;
-                    chatScript.inputField.ActivateInputField();
+                    if (moveDir.x != 0 || moveDir.y != 0)
+                    {
+                        state = State.MOVE;
+                    }
+                    else
+                    {
+                        rigid.velocity = Vector2.zero;
+                        state = State.NORMAL;
+                    }
                 }
-            }
 
-            // 채팅 끄기
-            if (Input.GetKeyDown(KeyCode.Escape) && partySystemScript != null &&
-                !partySystemScript.partyCreator.activeSelf)
-            {
-                chatScript.inputField.text = "";
-                chatScript.inputField.DeactivateInputField();
-
-                chatScript.CloseChatWindowOnButtonClick();
-            }
-            
-            // 인벤토리 열기
-            if (Input.GetKeyDown(KeyCode.I) && chatScript != null && partySystemScript != null &&
-                !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf)
-            {
-                inventory.SetActive(!inventory.activeSelf);
-            }
-
-            // 보이스 참가하기
-            if (recorder != null)
-            {
-                if (Input.GetKey(KeyCode.T))
+                // 공격 & 공격 쿨타임 끝나면
+                if (Input.GetMouseButtonDown(0) && isAttackCooldownOver &&
+                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit)
                 {
-                    recorder.TransmitEnabled = true;
+                    state = State.ATTACK;
+
+                    Vector3 mouseScreenPosition = Input.mousePosition;
+
+                    // 마우스의 스크린 좌표를 월드 좌표로 변환합니다.
+                    mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+                    // 플레이어가 보고 있는 방향에 따른 공격방향
+                    //SetDirection();
+
+                    attackDistanceSpeed = 14f;
+                    isAttackCooldownOver = false;
+
+                    // 적을 공격한 상태.
+                    if (isPlayerInRangeOfEnemy)
+                    {
+                        enemyCtrl.GetComponent<PhotonView>().RPC("EnemyAttackedPlayer", RpcTarget.All, status.attackDamage);
+                    }
                 }
-                else
+
+                if (!isAttackCooldownOver)
                 {
-                    recorder.TransmitEnabled = false;
+                    if (attackCoolTime > 0.0f)
+                    {
+                        attackCoolTime -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        isAttackCooldownOver = true;
+                        attackCoolTime = 1.0f;
+                    }
+                }
+
+                // 채팅 입력
+                if (Input.GetKeyDown(KeyCode.Return) && chatScript != null &&
+                    !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf)
+                {
+                    if (!chatScript.inputField.isFocused)
+                    {
+                        chatScript.inputField.interactable = true;
+                        chatScript.inputField.ActivateInputField();
+                    }
+                }
+
+                // 채팅 끄기
+                if (Input.GetKeyDown(KeyCode.Escape) && chatScript != null &&
+                    !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf)
+                {
+                    chatScript.inputField.text = "";
+                    chatScript.inputField.DeactivateInputField();
+
+                    chatScript.CloseChatWindowOnButtonClick();
+                }
+
+                // 인벤토리 열기
+                if (Input.GetKeyDown(KeyCode.I) && isDeactiveUI)
+                {
+                    inventory.SetActive(!inventory.activeSelf);
+                }
+
+                // 보이스 참가하기
+                if (recorder != null)
+                {
+                    if (Input.GetKey(KeyCode.T))
+                    {
+                        recorder.TransmitEnabled = true;
+                    }
+                    else
+                    {
+                        recorder.TransmitEnabled = false;
+                    }
+                }
+
+                if (partySystemScript != null)
+                {
+                    PartyHUDActive();
                 }
             }
-
-            if (partySystemScript != null)
+            else
             {
-                IsPartyHUDActive();
+
             }
         }
     }
@@ -261,8 +290,67 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     break;
                 case State.ATTACK:
                     AttackAnimation();
+                    AttackDirection();
                     Attack();
                     break;
+                case State.ATTACKED:
+                    KnockBack();
+                    break;
+                case State.DIE:
+                    Death();
+                    break;
+            }
+        }
+    }
+
+    public void DeathAnimEvent()
+    {
+        state = State.DIE;
+        anim.speed = 0f;
+    }
+
+    private void Death()
+    {
+        if (deathTime >= 0.0f)
+        {
+            deathTime -= Time.deltaTime;
+        }
+        else
+        {
+            PhotonNetwork.Destroy(this.gameObject);
+        }
+    }
+
+    // 넉백
+    private void KnockBack()
+    {
+        if (onHit && status.HP > 0)
+        {
+            if (enemyAttackDirection.x < 0f)
+            {
+                this.transform.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                this.transform.localScale = new Vector3(-1, 1, 1);
+            }
+
+            anim.Play("Idle", -1, 0f);
+            anim.speed = 0;
+            rigid.velocity = Vector2.zero;
+
+            rigid.velocity = enemyAttackDirection.normalized * attackedDistanceSpeed;
+
+            float attackedSpeedDropMultiplier = 6f;
+            attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime;
+
+            if (attackedDistanceSpeed < 0.1f)
+            {
+                rigid.velocity = Vector2.zero;
+                onHit = false;
+                attackedDistanceSpeed = 5f;
+                anim.speed = 1f;
+                state = State.NORMAL;
             }
         }
     }
@@ -306,6 +394,22 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     void Attack()
     {
+        // 공격 범위에 포함된 적
+        hitEnemies = Physics2D.OverlapCircle(attackPoint.position, attackRange, enemyLayers);
+
+        if (hitEnemies != null)
+        {
+            EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+
+            if (enemyCtrl != null && !enemyCtrl.onHit)
+            {
+                enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, mouseWorldPosition - this.transform.position);
+            }
+        }
+    }
+
+    void AttackDirection()
+    {
         // 방향벡터 x좌표의 값에 따른 캐릭터 반전
         if (mouseWorldPosition.x - this.transform.position.x > 0)
         {
@@ -345,7 +449,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     //}
 
     // 플레이어가 파티 방에 속해있는지 확인 후에 정보를 전달해주는 함수
-    public void IsPartyHUDActive()
+    public void PartyHUDActive()
     {
         if (party != null)
         {
@@ -369,18 +473,27 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 partySystemScript.partyMemberHUD[1].transform.GetChild(0).GetComponentInChildren<Text>().text = partyMemberPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[1].SetActive(true);
             }
+
+            partySystemScript.leavingParty.gameObject.SetActive(true);
         }
         else
         {
-            partySystemScript.partyMemberHUD[0].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
-            partySystemScript.partyMemberHUD[1].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
+            if (partySystemScript.partyMemberHUD[0].activeSelf || partySystemScript.partyMemberHUD[1].activeSelf)
+            {
+                partySystemScript.partyMemberHUD[0].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
+                partySystemScript.partyMemberHUD[1].transform.GetChild(0).GetComponentInChildren<Text>().text = "";
 
-            partySystemScript.partyMemberHUD[0].transform.Find("Ready").gameObject.SetActive(false);
-            partySystemScript.partyMemberHUD[1].transform.Find("Ready").gameObject.SetActive(false);
+                partySystemScript.partyMemberHUD[0].transform.Find("Ready").gameObject.SetActive(false);
+                partySystemScript.partyMemberHUD[1].transform.Find("Ready").gameObject.SetActive(false);
 
-            partySystemScript.partyMemberHUD[0].SetActive(false);
-            partySystemScript.partyMemberHUD[1].SetActive(false);
-            return;
+                partySystemScript.partyMemberHUD[0].SetActive(false);
+                partySystemScript.partyMemberHUD[1].SetActive(false);
+            }
+
+            if (partySystemScript.leavingParty.gameObject.activeSelf)
+            {
+                partySystemScript.leavingParty.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -537,5 +650,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private void DisableDungeonCanvas()
     {
         DungeonCanvas.SetActive(false);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null)
+            return;
+
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        
     }
 }

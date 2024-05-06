@@ -7,6 +7,7 @@ using Photon.Pun;
 public class Party : MonoBehaviourPun, IPunObservable
 {
     public Text Title;
+    public Text leaderName;
     private string context;
 
     [SerializeField] private int partyLeaderID = -1;
@@ -34,6 +35,11 @@ public class Party : MonoBehaviourPun, IPunObservable
         }
 
         return 1;
+    }
+
+    public void SetLeaderName(string name)
+    {
+        this.leaderName.text = name;
     }
 
     public void SetPartyLeaderID(int leaderID)

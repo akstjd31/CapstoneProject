@@ -16,6 +16,7 @@ TagManager:
   - Bullet
   - Inventory
   - VoiceManager
+  - Enemy
   - Room
   layers:
   - Default
@@ -25,8 +26,8 @@ TagManager:
   - Water
   - UI
   - Room Checker
-  - 
-  - 
+  - Players
+  - Enemies
   - 
   - 
   - 

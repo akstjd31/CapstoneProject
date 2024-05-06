@@ -18,6 +18,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
     public GameObject content;
 
     public GameObject[] partyMemberHUD; // 파티 멤버 HUD
+    public Button leavingParty; // 파티
 
     [SerializeField] private List<Party> parties = new List<Party>();   // 파티 리스트 
 
@@ -142,7 +143,6 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     Debug.Log(PhotonNetwork.NickName + " 가 방을 생성하였습니다.");
                     partyCreator.SetActive(false);
                     playerCtrl.party.SetPartyLeaderID(playerCtrl.GetComponent<PhotonView>().ViewID);
-                    createPartyButton.SetActive(false);
                     readyButton[0].SetActive(true);
 
                     partyMemberHUD[0].GetComponentInChildren<Text>().text = PhotonNetwork.NickName;
@@ -380,8 +380,9 @@ public class PartySystem : MonoBehaviourPunCallbacks
         Party newParty = partyPV.GetComponent<Party>();
         newParty.SetContext(receiveMessage);
         newParty.SetPartyLeaderID(playerViewID);
+        newParty.SetLeaderName(PhotonNetwork.NickName);
 
-        newParty.GetComponent<Button>().onClick.AddListener(OnClickJoinPartyButton);
+        newParty.GetComponentInChildren<Button>().onClick.AddListener(OnClickJoinPartyButton);
         parties.Add(newParty);
         //parties[parties.Count - 1].GetComponent<Button>().onClick.AddListener(OnClickJoinPartyButton);
 
