@@ -50,17 +50,17 @@ public class EnemyAI : MonoBehaviour
 
                 status1 = target1.gameObject.GetComponent<Status>();
                 status2 = target2.gameObject.GetComponent<Status>();
+
+                StartCoroutine(GetTimeToFacePlayer());
             }
-            else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
-            {
-                GameObject target = GameObject.FindGameObjectWithTag("Player");
+            //else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
+            //{
+            //    GameObject target = GameObject.FindGameObjectWithTag("Player");
 
-                target1 = target.transform;
+            //    target1 = target.transform;
 
-                status1 = target1.gameObject.GetComponent<Status>();
-            }
-
-            StartCoroutine(GetTimeToFacePlayer());
+            //    status1 = target1.gameObject.GetComponent<Status>();
+            //}
         }
 
         if (focusTarget != null)
@@ -70,6 +70,7 @@ public class EnemyAI : MonoBehaviour
             {
                 agent.isStopped = true;
                 isTargetPathMissing = true;
+
             }
             else
             {
