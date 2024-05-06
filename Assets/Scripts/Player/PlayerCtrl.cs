@@ -161,7 +161,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-            if (state != State.ATTACK && !onHit && isDeactiveUI)
+            if (state != State.ATTACK && state != State.ATTACKED && !onHit && isDeactiveUI)
             {
                 if (moveDir.x != 0 || moveDir.y != 0)
                 {
