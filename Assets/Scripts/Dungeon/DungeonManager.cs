@@ -9,28 +9,29 @@ using UnityEngine.UIElements;
 
 public class DungeonManager : MonoBehaviourPunCallbacks
 {
-    public static float[] mapSize = new float[2] {36.0f, 20.0f};
-    public static int roomNum = 5;
+    public float[] mapSize = new float[2] {36.0f, 20.0f};
+    public int roomNum = 5;
     public static Vector3 playerRoomPos = new Vector3(0.0f, 0.0f ,0.0f);
     //public static GameObject[] endRooms = new GameObject[roomNum];
-    public static List<GameObject> endRooms = new List<GameObject>();
-    public static int endRoomIndexChecker = 0;
-    public static float mapCreateTimer = 0.0f;
-    public static bool isMapCreate = false;
-    GameObject bossRoom;
+    public List<GameObject> endRooms = new List<GameObject>();
+    public int endRoomIndexChecker = 0;
+    public float mapCreateTimer = 0.0f;
+    public bool isMapCreate = false;
+    public bool specialRoomSelect = false;
+    public GameObject bossRoom;
     public GameObject bossRoomMarker;
     float bossRoomDistance = 0;
-    GameObject shopRoom;
+    public GameObject shopRoom;
     public GameObject shopRoomMarker;
-    GameObject healRoom;
+    public GameObject healRoom;
     public GameObject healRoomMarker;
-    bool specialRoomSelect = false;
 
-    public static int farherstX = 0;
-    public static int farherstY = 0;
-    public static int farherstMX = 0;
-    public static int farherstMY = 0;
+    public int farherstX = 0;
+    public int farherstY = 0;
+    public int farherstMX = 0;
+    public int farherstMY = 0;
 
+    string mapDir = "Dungeon/";
     // Start is called before the first frame update
     void Start()
     {
@@ -50,65 +51,60 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         {
             mapCreateTimer += Time.deltaTime;
         }
-        if(mapCreateTimer > 1.0f)
+        if(mapCreateTimer > 1.0f && roomNum < 0)
         {
             isMapCreate = true;
         }
         if(isMapCreate && !specialRoomSelect)
         {
-            // for(int i = 0; i < endRoomIndexChecker; i++)
-            // {
-            //     if(endRooms[i] == null)
-            //     {
-            //         continue;
-            //     }
-            //     float endRoomDistance = Mathf.Sqrt(Mathf.Pow(endRooms[i].transform.position.x,2) + Mathf.Pow(endRooms[i].transform.position.y,2));
-            //     if(bossRoomDistance < endRoomDistance)
-            //     {
-            //         bossRoomDistance = endRoomDistance;
-            //         bossRoom = endRooms[i];
-            //         endRooms[i] = null;
-            //     }
-            // }
-            // while(true)
-            // {
-            //     int rannum = Random.Range(0, endRoomIndexChecker);
-            //     if(endRooms[rannum] == null)
-            //     {
-            //         continue;
-            //     }
-            //     else
-            //     {
-            //         shopRoom = endRooms[rannum];
-            //         endRooms[rannum] = null;
-            //         break;
-            //     }
-            // }
-            // while(true)
-            // {
-            //     int rannum = Random.Range(0, endRoomIndexChecker);
-            //     if(endRooms[rannum] == null)
-            //     {
-            //         continue;
-            //     }
-            //     else
-            //     {
-            //         healRoom = endRooms[rannum];
-            //         endRooms[rannum] = null;
-            //         break;
-            //     }
-            // }
-            // GameObject healRoomMarker_ = Instantiate(healRoomMarker, this.transform);
-            // healRoomMarker_.transform.position = healRoom.transform.position;
+            for(int i = 0; i < endRoomIndexChecker; i++)
+            {
+                if(endRooms[i] == null)
+                {
+                    continue;
+                }
+                float endRoomDistance = Mathf.Sqrt(Mathf.Pow(endRooms[i].transform.position.x,2) + Mathf.Pow(endRooms[i].transform.position.y,2));
+                if(bossRoomDistance < endRoomDistance)
+                {
+                    bossRoomDistance = endRoomDistance;
+                    bossRoom = endRooms[i];
+                    endRooms[i] = null;
+                }
+            }
+            while(true)
+            {
+                int rannum = Random.Range(0, endRoomIndexChecker);
+                if(endRooms[rannum] == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    shopRoom = endRooms[rannum];
+                    endRooms[rannum] = null;
+                    break;
+                }
+            }
+            while(true)
+            {
+                int rannum = Random.Range(0, endRoomIndexChecker);
+                if(endRooms[rannum] == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    healRoom = endRooms[rannum];
+                    endRooms[rannum] = null;
+                    break;
+                }
+            }
+            PhotonNetwork.Instantiate(mapDir + healRoomMarker.name, healRoom.transform.position, Quaternion.identity, 0);
+            PhotonNetwork.Instantiate(mapDir + shopRoomMarker.name, shopRoom.transform.position, Quaternion.identity, 0);
+            PhotonNetwork.Instantiate(mapDir + bossRoomMarker.name, bossRoom.transform.position, Quaternion.identity, 0);
+            specialRoomSelect = true;
 
-            // GameObject shopRoomMarker_ = Instantiate(shopRoomMarker, this.transform);
-            // shopRoomMarker_.transform.position = shopRoom.transform.position;
-
-            // GameObject bossRoomMarker_ = Instantiate(bossRoomMarker, this.transform);
-            // bossRoomMarker_.transform.position = bossRoom.transform.position;
-            // specialRoomSelect = true;
-
-            // Debug.Log(farherstMX +" "+ farherstX +" "+ farherstMY +" "+ farherstY);
+            Debug.Log(farherstMX +" "+ farherstX +" "+ farherstMY +" "+ farherstY);
         }
     }
 }

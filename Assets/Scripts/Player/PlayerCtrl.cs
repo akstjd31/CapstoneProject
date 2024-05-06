@@ -95,7 +95,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         this.state = state;
     }
-
     void Start()
     {
         // 변수 초기화

@@ -16,9 +16,6 @@ public class DungeonCameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(cameraHalfWidth);
-        Debug.Log(cameraHalfHeight);
-        Debug.Log(DungeonManager.playerRoomPos);
         if (player == null)
         {
             if (GameObject.FindGameObjectWithTag("Player"))
