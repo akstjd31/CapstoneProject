@@ -6,6 +6,7 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+
 public class DungeonManager : MonoBehaviourPunCallbacks
 {
     public static float[] mapSize = new float[2] {36.0f, 20.0f};
@@ -29,6 +30,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public static int farherstY = 0;
     public static int farherstMX = 0;
     public static int farherstMY = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -101,7 +103,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
 
             // GameObject shopRoomMarker_ = Instantiate(shopRoomMarker, this.transform);
             // shopRoomMarker_.transform.position = shopRoom.transform.position;
-            
+
             // GameObject bossRoomMarker_ = Instantiate(bossRoomMarker, this.transform);
             // bossRoomMarker_.transform.position = bossRoom.transform.position;
             // specialRoomSelect = true;

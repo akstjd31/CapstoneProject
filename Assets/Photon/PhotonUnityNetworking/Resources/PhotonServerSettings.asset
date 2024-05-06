@@ -91,6 +91,11 @@ MonoBehaviour:
   - CantHearYou
   - ChangeColour
   - HeresWhy
+  - DamageEnemyOnHit
+  - DamagePlayerOnHit
+  - DamageEnemyOnHitRPC
+  - EnemyAttackedPlayerRPC
+  - DamagePlayerOnHitRPC
   - SetActiveRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1

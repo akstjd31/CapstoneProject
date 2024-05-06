@@ -8,14 +8,12 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
-public enum State
-{ 
-    NORMAL, MOVE, ATTACK, ATTACKIDLE, DIE
-}
-
 public class EnemyCtrl : MonoBehaviour
 {
-    private BoxCollider2D collider;
+    public enum State
+    {
+        NORMAL, MOVE, ATTACK, ATTACKED, DIE
+    }
 
     private PhotonView enemyPV;
     private Animator anim;
@@ -33,47 +31,64 @@ public class EnemyCtrl : MonoBehaviour
 
     [SerializeField] private State state;
 
-    [SerializeField] private float attackDelay;
-
     public bool onHit = false;
 
-    private float attackDistanceSpeed = 5f;
+    private float attackDistanceSpeed = 10f;
     private float attackedDistanceSpeed = 3f;
 
     private bool isEnemyDead = false;
 
     private Status status;
+
+    private Vector3 targetPos;
+
+    public Vector3 playerAttackDirection;
+
+    public Transform detectionPoint;
+    public float detectionRange;
+    public LayerMask playerLayers;
+
+    [SerializeField] private float restTime = 0.0f;
+
+    // 근접 공격 포인트와 범위
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+
+    // 원거리 발사 위치와 발사체
+    public Transform firePoint;
+    public Transform projectile;
+
     // Start is called before the first frame update
     private void Start()
     {
-        collider = GetComponent<BoxCollider2D>();
-
         enemyPV = this.GetComponent<PhotonView>();
         anim = this.GetComponent<Animator>();
         agent = this.GetComponent<NavMeshAgent>();
         enemyAIScript = this.GetComponent<EnemyAI>();
         rigid = this.GetComponent<Rigidbody2D>();
-
-        enemyManagerScript = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
-
         canvas = GameObject.FindGameObjectWithTag("Canvas");
 
-        HPInitSetting();
+        enemy.InitSetting();
 
+        detectionRange = enemy.enemyData.enemyType == EnemyType.LONG_DISTANCE ? 7 : 3;  // 원거리, 근거리몹에 따라 범위가 다름.
+
+        HPInitSetting();
         state = State.NORMAL;
 
-        attackDelay = 999;
-
         status = null;
-
     }
 
-    // ���� HP�� ����
+    // HP UI 생성 및 세팅
     public void HPInitSetting()
     {
         hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
         hpBar.maxValue = enemy.enemyData.hp;
-        hpBar.value = hpBar.maxValue;
+        hpBar.value = enemy.enemyData.hp;
+    }
+
+    public void SetState(State state)
+    {
+        this.state = state;
     }
 
     public void SetEnemy(Enemy enemy)
@@ -81,164 +96,221 @@ public class EnemyCtrl : MonoBehaviour
         this.enemy = enemy;
     }
 
-    public Enemy GetEnemy()
+    // 플레이어한테 피격당했을 떄 RPC
+    [PunRPC]
+    public void DamagePlayerOnHitRPC(int playerViewID, Vector3 attackDirection)
     {
-        return enemy;
+        PhotonView playerPV = PhotonView.Find(playerViewID);
+        Status status = playerPV.GetComponent<Status>();
+
+        // 플레이어의 공격력만큼 체력에서 깎음
+        if (hpBar != null)
+        {
+            enemy.enemyData.hp -= status.attackDamage;
+        }
+
+        status.agroMeter += status.attackDamage;    // 어그로미터 값 증가
+
+        playerAttackDirection = attackDirection;
+        onHit = true;
+        state = State.ATTACKED;
     }
 
-    // ���� ����(state)�� ó���ϴ� �κ�
     private void FixedUpdate()
     {
         if (!isEnemyDead)
         {
-            // ���� 
-            if (enemy.enemyData.hp <= 0)
+            // 죽음
+            if (hpBar.value <= 0)
             {
                 StartCoroutine(Death());
             }
 
-            // �̵�
-            if (agent.velocity != Vector3.zero)
+            // 속도가 0이 아니면 이동상태
+            if (agent.velocity != Vector3.zero && 
+                state != State.ATTACK && 
+                !onHit &&
+                restTime >= enemy.enemyData.attackDelayTime)
             {
-                attackDelay = 999;
                 state = State.MOVE;
             }
-            // ���� or �����غ�
-            else
-            {
-                // �����س��� Ÿ���� ������ ��
-                if (!enemyAIScript.IsFocusTargetNull())
-                {
-                    // ���͸��� �־��� ���ݵ���� ����
-                    if (attackDelay > enemy.enemyData.attackDelayTime)
-                    {
-                        // Ÿ��� ���� �����ٰ� �Ǵ��ϸ� ����
-                        if (enemyAIScript.IsEnemyClosetPlayer())
-                        {
-                            state = State.ATTACK;
-                            attackDelay = 0.0f;
-                        }
-                    }
-                    else
-                    {
-                        state = State.ATTACKIDLE;
 
-                        attackDelay += Time.deltaTime;
-                    }
+            // 적의 타겟이 존재할 때
+            if (enemyAIScript.GetTarget() != null)
+            {
+                // 적이 플레이어와 어느정도 가까이 있으면 공격
+                if (IsEnemyClosetPlayer() && state != State.ATTACK && state != State.NORMAL && !onHit)
+                {
+                    state = State.ATTACK;
+                    targetPos = enemyAIScript.GetTarget().position;
+                    agent.isStopped = true;
+                    enemyAIScript.isLookingAtPlayer = false;    // 공격할 때 플레이어가 움직여도 그 방향 유지
+
                 }
             }
         }
     }
 
-    // �ִϸ��̼� �� ��Ÿ�Լ� ����
     private void Update()
     {
         switch (state)
         {
             case State.NORMAL:
+                attackAndRest();
                 IdleAnimation();
                 break;
             case State.MOVE:
                 MoveAnimation();
                 break;
             case State.ATTACK:
-                //Attack();
+                Attack();
+                AttackDirection();
                 AttackAnimation();
                 break;
-            case State.ATTACKIDLE:
-                AttackIdleAnimation();
-                break;
-            case State.DIE:
+            case State.ATTACKED:
+                KnockBack();
                 break;
         }
 
-        // ü�¹ٰ� �����Ҷ��� �� ����ٴ�.
         if (hpBar != null)
+        {
             FollowEnemyHPBar();
+        }
 
-        // �˹�
-        KnockBack();
+        // 넉백
+        
+    }
+
+    // 플레이어가 소유한 범위포인트에 따른 반환
+    private bool IsEnemyClosetPlayer()
+    {
+        if (enemyAIScript.GetTarget() != null && state != State.ATTACK)
+        {
+            // 공격 범위에 들어간 적
+            Collider2D players = Physics2D.OverlapCircle(detectionPoint.position, detectionRange, playerLayers);
+
+            if (players != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     IEnumerator Death()
     {
-        // ���� �������� ���� �ؾ��ϴ� �͵�
+        // 죽기전에 처리해야할 것들
         isEnemyDead = true;
 
         enemyAIScript.enabled = false;
-        anim.SetTrigger("Die");
+        agent.isStopped = true;
+        anim.SetTrigger("Death");
+        yield return new WaitForSeconds(1.0f);
 
-        yield return new WaitForSeconds(3.0f);
-
-        // ���� ó��
         DestroyHPBar();
-        enemyManagerScript.RemoveEnemy(this.gameObject);
-        PhotonNetwork.Destroy(this.gameObject);
+        //enemyManagerScript.RemoveEnemy(this.gameObject);
+        Destroy(this.gameObject);
     }
 
-    // �÷��̾�� �¾��� ��
-    [PunRPC]
-    public void EnemyAttackedPlayer(int damagedHP)
-    {
-        enemy.enemyData.hp -= damagedHP;
-        onHit = true;
-    }
 
-    // �̵� ����
     private void Attack()
     {
-        // ���� ���� ����
-        //if (this.transform.localScale.x > 0)
-        //{
-        //    rigid.velocity = transform.right * attackedDistanceSpeed;
-        //}
-        //else
-        //{
-        //    rigid.velocity = -transform.right * attackedDistanceSpeed;
-        //}
-
-        rigid.velocity = (enemyAIScript.GetTarget().position - this.transform.position).normalized * attackedDistanceSpeed;
-
-        float attackSpeedDropMultiplier = 6f; // ���ҵǴ� ����
-
-        attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // ���� ���ư��� �Ÿ� ���
-
-        if (attackDistanceSpeed < 0.3f)
+        // 근접
+        if (enemy.enemyData.enemyType == EnemyType.SHORT_DISTANCE)
         {
-            rigid.velocity = Vector2.zero;
-            attackDistanceSpeed = 5f;
+            // 공격 범위에 포함된 플레이어
+            Collider2D hitPlayers = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayers);
 
-            state = State.ATTACKIDLE;
+            if (hitPlayers != null)
+            {
+                PlayerCtrl player = hitPlayers.GetComponent<PlayerCtrl>();
+                if (player != null && !player.onHit)
+                {
+                    // 몹의 데미지만큼 플레이어에게 피해를 입힘.
+                    player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, enemy.enemyData.attackDamage, targetPos - this.transform.position);
+                }
+            }
         }
-
+        else
+        {
+        }
     }
 
-    // �˹�
+
+    // 공격 방향
+    private void AttackDirection()
+    {
+        // 근접
+        if (enemy.enemyData.enemyType == EnemyType.SHORT_DISTANCE)
+        {
+            rigid.velocity = (targetPos - this.transform.position) * attackedDistanceSpeed;
+
+            float attackSpeedDropMultiplier = 6f;
+
+            attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime;
+
+            if (attackDistanceSpeed < 0.3f)
+            {
+                rigid.velocity = Vector2.zero;
+                attackDistanceSpeed = 10f;
+                state = State.NORMAL;
+                restTime = 0.0f;
+            }
+        }
+        // 원거리
+        else
+        {
+        }
+    }
+
+    // 애내메이션 이벤트 호출 함수
+    public void Fire()
+    {
+        GameObject arrow = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+        arrow.GetComponent<Arrow>().SetTarget(targetPos);
+        arrow.GetComponent<Arrow>().SetDamage(enemy.enemyData.attackDamage);
+
+        state = State.NORMAL;
+        restTime = 0.0f;
+    }
+
+    // 공격이나 피격당할 때 몹마다 가지고 있는 딜레이타임별로 쉬기
+    private void attackAndRest()
+    {
+        if (restTime <= enemy.enemyData.attackDelayTime)
+        {
+            restTime += Time.deltaTime;
+        }
+        else
+        {
+            agent.isStopped = false;
+            enemyAIScript.isLookingAtPlayer = true;
+        }
+    }
+
     private void KnockBack()
     {
         if (onHit && enemy.enemyData.hp > 0)
         {
-            anim.speed = 0f;
+            anim.Play("Idle", -1, 0f);
+            anim.speed = 0;
+            rigid.velocity = Vector2.zero;
+            agent.isStopped = true;
 
-            // ������ / ������ �ٶ󺸴� �������� �ڷ� �˹�
-            if (this.transform.localScale.x > 0)
-            {
-                rigid.velocity = -transform.right * attackedDistanceSpeed;
-            }
-            else
-            {
-                rigid.velocity = transform.right * attackedDistanceSpeed;
-            }
+            rigid.velocity = playerAttackDirection * attackedDistanceSpeed;
 
-            float attackedSpeedDropMultiplier = 6f; // ���ҵǴ� ����
-            attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime; // ���� ���ư��� �Ÿ� ���
+            float attackedSpeedDropMultiplier = 6f;
+            attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime;
 
-            if (attackedDistanceSpeed < 0.6f)
+            if (attackedDistanceSpeed < 0.05f)
             {
                 rigid.velocity = Vector2.zero;
                 onHit = false;
                 attackedDistanceSpeed = 3f;
                 anim.speed = 1f;
+                state = State.NORMAL;
+                restTime = 0.0f;
             }
         }
     }
@@ -248,55 +320,58 @@ public class EnemyCtrl : MonoBehaviour
         Destroy(hpBar.gameObject);
     }
 
-    // HP�ٰ� ���� ����ٴ�.
+    // HP UI가 적을 따라다님.
     private void FollowEnemyHPBar()
     {
         Vector3 enemyPos = Camera.main.WorldToScreenPoint(this.transform.position);
-        hpBar.transform.position = new Vector2(enemyPos.x, enemyPos.y - 100);
+        hpBar.transform.position = new Vector2(enemyPos.x, enemyPos.y - 30);
         hpBar.value = enemy.enemyData.hp;
     }
 
     private void IdleAnimation()
     {
         anim.SetBool("isAttack", false);
-        anim.SetBool("AttackIdle", false);
         anim.SetBool("isMove", false);
     }
 
     private void MoveAnimation()
     {
         anim.SetBool("isAttack", false);
-        anim.SetBool("AttackIdle", false);
         anim.SetBool("isMove", true);
     }
 
     private void AttackAnimation()
     {
         anim.SetBool("isMove", false);
-        anim.SetBool("AttackIdle", false);
         anim.SetBool("isAttack", true);
     }
 
-    private void AttackIdleAnimation()
+    private void OnDrawGizmosSelected()
     {
-        anim.SetBool("isMove", false);
-        anim.SetBool("isAttack", false);
-        anim.SetBool("AttackIdle", true);
+        if (detectionPoint == null)
+            return;
+
+        Gizmos.DrawWireSphere(detectionPoint.position, detectionRange);
+
+        if (attackPoint == null)
+            return;
+
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (other.CompareTag("Player") && state == State.ATTACK)
-        {
-            status = other.GetComponent<Status>();
-            //BoxCollider2D boxCol = other.GetComponent<BoxCollider2D>();
+    //private void OnTriggerStay2D(Collider2D other)
+    //{
+    //    if (other.CompareTag("Player") && state == State.ATTACK)
+    //    {
+    //        status = other.GetComponent<Status>();
+    //        //BoxCollider2D boxCol = other.GetComponent<BoxCollider2D>();
 
-            status.HP -= enemy.enemyData.attackDamage;
-        }
-    }
+    //        status.HP -= enemy.enemyData.attackDamage;
+    //    }
+    //}
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        status = null;
-    }
+    //private void OnTriggerExit2D(Collider2D other)
+    //{
+    //    status = null;
+    //}
 }
