@@ -1094,9 +1094,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   mapArray:
-  - {fileID: 8896764736808474999, guid: e5b5f13d8f940a14ca2b4307a987a68b, type: 3}
-  - {fileID: 790118025837392789, guid: a7135930b3c129d438ebd34994243a7c, type: 3}
-  - {fileID: 906312298968879362, guid: 8ff42b5d7d9734e4fbbeb537c3be1704, type: 3}
+  - {fileID: 4309532895442696112, guid: 4f8cb1183e8bc9549b261d8dc904a838, type: 3}
   doorList: 00000000
 --- !u!114 &-6015724904856781856
 MonoBehaviour:
@@ -1133,7 +1131,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridMap: 0
-  Tool: {fileID: 0}
 --- !u!1 &6680818524980998317
 GameObject:
   m_ObjectHideFlags: 0

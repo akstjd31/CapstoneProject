@@ -14,8 +14,8 @@ public class RoomController : MonoBehaviourPunCallbacks
 	public GameObject[] downRooms;
 	public GameObject[] leftRooms;
     public Transform[] mapSpawnPoints;
-    public GameObject[] mapArray = new GameObject[3];
-    float[] mapSize = new float[2];
+    public GameObject[] mapArray = new GameObject[1];
+    PhotonView roomView;
     string mapDir = "Dungeon/";
 
     public bool[] doorList = new bool[4];
@@ -23,12 +23,12 @@ public class RoomController : MonoBehaviourPunCallbacks
     bool makeDoor = false;
     bool doorCheck = false;
     bool makePlayMap = false;
+    bool isNameChanged = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        mapSize[0] = 36.0f;
-        mapSize[1] = 20.0f;
+        roomView = GetComponent<PhotonView>();
         startPoint = GameObject.Find("Spawn");
         //Invoke("CreateRoom", 0.3f);
         StartCoroutine(CreateRoom());
@@ -41,7 +41,23 @@ public class RoomController : MonoBehaviourPunCallbacks
         if(DungeonManager.isMapCreate && !makeDoor)
         {
             RaycastHit2D hit;
-            
+            if(!isNameChanged)
+            {
+                this.name = this.name + Time.deltaTime + Random.Range(0.0f, 10.0f);
+                for(int i = 1; i < this.GetComponentsInChildren<Transform>().Length; i++)
+                {
+                    this.GetComponentsInChildren<Transform>()[i].name = this.GetComponentsInChildren<Transform>()[i].name + Time.deltaTime + Random.Range(0.0f, 10.0f);
+                }
+                for(int i = 2; i < mapSpawnPoints.Length; i++)
+                {
+                    if(mapSpawnPoints[i].childCount > 0)
+                    {
+                        mapSpawnPoints[i].GetChild(0).gameObject.name = mapSpawnPoints[i].GetChild(0).gameObject.name + Time.deltaTime + Random.Range(0.0f, 10.0f);
+                    }
+                }
+                isNameChanged = true;
+            }
+
             for(int i = 2; i < mapSpawnPoints.Length; i++)
             {
                 hit = Physics2D.Raycast(new Vector2(this.transform.position.x + (mapSpawnPoints[i].position.x - this.transform.position.x) * 0.2f, this.transform.position.y + (mapSpawnPoints[i].position.y - this.transform.position.y) * 0.2f), 
@@ -60,13 +76,17 @@ public class RoomController : MonoBehaviourPunCallbacks
                     {
                         //Debug.Log("breakDoor");
                         //hit.transform.localScale = new Vector3(1, 1, 1);
-                        hit.transform.gameObject.SetActive(false);
+                        //hit.transform.gameObject.SetActive(false);
+                        roomView.RPC("SetActiveRPC",RpcTarget.AllBuffered, hit.transform.gameObject.name, false);
+                        Debug.Log(hit.transform.gameObject.name);
                     }
                     else
                     {
                         //Debug.Log("makeDoor");
-
                         mapSpawnPoints[i].GetChild(0).gameObject.SetActive(true);
+                        string wallName = mapSpawnPoints[i].GetChild(0).gameObject.name;
+                        roomView.RPC("SetActiveRPC",RpcTarget.AllBuffered, wallName, true);
+                        Debug.Log(mapSpawnPoints[i].GetChild(0).gameObject.name);
                     }
                 }
             }
@@ -148,7 +168,8 @@ public class RoomController : MonoBehaviourPunCallbacks
         if(DungeonManager.isMapCreate && makeDoor && doorCheck && !makePlayMap)
         {
             Debug.Log(mapDir + mapArray[Random.Range(0, mapArray.Length)].name);
-            Vector3 gridMapPosition = new Vector2((this.transform.position.x - startPoint.transform.position.x) * mapSize[0], (this.transform.position.y - startPoint.transform.position.y) * mapSize[1]);
+            Vector3 gridMapPosition = new Vector2((this.transform.position.x - startPoint.transform.position.x) * DungeonManager.mapSize[0]
+            , (this.transform.position.y - startPoint.transform.position.y) * DungeonManager.mapSize[1]);
             PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
             //gridMap.transform.position = new Vector2(this.transform.position.x * 25.0f, this.transform.position.y * 9.0f);
             makePlayMap = true;
@@ -159,7 +180,11 @@ public class RoomController : MonoBehaviourPunCallbacks
             // }
         }
     }
-
+    [PunRPC]
+    void SetActiveRPC(string wallName, bool active)
+    {
+        GameObject.Find(wallName).SetActive(active);
+    }
     private IEnumerator CreateRoom()
     {
         if(this.transform.position.x > DungeonManager.farherstX)
@@ -193,10 +218,17 @@ public class RoomController : MonoBehaviourPunCallbacks
                     Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 0.5f), Vector2.up * 0.5f, Color.red);
                     if(hit.collider == null)
                     {
-                        Debug.Log(mapDir + upRooms[Random.Range(1, upRooms.Length-1)].name);
                         Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
                         //roomtemp = 
-                        PhotonNetwork.Instantiate(mapDir + upRooms[Random.Range(1, upRooms.Length-1)].name, roomtempPosition, Quaternion.identity, 0);
+                        int rannum = Random.Range(1, upRooms.Length-1);
+                        if(upRooms[rannum].name.Contains("(Clone)"))
+                        {
+                            PhotonNetwork.Instantiate(mapDir + upRooms[rannum].name.Substring(0, upRooms[rannum].name.Length - 7), roomtempPosition, Quaternion.identity, 0);
+                        }
+                        else
+                        {
+                            PhotonNetwork.Instantiate(mapDir + upRooms[rannum].name, roomtempPosition, Quaternion.identity, 0);
+                        }
                         //roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
@@ -216,7 +248,15 @@ public class RoomController : MonoBehaviourPunCallbacks
                     {
                         Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
                         //roomtemp = 
-                        PhotonNetwork.Instantiate(mapDir + rightRooms[Random.Range(1, rightRooms.Length-1)].name, roomtempPosition, Quaternion.identity, 0);
+                        int rannum = Random.Range(1, rightRooms.Length-1);
+                        if(rightRooms[rannum].name.Contains("(Clone)"))
+                        {
+                            PhotonNetwork.Instantiate(mapDir + rightRooms[rannum].name.Substring(0, rightRooms[rannum].name.Length - 7), roomtempPosition, Quaternion.identity, 0);
+                        }
+                        else
+                        {
+                            PhotonNetwork.Instantiate(mapDir + rightRooms[rannum].name, roomtempPosition, Quaternion.identity, 0);
+                        }
                         //roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
@@ -236,7 +276,15 @@ public class RoomController : MonoBehaviourPunCallbacks
                     {
                         Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
                         //roomtemp = 
-                        PhotonNetwork.Instantiate(mapDir + downRooms[Random.Range(1, downRooms.Length-1)].name, roomtempPosition, Quaternion.identity, 0);
+                        int rannum = Random.Range(1, downRooms.Length-1);
+                        if(downRooms[rannum].name.Contains("(Clone)"))
+                        {
+                            PhotonNetwork.Instantiate(mapDir + downRooms[rannum].name.Substring(0, downRooms[rannum].name.Length - 7), roomtempPosition, Quaternion.identity, 0);
+                        }
+                        else
+                        {
+                            PhotonNetwork.Instantiate(mapDir + downRooms[rannum].name, roomtempPosition, Quaternion.identity, 0);
+                        }
                         //roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;
@@ -256,7 +304,15 @@ public class RoomController : MonoBehaviourPunCallbacks
                     {
                         Vector3 roomtempPosition = new Vector2(mapSpawnPoints[i].transform.position.x, mapSpawnPoints[i].transform.position.y);
                         //roomtemp = 
-                        PhotonNetwork.Instantiate(mapDir + leftRooms[Random.Range(1, leftRooms.Length-1)].name, roomtempPosition, Quaternion.identity, 0);
+                        int rannum = Random.Range(1, leftRooms.Length-1);
+                        if(leftRooms[rannum].name.Contains("(Clone)"))
+                        {
+                            PhotonNetwork.Instantiate(mapDir + leftRooms[rannum].name.Substring(0, leftRooms[rannum].name.Length - 7), roomtempPosition, Quaternion.identity, 0);
+                        }
+                        else
+                        {
+                            PhotonNetwork.Instantiate(mapDir + leftRooms[rannum].name, roomtempPosition, Quaternion.identity, 0);
+                        }
                         //roomtemp.transform.SetParent(this.transform.parent);
                         DungeonManager.roomNum--;
                         DungeonManager.mapCreateTimer = 0.0f;

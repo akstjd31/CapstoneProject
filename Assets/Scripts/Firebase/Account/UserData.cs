@@ -24,7 +24,25 @@ public class UserData : MonoBehaviour
     {
         auth = FirebaseAuth.DefaultInstance;
 
-        await auth.CreateUserWithEmailAndPasswordAsync(email, password);
+        await auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith((task) =>
+        {
+            if(task.IsCompletedSuccessfully)
+            {
+                Debug.Log("register IsCompletedSuccessfully");
+            }
+            else if(task.IsCompleted)
+            {
+                Debug.Log("register IsCompleted");
+            }
+            else if(task.IsCanceled)
+            {
+                Debug.Log("register IsCanceled");
+            }
+            else if(task.IsFaulted)
+            {
+                Debug.Log("register IsFaulted");
+            }
+        });
         await auth.SignInWithEmailAndPasswordAsync(email, password);
 
         UserInfoManager.SetCurrentUser(auth.CurrentUser);
@@ -130,7 +148,9 @@ public class UserData : MonoBehaviour
 
     public static void CallFixDB()
     {
+#pragma warning disable CS4014
         FixDB();
+#pragma warning restore CS4014
     }
 
     public static async Task FixDB(Dictionary<string, object> param = null)

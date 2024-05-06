@@ -17,6 +17,7 @@ TagManager:
   - Inventory
   - VoiceManager
   - Enemy
+  - Room
   layers:
   - Default
   - TransparentFX
