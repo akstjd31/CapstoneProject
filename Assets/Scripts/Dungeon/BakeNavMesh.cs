@@ -7,15 +7,8 @@ public class BakeNavMesh : MonoBehaviour
 {
     public NavMeshSurface navMeshSurface = new NavMeshSurface();
     
-    // Start is called before the first frame update
-    void Start()
+    public void BakeNavigation()
     {
         navMeshSurface.BuildNavMesh();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

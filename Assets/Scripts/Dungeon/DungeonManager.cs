@@ -32,6 +32,8 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public int farherstMY = 0;
 
     string mapDir = "Dungeon/";
+
+    public BakeNavMesh bakeNavMesh;
     // Start is called before the first frame update
     void Start()
     {
