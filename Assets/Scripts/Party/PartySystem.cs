@@ -201,7 +201,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
     {
         // 클릭한 파티 방의 정보를 가져옴.
         GameObject clickObject = EventSystem.current.currentSelectedGameObject;
-        Party party = clickObject.GetComponent<Party>();
+        Party party = clickObject.transform.parent.GetComponent<Party>();
 
         // 파티에 인원이 꽉차면
         if (party.GetPartyHeadCount() == 2)
