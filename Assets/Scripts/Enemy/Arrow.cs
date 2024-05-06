@@ -30,7 +30,6 @@ public class Arrow : MonoBehaviour
     private void Start()
     {
         rigid = this.GetComponent<Rigidbody2D>();
-        Destroy(this.gameObject, 5f);
     }
 
     private void Update()
@@ -42,12 +41,17 @@ public class Arrow : MonoBehaviour
 
             float angle = Mathf.Atan2(rigid.velocity.y, rigid.velocity.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+            if (rigid.velocity == Vector2.zero)
+            {
+                Destroy(this.gameObject);
+            }
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && rigid.velocity != Vector2.zero)
+        if (other.CompareTag("Player"))
         {
             PlayerCtrl player = other.GetComponent<PlayerCtrl>();
 
