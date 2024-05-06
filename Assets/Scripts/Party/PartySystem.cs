@@ -332,8 +332,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
             // 1인 파티였다면
             if (party.GetPartyHeadCount() == 1)
             {
-                parties[partyListIdx].GetComponent<Button>().onClick.RemoveListener(OnClickJoinPartyButton);
-                Destroy(parties[partyListIdx].gameObject);
+                PhotonNetwork.Destroy(party.gameObject);
                 parties.Remove(parties[partyListIdx]);
             }
             else

@@ -133,12 +133,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
 
-            uiManager.hpBar.value = this.status.HP;
-
             // HUD1 == otherPlayer
             HUD hud1 = uiManager.hud1.GetComponent<HUD>();
             hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
-            hud1.hpBar.value = otherPlayer.GetComponent<Status>().HP;
         }
     }
 
@@ -168,6 +165,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     if (uiManager != null)
                     {
                         uiManager.hpText.text = string.Format("{0} / {1}", this.status.HP, this.status.MAXHP);
+                        uiManager.hpBar.value = status.HP;
+
+                        if (otherPlayer != null)
+                        {
+                            HUD hud = uiManager.hud1.GetComponent<HUD>();
+                            hud.hpBar.value = otherPlayer.GetComponent<Status>().HP;
+                        }
                     }
                 }
 
