@@ -6,6 +6,7 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+
 public class DungeonManager : MonoBehaviourPunCallbacks
 {
     public float[] mapSize = new float[2] {36.0f, 20.0f};
