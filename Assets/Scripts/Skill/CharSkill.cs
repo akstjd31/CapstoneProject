@@ -4,17 +4,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 public class CharSkill : MonoBehaviour
 {
     public static FirebaseUser currentUser;
     private static Dictionary<string, int> userSkill;  //스킬 데이터의 인스턴스
+    private static Button[] btn_skill = new Button[7];  //버튼의 순서를 보장하지 않음
+    private static List<string> skill_name = new()
+    {
+        "pride", "greed", "lust", "envy", "glutny", "wrath", "sloth"
+        //교만, 탐욕, 색욕, 질투, 먹보, 분노, 나태
+        //1001~1007
+    };
 
-    // Start is called before the first frame update
     async void Start()
     {
         currentUser = UserInfoManager.GetCurrentUser();
         await InitSkill();
+
+        btn_skill = GameObject.Find("Images").GetComponentsInChildren<Button>();
+        
+        for(int i = 0; i< btn_skill.Length; i++)
+        {
+            int index = i;
+
+            btn_skill[i].onClick.AddListener(() =>
+            {
+                UpgradeSkill(btn_skill[index].transform.parent.name);
+            });
+            //Debug.Log($"{btn_skill[i].transform.parent.name}");
+        }
     }
 
     private static async Task InitSkill()
@@ -83,6 +103,56 @@ public class CharSkill : MonoBehaviour
 
         userSkill[skillNum.ToString()] = ++userSkill[skillNum.ToString()];
         UpdataSkillData();
+    }
+
+    //UI에서 접근하는 메소드
+    //parameter는 영어 이름
+    public static void UpgradeSkill(string skillName)
+    {
+        //"pride", "greed", "lust", "envy", "glutny", "wrath", "sloth"
+        //교만, 탐욕, 색욕, 질투, 먹보, 분노, 나태
+        List<string> skillName_kr = new()
+        {
+            "교만", "탐욕", "색욕", "질투", "먹보", "분노", "나태"
+        };
+
+        int index = -1;
+        switch(skillName)
+        {
+            case "pride":
+                index = 0;
+                break;
+            case "greed":
+                index = 1;
+                break;
+            case "lust":
+                index = 2;
+                break;
+            case "envy":
+                index = 3;
+                break;
+            case "glutny":
+                index = 4;
+                break;
+            case "wrath":
+                index = 5;
+                break;
+            case "sloth":
+                index = 6;
+                break;
+        }
+
+        if(index == -1)
+        {
+            Debug.Log($"skillName {skillName} is not exist");
+            return;
+        }
+
+        //parameter는 한글 이름
+        int skillNum = SkillData.Skill_NameToNum(skillName_kr[index]);
+        Debug.Log($"Upgrade by button => {skillNum} {skillName}");
+
+        LevelUpSkill(skillNum);
     }
 
     //CharSkill.cs (userSkill) => UserInfoManager.cs (skillLevel) & Firestore Server
