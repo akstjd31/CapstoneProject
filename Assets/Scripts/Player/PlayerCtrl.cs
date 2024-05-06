@@ -242,6 +242,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 IsPartyHUDActive();
             }
+
+            //상점 테스트 전용
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                inventory.SetActive(!inventory.activeSelf);
+                new ShowOnSaleItem().ShowShopUI();
+            }
         }
     }
 

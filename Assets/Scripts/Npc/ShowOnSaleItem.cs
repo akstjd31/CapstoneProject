@@ -18,6 +18,21 @@ public class ShowOnSaleItem : MonoBehaviour
     {
         shop = Instantiate(shopView, GameObject.Find("Canvas").transform);
         content = shop.transform.Find("Bag/Items/Viewport/Content");
+        //SetOnsaleList();
+
+        Debug.Log("called start");
+    }
+
+    public void ShowShopUI()
+    {
+        shop = Instantiate(shopView, GameObject.Find("Canvas").transform);
+        content = shop.transform.Find("Bag/Items/Viewport/Content");
+
+        if(content == null)
+        {
+            Debug.LogError("Can't Find ScrollView's content object");
+            return;
+        }
 
         SetOnsaleList();
     }
@@ -29,6 +44,8 @@ public class ShowOnSaleItem : MonoBehaviour
 
         for (int i = 0; i < numOfItem; i++)
         {
+            Debug.Log($"Call SetOnsaleList: {i}");
+
             temp = Instantiate(item_Container, content);
             temp.GetComponentInChildren<Text>().text = $"{i}¹øÂ°";
             temp.GetComponent<Button>().onClick.AddListener(() =>
