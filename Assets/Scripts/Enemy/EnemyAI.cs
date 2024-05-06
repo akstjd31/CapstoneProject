@@ -19,11 +19,11 @@ public class EnemyAI : MonoBehaviour
 
     private PhotonView enemyPV;
 
-    private Transform focusTarget = null;
+    [SerializeField] private Transform focusTarget = null;
 
     public bool isLookingAtPlayer = false;
 
-    private bool isTargetPathMissing = false;
+    private bool focusTargetSetting = false;
 
     // Start is called before the first frame update
     void Start()
@@ -53,54 +53,38 @@ public class EnemyAI : MonoBehaviour
 
                 StartCoroutine(GetTimeToFacePlayer());
             }
-            //else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
-            //{
-            //    GameObject target = GameObject.FindGameObjectWithTag("Player");
+            else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
+            {
+                GameObject target = GameObject.FindGameObjectWithTag("Player");
 
-            //    target1 = target.transform;
+                target1 = target.transform;
 
-            //    status1 = target1.gameObject.GetComponent<Status>();
-            //}
+                status1 = target1.gameObject.GetComponent<Status>();
+
+                StartCoroutine(GetTimeToFacePlayer());
+            }
+            else
+            {
+                agent.isStopped = true;
+            }
         }
 
         if (focusTarget != null)
         {
-            // 만약 타겟으로 향하는 path가 존재하지 않을 경우
-            if (agent.pathStatus == NavMeshPathStatus.PathInvalid)
-            {
-                agent.isStopped = true;
-                isTargetPathMissing = true;
+            agent.SetDestination(focusTarget.position);
 
-            }
-            else
-            {
-                // path가 존재하지 않다가 생기면 다시 타겟을 설정한다.
-                if (agent.isStopped && isTargetPathMissing)
-                {
-                    StartCoroutine(GetTimeToFacePlayer());
-                    agent.isStopped = false;
-                    isTargetPathMissing = false;
-                }
-
-                // 포커싱 == 타겟1
-                if (focusTarget == target1)
-                {
-                    agent.SetDestination(target1.position);
-
-                    if (isLookingAtPlayer)
-                        FlipHorizontalRelativeToTarget(target1.position);
-                }
-                // 포커싱 == 타겟2
-                else
-                {
-                    agent.SetDestination(target2.position);
-
-                    if (isLookingAtPlayer)
-                        FlipHorizontalRelativeToTarget(target2.position);
-                }
-            }
+            if (isLookingAtPlayer)
+                FlipHorizontalRelativeToTarget(focusTarget.position);
 
             CheckAggroMeterAndChangeFocus();
+        }
+        else
+        {
+            // path가 존재하지 않다가 생기면 다시 타겟을 설정한다.
+            if (isLookingAtPlayer && focusTargetSetting)
+            {
+                FollowClosetPlayer();
+            }
         }
     }
 
@@ -131,7 +115,6 @@ public class EnemyAI : MonoBehaviour
     {
         yield return new WaitForSeconds(waitForSec);
         FollowClosetPlayer();
-
         //spriteRenderer.color = Color.red;
     }
 
@@ -151,6 +134,15 @@ public class EnemyAI : MonoBehaviour
     // 포커싱 대상 정하기 (적과 플레이어와 가까우면 포커싱)
     public void FollowClosetPlayer()
     {
+        // 남아있는 플레이어가 존재하지 않은 경우
+        if (target1 == null && target2 == null)
+        {
+            Debug.Log("!");
+            focusTargetSetting = false;
+            isLookingAtPlayer = false;
+            return;
+        }
+
         if (target1 != null && target2 != null)
         {
             float dist1 = Vector2.Distance(this.transform.position, target1.position);
@@ -167,9 +159,11 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            focusTarget = target1;
+            focusTarget = target1 == null ? target2 : target1;
         }
 
         isLookingAtPlayer = true;
+        focusTargetSetting = true;
+        agent.isStopped = false;
     }
 }

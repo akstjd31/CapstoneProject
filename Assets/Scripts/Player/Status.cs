@@ -12,7 +12,7 @@ public class Status : MonoBehaviourPunCallbacks
         NickName = 0, HP, Weapon, RollCoolTime
     }
 
-    public float HP = 100; // 체력
+    public float HP = 30; // 체력
     public float MAXHP = 100; // 최대 체력
     public int attackDamage = 5; // 공격력
     public float attackSpeed = 1.0f; // 공격 속도

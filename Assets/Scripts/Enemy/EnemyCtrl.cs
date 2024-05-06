@@ -170,8 +170,6 @@ public class EnemyCtrl : MonoBehaviour
             case State.ATTACKED:
                 KnockBack();
                 break;
-            case State.DIE:
-                break;
         }
 
         if (hpBar != null)
