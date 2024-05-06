@@ -254,7 +254,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 }
 
                 // 보이스 참가하기
-                if (recorder != null)
+                if (SceneManager.GetActiveScene().name == "DungeonScene")
                 {
                     if (Input.GetKey(KeyCode.T))
                     {
