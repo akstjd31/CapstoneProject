@@ -14,11 +14,12 @@ public class RoomController : MonoBehaviourPunCallbacks
 	public GameObject[] downRooms;
 	public GameObject[] leftRooms;
     public Transform[] mapSpawnPoints;
-    public GameObject[] mapArray = new GameObject[1];
+    public GameObject[] mapArray = new GameObject[5];
     PhotonView roomView;
     string mapDir = "Dungeon/";
 
     public bool[] doorList = new bool[4];
+    public GameObject[] doorObject = new GameObject[4];
 
     bool makeDoor = false;
     bool doorCheck = false;
@@ -26,10 +27,13 @@ public class RoomController : MonoBehaviourPunCallbacks
     bool isNameChanged = false;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         roomView = GetComponent<PhotonView>();
         startPoint = GameObject.Find("Spawn");
+    }
+    void Start()
+    {
         //Invoke("CreateRoom", 0.3f);
         StartCoroutine(CreateRoom());
         //CreateRoom();
@@ -168,8 +172,8 @@ public class RoomController : MonoBehaviourPunCallbacks
         if(DungeonManager.isMapCreate && makeDoor && doorCheck && !makePlayMap)
         {
             Debug.Log(mapDir + mapArray[Random.Range(0, mapArray.Length)].name);
-            Vector3 gridMapPosition = new Vector2((this.transform.position.x - startPoint.transform.position.x) * DungeonManager.mapSize[0]
-            , (this.transform.position.y - startPoint.transform.position.y) * DungeonManager.mapSize[1]);
+            Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * DungeonManager.mapSize[0]
+            , (this.transform.position.y - startPoint.transform.position.y) * DungeonManager.mapSize[1], 0);
             PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
             //gridMap.transform.position = new Vector2(this.transform.position.x * 25.0f, this.transform.position.y * 9.0f);
             makePlayMap = true;

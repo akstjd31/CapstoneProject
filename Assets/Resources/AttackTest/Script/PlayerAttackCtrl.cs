@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 public class PlayerAttackCtrl : MonoBehaviour
 {
-    GameObject hand;
+    private GameObject player;
     GameObject weaponRotator;
     GameObject weaponHolder;
     GameObject weapon;
@@ -19,30 +19,41 @@ public class PlayerAttackCtrl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        hand = this.transform.GetChild(0).gameObject;
-        weaponRotator = hand.transform.GetChild(0).gameObject;
+        weaponRotator = this.transform.GetChild(0).gameObject;
         weaponHolder = weaponRotator.transform.GetChild(0).gameObject;
         weapon = weaponHolder.transform.GetChild(0).gameObject;
         effect = weapon.GetComponent<WeaponEffect>().Effect;
         effectPullingPosition = new Vector3(50000.0f, 50000.0f, 50000.0f);
-        effect = Instantiate(effect, effectPullingPosition, hand.transform.rotation);
+        effect = Instantiate(effect, effectPullingPosition, this.transform.rotation);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(hand.name);
+        if (player == null)
+        {
+            if (GameObject.FindGameObjectWithTag("Player"))
+            {
+                player = GameObject.FindGameObjectWithTag("Player");
+            }
+        }
+        else
+        {
+            transform.position = new Vector3(player.transform.position.x, player.transform.position.y + 0.75f, 0);
+        }
+
+        Debug.Log(this.name);
         Debug.Log(weaponRotator.name);
         Debug.Log(weaponHolder.name);
         Debug.Log(weapon.name);
         mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
-        LookAt2D(hand, mousePos);
+        LookAt2D(this.gameObject, mousePos);
         if(Input.GetMouseButtonDown(0))
         {
             if(!isAttack)
             {
-                effect.transform.position = hand.transform.position;
-                effect.transform.rotation = hand.transform.rotation;
+                effect.transform.position = this.transform.position;
+                effect.transform.rotation = this.transform.rotation;
                 effect.GetComponent<Animator>().SetBool("isAttack", true);
                 StartCoroutine("Attack");
             }
