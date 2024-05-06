@@ -11,13 +11,16 @@ public class DungeonManager : MonoBehaviourPunCallbacks
 {
     public float[] mapSize = new float[2] {36.0f, 20.0f};
     public int roomNum = 5;
+    public int createdRoomNum = 1;
     public static Vector3 playerRoomPos = new Vector3(0.0f, 0.0f ,0.0f);
     //public static GameObject[] endRooms = new GameObject[roomNum];
+    public List<GameObject> rooms = new List<GameObject>();
     public List<GameObject> endRooms = new List<GameObject>();
     public int endRoomIndexChecker = 0;
     public float mapCreateTimer = 0.0f;
     public bool isMapCreate = false;
     public bool specialRoomSelect = false;
+    public bool NavMeshbaked = false;
     public GameObject bossRoom;
     public GameObject bossRoomMarker;
     float bossRoomDistance = 0;
@@ -107,6 +110,24 @@ public class DungeonManager : MonoBehaviourPunCallbacks
             specialRoomSelect = true;
 
             Debug.Log(farherstMX +" "+ farherstX +" "+ farherstMY +" "+ farherstY);
+        }
+        if(isMapCreate && specialRoomSelect && !NavMeshbaked)
+        {
+            for(int i = 0; i < createdRoomNum; i++)
+            {
+                if(rooms[i].GetComponent<RoomController>().makePlayMap)
+                {
+                    if(i == createdRoomNum - 1)
+                    {
+                        bakeNavMesh.BakeNavigation();
+                        NavMeshbaked = true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 }

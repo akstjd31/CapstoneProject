@@ -1206,17 +1206,18 @@ MonoBehaviour:
   leftRooms: []
   mapSpawnPoints: []
   mapArray:
-  - {fileID: 6610912550597531676, guid: e5b5f13d8f940a14ca2b4307a987a68b, type: 3}
-  - {fileID: 3181342428140593967, guid: a7135930b3c129d438ebd34994243a7c, type: 3}
-  - {fileID: 8966001500081246785, guid: 8ff42b5d7d9734e4fbbeb537c3be1704, type: 3}
-  - {fileID: 6671084173881694252, guid: 8e1c4d25b56ce404f84c1e7f8ccc88ba, type: 3}
-  - {fileID: 8874482460912848076, guid: bca5178407759fa458a369bd43f82e71, type: 3}
+  - {fileID: 6610912550597531676, guid: d525343a6ece30f49b359f8d46ef9913, type: 3}
+  - {fileID: 3181342428140593967, guid: 2907699c376ae1340a9feaa28fdeb67f, type: 3}
+  - {fileID: 8966001500081246785, guid: 436f69728eb04634699d5839f84bbebb, type: 3}
+  - {fileID: 6671084173881694252, guid: 7ae8eb8be33bc1c41870fe4709d6b681, type: 3}
+  - {fileID: 8874482460912848076, guid: 8fd1aa853dc2edf48afb8ea2e4cde672, type: 3}
   doorList: 00000000
   doorObject:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  makePlayMap: 0
 --- !u!114 &-7226073843958973739
 MonoBehaviour:
   m_ObjectHideFlags: 0
