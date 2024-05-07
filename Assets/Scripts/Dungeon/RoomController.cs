@@ -161,116 +161,51 @@ public class RoomController : MonoBehaviourPunCallbacks
         }
         if(dungeonManager.isMapCreate && dungeonManager.specialRoomSelect && makeDoor && doorCheck && !makePlayMap)
         {
+            Vector3 gridMapPosition;
             if(this.name == dungeonManager.bossRoom.name)
             {
-                Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
+                gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
                 PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
-                for(int i = 0; i < 4; i++)
-                {
-                    if(doorList[i])
-                    {
-                        if(i == 0)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
-                        }
-                        else if(i == 1)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
-                        }
-                        else if(i == 2)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
-                        }
-                        else if(i == 3)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
-                        }
-                    }
-                }
             }
             else if(this.name == dungeonManager.shopRoom.name)
             {
-                Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
+                gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
-                PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
-                for(int i = 0; i < 4; i++)
-                {
-                    if(doorList[i])
-                    {
-                        if(i == 0)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
-                        }
-                        else if(i == 1)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
-                        }
-                        else if(i == 2)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
-                        }
-                        else if(i == 3)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
-                        }
-                    }
-                }
+                PhotonNetwork.Instantiate(mapDir + "ShopMap", gridMapPosition, Quaternion.identity, 0);
             }
             else if(this.name == dungeonManager.healRoom.name)
             {
-                Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
+                gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
-                PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
-                for(int i = 0; i < 4; i++)
-                {
-                    if(doorList[i])
-                    {
-                        if(i == 0)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
-                        }
-                        else if(i == 1)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
-                        }
-                        else if(i == 2)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
-                        }
-                        else if(i == 3)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
-                        }
-                    }
-                }
+                PhotonNetwork.Instantiate(mapDir + "EventMap", gridMapPosition, Quaternion.identity, 0);
             }
             else
             {
                 //Debug.Log(mapDir + mapArray[Random.Range(0, mapArray.Length)].name);
-                Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
+                gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
                 PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
-                for(int i = 0; i < 4; i++)
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                if (doorList[i])
                 {
-                    if(doorList[i])
+                    if (i == 0)
                     {
-                        if(i == 0)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
-                        }
-                        else if(i == 1)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
-                        }
-                        else if(i == 2)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
-                        }
-                        else if(i == 3)
-                        {
-                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
-                        }
+                        PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
+                    }
+                    else if (i == 1)
+                    {
+                        PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
+                    }
+                    else if (i == 2)
+                    {
+                        PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
+                    }
+                    else if (i == 3)
+                    {
+                        PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
                     }
                 }
             }
