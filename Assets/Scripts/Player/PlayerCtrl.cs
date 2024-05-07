@@ -91,6 +91,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private bool isDeath = false;
     private float deathTime = 1.0f;
 
+    private ShowOnSaleItem showOnSaleItem;  //상점
+    private bool isActiveSale = false;
+
     public void SetState(State state)
     {
         this.state = state;
@@ -122,6 +125,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             //던전 선택 canvas 생성
             MakeDungeonMap();
+
+            //상점 테스트
+            showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();
         }
 
         // 던전 씬
@@ -251,6 +257,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 if (Input.GetKeyDown(KeyCode.I) && isDeactiveUI)
                 {
                     inventory.SetActive(!inventory.activeSelf);
+
+                    //UI에 보유 금액 표기
+                    if(inventory.activeSelf)
+                    {
+                        GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
+                    }
                 }
 
                 // 보이스 참가하기
@@ -269,6 +281,26 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 if (partySystemScript != null)
                 {
                     PartyHUDActive();
+                }
+
+                //상점 테스트 전용
+                if (showOnSaleItem != null && Input.GetKeyDown(KeyCode.O))
+                {
+                    inventory.SetActive(!inventory.activeSelf);
+                    //UI에 보유 금액 표기
+                    if (inventory.activeSelf)
+                    {
+                        GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
+                    }
+
+                    if (isActiveSale)
+                    {
+                        showOnSaleItem.CloseShopUI();
+                    }
+                    else
+                    {
+                        showOnSaleItem.ShowShopUI();
+                    }
                 }
             }
             else

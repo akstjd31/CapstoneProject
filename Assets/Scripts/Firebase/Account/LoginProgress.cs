@@ -112,10 +112,203 @@ public class LoginProgress : MonoBehaviour
     //정상 동작 + 가입 진행도에 따른 조건 추가
     public void SigninWithEmail_Condition()
     {
+        NoAsync();
+
 #pragma warning disable CS4014
-        SignInWithEmailAndPassword_Condition();
+        //SignInWithEmailAndPassword_Condition();
         //SignUpAndIn();
+        //Signin0505();
+        //Simple0505();
+        //Anonymous();
 #pragma warning restore CS4014
+    }
+
+    private void NoAsync()
+    {
+        auth = FirebaseAuth.DefaultInstance;
+
+        if (auth.CurrentUser != null)
+        {
+            auth.SignOut();
+            Debug.Log("sign out successfully");
+        }
+
+        string email = inputField_email.text.Trim();
+        string password = inputField_password.text.Trim();
+
+        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            {
+                // 이메일 및 비밀번호 인증 실패
+                Debug.LogError("이메일 및 비밀번호 인증 IsFaulted: " + task.Exception);
+                //return;
+            }
+            if (task.IsCompleted)
+            {
+                // 이메일 및 비밀번호 인증 실패
+                Debug.LogError("이메일 및 비밀번호 인증 IsCompleted: " + task.Exception);
+                //return;
+            }
+            if (task.IsCompletedSuccessfully)
+            {
+                // 이메일 및 비밀번호 인증 실패
+                Debug.LogError("이메일 및 비밀번호 인증 IsCompletedSuccessfully: " + task.Exception);
+                //return;
+            }
+            return;
+
+            FirebaseUser emailUser = task.Result.User;
+            // 이메일 및 비밀번호 인증 성공
+            Debug.Log("이메일 및 비밀번호 인증 성공: " + emailUser.UserId);
+        });
+    }
+
+    private async void Anonymous()
+    {
+        auth = FirebaseAuth.DefaultInstance;
+
+        if (auth.CurrentUser != null)
+        {
+            auth.SignOut();
+            Debug.Log("sign out successfully");
+        }
+
+        await auth.SignInAnonymouslyAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            {
+                // 익명 사용자 인증 실패
+                Debug.LogError("익명 사용자 인증 실패: " + task.Exception);
+                return;
+            }
+
+            FirebaseUser anonymousUser = task.Result.User;
+            // 익명 사용자 인증 성공
+            Debug.Log("익명 사용자 인증 성공: " + anonymousUser.UserId);
+
+            string email = inputField_email.text.Trim();
+            string password = inputField_password.text.Trim();
+
+            // 이메일 및 비밀번호로 인증하기
+            auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    // 이메일 및 비밀번호 인증 실패
+                    Debug.LogError("이메일 및 비밀번호 인증 실패: " + task.Exception);
+                    return;
+                }
+
+                FirebaseUser emailUser = task.Result.User;
+                // 이메일 및 비밀번호 인증 성공
+                Debug.Log("이메일 및 비밀번호 인증 성공: " + emailUser.UserId);
+
+                // 계정 연결하기
+                //LinkAccounts(anonymousUser, emailUser);
+            });
+        });
+    }
+
+    private void SignInWithEmailAndPassword_anonymous()
+    {
+        string email = inputField_email.text.Trim();
+        string password = inputField_password.text.Trim();
+
+        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            {
+                // 이메일 및 비밀번호 인증 실패
+                Debug.LogError("이메일 및 비밀번호 인증 실패: " + task.Exception);
+                return;
+            }
+
+            FirebaseUser emailUser = task.Result.User;
+            // 이메일 및 비밀번호 인증 성공
+            Debug.Log("이메일 및 비밀번호 인증 성공: " + emailUser.UserId);
+
+            // 계정 연결하기
+            //LinkAccounts(anonymousUser, emailUser);
+        });
+    }
+
+    private async void Simple0505()
+    {
+        auth = FirebaseAuth.DefaultInstance;
+
+        if (auth.CurrentUser != null)
+        {
+            auth.SignOut();
+            Debug.Log("sign out successfully");
+        }
+
+        await auth.SignInWithEmailAndPasswordAsync("inputEmail123@gmail.com", "inputPassword0505");
+
+        Debug.Log($"success signin");
+    }
+
+    private async void Signin0505()
+    {
+        auth = FirebaseAuth.DefaultInstance;
+        auth.StateChanged += AuthStateChanged;
+
+        string email = inputField_email.text.Trim();
+        string password = inputField_password.text.Trim();
+
+        if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+        {
+            loginErrorMsg.text = errMsg[0];
+            return;
+        }
+
+        if(auth.CurrentUser != null)
+        {
+            auth.SignOut();
+            Debug.Log("sign out successfully");
+        }
+
+        Debug.Log($"try signin : {email}, {password}");
+
+
+        AuthResult result = null;
+
+        try
+        {
+            await IsRegisteredAccount(email);
+
+            result = await auth.SignInWithEmailAndPasswordAsync("inputEmail123@gmail.com", "inputPassword0505");//(email, password);
+            Debug.Log($"success signin : {result.User.Email}");
+        }
+        catch(FirebaseException e)
+        {
+            Debug.Log($"user : {auth.CurrentUser?.Email}");
+            Debug.Log($"result : {result != null}\n{result?.AdditionalUserInfo}\n{result?.GetType()}\n{result?.Credential}");
+            Debug.LogError($"FirebaseException : {e.StackTrace}");
+        }
+    }
+
+    private void OnDestroy()
+    {
+        auth.StateChanged -= AuthStateChanged;
+    }
+
+
+    private void AuthStateChanged(object sender, System.EventArgs eventArgs)
+    {
+        // 사용자의 현재 인증 상태를 가져옴
+        FirebaseUser user = auth.CurrentUser;
+
+        if (user != null)
+        {
+            // 사용자가 인증되었을 때 할 작업
+            Debug.Log("사용자가 인증되었습니다: " + user.Email);
+        }
+        else
+        {
+            // 사용자가 로그아웃되었을 때 할 작업
+            Debug.Log("사용자가 로그아웃되었습니다.");
+        }
     }
 
     private async Task SignInWithEmailAndPassword_Condition()
@@ -185,6 +378,31 @@ public class LoginProgress : MonoBehaviour
                 Debug.Log($"task => {task.IsCanceled}, {task.IsFaulted}, {task.IsCompletedSuccessfully}, {task.IsCompleted}");
             }
         });
+    }
+
+    private async Task IsRegisteredAccount(string email)
+    {
+        auth = FirebaseAuth.DefaultInstance;
+
+        try
+        {
+            Debug.Log("in try");
+            // 주어진 이메일로 가입된 사용자의 인증 방법 목록 가져오기
+            IEnumerable<string> result = await auth.FetchProvidersForEmailAsync(email);
+            Debug.Log($"result : {result} {result.GetEnumerator().Current}");
+            
+
+            foreach(string provider in result)
+            {
+                Debug.Log($"인증 방법({provider})으로 가입된 사용자입니다.");
+            }
+        }
+        catch (Firebase.FirebaseException e)
+        {
+            Debug.LogError($"이메일 확인 중 오류 발생: {e.Message}");
+        }
+
+        Debug.Log("nothing happened in IsRegisteredAccount");
     }
 
     //더미 메일로 회원가입을 시키고, 그 뒤 입력받은 데이터로 로그인을 수행

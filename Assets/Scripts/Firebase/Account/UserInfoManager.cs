@@ -6,12 +6,16 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UserInfoManager : MonoBehaviour
 {
     private static UserInfoManager instance;
     private static FirebaseUser currentUser; // Firebase 사용자 정보를 저장할 변수
     private static Dictionary<string, int> skillLevel; //스킬 데이터의 원본
+
+    private bool isDebug = true;
+    private static int nowMoney = 0;
 
     void Awake()
     {
@@ -24,6 +28,18 @@ public class UserInfoManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+
+        // 3초마다 GetUserMoney 함수를 호출합니다.
+        InvokeRepeating("WrapGetUserMoney", 0f, 3f);
+    }
+
+    //디버그인 경우 유저를 FirebaseAuth에서 자동 삭제
+    private void OnApplicationQuit()
+    {
+        if(isDebug && currentUser != null)
+        {
+            currentUser.DeleteAsync();
         }
     }
 
@@ -49,7 +65,7 @@ public class UserInfoManager : MonoBehaviour
     {
         try
         {
-            int nowMoney = await GetUserMoney_Async();
+            nowMoney = await GetUserMoney_Async();
 
             if (nowMoney < 0)
             {
@@ -87,6 +103,8 @@ public class UserInfoManager : MonoBehaviour
 
                     // 업데이트된 userData를 다시 Firestore에 저장
                     await docUser.UpdateAsync("userData", userContainer);
+
+                    nowMoney = updateMoney;
                 }
                 else
                 {
@@ -104,11 +122,38 @@ public class UserInfoManager : MonoBehaviour
         }
     }
 
+    public static int GetNowMoney()
+    {
+        return nowMoney;
+    }
+
+    private void WrapGetUserMoney()
+    {
+        GetUserMoney();
+    }
+
     public static void GetUserMoney()
     {
 #pragma warning disable CS4014
-        GetUserMoney_Async();
+        if (SceneManager.GetActiveScene().name == "LobbyScene")
+        {
+            Debug.Log($"Call GetUserMoney : {nowMoney}");
+            GetUserMoney_Async();
+        }
+
+        //instance.StartCoroutine(instance.RunGetUserMoneyAsync());
 #pragma warning restore CS4014
+    }
+
+    private IEnumerator RunGetUserMoneyAsync()
+    {
+        //추후 수정
+        if(SceneManager.GetActiveScene().name != "LobbyScene")
+        {
+            yield return null;
+        }
+
+        yield return GetUserMoney_Async();
     }
 
     public static async Task<int> GetUserMoney_Async()
@@ -131,9 +176,9 @@ public class UserInfoManager : MonoBehaviour
                     if (userDataMap.ContainsKey("money"))
                     {
                         //Debug.Log($"userDataMap[\"money\"] : {userDataMap["money"]}");
-                        int money = Convert.ToInt32(userDataMap["money"]);
+                        nowMoney = Convert.ToInt32(userDataMap["money"]);
                         //Debug.Log($"get money from server : {money} {FirebaseAuth.DefaultInstance.CurrentUser.Email}");
-                        return money;
+                        return nowMoney;
                     }
                     else
                     {

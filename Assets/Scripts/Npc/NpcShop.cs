@@ -22,6 +22,17 @@ public class NpcShop : MonoBehaviour
         SellItem(102, 1004, 1);
     }
 
+    //release method
+    //상점에 노출할 아이템을 생성할 때, 각 버튼에 등록
+    public static void BuyItem(int itemKey)
+    {
+        //read item name
+        Debug.Log($"called BuyItem method : {itemKey}");
+        //지금은 1개씩 구매 가능
+        //추후 UI를 통해 여러 개 구매 지원 예정
+        BuyItem(101, itemKey, 1);
+    }
+
     //semaphore for getting or setting money
     private static SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
