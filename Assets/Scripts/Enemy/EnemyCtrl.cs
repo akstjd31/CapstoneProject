@@ -110,7 +110,14 @@ public class EnemyCtrl : MonoBehaviour
             enemy.enemyData.hp -= status.attackDamage;
         }
 
-        status.agroMeter += status.attackDamage;    // 어그로미터 값 증가
+        if (playerViewID == enemyAIScript.GetFirstTarget().GetComponent<PhotonView>().ViewID)
+        {
+            enemyAIScript.agroMeter1 += status.attackDamage;
+        }
+        else
+        {
+            enemyAIScript.agroMeter2 += status.attackDamage;
+        }
 
         playerAttackDirection = attackDirection;
         onHit = true;
@@ -140,13 +147,13 @@ public class EnemyCtrl : MonoBehaviour
             }
 
             // 적의 타겟이 존재할 때
-            if (enemyAIScript.GetTarget() != null)
+            if (enemyAIScript.GetFocusTarget() != null)
             {
                 // 적이 플레이어와 어느정도 가까이 있으면 공격
                 if (IsEnemyClosetPlayer() && state != State.ATTACK && state != State.NORMAL && !onHit)
                 {
                     state = State.ATTACK;
-                    targetPos = enemyAIScript.GetTarget().position;
+                    targetPos = enemyAIScript.GetFocusTarget().position;
                     agent.isStopped = true;
                     enemyAIScript.isLookingAtPlayer = false;    // 공격할 때 플레이어가 움직여도 그 방향 유지
 
@@ -191,7 +198,7 @@ public class EnemyCtrl : MonoBehaviour
     // 플레이어가 소유한 범위포인트에 따른 반환
     private bool IsEnemyClosetPlayer()
     {
-        if (enemyAIScript.GetTarget() != null && state != State.ATTACK)
+        if (enemyAIScript.GetFocusTarget() != null && state != State.ATTACK)
         {
             // 공격 범위에 들어간 적
             Collider2D players = Physics2D.OverlapCircle(detectionPoint.position, detectionRange, playerLayers);

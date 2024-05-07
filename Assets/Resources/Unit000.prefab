@@ -2046,7 +2046,6 @@ MonoBehaviour:
   MAXHP: 100
   attackDamage: 10
   attackSpeed: 1
-  agroMeter: 0
   statInfo: {fileID: 0}
   stats: []
 --- !u!114 &9018133177964143318

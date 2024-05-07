@@ -13,8 +13,6 @@ public class EnemyAI : MonoBehaviour
 
     [SerializeField] private Transform target1, target2; // 2인 멀티 플레이어
 
-    private Status status1, status2;
-
     [SerializeField] private float waitForSec = 1f;
 
     private PhotonView enemyPV;
@@ -28,6 +26,8 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private GameObject onTriggerCheckObj;
     [SerializeField] private TriggerCheck triggerCheck;
 
+    public int agroMeter1, agroMeter2;  // 어그로미터기
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +36,8 @@ public class EnemyAI : MonoBehaviour
         agent.updateUpAxis = false;
 
         enemyPV = this.GetComponent<PhotonView>();
+
+        agroMeter1 = 0; agroMeter2 = 0;
     }
 
     // Update is called once per frame
@@ -54,9 +56,6 @@ public class EnemyAI : MonoBehaviour
                     target1 = targets[0].transform;
                     target2 = targets[1].transform;
 
-                    status1 = target1.gameObject.GetComponent<Status>();
-                    status2 = target2.gameObject.GetComponent<Status>();
-
                     StartCoroutine(GetTimeToFacePlayer());
                 }
                 else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
@@ -65,8 +64,6 @@ public class EnemyAI : MonoBehaviour
 
                     target1 = target.transform;
 
-                    status1 = target1.gameObject.GetComponent<Status>();
-
                     StartCoroutine(GetTimeToFacePlayer());
                 }
                 else
@@ -74,7 +71,6 @@ public class EnemyAI : MonoBehaviour
                     agent.isStopped = true;
                 }
             }
-
 
             if (focusTarget != null)
             {
@@ -101,7 +97,7 @@ public class EnemyAI : MonoBehaviour
         if (target1 != null && target2 != null)
         {
             // 어그로 미터에 따른 타겟 변경
-            if (status1.agroMeter > status2.agroMeter)
+            if (agroMeter1 > agroMeter2)
             {
 
                 focusTarget = target1;
@@ -113,7 +109,17 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    public Transform GetTarget()
+    public Transform GetFirstTarget()
+    {
+        return target1;
+    }
+
+    public Transform GetSecondTarget()
+    {
+        return target2;
+    }
+
+    public Transform GetFocusTarget()
     {
         return focusTarget;
     }

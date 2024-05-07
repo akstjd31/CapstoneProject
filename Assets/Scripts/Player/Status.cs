@@ -16,7 +16,6 @@ public class Status : MonoBehaviourPunCallbacks
     public float MAXHP = 100; // 최대 체력
     public int attackDamage = 5; // 공격력
     public float attackSpeed = 1.0f; // 공격 속도
-    public int agroMeter = 0; // 어그로 미터기
 
     [SerializeField] private Transform statInfo; // 플레이어의 스탯 정보
     public Text[] stats; // 스탯 정보가 담긴 텍스트
@@ -81,15 +80,6 @@ public class Status : MonoBehaviourPunCallbacks
         {
             stats[(int)TextList.RollCoolTime].gameObject.SetActive(true);
             stats[(int)TextList.RollCoolTime].text = "RollCoolTime: " + playerCtrl.rollCoolTime.ToString("F3");
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        // 던전에 있는 방이 변경될 때마다 어그로미터기 수치를 0으로 만들어줌.
-        if (other.CompareTag("TriggerObj"))
-        {
-            agroMeter = 0;
         }
     }
 }
