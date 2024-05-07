@@ -5516,6 +5516,7 @@ GameObject:
   m_Component:
   - component: {fileID: 521683263}
   - component: {fileID: 521683262}
+  - component: {fileID: 521683264}
   m_Layer: 0
   m_Name: ShopManager
   m_TagString: Untagged
@@ -5537,7 +5538,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shopView: {fileID: 3089237400207473097, guid: 270d48ea8af651644b04bd95e7131462, type: 3}
   item_Container: {fileID: 2498112146650351077, guid: 5e82061647261c346a86ccd036d9ac47, type: 3}
-  inventory: {fileID: 0}
 --- !u!4 &521683263
 Transform:
   m_ObjectHideFlags: 0
@@ -5553,6 +5553,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &521683264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521683261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9334261bab0cd2d4cab74bf7441a6cc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &535564879
 GameObject:
   m_ObjectHideFlags: 0
@@ -30664,7 +30676,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1908874737
 GameObject:
@@ -30956,7 +30968,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1926936968
 GameObject:
@@ -31111,7 +31123,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1960241267
 GameObject:

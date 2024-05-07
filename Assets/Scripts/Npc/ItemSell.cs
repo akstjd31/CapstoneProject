@@ -16,6 +16,32 @@ public class ItemSell : MonoBehaviour
         { 2001, new List<int> { -1, 50 } }
     };
 
+    public Dictionary<string, int> GetShopItemList(int shopKind = 1001)
+    {
+        Dictionary<string, int> rtValue = new();
+
+        switch (shopKind)
+        {
+            case 1001:
+                rtValue = new()
+                {
+                    { "A", 100 },
+                    { "B", 100 },
+                    { "C", 200 },
+                    { "D", 200 },
+                    { "E", 150 },
+                    { "F", 150 },
+                    { "G", 100 },
+                    { "H", 100 },
+                    { "I", 100 },
+                };
+                break;
+        }
+
+
+        return rtValue;
+    }
+
     public static int BuyItemCost(int itemKey)
     {
         if (_items.ContainsKey(itemKey) && _items[itemKey][0] != -1)

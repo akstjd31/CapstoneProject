@@ -91,6 +91,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private bool isDeath = false;
     private float deathTime = 1.0f;
 
+    private ShowOnSaleItem showOnSaleItem;  //상점
+    private bool isActiveSale = false;
+
     public void SetState(State state)
     {
         this.state = state;
@@ -123,6 +126,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             //던전 선택 canvas 생성
             MakeDungeonMap();
+
+            //상점 테스트
+            showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();
         }
 
         // 던전 씬
@@ -270,17 +276,25 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 {
                     PartyHUDActive();
                 }
+
+                //상점 테스트 전용
+                if (showOnSaleItem != null && Input.GetKeyDown(KeyCode.O))
+                {
+                    inventory.SetActive(!inventory.activeSelf);
+
+                    if(isActiveSale)
+                    {
+                        showOnSaleItem.CloseShopUI();
+                    }
+                    else
+                    {
+                        showOnSaleItem.ShowShopUI();
+                    }
+                }
             }
             else
             {
 
-            }
-
-            //상점 테스트 전용
-            if (Input.GetKeyDown(KeyCode.O))
-            {
-                inventory.SetActive(!inventory.activeSelf);
-                new ShowOnSaleItem().ShowShopUI();
             }
         }
     }
