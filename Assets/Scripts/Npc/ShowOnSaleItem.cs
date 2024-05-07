@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -53,10 +54,12 @@ public class ShowOnSaleItem : MonoBehaviour
         GameObject temp;
         ItemSell showOnSaleItem = FindObjectOfType<ItemSell>();
 
-        Dictionary<string, int> items = showOnSaleItem.GetShopItemList();
+        Dictionary<int, List<string>> items = showOnSaleItem.GetShopItemList(shopKind);
+
         int numOfItem = items.Count;
-        Debug.Log($"items : {numOfItem}");
-        List<string> itemName = new(items.Keys);
+        //Debug.Log($"items : {numOfItem}");
+        List<int> itemKeys = new(items.Keys);
+        //List<string> itemName = items.Values.SelectMany(list => list).ToList();
 
         for (int i = 0; i < numOfItem; i++)
         {
@@ -64,16 +67,17 @@ public class ShowOnSaleItem : MonoBehaviour
             int index = i;
 
             temp = Instantiate(item_Container, content);
-            temp.GetComponentInChildren<Text>().text = itemName[index];
+            temp.GetComponentInChildren<Text>().text = ItemSell.GetItemNameByKey(itemKeys[index]);
             temp.GetComponent<Button>().onClick.AddListener(() =>
             {
                 // 클릭된 버튼을 찾기
                 Button clickedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
-                string itemText = itemName[index];
-                clickedButton.transform.Find("ItemName").GetComponent<Text>().text = itemText;
-                Debug.Log($"call buyItem with button : index {index}, title {itemText}");
 
-                NpcShop.BuyItem(itemText);
+                string itemText = ItemSell.GetItemNameByKey(itemKeys[index]);
+                clickedButton.transform.Find("ItemName").GetComponent<Text>().text = itemText;
+                Debug.Log($"call buyItem with button : index {index}, key {itemKeys[index]}, name {itemText}");
+
+                NpcShop.BuyItem(itemKeys[index]);
             });
 
             itemList.Add(temp);

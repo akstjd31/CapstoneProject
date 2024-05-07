@@ -13,33 +13,75 @@ public class ItemSell : MonoBehaviour
         { 1003, new List<int> { 100, -1 } },
         { 1004, new List<int> { 200, 100 } },
         { 1005, new List<int> { 200, 100 } },
+        { 1006, new List<int> { 100, 50 } },
+        { 1007, new List<int> { 100, 50 } },
+        { 1008, new List<int> { 100, -1 } },
+        { 1009, new List<int> { 200, 100 } },
+        { 1010, new List<int> { 200, 100 } },
+
         { 2001, new List<int> { -1, 50 } }
     };
-
-    public Dictionary<string, int> GetShopItemList(int shopKind = 1001)
+    
+    private static Dictionary<int, string> _itemName = new()
     {
-        Dictionary<string, int> rtValue = new();
+        { 1001, "A" },
+        { 1002, "B" },
+        { 1003, "C" },
+        { 1004, "D" },
+        { 1005, "E" },
+        { 1006, "F" },
+        { 1007, "G" },
+        { 1008, "H" },
+        { 1009, "I" },
+        { 1010, "J" },
+
+        { 2001, "a" }
+    };
+
+    public Dictionary<int, List<string>> GetShopItemList(int shopKind = 1001)
+    {
+        Dictionary<int, List<string>> rtValue = new();
+        List<int> itemKeys = new();
 
         switch (shopKind)
         {
             case 1001:
-                rtValue = new()
+                itemKeys = new()
                 {
-                    { "A", 100 },
-                    { "B", 100 },
-                    { "C", 200 },
-                    { "D", 200 },
-                    { "E", 150 },
-                    { "F", 150 },
-                    { "G", 100 },
-                    { "H", 100 },
-                    { "I", 100 },
+                    1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010
                 };
                 break;
         }
 
+        rtValue = Inner_GetShopItemList(itemKeys);
 
         return rtValue;
+    }
+
+    private Dictionary<int, List<string>> Inner_GetShopItemList(List<int> itemKeys)
+    {
+        Dictionary<int, List<string>> rtValue = new();
+
+        foreach (int key in itemKeys)
+        {
+            if (_itemName.ContainsKey(key))
+            {
+                string itemName = _itemName[key];
+                int itemPrice = _items[key][0]; //ÆÇ¸Å°¡
+                List<string> itemData = new List<string>
+                {
+                    itemName, itemPrice.ToString()
+                };
+                rtValue.Add(key, itemData);
+            }
+        }
+
+        return rtValue;
+    }
+
+    public static string GetItemNameByKey(int itemKey)
+    {
+        return _itemName[itemKey];
     }
 
     public static int BuyItemCost(int itemKey)

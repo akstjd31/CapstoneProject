@@ -24,10 +24,10 @@ public class NpcShop : MonoBehaviour
 
     //release method
     //상점에 노출할 아이템을 생성할 때, 각 버튼에 등록
-    public static void BuyItem(string itemName)
+    public static void BuyItem(int itemKey)
     {
         //read item name
-        Debug.Log($"called BuyItem method : {itemName}");
+        Debug.Log($"called BuyItem method : {itemKey}");
     }
 
     //semaphore for getting or setting money
