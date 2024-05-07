@@ -16,7 +16,6 @@ public class Status : MonoBehaviourPunCallbacks
     public float MAXHP = 100; // 최대 체력
     public int attackDamage = 5; // 공격력
     public float attackSpeed = 1.0f; // 공격 속도
-    public int agroMeter = 0; // 어그로 미터기
 
     [SerializeField] private Transform statInfo; // 플레이어의 스탯 정보
     public Text[] stats; // 스탯 정보가 담긴 텍스트

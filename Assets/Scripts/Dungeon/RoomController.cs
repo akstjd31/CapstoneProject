@@ -5,7 +5,6 @@ using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.AI;
 
 public class RoomController : MonoBehaviourPunCallbacks
 {
@@ -15,55 +14,27 @@ public class RoomController : MonoBehaviourPunCallbacks
 	public GameObject[] downRooms;
 	public GameObject[] leftRooms;
     public Transform[] mapSpawnPoints;
-    public GameObject[] mapArray = new GameObject[1];
+    public GameObject[] mapArray = new GameObject[5];
     PhotonView roomView;
     string mapDir = "Dungeon/";
+    DungeonManager dungeonManager;
 
     public bool[] doorList = new bool[4];
 
+    bool isNameChanged = false;
     bool makeDoor = false;
     bool doorCheck = false;
-    bool makePlayMap = false;
-    bool isNameChanged = false;
-
-    private void GenerateNavMesh()
-    {
-        // Use this if you want to clear existing
-        //NavMesh.RemoveAllNavMeshData();  
-        var settings = NavMesh.CreateSettings();
-        var buildSources = new List<NavMeshBuildSource>();
-        // create floor as passable area
-        var floor = new NavMeshBuildSource
-        {
-            transform = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, Vector3.one),
-            shape = NavMeshBuildSourceShape.Box,
-            size = new Vector3(10, 1, 10)
-        };
-        buildSources.Add(floor);
-
-        // Create obstacle 
-        const int OBSTACLE = 1 << 0;
-        var obstacle = new NavMeshBuildSource
-        {
-            transform = Matrix4x4.TRS(new Vector3(3, 0, 3), Quaternion.identity, Vector3.one),
-            shape = NavMeshBuildSourceShape.Box,
-            size = new Vector3(1, 1, 1),
-            area = OBSTACLE
-        };
-        buildSources.Add(obstacle);
-
-        // build navmesh
-        NavMeshData built = NavMeshBuilder.BuildNavMeshData(
-            settings, buildSources, new Bounds(Vector3.zero, new Vector3(10, 10, 10)),
-            new Vector3(0, 0, 0), Quaternion.identity);
-        NavMesh.AddNavMeshData(built);
-    }
+    public bool makePlayMap = false;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         roomView = GetComponent<PhotonView>();
         startPoint = GameObject.Find("Spawn");
+        dungeonManager = startPoint.transform.parent.GetComponent<DungeonManager>();
+    }
+    void Start()
+    {
         //Invoke("CreateRoom", 0.3f);
         StartCoroutine(CreateRoom());
         //CreateRoom();
@@ -72,7 +43,7 @@ public class RoomController : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void FixedUpdate()
     {
-        if(DungeonManager.isMapCreate && !makeDoor)
+        if(dungeonManager.isMapCreate && !makeDoor)
         {
             RaycastHit2D hit;
             if(!isNameChanged)
@@ -90,7 +61,7 @@ public class RoomController : MonoBehaviourPunCallbacks
                     }
                 }
 
-                //GenerateNavMesh();
+
                 isNameChanged = true;
             }
 
@@ -128,17 +99,15 @@ public class RoomController : MonoBehaviourPunCallbacks
             }
             makeDoor = true;
         }
-        if(DungeonManager.isMapCreate && makeDoor && !doorCheck)
+        if(dungeonManager.isMapCreate && makeDoor && !doorCheck)
         {
             for(int i = 0; i < 4; i ++)
             {
                 RaycastHit2D hit;
                 if (i == 0)
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y + 1 * 0.2f),
-                    Vector2.up, 0.5f);
-                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 1 * 0.2f),
-                    Vector2.up * 0.5f, Color.blue);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y + 1 * 0.2f), Vector2.up, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y + 1 * 0.2f), Vector2.up * 0.5f, Color.blue);
                     if(hit.collider == null)
                     {
                         doorList[i] = true;
@@ -150,10 +119,8 @@ public class RoomController : MonoBehaviourPunCallbacks
                 }
                 else if (i == 1)
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x + 1 * 0.2f, this.transform.position.y),
-                    Vector2.right, 0.5f);
-                    Debug.DrawRay(new Vector2(this.transform.position.x + 1 * 0.2f, this.transform.position.y),
-                    Vector2.right * 0.5f, Color.blue);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x + 1 * 0.2f, this.transform.position.y), Vector2.right, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x + 1 * 0.2f, this.transform.position.y), Vector2.right * 0.5f, Color.blue);
                     if(hit.collider == null)
                     {
                         doorList[i] = true;
@@ -165,10 +132,8 @@ public class RoomController : MonoBehaviourPunCallbacks
                 }
                 else if (i == 2)
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1 * 0.2f),
-                    Vector2.down, 0.5f);
-                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 1 * 0.2f),
-                    Vector2.down * 0.5f, Color.blue);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1 * 0.2f), Vector2.down, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y - 1 * 0.2f), Vector2.down * 0.5f, Color.blue);
                     if(hit.collider == null)
                     {
                         doorList[i] = true;
@@ -180,10 +145,8 @@ public class RoomController : MonoBehaviourPunCallbacks
                 }
                 else if (i == 3)
                 {
-                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x - 1 * 0.2f, this.transform.position.y),
-                    Vector2.left, 0.5f);
-                    Debug.DrawRay(new Vector2(this.transform.position.x - 1 * 0.2f, this.transform.position.y),
-                    Vector2.left * 0.5f, Color.blue);
+                    hit = Physics2D.Raycast(new Vector2(this.transform.position.x - 1 * 0.2f, this.transform.position.y), Vector2.left, 0.5f);
+                    Debug.DrawRay(new Vector2(this.transform.position.x - 1 * 0.2f, this.transform.position.y), Vector2.left * 0.5f, Color.blue);
                     if(hit.collider == null)
                     {
                         doorList[i] = true;
@@ -195,25 +158,123 @@ public class RoomController : MonoBehaviourPunCallbacks
                 }
             }
             doorCheck = true;
-            //Debug.Log(this.transform.position);
-            // for(int i = 0; i < 4; i++)
-            // {
-            //     Debug.Log(doorList[i]);
-            // } 
         }
-        if(DungeonManager.isMapCreate && makeDoor && doorCheck && !makePlayMap)
+        if(dungeonManager.isMapCreate && dungeonManager.specialRoomSelect && makeDoor && doorCheck && !makePlayMap)
         {
-            Debug.Log(mapDir + mapArray[Random.Range(0, mapArray.Length)].name);
-            Vector3 gridMapPosition = new Vector2((this.transform.position.x - startPoint.transform.position.x) * DungeonManager.mapSize[0]
-            , (this.transform.position.y - startPoint.transform.position.y) * DungeonManager.mapSize[1]);
-            PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
-            //gridMap.transform.position = new Vector2(this.transform.position.x * 25.0f, this.transform.position.y * 9.0f);
+            if(this.name == dungeonManager.bossRoom.name)
+            {
+                Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
+                , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
+                PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
+                for(int i = 0; i < 4; i++)
+                {
+                    if(doorList[i])
+                    {
+                        if(i == 0)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
+                        }
+                        else if(i == 1)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
+                        }
+                        else if(i == 2)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
+                        }
+                        else if(i == 3)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
+                        }
+                    }
+                }
+            }
+            else if(this.name == dungeonManager.shopRoom.name)
+            {
+                Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
+                , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
+                PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
+                for(int i = 0; i < 4; i++)
+                {
+                    if(doorList[i])
+                    {
+                        if(i == 0)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
+                        }
+                        else if(i == 1)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
+                        }
+                        else if(i == 2)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
+                        }
+                        else if(i == 3)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
+                        }
+                    }
+                }
+            }
+            else if(this.name == dungeonManager.healRoom.name)
+            {
+                Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
+                , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
+                PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
+                for(int i = 0; i < 4; i++)
+                {
+                    if(doorList[i])
+                    {
+                        if(i == 0)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
+                        }
+                        else if(i == 1)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
+                        }
+                        else if(i == 2)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
+                        }
+                        else if(i == 3)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //Debug.Log(mapDir + mapArray[Random.Range(0, mapArray.Length)].name);
+                Vector3 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
+                , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
+                PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
+                for(int i = 0; i < 4; i++)
+                {
+                    if(doorList[i])
+                    {
+                        if(i == 0)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, dungeonManager.mapSize[1] / 2 - 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f), 0);
+                        }
+                        else if(i == 1)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(dungeonManager.mapSize[0] / 2 - 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 270.0f), 0);
+                        }
+                        else if(i == 2)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(0.0f, -dungeonManager.mapSize[1] / 2 + 1.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f), 0);
+                        }
+                        else if(i == 3)
+                        {
+                            PhotonNetwork.Instantiate(mapDir + "Door", gridMapPosition + new Vector3(-dungeonManager.mapSize[0] / 2 + 1.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 90.0f), 0);
+                        }
+                    }
+                }
+            }
             makePlayMap = true;
-
-            // for(int i = 0; i < gameObject.transform.childCount; i++)
-            // {
-            //     gameObject.transform.GetChild(i).gameObject.SetActive(false);
-            // }
         }
     }
     [PunRPC]
@@ -223,27 +284,28 @@ public class RoomController : MonoBehaviourPunCallbacks
     }
     private IEnumerator CreateRoom()
     {
-        if(this.transform.position.x > DungeonManager.farherstX)
+        if(this.transform.position.x > dungeonManager.farherstX)
         {
-            DungeonManager.farherstX = (int)this.transform.position.x;
+            dungeonManager.farherstX = (int)this.transform.position.x;
         }
-        else if(this.transform.position.y > DungeonManager.farherstY)
+        else if(this.transform.position.y > dungeonManager.farherstY)
         {
-            DungeonManager.farherstY = (int)this.transform.position.y;
+            dungeonManager.farherstY = (int)this.transform.position.y;
         }
-        else if(this.transform.position.x < DungeonManager.farherstMX)
+        else if(this.transform.position.x < dungeonManager.farherstMX)
         {
-            DungeonManager.farherstMX = (int)this.transform.position.x;
+            dungeonManager.farherstMX = (int)this.transform.position.x;
         }
-        else if(this.transform.position.y < DungeonManager.farherstMY)
+        else if(this.transform.position.y < dungeonManager.farherstMY)
         {
-            DungeonManager.farherstMY = (int)this.transform.position.y;
+            dungeonManager.farherstMY = (int)this.transform.position.y;
         }
 
-        int roomNumTemp = DungeonManager.roomNum;
+        int roomNumTemp = dungeonManager.roomNum;
         RaycastHit2D hit;
         mapSpawnPoints = this.gameObject.transform.GetChild(0).GetComponentsInChildren<Transform>();
-        if(DungeonManager.roomNum > (int)roomNumTemp / 3)
+        dungeonManager.rooms.Add(this.gameObject);
+        if(dungeonManager.roomNum > (int)roomNumTemp / 3)
         {
             for(int i = 2; i < mapSpawnPoints.Length; i++)
             {
@@ -266,8 +328,9 @@ public class RoomController : MonoBehaviourPunCallbacks
                             PhotonNetwork.Instantiate(mapDir + upRooms[rannum].name, roomtempPosition, Quaternion.identity, 0);
                         }
                         //roomtemp.transform.SetParent(this.transform.parent);
-                        DungeonManager.roomNum--;
-                        DungeonManager.mapCreateTimer = 0.0f;
+                        dungeonManager.roomNum--;
+                        dungeonManager.createdRoomNum++;
+                        dungeonManager.mapCreateTimer = 0.0f;
                     }
                     // else
                     // {
@@ -294,8 +357,9 @@ public class RoomController : MonoBehaviourPunCallbacks
                             PhotonNetwork.Instantiate(mapDir + rightRooms[rannum].name, roomtempPosition, Quaternion.identity, 0);
                         }
                         //roomtemp.transform.SetParent(this.transform.parent);
-                        DungeonManager.roomNum--;
-                        DungeonManager.mapCreateTimer = 0.0f;
+                        dungeonManager.roomNum--;
+                        dungeonManager.createdRoomNum++;
+                        dungeonManager.mapCreateTimer = 0.0f;
                     }
                     // else
                     // {
@@ -322,8 +386,9 @@ public class RoomController : MonoBehaviourPunCallbacks
                             PhotonNetwork.Instantiate(mapDir + downRooms[rannum].name, roomtempPosition, Quaternion.identity, 0);
                         }
                         //roomtemp.transform.SetParent(this.transform.parent);
-                        DungeonManager.roomNum--;
-                        DungeonManager.mapCreateTimer = 0.0f;
+                        dungeonManager.roomNum--;
+                        dungeonManager.createdRoomNum++;
+                        dungeonManager.mapCreateTimer = 0.0f;
                     }
                     // else
                     // {
@@ -350,8 +415,9 @@ public class RoomController : MonoBehaviourPunCallbacks
                             PhotonNetwork.Instantiate(mapDir + leftRooms[rannum].name, roomtempPosition, Quaternion.identity, 0);
                         }
                         //roomtemp.transform.SetParent(this.transform.parent);
-                        DungeonManager.roomNum--;
-                        DungeonManager.mapCreateTimer = 0.0f;
+                        dungeonManager.roomNum--;
+                        dungeonManager.createdRoomNum++;
+                        dungeonManager.mapCreateTimer = 0.0f;
                     }
                     // else
                     // {
@@ -366,8 +432,8 @@ public class RoomController : MonoBehaviourPunCallbacks
         {
             if(mapSpawnPoints.Length == 1)
             {
-                DungeonManager.endRooms.Add(this.gameObject);
-                DungeonManager.endRoomIndexChecker++;
+                dungeonManager.endRooms.Add(this.gameObject);
+                dungeonManager.endRoomIndexChecker++;
             }
             for(int i = 2; i < mapSpawnPoints.Length; i++)
             {
@@ -382,8 +448,9 @@ public class RoomController : MonoBehaviourPunCallbacks
                         //roomtemp = 
                         PhotonNetwork.Instantiate(mapDir + upRooms[0].name, roomtempPosition, Quaternion.identity, 0);
                         //roomtemp.transform.SetParent(this.transform.parent);
-                        DungeonManager.roomNum--;
-                        DungeonManager.mapCreateTimer = 0.0f;
+                        dungeonManager.roomNum--;
+                        dungeonManager.createdRoomNum++;
+                        dungeonManager.mapCreateTimer = 0.0f;
                     }
                     // else
                     // {
@@ -402,8 +469,9 @@ public class RoomController : MonoBehaviourPunCallbacks
                         //roomtemp = 
                         PhotonNetwork.Instantiate(mapDir + rightRooms[0].name, roomtempPosition, Quaternion.identity, 0);
                         //roomtemp.transform.SetParent(this.transform.parent);
-                        DungeonManager.roomNum--;
-                        DungeonManager.mapCreateTimer = 0.0f;
+                        dungeonManager.roomNum--;
+                        dungeonManager.createdRoomNum++;
+                        dungeonManager.mapCreateTimer = 0.0f;
                     }
                     // else
                     // {
@@ -422,8 +490,9 @@ public class RoomController : MonoBehaviourPunCallbacks
                         //roomtemp = 
                         PhotonNetwork.Instantiate(mapDir + downRooms[0].name, roomtempPosition, Quaternion.identity, 0);
                         //roomtemp.transform.SetParent(this.transform.parent);
-                        DungeonManager.roomNum--;
-                        DungeonManager.mapCreateTimer = 0.0f;
+                        dungeonManager.roomNum--;
+                        dungeonManager.createdRoomNum++;
+                        dungeonManager.mapCreateTimer = 0.0f;
                     }
                     // else
                     // {
@@ -442,8 +511,9 @@ public class RoomController : MonoBehaviourPunCallbacks
                         //roomtemp = 
                         PhotonNetwork.Instantiate(mapDir + leftRooms[0].name, roomtempPosition, Quaternion.identity, 0);
                         //roomtemp.transform.SetParent(this.transform.parent);
-                        DungeonManager.roomNum--;
-                        DungeonManager.mapCreateTimer = 0.0f;
+                        dungeonManager.roomNum--;
+                        dungeonManager.createdRoomNum++;
+                        dungeonManager.mapCreateTimer = 0.0f;
                     }
                     // else
                     // {

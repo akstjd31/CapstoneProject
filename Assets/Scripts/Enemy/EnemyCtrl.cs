@@ -36,7 +36,8 @@ public class EnemyCtrl : MonoBehaviour
     private float attackDistanceSpeed = 10f;
     private float attackedDistanceSpeed = 3f;
 
-    private bool isEnemyDead = false;
+    private bool isDeath = false;
+    private float deathTime = 1.0f;
 
     private Status status;
 
@@ -109,7 +110,14 @@ public class EnemyCtrl : MonoBehaviour
             enemy.enemyData.hp -= status.attackDamage;
         }
 
-        status.agroMeter += status.attackDamage;    // 어그로미터 값 증가
+        if (playerViewID == enemyAIScript.GetFirstTarget().GetComponent<PhotonView>().ViewID)
+        {
+            enemyAIScript.agroMeter1 += status.attackDamage;
+        }
+        else
+        {
+            enemyAIScript.agroMeter2 += status.attackDamage;
+        }
 
         playerAttackDirection = attackDirection;
         onHit = true;
@@ -118,12 +126,15 @@ public class EnemyCtrl : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isEnemyDead)
+        if (!isDeath)
         {
             // 죽음
-            if (hpBar.value <= 0)
+            if (enemy.enemyData.hp <= 0)
             {
-                StartCoroutine(Death());
+                anim.SetTrigger("Death");
+                rigid.velocity = Vector2.zero;
+                isDeath = true;
+                agent.isStopped = true;
             }
 
             // 속도가 0이 아니면 이동상태
@@ -136,13 +147,13 @@ public class EnemyCtrl : MonoBehaviour
             }
 
             // 적의 타겟이 존재할 때
-            if (enemyAIScript.GetTarget() != null)
+            if (enemyAIScript.GetFocusTarget() != null)
             {
                 // 적이 플레이어와 어느정도 가까이 있으면 공격
                 if (IsEnemyClosetPlayer() && state != State.ATTACK && state != State.NORMAL && !onHit)
                 {
                     state = State.ATTACK;
-                    targetPos = enemyAIScript.GetTarget().position;
+                    targetPos = enemyAIScript.GetFocusTarget().position;
                     agent.isStopped = true;
                     enemyAIScript.isLookingAtPlayer = false;    // 공격할 때 플레이어가 움직여도 그 방향 유지
 
@@ -170,6 +181,9 @@ public class EnemyCtrl : MonoBehaviour
             case State.ATTACKED:
                 KnockBack();
                 break;
+            case State.DIE:
+                Death();
+                break;
         }
 
         if (hpBar != null)
@@ -184,7 +198,7 @@ public class EnemyCtrl : MonoBehaviour
     // 플레이어가 소유한 범위포인트에 따른 반환
     private bool IsEnemyClosetPlayer()
     {
-        if (enemyAIScript.GetTarget() != null && state != State.ATTACK)
+        if (enemyAIScript.GetFocusTarget() != null && state != State.ATTACK)
         {
             // 공격 범위에 들어간 적
             Collider2D players = Physics2D.OverlapCircle(detectionPoint.position, detectionRange, playerLayers);
@@ -198,19 +212,23 @@ public class EnemyCtrl : MonoBehaviour
         return false;
     }
 
-    IEnumerator Death()
+    public void DeathAnimEvent()
     {
-        // 죽기전에 처리해야할 것들
-        isEnemyDead = true;
+        state = State.DIE;
+        anim.speed = 0f;
+    }
 
-        enemyAIScript.enabled = false;
-        agent.isStopped = true;
-        anim.SetTrigger("Death");
-        yield return new WaitForSeconds(1.0f);
-
-        DestroyHPBar();
-        //enemyManagerScript.RemoveEnemy(this.gameObject);
-        Destroy(this.gameObject);
+    private void Death()
+    {
+        if (deathTime >= 0.0f)
+        {
+            deathTime -= Time.deltaTime;
+        }
+        else
+        {
+            DestroyHPBar();
+            PhotonNetwork.Destroy(this.gameObject);
+        }
     }
 
 

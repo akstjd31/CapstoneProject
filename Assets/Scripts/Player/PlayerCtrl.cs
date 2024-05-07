@@ -98,7 +98,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         this.state = state;
     }
-
     void Start()
     {
         // 변수 초기화
@@ -142,6 +141,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             // HUD1 == otherPlayer
             HUD hud1 = uiManager.hud1.GetComponent<HUD>();
             hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
+            hud1.hpBar.maxValue = status.MAXHP;
         }
     }
 
@@ -198,7 +198,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                 // 공격 & 공격 쿨타임 끝나면
                 if (Input.GetMouseButtonDown(0) && isAttackCooldownOver &&
-                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit)
+                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.activeSelf)
                 {
                     state = State.ATTACK;
 
