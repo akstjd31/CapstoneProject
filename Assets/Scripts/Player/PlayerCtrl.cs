@@ -135,6 +135,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             // HUD1 == otherPlayer
             HUD hud1 = uiManager.hud1.GetComponent<HUD>();
             hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
+            hud1.hpBar.maxValue = status.MAXHP;
         }
     }
 
@@ -164,7 +165,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     if (uiManager != null)
                     {
                         uiManager.hpText.text = string.Format("{0} / {1}", this.status.HP, this.status.MAXHP);
-                        uiManager.hpBar.value = status.HP / 100;
+                        uiManager.hpBar.value = status.HP;
 
                         if (otherPlayer != null)
                         {

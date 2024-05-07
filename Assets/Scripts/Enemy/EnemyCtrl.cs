@@ -36,7 +36,8 @@ public class EnemyCtrl : MonoBehaviour
     private float attackDistanceSpeed = 10f;
     private float attackedDistanceSpeed = 3f;
 
-    private bool isEnemyDead = false;
+    private bool isDeath = false;
+    private float deathTime = 1.0f;
 
     private Status status;
 
@@ -118,12 +119,15 @@ public class EnemyCtrl : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isEnemyDead)
+        if (!isDeath)
         {
             // 죽음
-            if (hpBar.value <= 0)
+            if (enemy.enemyData.hp <= 0)
             {
-                StartCoroutine(Death());
+                anim.SetTrigger("Death");
+                rigid.velocity = Vector2.zero;
+                isDeath = true;
+                agent.isStopped = true;
             }
 
             // 속도가 0이 아니면 이동상태
@@ -170,6 +174,9 @@ public class EnemyCtrl : MonoBehaviour
             case State.ATTACKED:
                 KnockBack();
                 break;
+            case State.DIE:
+                Death();
+                break;
         }
 
         if (hpBar != null)
@@ -198,19 +205,23 @@ public class EnemyCtrl : MonoBehaviour
         return false;
     }
 
-    IEnumerator Death()
+    public void DeathAnimEvent()
     {
-        // 죽기전에 처리해야할 것들
-        isEnemyDead = true;
+        state = State.DIE;
+        anim.speed = 0f;
+    }
 
-        enemyAIScript.enabled = false;
-        agent.isStopped = true;
-        anim.SetTrigger("Death");
-        yield return new WaitForSeconds(1.0f);
-
-        DestroyHPBar();
-        //enemyManagerScript.RemoveEnemy(this.gameObject);
-        Destroy(this.gameObject);
+    private void Death()
+    {
+        if (deathTime >= 0.0f)
+        {
+            deathTime -= Time.deltaTime;
+        }
+        else
+        {
+            DestroyHPBar();
+            PhotonNetwork.Destroy(this.gameObject);
+        }
     }
 
 

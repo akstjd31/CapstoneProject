@@ -83,4 +83,13 @@ public class Status : MonoBehaviourPunCallbacks
             stats[(int)TextList.RollCoolTime].text = "RollCoolTime: " + playerCtrl.rollCoolTime.ToString("F3");
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // 던전에 있는 방이 변경될 때마다 어그로미터기 수치를 0으로 만들어줌.
+        if (other.CompareTag("TriggerObj"))
+        {
+            agroMeter = 0;
+        }
+    }
 }

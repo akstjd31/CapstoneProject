@@ -174,9 +174,9 @@ public class EnemyAI : MonoBehaviour
         agent.isStopped = false;
     }
 
-    private void OnTriggerStay2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("TriggerObj") && onTriggerCheckObj == null)
+        if (other.CompareTag("TriggerObj"))
         {
             onTriggerCheckObj = other.gameObject;
             triggerCheck = onTriggerCheckObj.GetComponent<TriggerCheck>();
