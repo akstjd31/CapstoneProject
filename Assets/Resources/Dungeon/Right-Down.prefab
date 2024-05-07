@@ -227,11 +227,6 @@ MonoBehaviour:
   - {fileID: 6671084173881694252, guid: 7ae8eb8be33bc1c41870fe4709d6b681, type: 3}
   - {fileID: 8874482460912848076, guid: 8fd1aa853dc2edf48afb8ea2e4cde672, type: 3}
   doorList: 00000000
-  doorObject:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   makePlayMap: 0
 --- !u!114 &4374404639654757022
 MonoBehaviour:
