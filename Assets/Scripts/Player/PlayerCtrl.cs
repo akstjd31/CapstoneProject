@@ -257,6 +257,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 if (Input.GetKeyDown(KeyCode.I) && isDeactiveUI)
                 {
                     inventory.SetActive(!inventory.activeSelf);
+
+                    //UI에 보유 금액 표기
+                    if(inventory.activeSelf)
+                    {
+                        GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
+                    }
                 }
 
                 // 보이스 참가하기
@@ -281,8 +287,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 if (showOnSaleItem != null && Input.GetKeyDown(KeyCode.O))
                 {
                     inventory.SetActive(!inventory.activeSelf);
+                    //UI에 보유 금액 표기
+                    if (inventory.activeSelf)
+                    {
+                        GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
+                    }
 
-                    if(isActiveSale)
+                    if (isActiveSale)
                     {
                         showOnSaleItem.CloseShopUI();
                     }
