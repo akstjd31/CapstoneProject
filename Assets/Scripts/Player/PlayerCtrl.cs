@@ -66,7 +66,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     RawImage DungeonImage;
     Button destroyButton;
 
-    GameObject inventory;
+    Inventory inventory;
 
     Vector3 mouseWorldPosition;
 
@@ -94,6 +94,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private ShowOnSaleItem showOnSaleItem;  //상점
     private bool isActiveSale = false;
 
+    private Items items; // 바닥에 놓여있는 아이템
+
     public void SetState(State state)
     {
         this.state = state;
@@ -112,10 +114,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         status = this.GetComponent<Status>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
-        inventory = canvas.transform.Find("Inventory").gameObject;
+        inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
 
         recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
         state = State.NORMAL;
+        items = null;
 
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
@@ -198,7 +201,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                 // 공격 & 공격 쿨타임 끝나면
                 if (Input.GetMouseButtonDown(0) && isAttackCooldownOver &&
-                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.activeSelf)
+                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.gameObject.activeSelf)
                 {
                     state = State.ATTACK;
 
@@ -256,11 +259,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 // 인벤토리 열기
                 if (Input.GetKeyDown(KeyCode.I) && isDeactiveUI)
                 {
-                    inventory.SetActive(!inventory.activeSelf);
+                    inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
 
                     //UI에 보유 금액 표기
-                    if(inventory.activeSelf)
+                    if(inventory.gameObject.activeSelf)
                     {
+                        inventory.FreshSlot();  // 아이템 리스트를 인벤토리에 추가한다. 
                         GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
                     }
                 }
@@ -286,9 +290,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 //상점 테스트 전용
                 if (showOnSaleItem != null && Input.GetKeyDown(KeyCode.O))
                 {
-                    inventory.SetActive(!inventory.activeSelf);
+                    inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
                     //UI에 보유 금액 표기
-                    if (inventory.activeSelf)
+                    if (inventory.gameObject.activeSelf)
                     {
                         GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
                     }
@@ -301,6 +305,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     {
                         showOnSaleItem.ShowShopUI();
                     }
+                }
+
+                // 아이템 픽업
+                if (Input.GetKeyDown(KeyCode.Z) && items != null)
+                {
+                    inventory.GetComponent<Inventory>().items.Add(items.item);
+                    Destroy(items.gameObject);
                 }
             }
             else
@@ -578,12 +589,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             anim.runtimeAnimatorController = animController[0];
         }
     }
-    //private void OnTriggerEnter2D(Collider2D other)
-    //{
-    //    if (other.CompareTag("Enemy"))
-    //    {
-    //        isPlayerInRangeOfEnemy = true;
-    //        enemyCtrl = other.GetComponent<EnemyCtrl>();
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -593,15 +598,18 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             DungeonCanvas.SetActive(true);
         }
 
-        if (other.CompareTag("Weapon")) {
-            
+        if (other.CompareTag("Item"))
+        {
+            items = other.GetComponent<Items>();
         }
-        //if (other.CompareTag("Enemy"))
-        //{
-        //    isPlayerInRangeOfEnemy = true;
-        //    enemyCtrl = other.GetComponent<EnemyCtrl>();
+    }
 
-        //}
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Item"))
+        {
+            items = null;
+        }
     }
 
     private void MakeDungeonMap()
@@ -646,13 +654,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
         DungeonCanvas.SetActive(false);
     }
-
-
-    // private void OnTriggerExit2D(Collider2D other)
-    // {
-    //     isPlayerInRangeOfEnemy = false;
-    //     enemyCtrl = null;
-    // }
 
     private bool DungeonEnterCondition()
     {

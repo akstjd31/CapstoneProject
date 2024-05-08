@@ -32,6 +32,8 @@ public class Inventory : MonoBehaviour
 
         inventorySlots = intventorySlotParent.GetComponentsInChildren<Slot>();
         inventoryDrags = intventorySlotParent.GetComponentsInChildren<Drag>();
+
+        this.transform.SetAsLastSibling();
     }
 #endif
 
@@ -49,17 +51,18 @@ public class Inventory : MonoBehaviour
     {
         int i = 0;
 
-        if (items.Count > 0)
-        {
-            equippedSlot.item = items[0];
-            equippedDrag.isDraggable = true;
-            i++;
-        }
-        else
-        {
-            equippedSlot.item = null;
-            equippedDrag.isDraggable = false;
-        }
+        // ì°©ìš© ìŠ¬ë¡¯
+        //if (items.Count > 0)
+        //{
+        //    equippedSlot.item = items[0];
+        //    equippedDrag.isDraggable = true;
+        //    i++;
+        //}
+        //else
+        //{
+        //    equippedSlot.item = null;
+        //    equippedDrag.isDraggable = false;
+        //}
 
         for (; i < items.Count && i < inventorySlots.Length; i++)
         {
@@ -82,7 +85,7 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            print("½½·ÔÀÌ °¡µæ Â÷ ÀÖ½À´Ï´Ù.");
+            Debug.Log("ì•„ì´í…œ ê³µê°„ì´ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 

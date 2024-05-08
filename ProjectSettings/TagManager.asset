@@ -4,7 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Weapon
   - PlayerStat
   - HitBox
   - Canvas
@@ -18,6 +17,9 @@ TagManager:
   - VoiceManager
   - Enemy
   - Room
+  - Trash
+  - Item
+  - TriggerObj
   layers:
   - Default
   - TransparentFX

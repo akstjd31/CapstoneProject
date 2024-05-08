@@ -34,10 +34,21 @@ public class Slot : MonoBehaviour, IDropHandler
         }
     }
 
-    // �ش� ���Կ� ���𰡰� ���콺 ��� ���� �� �߻��ϴ� �̺�Ʈ
+    // 아이템 드랍
     public void OnDrop(PointerEventData eventData)
     {
         GameObject targetObj = eventData.pointerDrag;
+        Drag drag = targetObj.GetComponent<Drag>();
+
+        Debug.Log(targetObj.name);
+        // 만약 쓰레기통에 넣는다면 해당 아이템 삭제
+        if (targetObj.CompareTag("Trash"))
+        {
+            targetObj.GetComponent<Slot>().item = null;
+            drag.isDraggable = false;
+            return;
+        }
+
         Item targetItem = targetObj.GetComponent<Slot>().item;
 
         Item tmp = targetItem;
@@ -45,7 +56,6 @@ public class Slot : MonoBehaviour, IDropHandler
         item = tmp;
 
         Drag targetDrag = this.GetComponent<Drag>();
-        Drag drag = targetObj.GetComponent<Drag>();
 
         targetDrag.isDraggable = true;
 
