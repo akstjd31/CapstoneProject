@@ -93,6 +93,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     private ShowOnSaleItem showOnSaleItem;  //상점
     private bool isActiveSale = false;
+    public bool isMoveRoom = false;
 
     public void SetState(State state)
     {

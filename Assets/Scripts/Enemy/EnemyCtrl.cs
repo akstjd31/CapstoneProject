@@ -112,11 +112,11 @@ public class EnemyCtrl : MonoBehaviour
 
         if (playerViewID == enemyAIScript.GetFirstTarget().GetComponent<PhotonView>().ViewID)
         {
-            enemyAIScript.agroMeter1 += status.attackDamage;
+            enemyAIScript.aggroMeter1 += status.attackDamage;
         }
         else
         {
-            enemyAIScript.agroMeter2 += status.attackDamage;
+            enemyAIScript.aggroMeter2 += status.attackDamage;
         }
 
         playerAttackDirection = attackDirection;

@@ -23,6 +23,7 @@ public class MoveRoom : MonoBehaviour
         Debug.Log("Trigger");
         if (other.tag == "Player")
         {
+            other.GetComponent<PlayerCtrl>().isMoveRoom = true;
             Debug.Log("Player");
             other.transform.Translate(dir * 5.0f);
             Debug.Log("Translate");
