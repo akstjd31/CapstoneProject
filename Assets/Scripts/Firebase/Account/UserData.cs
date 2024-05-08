@@ -24,35 +24,42 @@ public class UserData : MonoBehaviour
     {
         auth = FirebaseAuth.DefaultInstance;
 
-        await auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith((task) =>
+        try
         {
-            if(task.IsCompletedSuccessfully)
+            await auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith((task) =>
             {
-                Debug.Log("register IsCompletedSuccessfully");
-            }
-            else if(task.IsCompleted)
-            {
-                Debug.Log("register IsCompleted");
-            }
-            else if(task.IsCanceled)
-            {
-                Debug.Log("register IsCanceled");
-            }
-            else if(task.IsFaulted)
-            {
-                Debug.Log("register IsFaulted");
-            }
-        });
-        await auth.SignInWithEmailAndPasswordAsync(email, password);
+                if (task.IsCompletedSuccessfully)
+                {
+                    Debug.Log("register IsCompletedSuccessfully");
+                }
+                else if (task.IsCompleted)
+                {
+                    Debug.Log("register IsCompleted");
+                }
+                else if (task.IsCanceled)
+                {
+                    Debug.Log("register IsCanceled");
+                }
+                else if (task.IsFaulted)
+                {
+                    Debug.Log("register IsFaulted");
+                }
+            });
+            await auth.SignInWithEmailAndPasswordAsync(email, password);
 
-        UserInfoManager.SetCurrentUser(auth.CurrentUser);
+            UserInfoManager.SetCurrentUser(auth.CurrentUser);
 
-        await MakeDB_New(initData);
-        //캐릭터 별 데이터를 생성
-        //await MakeDB_Char();
+            await MakeDB_New(initData);
+            //캐릭터 별 데이터를 생성
+            //await MakeDB_Char();
 
-        SceneManager.LoadScene("SelectCharacter");
-        //SceneManager.LoadScene("TestScene");
+            SceneManager.LoadScene("SelectCharacter");
+            //SceneManager.LoadScene("TestScene");
+        }
+        catch (FirebaseException e)
+        {
+            Debug.Log($"FirebaseException : {e.StackTrace}");
+        }
     }
 
     public static async Task SetNickname(string nickname)
