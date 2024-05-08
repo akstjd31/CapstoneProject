@@ -63830,7 +63830,6 @@ GameObject:
   - component: {fileID: 1368227513}
   - component: {fileID: 1368227515}
   - component: {fileID: 1368227514}
-  - component: {fileID: 1368227516}
   m_Layer: 5
   m_Name: Trash
   m_TagString: Trash
@@ -63899,19 +63898,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1368227512}
   m_CullTransparentMesh: 1
---- !u!114 &1368227516
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1368227512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 062c252c72ce0ca4e856d5008b675762, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Image: {fileID: 0}
 --- !u!1 &1417553135
 GameObject:
   m_ObjectHideFlags: 0
@@ -70707,6 +70693,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   items:
   - {fileID: 11400000, guid: c861789953c74ff4a92e99f5a7a2bf19, type: 2}
+  - {fileID: 11400000, guid: c7e60fd230a7a6e45996d359077bed7d, type: 2}
   equippedSlotParent: {fileID: 4826380450313185438}
   intventorySlotParent: {fileID: 1999853701}
   equippedSlot: {fileID: 503435985}

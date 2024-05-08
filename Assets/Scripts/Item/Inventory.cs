@@ -50,21 +50,15 @@ public class Inventory : MonoBehaviour
     public void FreshSlot()
     {
         int i = 0;
+        Item item = null;
 
-        // 착용 슬롯
-        //if (items.Count > 0)
-        //{
-        //    equippedSlot.item = items[0];
-        //    equippedDrag.isDraggable = true;
-        //    i++;
-        //}
-        //else
-        //{
-        //    equippedSlot.item = null;
-        //    equippedDrag.isDraggable = false;
-        //}
+        if (equippedDrag.isDraggable)
+        {
+            item = equippedSlot.item;
+            items.Remove(item);
+        }
 
-        for (; i < items.Count && i < inventorySlots.Length; i++)
+        for (i = 0; i < items.Count && i < inventorySlots.Length; i++)
         {
             inventorySlots[i].item = items[i];
             inventoryDrags[i].isDraggable = true;
@@ -73,6 +67,11 @@ public class Inventory : MonoBehaviour
         {
             inventorySlots[i].item = null;
             inventoryDrags[i].isDraggable = false;
+        }
+
+        if (item != null)
+        {
+            items.Add(item);
         }
     }
 

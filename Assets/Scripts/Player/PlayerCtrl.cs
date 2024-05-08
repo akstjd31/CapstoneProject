@@ -310,7 +310,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 // 아이템 픽업
                 if (Input.GetKeyDown(KeyCode.Z) && items != null)
                 {
-                    inventory.GetComponent<Inventory>().items.Add(items.item);
+                    inventory.GetComponent<Inventory>().AddItem(items.item);
                     Destroy(items.gameObject);
                 }
             }

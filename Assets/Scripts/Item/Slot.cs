@@ -38,47 +38,32 @@ public class Slot : MonoBehaviour, IDropHandler
     public void OnDrop(PointerEventData eventData)
     {
         GameObject targetObj = eventData.pointerDrag;
-        Drag drag = targetObj.GetComponent<Drag>();
-
-        Debug.Log(targetObj.name);
-        // 만약 쓰레기통에 넣는다면 해당 아이템 삭제
-        if (targetObj.CompareTag("Trash"))
-        {
-            targetObj.GetComponent<Slot>().item = null;
-            drag.isDraggable = false;
-            return;
-        }
-
-        Item targetItem = targetObj.GetComponent<Slot>().item;
-
-        Item tmp = targetItem;
-        targetItem = item;
-        item = tmp;
-
         Drag targetDrag = this.GetComponent<Drag>();
 
-        targetDrag.isDraggable = true;
-
-        targetDrag.defaultSize = targetDrag.isEquippedItem ? new Vector2(350, 350) : new Vector2(200, 200);
-
-        targetDrag.defaultSprite = targetDrag.image.sprite;
-
-        drag.isDraggable = false;
-
-        //Drag drag = dropObj.GetComponent<Drag>();
-        //Drag targetDrag = this.GetComponent<Drag>();
-
-        //if (drag != null)
-        //{ 
-        //    targetDrag.isDraggable = true;
-
-        //    targetDrag.defaultSize = targetDrag.isEquippedItem ? new Vector2(170, 170) : new Vector2(100, 100);
-
-
-        //    targetDrag.defaultSprite = drag.defaultSprite;
-        //    targetDrag.image.sprite = targetDrag.defaultSprite;
-
-        //    drag.defaultSprite = null;
+        //// 만약 쓰레기통에 넣는다면 해당 아이템 삭제
+        //if (targetObj.CompareTag("Trash"))
+        //{
+        //    targetObj.GetComponent<Slot>().item = null;
+        //    targetDrag.isDraggable = false;
+        //    return;
         //}
+
+        if (!targetDrag.isDraggable)
+        {
+            Item targetItem = targetObj.GetComponent<Slot>().item;
+            Drag drag = targetObj.GetComponent<Drag>();
+
+            Item tmp = targetItem;
+            targetItem = item;
+            item = tmp;
+
+            targetDrag.isDraggable = true;
+
+            targetDrag.defaultSize = targetDrag.isEquippedItem ? new Vector2(350, 350) : new Vector2(200, 200);
+
+            targetDrag.defaultSprite = targetDrag.image.sprite;
+
+            drag.isDraggable = false;
+        }
     }
 }
