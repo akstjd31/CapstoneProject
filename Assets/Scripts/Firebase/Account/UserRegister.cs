@@ -1,3 +1,4 @@
+using Firebase;
 using Firebase.Auth;
 using System;
 using System.Collections;
@@ -200,7 +201,16 @@ public class UserRegister : MonoBehaviour
             return;
         }
 
-        var continueRegister = await IsExistAccount(email, password);
+        bool continueRegister = false;
+
+        try
+        {
+            continueRegister = await IsExistAccount(email, password);
+        }
+        catch(FirebaseException e)
+        {
+            Debug.Log($"isExistAccount : {e.StackTrace}");
+        }
 
         if (!continueRegister)
         {
