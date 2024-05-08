@@ -19,9 +19,9 @@ public class EnemyCtrl : MonoBehaviour
     private Animator anim;
     private NavMeshAgent agent;
     private EnemyAI enemyAIScript;
+    private DropChanceCalculator dropCalc;
     private Rigidbody2D rigid;
     
-    private EnemyManager enemyManagerScript;
     [SerializeField] private Enemy enemy;
 
     public Slider HPBar;
@@ -108,6 +108,17 @@ public class EnemyCtrl : MonoBehaviour
         if (hpBar != null)
         {
             enemy.enemyData.hp -= status.attackDamage;
+
+            // 죽음
+            if (enemy.enemyData.hp <= 0)
+            {
+                anim.SetTrigger("Death");
+                rigid.velocity = Vector2.zero;
+                isDeath = true;
+                agent.isStopped = true;
+                dropCalc.SetLevel(status.level);    // 죽기 전에 본인을 죽인 플레이어의 레벨정보를 넘겨준다.
+                return;
+            }
         }
 
         if (playerViewID == enemyAIScript.GetFirstTarget().GetComponent<PhotonView>().ViewID)
@@ -128,15 +139,6 @@ public class EnemyCtrl : MonoBehaviour
     {
         if (!isDeath)
         {
-            // 죽음
-            if (enemy.enemyData.hp <= 0)
-            {
-                anim.SetTrigger("Death");
-                rigid.velocity = Vector2.zero;
-                isDeath = true;
-                agent.isStopped = true;
-            }
-
             // 속도가 0이 아니면 이동상태
             if (agent.velocity != Vector3.zero && 
                 state != State.ATTACK && 

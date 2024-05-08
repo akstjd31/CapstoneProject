@@ -429,11 +429,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
         if (moveDir.x > 0.0f)
         {
-            this.transform.localScale = new Vector3(1, 1, 1);
+            this.transform.localScale = new Vector3(-1, 1, 1);
         }
         else if (moveDir.x < 0.0f)
         {
-            this.transform.localScale = new Vector3(-1, 1, 1);
+            this.transform.localScale = new Vector3(1, 1, 1);
         }
 
         rigid.velocity = moveDir * movePower;
@@ -460,11 +460,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 방향벡터 x좌표의 값에 따른 캐릭터 반전
         if (mouseWorldPosition.x - this.transform.position.x > 0)
         {
-            this.transform.localScale = new Vector3(1, 1, 1);
+            this.transform.localScale = new Vector3(-1, 1, 1);
         }
         else
         {
-            this.transform.localScale = new Vector3(-1, 1, 1);
+            this.transform.localScale = new Vector3(1, 1, 1);
 
         }
 

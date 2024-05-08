@@ -20,6 +20,7 @@ TagManager:
   - Trash
   - Item
   - TriggerObj
+  - Store
   layers:
   - Default
   - TransparentFX
