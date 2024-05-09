@@ -3096,6 +3096,8 @@ GameObject:
   - component: {fileID: 1325594590015264874}
   - component: {fileID: 4853698200121417080}
   - component: {fileID: 6556765056833199813}
+  - component: {fileID: 5920831407722871345}
+  - component: {fileID: 6862011370198534358}
   m_Layer: 8
   m_Name: UnitRoot
   m_TagString: Enemy
@@ -3217,6 +3219,10 @@ MonoBehaviour:
   waitForSec: 1
   focusTarget: {fileID: 0}
   isLookingAtPlayer: 0
+  onTriggerCheckObj: {fileID: 0}
+  triggerCheck: {fileID: 0}
+  agroMeter1: 0
+  agroMeter2: 0
 --- !u!114 &8587959320221164470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3363,6 +3369,31 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 0
   m_TeleportEnabled: 0
   m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &5920831407722871345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5790117194044152227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 899cdfdd7e3c97d4bab60251b9051081, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerLevel: 1
+--- !u!114 &6862011370198534358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5790117194044152227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 277907847e604a34194ca9c18dcbf805, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6217272189837564785
 GameObject:
   m_ObjectHideFlags: 0

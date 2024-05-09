@@ -2044,6 +2044,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HP: 100
   MAXHP: 100
+  level: 1
+  maxLevel: 10
   attackDamage: 10
   attackSpeed: 1
   statInfo: {fileID: 0}
@@ -3653,7 +3655,7 @@ RectTransform:
   m_GameObject: {fileID: 8014477973157402509}
   m_LocalRotation: {x: -0, y: 0.008726557, z: -0, w: 0.9999619}
   m_LocalPosition: {x: 0, y: 0, z: 0.00015256465}
-  m_LocalScale: {x: -2, y: 2, z: 2}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3653973436958560024}

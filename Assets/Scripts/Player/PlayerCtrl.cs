@@ -138,13 +138,21 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             uiManager = canvas.GetComponent<UIManager>();
 
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
+            uiManager.hpBar.maxValue = status.MAXHP;
 
-            // HUD1 == otherPlayer
-            HUD hud1 = uiManager.hud1.GetComponent<HUD>();
-            hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
-            hud1.hpBar.maxValue = status.MAXHP;
+            if (GameObject.FindGameObjectsWithTag("Player").Length > 1)
+            {
+                GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+                otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
+            }
+
+            if (otherPlayer != null)
+            {
+                // HUD1 == otherPlayer
+                HUD hud1 = uiManager.hud1.GetComponent<HUD>();
+                hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
+                hud1.hpBar.maxValue = status.MAXHP;
+            }
         }
     }
 
@@ -541,52 +549,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 partySystemScript.leavingParty.gameObject.SetActive(false);
             }
-        }
-    }
-
-
-    [PunRPC]
-    void GetWeapon(int viewID)
-    {
-        // RPC로 전달된 PhotonView의 ID를 사용하여 해당 오브젝트를 찾음
-        PhotonView targetPhotonView = PhotonView.Find(viewID);
-
-        // 해당 viewID가 존재하는 경우
-        if (targetPhotonView != null)
-        {
-            string targetName = targetPhotonView.gameObject.name;
-
-            // 현 무기이름을 저장 (-7을 한 이유는 Clone 부분의 문자열을 빼주기 위함
-            weaponName = targetName.Substring(0, targetName.Length - 7);
-
-            // 무기교체 시 애니메이터 교체 (수정 필요)
-            SetAnimationController(weaponName);
-
-            //PlayerStatDisplay playerStatDisplay = playerStat.GetComponent<PlayerStatDisplay>();
-
-            // 현 플레이어 스탯 + 무기 스탯
-            ItemPickUp newItem = targetPhotonView.GetComponent<ItemPickUp>();
-            int atkDamage = status.attackDamage + newItem.GetDamage();
-            float atkSpeed = status.attackSpeed + newItem.GetSpeed();
-
-            // 적용
-            status.attackDamage = atkDamage;
-            status.attackSpeed = atkSpeed;
-
-            PhotonView.Destroy(targetPhotonView.gameObject);
-        }
-        else
-        {
-            Debug.Log("Not Found");
-        }
-    }
-
-    // 애니메이터 교체
-    void SetAnimationController(string name)
-    {
-        if (name.Equals("Sword"))
-        {
-            anim.runtimeAnimatorController = animController[0];
         }
     }
 

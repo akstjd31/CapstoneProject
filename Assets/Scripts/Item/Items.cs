@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 아이템 자체에 달려있는 스크립트
 public class Items : MonoBehaviour
 {
     public Item item;

@@ -20,6 +20,7 @@ public class EnemyCtrl : MonoBehaviour
     private NavMeshAgent agent;
     private EnemyAI enemyAIScript;
     private DropChanceCalculator dropCalc;
+    private DropItem dropItem;
     private Rigidbody2D rigid;
     
     [SerializeField] private Enemy enemy;
@@ -66,6 +67,8 @@ public class EnemyCtrl : MonoBehaviour
         anim = this.GetComponent<Animator>();
         agent = this.GetComponent<NavMeshAgent>();
         enemyAIScript = this.GetComponent<EnemyAI>();
+        dropItem = this.GetComponent<DropItem>();
+        dropCalc = this.GetComponent<DropChanceCalculator>();
         rigid = this.GetComponent<Rigidbody2D>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
 
@@ -113,9 +116,10 @@ public class EnemyCtrl : MonoBehaviour
             if (enemy.enemyData.hp <= 0)
             {
                 anim.SetTrigger("Death");
-                rigid.velocity = Vector2.zero;
+                enemyAIScript.enabled = false;
                 isDeath = true;
                 agent.isStopped = true;
+                rigid.velocity = Vector2.zero;
                 dropCalc.SetLevel(status.level);    // 죽기 전에 본인을 죽인 플레이어의 레벨정보를 넘겨준다.
                 return;
             }
@@ -228,6 +232,8 @@ public class EnemyCtrl : MonoBehaviour
         }
         else
         {
+            dropItem.SpawnDroppedItem();
+
             DestroyHPBar();
             PhotonNetwork.Destroy(this.gameObject);
         }

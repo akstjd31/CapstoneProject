@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 아이템 확률 계산 및 등급 반환
 public class DropChanceCalculator : MonoBehaviour
 {
     private List<string> tagName;   // 해당 스크립트를 가진 오브젝트의 태그에 따른 확률을 지정하기 위한 태그 리스트
     private float[][] levelInfo;
 
     // 적 관련
-    private float gradeDropProbability; // 등급별 아이템 드랍할 확률
+    [SerializeField] private float gradeDropProbability; // 등급별 아이템 드랍할 확률
     public int playerLevel = 1;  //  해당 적을 죽인 플레이어 컨트롤러
 
     private void Start()
@@ -20,10 +21,10 @@ public class DropChanceCalculator : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log(RandomDropItem() + "당첨!" + " 확률 : " + gradeDropProbability);
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    Debug.Log(RandomDropItem() + "당첨!" + " 확률 : " + gradeDropProbability);
+        //}
     }
 
     public void SetLevel(int level)
@@ -112,7 +113,7 @@ public class DropChanceCalculator : MonoBehaviour
             levelInfo[7] = new float[]  { 55,    33, 12  };
             levelInfo[8] = new float[]  { 50,    35, 15  };
             levelInfo[9] = new float[]  { 35,    45, 20  };
-            levelInfo[10] = new float[] { 25,   50, 25   };
+            levelInfo[10] = new float[] { 25,   50,  25  };
 
             return GetGrade(
                 levelInfo[playerLevel][0], levelInfo[playerLevel][1], levelInfo[playerLevel][2]

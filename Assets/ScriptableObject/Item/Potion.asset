@@ -15,3 +15,5 @@ MonoBehaviour:
   itemID: 101
   itemName: Potion
   itemImage: {fileID: 21300000, guid: e0a5f6a8b36a783488c2151df8bd4ba5, type: 3}
+  itemType: 0
+  prefab: {fileID: 1963447442334310042, guid: ff0502c6aa2742f43a90e619c28a2905, type: 3}
