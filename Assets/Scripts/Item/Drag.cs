@@ -6,10 +6,8 @@ using UnityEngine.EventSystems;
 
 public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
-    // ������ ��ġ
+    // 옮길 정보들
     public Vector2 defaultPos;
-
-    // ���� �θ� ����
     public Transform defaultParent;
     public Sprite defaultSprite;
     public Color defaultColor;
@@ -40,7 +38,7 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // Ư�� �������� ���� ������ ����� ���� ����
+        // 해당 슬롯에 아이템이 존재한다면
         if (isDraggable)
         {
             // parent.parent.parent = Bag
@@ -51,7 +49,7 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
         }
         else
         {
-            Debug.Log("�ش� �ڸ��� �������� �������� �ʽ��ϴ�!");
+            Debug.Log("슬롯에 아이템이 없습니다!");
         }
     }
 

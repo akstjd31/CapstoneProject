@@ -66,7 +66,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     RawImage DungeonImage;
     Button destroyButton;
 
-    GameObject inventory;
+    Inventory inventory;
 
     Vector3 mouseWorldPosition;
 
@@ -95,6 +95,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private bool isActiveSale = false;
     public bool isMoveRoom = false;
 
+    private Items items; // 바닥에 놓여있는 아이템
+
     public void SetState(State state)
     {
         this.state = state;
@@ -113,10 +115,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         status = this.GetComponent<Status>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
-        inventory = canvas.transform.Find("Inventory").gameObject;
+        inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
 
         recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
         state = State.NORMAL;
+        items = null;
 
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
@@ -136,13 +139,21 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             uiManager = canvas.GetComponent<UIManager>();
 
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
+            uiManager.hpBar.maxValue = status.MAXHP;
 
-            // HUD1 == otherPlayer
-            HUD hud1 = uiManager.hud1.GetComponent<HUD>();
-            hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
-            hud1.hpBar.maxValue = status.MAXHP;
+            if (GameObject.FindGameObjectsWithTag("Player").Length > 1)
+            {
+                GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+                otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
+            }
+
+            if (otherPlayer != null)
+            {
+                // HUD1 == otherPlayer
+                HUD hud1 = uiManager.hud1.GetComponent<HUD>();
+                hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
+                hud1.hpBar.maxValue = status.MAXHP;
+            }
         }
     }
 
@@ -199,7 +210,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                 // 공격 & 공격 쿨타임 끝나면
                 if (Input.GetMouseButtonDown(0) && isAttackCooldownOver &&
-                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.activeSelf)
+                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.gameObject.activeSelf)
                 {
                     state = State.ATTACK;
 
@@ -257,11 +268,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 // 인벤토리 열기
                 if (Input.GetKeyDown(KeyCode.I) && isDeactiveUI)
                 {
-                    inventory.SetActive(!inventory.activeSelf);
+                    inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
 
                     //UI에 보유 금액 표기
-                    if(inventory.activeSelf)
+                    if(inventory.gameObject.activeSelf)
                     {
+                        inventory.FreshSlot();  // 아이템 리스트를 인벤토리에 추가한다. 
                         GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
                     }
                 }
@@ -287,9 +299,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 //상점 테스트 전용
                 if (showOnSaleItem != null && Input.GetKeyDown(KeyCode.O))
                 {
-                    inventory.SetActive(!inventory.activeSelf);
+                    inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
                     //UI에 보유 금액 표기
-                    if (inventory.activeSelf)
+                    if (inventory.gameObject.activeSelf)
                     {
                         GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
                     }
@@ -302,6 +314,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     {
                         showOnSaleItem.ShowShopUI();
                     }
+                }
+
+                // 아이템 픽업
+                if (Input.GetKeyDown(KeyCode.Z) && items != null)
+                {
+                    inventory.GetComponent<Inventory>().AddItem(items.item);
+                    Destroy(items.gameObject);
                 }
             }
             else
@@ -419,11 +438,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
         if (moveDir.x > 0.0f)
         {
-            this.transform.localScale = new Vector3(1, 1, 1);
+            this.transform.localScale = new Vector3(-1, 1, 1);
         }
         else if (moveDir.x < 0.0f)
         {
-            this.transform.localScale = new Vector3(-1, 1, 1);
+            this.transform.localScale = new Vector3(1, 1, 1);
         }
 
         rigid.velocity = moveDir * movePower;
@@ -450,11 +469,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 방향벡터 x좌표의 값에 따른 캐릭터 반전
         if (mouseWorldPosition.x - this.transform.position.x > 0)
         {
-            this.transform.localScale = new Vector3(1, 1, 1);
+            this.transform.localScale = new Vector3(-1, 1, 1);
         }
         else
         {
-            this.transform.localScale = new Vector3(-1, 1, 1);
+            this.transform.localScale = new Vector3(1, 1, 1);
 
         }
 
@@ -534,58 +553,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
-
-    [PunRPC]
-    void GetWeapon(int viewID)
-    {
-        // RPC로 전달된 PhotonView의 ID를 사용하여 해당 오브젝트를 찾음
-        PhotonView targetPhotonView = PhotonView.Find(viewID);
-
-        // 해당 viewID가 존재하는 경우
-        if (targetPhotonView != null)
-        {
-            string targetName = targetPhotonView.gameObject.name;
-
-            // 현 무기이름을 저장 (-7을 한 이유는 Clone 부분의 문자열을 빼주기 위함
-            weaponName = targetName.Substring(0, targetName.Length - 7);
-
-            // 무기교체 시 애니메이터 교체 (수정 필요)
-            SetAnimationController(weaponName);
-
-            //PlayerStatDisplay playerStatDisplay = playerStat.GetComponent<PlayerStatDisplay>();
-
-            // 현 플레이어 스탯 + 무기 스탯
-            ItemPickUp newItem = targetPhotonView.GetComponent<ItemPickUp>();
-            int atkDamage = status.attackDamage + newItem.GetDamage();
-            float atkSpeed = status.attackSpeed + newItem.GetSpeed();
-
-            // 적용
-            status.attackDamage = atkDamage;
-            status.attackSpeed = atkSpeed;
-
-            PhotonView.Destroy(targetPhotonView.gameObject);
-        }
-        else
-        {
-            Debug.Log("Not Found");
-        }
-    }
-
-    // 애니메이터 교체
-    void SetAnimationController(string name)
-    {
-        if (name.Equals("Sword"))
-        {
-            anim.runtimeAnimatorController = animController[0];
-        }
-    }
-    //private void OnTriggerEnter2D(Collider2D other)
-    //{
-    //    if (other.CompareTag("Enemy"))
-    //    {
-    //        isPlayerInRangeOfEnemy = true;
-    //        enemyCtrl = other.GetComponent<EnemyCtrl>();
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if(isLobbyScene && other.name == "DungeonEntrance") //&& DungeonEnterCondition()
@@ -594,15 +561,18 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             DungeonCanvas.SetActive(true);
         }
 
-        if (other.CompareTag("Weapon")) {
-            
+        if (other.CompareTag("Item"))
+        {
+            items = other.GetComponent<Items>();
         }
-        //if (other.CompareTag("Enemy"))
-        //{
-        //    isPlayerInRangeOfEnemy = true;
-        //    enemyCtrl = other.GetComponent<EnemyCtrl>();
+    }
 
-        //}
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Item"))
+        {
+            items = null;
+        }
     }
 
     private void MakeDungeonMap()
@@ -647,13 +617,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
         DungeonCanvas.SetActive(false);
     }
-
-
-    // private void OnTriggerExit2D(Collider2D other)
-    // {
-    //     isPlayerInRangeOfEnemy = false;
-    //     enemyCtrl = null;
-    // }
 
     private bool DungeonEnterCondition()
     {

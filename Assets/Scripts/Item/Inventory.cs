@@ -32,6 +32,8 @@ public class Inventory : MonoBehaviour
 
         inventorySlots = intventorySlotParent.GetComponentsInChildren<Slot>();
         inventoryDrags = intventorySlotParent.GetComponentsInChildren<Drag>();
+
+        this.transform.SetAsLastSibling();
     }
 #endif
 
@@ -48,20 +50,15 @@ public class Inventory : MonoBehaviour
     public void FreshSlot()
     {
         int i = 0;
+        Item item = null;
 
-        if (items.Count > 0)
+        if (equippedDrag.isDraggable)
         {
-            equippedSlot.item = items[0];
-            equippedDrag.isDraggable = true;
-            i++;
-        }
-        else
-        {
-            equippedSlot.item = null;
-            equippedDrag.isDraggable = false;
+            item = equippedSlot.item;
+            items.Remove(item);
         }
 
-        for (; i < items.Count && i < inventorySlots.Length; i++)
+        for (i = 0; i < items.Count && i < inventorySlots.Length; i++)
         {
             inventorySlots[i].item = items[i];
             inventoryDrags[i].isDraggable = true;
@@ -70,6 +67,11 @@ public class Inventory : MonoBehaviour
         {
             inventorySlots[i].item = null;
             inventoryDrags[i].isDraggable = false;
+        }
+
+        if (item != null)
+        {
+            items.Add(item);
         }
     }
 
@@ -82,7 +84,7 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            print("½½·ÔÀÌ °¡µæ Â÷ ÀÖ½À´Ï´Ù.");
+            Debug.Log("ì•„ì´í…œ ê³µê°„ì´ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 
