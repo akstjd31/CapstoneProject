@@ -32,7 +32,7 @@ public class PlayerStatDisplay : MonoBehaviour
         }
         else
         {
-            //UpdateText((int)status.HP, playetCtrl.weaponName, status.attackDamage, status.attackSpeed);
+            UpdateText((int)status.HP, playetCtrl.weaponName, status.attackDamage, status.attackSpeed);
         }
     }
 

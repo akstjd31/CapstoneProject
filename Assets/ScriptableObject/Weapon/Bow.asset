@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
-  m_Name: Potion
+  m_Script: {fileID: 11500000, guid: 227368ab7eda94fe2ab3142bf744082b, type: 3}
+  m_Name: Bow
   m_EditorClassIdentifier: 
-  itemName: Potion
-  itemImage: {fileID: 21300000, guid: 276f58a9acae2424ba2a707919fea8b5, type: 3}
+  name: Bow
+  damage: 6
+  speed: 1.6
+  weaponType: 1
+  Prefab: {fileID: 0}
