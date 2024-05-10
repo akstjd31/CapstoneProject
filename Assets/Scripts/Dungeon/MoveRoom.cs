@@ -12,21 +12,11 @@ public class MoveRoom : MonoBehaviour
         dir = this.transform.localRotation * Vector3.up;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Trigger");
         if (other.tag == "Player")
         {
-            other.GetComponent<PlayerCtrl>().isMoveRoom = true;
-            Debug.Log("Player");
             other.transform.Translate(dir * 5.0f);
-            Debug.Log("Translate");
         }
     }
 }

@@ -219,6 +219,11 @@ public class RoomController : MonoBehaviourPunCallbacks
     }
     private IEnumerator CreateRoom()
     {
+        while(dungeonManager.coroutineNum >= 1)
+        {
+            yield return new WaitForSeconds(1.0f);
+        }
+        dungeonManager.coroutineNum++;
         if(this.transform.position.x > dungeonManager.farherstX)
         {
             dungeonManager.farherstX = (int)this.transform.position.x;
@@ -459,6 +464,7 @@ public class RoomController : MonoBehaviourPunCallbacks
                 }
             }
         }
+        dungeonManager.coroutineNum--;
         yield break;
     }
 }
