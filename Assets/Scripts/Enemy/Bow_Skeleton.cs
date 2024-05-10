@@ -7,9 +7,11 @@ public class Bow_Skeleton : Enemy
     public override void InitSetting()
     {
         enemyData.name = "Skeleton";
-        enemyData.hp = 80;
-        enemyData.attackDamage = 7;
+        enemyData.hp = 90;
+        enemyData.attackDamage = 25;
         enemyData.attackDelayTime = 1.5f;
+        enemyData.moveSpeed = 5;
+        enemyData.evasionRate = 0;
         enemyData.enemyType = EnemyType.LONG_DISTANCE;
     }
 }
