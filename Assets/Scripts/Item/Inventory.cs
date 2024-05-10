@@ -75,16 +75,17 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public int GetInventorySlotLength()
+    {
+        return inventorySlots.Length;
+    }
+
     public void AddItem(Item item)
     {
         if (items.Count < inventorySlots.Length)
         {
             items.Add(item);
             FreshSlot();
-        }
-        else
-        {
-            Debug.Log("아이템 공간이 없습니다.");
         }
     }
 

@@ -12,12 +12,15 @@ public class Status : MonoBehaviourPunCallbacks
         NickName = 0, HP, Weapon, RollCoolTime
     }
 
-    public float HP = 100; // 체력
-    public float MAXHP = 100; // 최대 체력
-    public int level = 1; // 플레이어 레벨
+    public float HP; // 체력
+    public float MAXHP; // 최대 체력
+    public int level = 0; // 플레이어 레벨
     public int maxLevel = 10; // 플레이어의 최대 레벨
-    public int attackDamage = 5; // 공격력
-    public float attackSpeed = 1.0f; // 공격 속도
+    public int attackDamage; // 공격력
+    //public float attackSpeed; // 공격 속도
+    public int moveSpeed = 5; // 이동 속도
+    public int evasionRate = 5; // 회피율
+    public string charType; // 직업
 
     [SerializeField] private Transform statInfo; // 플레이어의 스탯 정보
     public Text[] stats; // 스탯 정보가 담긴 텍스트
@@ -35,6 +38,25 @@ public class Status : MonoBehaviourPunCallbacks
         // 태그로 찾은 후에 텍스트 집어넣기
         //statInfo = GameObject.FindGameObjectWithTag("StatInfo").transform;
         //stats = statInfo.GetChild(0).GetComponentsInChildren<Text>();
+
+        charType = this.transform.name;
+
+        if (charType.Equals("Warrior"))
+        {
+            InitSetting(200, 34);
+        }
+        else if (charType.Equals("Archer"))
+        {
+            InitSetting(125, 38);
+        }
+
+        MAXHP = HP;
+    }
+
+    private void InitSetting(int hp, int attackDamage)
+    {
+        this.HP = hp;
+        this.attackDamage = attackDamage;
     }
 
     private void Update()
@@ -68,20 +90,5 @@ public class Status : MonoBehaviourPunCallbacks
         stats[(int)TextList.HP].text = "HP: " + HP;
         stats[(int)TextList.Weapon].text = "Weapon: " + playerCtrl.weaponName;
         //PrintRollCoolTimeText();
-    }
-
-    // 구르기는 사용 후 남은 쿨타임 계산때만 보임
-    void PrintRollCoolTimeText()
-    {
-        if (playerCtrl.rollCoolTime <= 0.0f)
-        {
-            stats[(int)TextList.RollCoolTime].gameObject.SetActive(false);
-            stats[(int)TextList.RollCoolTime].text = "RollCoolTime: " + playerCtrl.rollCoolTime;
-        }
-        else
-        {
-            stats[(int)TextList.RollCoolTime].gameObject.SetActive(true);
-            stats[(int)TextList.RollCoolTime].text = "RollCoolTime: " + playerCtrl.rollCoolTime.ToString("F3");
-        }
     }
 }

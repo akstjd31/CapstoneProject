@@ -125,13 +125,20 @@ public class EnemyCtrl : MonoBehaviour
             }
         }
 
-        if (playerViewID == enemyAIScript.GetFirstTarget().GetComponent<PhotonView>().ViewID)
+        if (enemyAIScript.GetSecondTarget() == null)
         {
             enemyAIScript.aggroMeter1 += status.attackDamage;
         }
         else
         {
-            enemyAIScript.aggroMeter2 += status.attackDamage;
+            if (playerViewID == enemyAIScript.GetFirstTarget().GetComponent<PhotonView>().ViewID)
+            {
+                enemyAIScript.aggroMeter1 += status.attackDamage;
+            }
+            else
+            {
+                enemyAIScript.aggroMeter2 += status.attackDamage;
+            }
         }
 
         playerAttackDirection = attackDirection;
@@ -290,12 +297,14 @@ public class EnemyCtrl : MonoBehaviour
         }
     }
 
-    // 애내메이션 이벤트 호출 함수
+    // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrow = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
-        arrow.GetComponent<Arrow>().SetTarget(targetPos);
-        arrow.GetComponent<Arrow>().SetDamage(enemy.enemyData.attackDamage);
+        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+        Arrow arrow = arrowPrefab.GetComponent<Arrow>();
+        arrow.SetTarget(targetPos);
+        arrow.SetDamage(enemy.enemyData.attackDamage);
+        arrow.SetOwner(this.tag);
 
         state = State.NORMAL;
         restTime = 0.0f;

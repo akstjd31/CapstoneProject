@@ -23,11 +23,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         NORMAL, MOVE, ATTACK, ATTACKED, DIE
     }
-    public float movePower = 5f; // 이동에 필요한 힘
-    public float rollSpeed;  // 구르는 속도
-    public float attackDistanceSpeed; // 공격 시 이동하는 속도
-    public float rollCoolTime = 0.0f; // 구르기 쿨타임
 
+    public float attackDistanceSpeed; // 공격 시 이동하는 속도
 
     [SerializeField] private bool isPlayerInRangeOfEnemy = false; // 공격가능한 범위인지 아닌지?
     private EnemyCtrl enemyCtrl = null; // 공격한 적의 정보
@@ -97,6 +94,15 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     private Items items; // 바닥에 놓여있는 아이템
 
+    // 바닥에 떨어진 아이템 체크포인트
+    public Transform itemCheckPoint;
+    public float itemCheckRange;
+    public LayerMask itemLayers;
+
+    // 원거리 발사 위치와 발사체
+    public Transform firePoint;
+    public Transform projectile;
+
     public void SetState(State state)
     {
         this.state = state;
@@ -117,7 +123,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
 
-        recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
         state = State.NORMAL;
         items = null;
 
@@ -138,6 +143,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
             uiManager = canvas.GetComponent<UIManager>();
+            recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
 
             uiManager.hpBar.maxValue = status.MAXHP;
 
@@ -221,13 +227,29 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     // 플레이어가 보고 있는 방향에 따른 공격방향
                     //SetDirection();
 
-                    attackDistanceSpeed = 14f;
-                    isAttackCooldownOver = false;
-
-                    // 적을 공격한 상태.
-                    if (isPlayerInRangeOfEnemy)
+                    if (status.charType.Equals("Warrior"))
                     {
-                        enemyCtrl.GetComponent<PhotonView>().RPC("EnemyAttackedPlayer", RpcTarget.All, status.attackDamage);
+                        attackDistanceSpeed = 14f;
+                        isAttackCooldownOver = false;
+
+                        // 적을 공격한 상태.
+                        if (isPlayerInRangeOfEnemy)
+                        {
+                            enemyCtrl.GetComponent<PhotonView>().RPC("EnemyAttackedPlayer", RpcTarget.All, status.attackDamage);
+                        }
+                    }
+                    else
+                    {
+                        rigid.velocity = Vector2.zero;
+                        // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
+                        if (mouseWorldPosition.x - this.transform.position.x > 0)
+                        {
+                            this.transform.localScale = new Vector3(-1, 1, 1);
+                        }
+                        else
+                        {
+                            this.transform.localScale = new Vector3(1, 1, 1);
+                        }
                     }
                 }
 
@@ -319,8 +341,15 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 // 아이템 픽업
                 if (Input.GetKeyDown(KeyCode.Z) && items != null)
                 {
-                    inventory.GetComponent<Inventory>().AddItem(items.item);
-                    Destroy(items.gameObject);
+                    if (inventory.items.Count < inventory.GetInventorySlotLength())
+                    {
+                        inventory.GetComponent<Inventory>().AddItem(items.item);
+                        Destroy(items.gameObject);
+                    }
+                    else
+                    {
+                        Debug.Log("인벤토리에 공간이 없습니다!");
+                    }
                 }
             }
             else
@@ -357,6 +386,26 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     break;
             }
         }
+    }
+
+    // 겹쳐져있는 아이템의 우선순위를 확인하여 먹는다.
+    private Items CheckItemPriority()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(itemCheckPoint.position, itemCheckRange, itemLayers);
+
+        int maxIdx = 0;
+        if (colliders.Length > 2)
+        {
+            for (var i = 1; i < colliders.Length; i++)
+            {
+                if (colliders[maxIdx].GetComponent<SpriteRenderer>().sortingOrder < colliders[i].GetComponent<SpriteRenderer>().sortingOrder)
+                {
+                    maxIdx = i;
+                }
+            }
+        }
+
+        return colliders[maxIdx].GetComponent<Items>();
     }
 
     public void DeathAnimEvent()
@@ -445,49 +494,69 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             this.transform.localScale = new Vector3(1, 1, 1);
         }
 
-        rigid.velocity = moveDir * movePower;
+        rigid.velocity = moveDir * status.moveSpeed;
     }
 
     void Attack()
     {
-        // 공격 범위에 포함된 적
-        hitEnemies = Physics2D.OverlapCircle(attackPoint.position, attackRange, enemyLayers);
-
-        if (hitEnemies != null)
+        if (status.charType.Equals("Warrior"))
         {
-            EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+            // 공격 범위에 포함된 적
+            hitEnemies = Physics2D.OverlapCircle(attackPoint.position, attackRange, enemyLayers);
 
-            if (enemyCtrl != null && !enemyCtrl.onHit)
+            if (hitEnemies != null)
             {
-                enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, mouseWorldPosition - this.transform.position);
+                EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+
+                if (enemyCtrl != null && !enemyCtrl.onHit)
+                {
+                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, mouseWorldPosition - this.transform.position);
+                }
             }
         }
     }
 
     void AttackDirection()
     {
-        // 방향벡터 x좌표의 값에 따른 캐릭터 반전
-        if (mouseWorldPosition.x - this.transform.position.x > 0)
+        if (status.charType.Equals("Warrior"))
         {
-            this.transform.localScale = new Vector3(-1, 1, 1);
+            // 방향벡터 x좌표의 값에 따른 캐릭터 반전
+            if (mouseWorldPosition.x - this.transform.position.x > 0)
+            {
+                this.transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else
+            {
+                this.transform.localScale = new Vector3(1, 1, 1);
+
+            }
+
+            // 문제점 : 현재 마우스 위치가 가까우면 플레이어가 조금만 이동함.
+            rigid.velocity = (mouseWorldPosition - this.transform.position).normalized * attackDistanceSpeed;
+
+            float attackSpeedDropMultiplier = 5f; // 감소되는 정도
+            attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // 실제 나아가는 거리 계산
+
+            if (attackDistanceSpeed < 0.5f)
+            {
+                rigid.velocity = Vector2.zero;
+                state = State.NORMAL;
+            }
         }
-        else
-        {
-            this.transform.localScale = new Vector3(1, 1, 1);
+    }
 
-        }
+    // 애니메이션 이벤트 호출 함수
+    public void Fire()
+    {
+        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+        Arrow arrow = arrowPrefab.GetComponent<Arrow>();
+        arrow.SetTarget(mouseWorldPosition);
+        arrow.SetDamage(status.attackDamage);
+        arrow.SetSpeed(4);
+        arrow.SetOwner(this.tag);
+        arrow.SetViewID(pv.ViewID);
 
-        // 문제점 : 현재 마우스 위치가 가까우면 플레이어가 조금만 이동함.
-        rigid.velocity = (mouseWorldPosition - this.transform.position).normalized * attackDistanceSpeed;
-
-        float attackSpeedDropMultiplier = 5f; // 감소되는 정도
-        attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // 실제 나아가는 거리 계산
-
-        if (attackDistanceSpeed < 0.5f)
-        {
-            rigid.velocity = Vector2.zero;
-            state = State.NORMAL;
-        }
+        state = State.NORMAL;
     }
 
     //// 2D 캐릭터 방향 결정
@@ -560,10 +629,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             //던전 선택창 출력
             DungeonCanvas.SetActive(true);
         }
+    }
 
-        if (other.CompareTag("Item"))
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Item") && items == null)
         {
-            items = other.GetComponent<Items>();
+            items = CheckItemPriority();
         }
     }
 
@@ -658,6 +730,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             return;
 
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-        
+
+        if (itemCheckPoint == null)
+            return;
+
+        Gizmos.DrawWireSphere(itemCheckPoint.position, itemCheckRange);
+
     }
 }

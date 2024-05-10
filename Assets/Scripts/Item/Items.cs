@@ -11,16 +11,30 @@ public class Items : MonoBehaviour
     private Vector3 endPos;
     public float lerpTime = 1.0f;
 
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
     private Vector3 targetVelocity = Vector3.zero;
+
+    public Transform checkPoint;
+    public LayerMask itemLayers;
+    public float range;
+    private bool hasPriority = false;
 
     private void Start()
     {
         startPos = transform.position;
         endPos = new Vector2(startPos.x, startPos.y + 0.5f);
+
+        spriteRenderer = this.GetComponent<SpriteRenderer>();
     }
 
     private void Update()
     {
+        if (!hasPriority)
+        {
+            PrioritySetting();
+        }
+
         // 부드럽게 이동
         transform.position = Vector3.SmoothDamp(transform.position, endPos, ref targetVelocity, lerpTime);
 
@@ -31,5 +45,30 @@ public class Items : MonoBehaviour
             startPos = endPos;
             endPos = tmp;
         }
+    }
+
+    private void PrioritySetting()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(checkPoint.position, range, itemLayers);
+        int triggerCount = 0;
+
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.isTrigger) // Trigger Collider 확인
+            {
+                triggerCount++;
+            }
+        }
+
+        spriteRenderer.sortingOrder = triggerCount + 1;
+        hasPriority = true;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (checkPoint == null)
+            return;
+
+        Gizmos.DrawWireSphere(checkPoint.position, range);
     }
 }

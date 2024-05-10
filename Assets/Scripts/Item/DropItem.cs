@@ -14,10 +14,10 @@ public class DropItem : MonoBehaviour
 
     private void Update()
     {
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    SpawnDroppedItem();
-        //}
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            SpawnDroppedItem();
+        }
     }
 
     public void SpawnDroppedItem()

@@ -1845,7 +1845,7 @@ GameObject:
   - component: {fileID: 7167822924147623151}
   - component: {fileID: 8926237017230244871}
   m_Layer: 7
-  m_Name: UnitRoot
+  m_Name: Warrior
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1863,6 +1863,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5333576331982244535}
   - {fileID: 7117730854833785047}
   - {fileID: 412918821328581671}
   m_Father: {fileID: 6367398623077263358}
@@ -1952,6 +1953,12 @@ MonoBehaviour:
     m_Bits: 256
   onHit: 0
   enemyAttackDirection: {x: 0, y: 0, z: 0}
+  isMoveRoom: 0
+  itemCheckPoint: {fileID: 5333576331982244535}
+  itemCheckRange: 0.8
+  itemLayers:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!114 &5726380531837837366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2048,6 +2055,7 @@ MonoBehaviour:
   maxLevel: 10
   attackDamage: 10
   attackSpeed: 1
+  charType: 
   statInfo: {fileID: 0}
   stats: []
 --- !u!114 &9018133177964143318
@@ -2505,6 +2513,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &4914246585736872729
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5333576331982244535}
+  m_Layer: 0
+  m_Name: ItemCheckPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5333576331982244535
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4914246585736872729}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3653973436958560024}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4929162409493902508
 GameObject:
   m_ObjectHideFlags: 0
@@ -3061,7 +3100,7 @@ Transform:
   m_Children:
   - {fileID: 6629045266908914456}
   m_Father: {fileID: 3653973436958560024}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7441431672253917928
 GameObject:
@@ -3640,7 +3679,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6367398623077263358}
   m_Layer: 5
-  m_Name: Unit000
+  m_Name: Warrior
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4044,7 +4083,7 @@ Transform:
   - {fileID: 619869081115003118}
   - {fileID: 7425693430046562127}
   m_Father: {fileID: 3653973436958560024}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8647605981059499726
 MonoBehaviour:

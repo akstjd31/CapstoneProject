@@ -25,6 +25,7 @@ public class CharType : MonoBehaviour
     private GameObject nickname_canvas;
     private TextMeshProUGUI nickname_input;
     private Text nickname_Error_Text;
+    private PhotonManager photonManager;
 
     private const string explane_warrior = "전사 직업 설명";
     private const string explane_archer = "아처 직업 설명";
@@ -55,6 +56,7 @@ public class CharType : MonoBehaviour
         nickname_canvas = GameObject.Find("Nickname");
         nickname_input = nickname_canvas.GetComponentInChildren<TextMeshProUGUI>();
         nickname_Error_Text = GameObject.Find("nickname_errMsg").GetComponent<Text>();
+        photonManager = GameObject.Find("PhotonManager").GetComponent<PhotonManager>();
 
 
         explane.SetActive(false);
@@ -118,12 +120,12 @@ public class CharType : MonoBehaviour
             if (click_obj == warrior)
             {
                 charType_input.text = "`전사` 직업을 선택하시겠습니까?";
-                selectedCharType = "warrior";
+                selectedCharType = "Warrior";
             }
             else if (click_obj == archer)
             {
                 charType_input.text = "`아처` 직업을 선택하시겠습니까?";
-                selectedCharType = "archer";
+                selectedCharType = "Archer";
             }
 
             //ui 종료
@@ -133,6 +135,8 @@ public class CharType : MonoBehaviour
                 charType_canvas.SetActive(false);
                 isCharTypeCanvas = false;
             }
+
+            photonManager.SetCharType(selectedCharType);
         }
     }
 
