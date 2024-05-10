@@ -14,29 +14,39 @@ public class CharType : MonoBehaviour
 {
     UserInfoManager userInfoManager;
     FirebaseUser currentUser;
+
     [SerializeField]
     private GameObject warrior;
     [SerializeField]
     private GameObject archer;
+
     private GameObject explane;
+    private Text explane_Title;
     private Text explane_Text;
+
     private GameObject charType_canvas;
     private Text charType_input;
+    private string selectedCharType = "";
+
     private GameObject nickname_canvas;
-    private TextMeshProUGUI nickname_input;
+    private TMP_InputField nickname_input;
     private Text nickname_Error_Text;
     private PhotonManager photonManager;
+    private Button nickname_submit;
 
-    private const string explane_warrior = "전사 직업 설명";
-    private const string explane_archer = "아처 직업 설명";
+    private const string explane_warrior = "전사는 강력한 근접 전투 능력을 가진 전투 전문가입니다.\n" +
+        "전사는 강력한 근접 무기를 사용하여 적을 공격합니다.\n" +
+        "전사는 높은 방어력으로 적들을 끌어들이거나 집중 공격을 하여 전장을 지배하는 데 탁월합니다.";
+    private const string explane_archer = "아처는 원거리 공격에 능숙한 전문가입니다.\n" +
+        "전투 중에는 일반적으로 적들로부터 멀리 떨어져 유리한 위치에서 공격하며,\n" +
+        "그들의 빠른 속도와 정확한 조준 능력을 활용하여 전투의 결과를 좌우할 수 있습니다.";
 
     private bool isCharTypeCanvas = false;
     private bool isNicknameCanvas = false;
+
     Vector2 pos;
     RaycastHit2D hit;
     GameObject click_obj;
-
-    private string selectedCharType = "";
 
     // Start is called before the first frame update
     void Start()
@@ -49,19 +59,52 @@ public class CharType : MonoBehaviour
 
         warrior = GameObject.Find("Inner_Field_Warrior");
         archer = GameObject.Find("Inner_Field_Archer");
-        explane = GameObject.Find("Char_Explanation");
-        explane_Text = explane.GetComponentInChildren<Text>();
-        charType_canvas = GameObject.Find("CharType_Confirm");
-        charType_input = charType_canvas.GetComponentInChildren<Text>();
-        nickname_canvas = GameObject.Find("Nickname");
-        nickname_input = nickname_canvas.GetComponentInChildren<TextMeshProUGUI>();
-        nickname_Error_Text = GameObject.Find("nickname_errMsg").GetComponent<Text>();
-        photonManager = GameObject.Find("PhotonManager").GetComponent<PhotonManager>();
 
+        explane = GameObject.Find("Char_Explanation");
+        Transform bgTransform = explane.transform.Find("bg");
+        explane_Title = bgTransform.transform.Find("Explane_Title").GetComponent<Text>();
+        explane_Text = bgTransform.transform.Find("Explane_Text").GetComponent<Text>();
+
+        charType_canvas = GameObject.Find("CharType_Confirm");
+        bgTransform = charType_canvas.transform.Find("bg");
+        charType_input = bgTransform.GetComponentInChildren<Text>();
+
+        nickname_canvas = GameObject.Find("Nickname");
+        bgTransform = nickname_canvas.transform.Find("bg");
+        nickname_input = bgTransform.GetComponentInChildren<TMP_InputField>();
+        nickname_Error_Text = bgTransform.Find("nickname_errMsg").GetComponent<Text>();
+        nickname_submit = bgTransform.Find("btn_nickname_yes").GetComponent<Button>();
 
         explane.SetActive(false);
         charType_canvas.SetActive(false);
         nickname_canvas.SetActive(false);
+    }
+
+    public void OnEndEdit()
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            if (!string.IsNullOrEmpty(nickname_input.text))
+            {
+                nickname_submit.onClick.Invoke();
+            }
+            else
+            {
+                nickname_Error_Text.text = "닉네임을 입력해주세요";
+            }
+        }
+    }
+
+    public void OnEndEditTMP()
+    {
+        if (!string.IsNullOrEmpty(nickname_input.text))
+        {
+            nickname_submit.onClick.Invoke();
+        }
+        else
+        {
+            nickname_Error_Text.text = "닉네임을 입력해주세요";
+        }
     }
 
     void Update()
@@ -88,12 +131,14 @@ public class CharType : MonoBehaviour
                 {
                     explane.SetActive(true);
                     explane.transform.position = pos;
+                    explane_Title.text = "전사";
                     explane_Text.text = explane_warrior;
                 }
                 else if (hit.collider.gameObject == archer)
                 {
                     explane.SetActive(true);
                     explane.transform.position = pos;
+                    explane_Title.text = "아처";
                     explane_Text.text = explane_archer;
                 }
             }
@@ -192,8 +237,6 @@ public class CharType : MonoBehaviour
 
         Debug.Log("닉네임 설정 비동기 작업 완료");
         PhotonManager.ConnectWithRegister();
-        //테스트 용 코드
-        //SceneManager.LoadScene("TestScene");
     }
 
     private async Task<bool> IsDuplicationNickname_Async(string input)
