@@ -164,12 +164,12 @@ public class CharType : MonoBehaviour
             if (click_obj == warrior)
             {
                 charType_input.text = "`전사` 직업을 선택하시겠습니까?";
-                selectedCharType = "warrior";
+                selectedCharType = "Warrior";
             }
             else if (click_obj == archer)
             {
                 charType_input.text = "`아처` 직업을 선택하시겠습니까?";
-                selectedCharType = "archer";
+                selectedCharType = "Archer";
             }
 
             //ui 종료
@@ -180,7 +180,7 @@ public class CharType : MonoBehaviour
                 isCharTypeCanvas = false;
             }
 
-            //GameObject.Find("PhotonManager").GetComponent<PhotonManager>().SetCharType(selectedCharType);
+            GameObject.Find("PhotonManager").GetComponent<PhotonManager>().SetCharType(selectedCharType);
         }
     }
 

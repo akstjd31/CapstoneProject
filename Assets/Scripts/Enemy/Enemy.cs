@@ -10,6 +10,8 @@ public struct EnemyData
     public int hp;
     public int attackDamage;
     public float attackDelayTime;
+    public int moveSpeed;
+    public int evasionRate; // 회피율
     public EnemyType enemyType;
 }
 public enum EnemyType
