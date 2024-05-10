@@ -26,7 +26,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private GameObject onTriggerCheckObj;
     [SerializeField] private TriggerCheck triggerCheck;
 
-    public int aggroMeter1, aggroMeter2;  // 어그로미터기
+    public int agroMeter1, agroMeter2;  // 어그로미터기
 
     // Start is called before the first frame update
     void Start()
@@ -37,7 +37,7 @@ public class EnemyAI : MonoBehaviour
 
         enemyPV = this.GetComponent<PhotonView>();
 
-        aggroMeter1 = 0; aggroMeter2 = 0;
+        agroMeter1 = 0; agroMeter2 = 0;
     }
 
     // Update is called once per frame
@@ -97,7 +97,7 @@ public class EnemyAI : MonoBehaviour
         if (target1 != null && target2 != null)
         {
             // 어그로 미터에 따른 타겟 변경
-            if (aggroMeter1 > aggroMeter2)
+            if (agroMeter1 > agroMeter2)
             {
 
                 focusTarget = target1;

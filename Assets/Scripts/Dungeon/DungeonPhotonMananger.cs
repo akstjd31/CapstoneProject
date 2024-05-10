@@ -10,9 +10,6 @@ public class DungeonPhotonMananger : MonoBehaviourPunCallbacks
 
     PhotonView canvasPV;
     PartySystem partySystemScript;
-
-    private string charType;
-    private string[] charTypeList = new string[] { "Warrior", "Archer" };
     void Start()
     {
         
@@ -36,10 +33,6 @@ public class DungeonPhotonMananger : MonoBehaviourPunCallbacks
         }
     }
 
-    public void SetCharType(string charType)
-    {
-        this.charType = charType;
-    }
 
     public void CreateRoom() 
     {
@@ -86,20 +79,7 @@ public class DungeonPhotonMananger : MonoBehaviourPunCallbacks
         base.OnJoinedRoom();
 
         Debug.Log("방 입장 성공");
-
-        if (charType != "")
-        {
-            if (charType.Equals(charTypeList[0]))
-            {
-                PhotonNetwork.Instantiate(charTypeList[0], Vector2.zero, Quaternion.identity);
-            }
-            else if (charType.Equals(charTypeList[1]))
-            {
-
-                PhotonNetwork.Instantiate(charTypeList[1], Vector2.zero, Quaternion.identity);
-            }
-        }
-        
+        PhotonNetwork.Instantiate("Unit000", Vector2.zero, Quaternion.identity);
     }
 
     public override void OnLeftLobby()

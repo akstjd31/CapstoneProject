@@ -7,7 +7,7 @@ public class Arrow : MonoBehaviour
 {
     [SerializeField] private float speed = 6f;
     private Vector3 targetPos;
-    private string owner = "";  // ì´ í™”ì‚´ì„ ìœ ì‚¬ëŒ?
+    private string owner = "";  // ÀÌ È­»ìÀ» ½ğ »ç¶÷?
 
     private int playerViewID = -1;
 

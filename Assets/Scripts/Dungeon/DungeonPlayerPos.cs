@@ -5,10 +5,24 @@ using UnityEngine;
 
 public class DungeonPlayerPos : MonoBehaviour
 {
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("asdfasdf");
         if(other.tag == "Player")
         {   
+            Debug.Log("Player");
             DungeonManager.playerRoomPos = this.transform.position;
         }
     }
