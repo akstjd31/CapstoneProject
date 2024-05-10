@@ -180,7 +180,7 @@ public class CharType : MonoBehaviour
                 isCharTypeCanvas = false;
             }
 
-            GameObject.Find("PhotonManager").GetComponent<PhotonManager>().SetCharType(selectedCharType);
+            //GameObject.Find("PhotonManager").GetComponent<PhotonManager>().SetCharType(selectedCharType);
         }
     }
 

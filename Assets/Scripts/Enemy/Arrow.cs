@@ -7,14 +7,31 @@ public class Arrow : MonoBehaviour
 {
     [SerializeField] private float speed = 6f;
     private Vector3 targetPos;
+    private string owner = "";  // 이 화살을 쏜 사람?
+
+    private int playerViewID = -1;
 
     private int damage;
 
     private Rigidbody2D rigid;
 
+    public void SetViewID(int viewID)
+    {
+        this.playerViewID = viewID;
+    }
+    public void SetOwner(string owner)
+    {
+        this.owner = owner;
+    }
+
     public void SetDamage(int damage)
     {
         this.damage = damage;
+    }
+
+    public void SetSpeed(float speed)
+    {
+        this.speed = speed;
     }
 
     public void SetTarget(Vector3 targetPos)
@@ -57,7 +74,7 @@ public class Arrow : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !owner.Equals(other.tag))
         {
             PlayerCtrl player = other.GetComponent<PlayerCtrl>();
 
