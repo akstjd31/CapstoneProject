@@ -23,13 +23,13 @@ public class NpcShop : MonoBehaviour
     }
 
     //release method
-    //»óÁ¡¿¡ ³ëÃâÇÒ ¾ÆÀÌÅÛÀ» »ý¼ºÇÒ ¶§, °¢ ¹öÆ°¿¡ µî·Ï
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½
     public static void BuyItem(int itemKey)
     {
         //read item name
         Debug.Log($"called BuyItem method : {itemKey}");
-        //Áö±ÝÀº 1°³¾¿ ±¸¸Å °¡´É
-        //ÃßÈÄ UI¸¦ ÅëÇØ ¿©·¯ °³ ±¸¸Å Áö¿ø ¿¹Á¤
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        //ï¿½ï¿½ï¿½ï¿½ UIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         BuyItem(101, itemKey, 1);
     }
 
@@ -57,7 +57,7 @@ public class NpcShop : MonoBehaviour
             int money = 0;
 
             //Debug.Log($"npcType : {npcType}");
-            //±¸¸Å °¡´ÉÇÑ npc
+            //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ npc
             if (npcType == 0 || npcType == 1)
             {
                 int itemCost = ItemSell.BuyItemCost(itemKey);
@@ -69,7 +69,7 @@ public class NpcShop : MonoBehaviour
 
                 money = itemCost * count;
 
-                //À¯ÀúÀÇ µ·ÀÌ ÃæºÐÇÑÁö °Ë»ç
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½
                 int userMoney = await UserInfoManager.GetUserMoney_Async();
                 //Debug.Log($"userMoney : {userMoney}");
                 if (userMoney < money)
@@ -77,7 +77,7 @@ public class NpcShop : MonoBehaviour
                     throw new NpcStoreException("No money, you can't buy this item");
                 }
 
-                //±¸¸Å¸¦ ¿Ï·áÇÏ°í À¯ÀúÀÇ µ·À» Áõ°¨½ÃÅ´
+                //ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½Ï·ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å´
                 AdjustMoney(-money);
             }
             else
@@ -107,7 +107,7 @@ public class NpcShop : MonoBehaviour
             int money = 0;
 
             //Debug.Log($"npcType : {npcType}");
-            //ÆÇ¸Å °¡´ÉÇÑ npc
+            //ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ npc
             if (npcType == 0 || npcType == 2)
             {
                 int itemCost = ItemSell.SellItemCost(itemKey);
@@ -117,7 +117,7 @@ public class NpcShop : MonoBehaviour
                     throw new NpcStoreException("you can't sell this item");
                 }
 
-                //ÆÇ¸Å¸¦ ¿Ï·áÇÏ°í À¯ÀúÀÇ µ·À» Áõ°¨½ÃÅ´
+                //ï¿½Ç¸Å¸ï¿½ ï¿½Ï·ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å´
                 money = itemCost * count;
                 AdjustMoney(money);
             }
@@ -148,33 +148,33 @@ public class NpcShop : MonoBehaviour
 
         DocumentReference doc_npc = coll_npc.Document(npcKey.ToString());
 
-        // npcÀÇ Å°¿¡ ÇØ´çÇÏ´Â ¹®¼­ °¡Á®¿À±â
+        // npcï¿½ï¿½ Å°ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         DocumentSnapshot npcSnapshot = await doc_npc.GetSnapshotAsync();
 
         if (npcSnapshot.Exists)
         {
-            // npcKey¿¡ ÇØ´çÇÏ´Â µ¥ÀÌÅÍ°¡ Á¸ÀçÇÏ´Â °æ¿ì
+            // npcKeyï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½
             Dictionary<string, object> npcData = npcSnapshot.ToDictionary();
 
-            // npcKey¿¡ ÇØ´çÇÏ´Â µ¥ÀÌÅÍ¿¡¼­ sellType °¡Á®¿À±â
+            // npcKeyï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ sellType ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (npcData.ContainsKey("sellType"))
             {
-                // sellType °ªÀ» ¹ÝÈ¯
+                // sellType ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
                 object sellTypeObj = npcData["sellType"];
                 if (sellTypeObj is long sellTypeLong)
                 {
-                    // longÀ¸·Î Ä³½ºÆÃÇÑ µÚ int·Î º¯È¯
+                    // longï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ intï¿½ï¿½ ï¿½ï¿½È¯
                     return (int)sellTypeLong;
                 }
                 else
                 {
-                    // Ä³½ºÆÃ ºÒ°¡´ÉÇÑ °æ¿ì null ¹ÝÈ¯
+                    // Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ null ï¿½ï¿½È¯
                     throw new NpcStoreException("Failed GetNpcType : npcData[\"sellType\"] can't be cast to int");
                 }
             }
         }
 
-        // npcÀÇ Å°¿¡ ÇØ´çÇÏ´Â µ¥ÀÌÅÍ°¡ ¾ø°Å³ª sellTypeÀÌ ¾ø´Â °æ¿ì ±âº»°ªÀÎ -1 ¹ÝÈ¯
+        // npcï¿½ï¿½ Å°ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½Å³ï¿½ sellTypeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½âº»ï¿½ï¿½ï¿½ï¿½ -1 ï¿½ï¿½È¯
         return -1;
     }
 
@@ -185,10 +185,10 @@ public class NpcShop : MonoBehaviour
 
     private static async void MakeNpcShopDB_Async()
     {
-        // Firestore ÀÎ½ºÅÏ½º »ý¼º
+        // Firestore ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
-        // µ¥ÀÌÅÍ¸¦ ÀúÀåÇÒ ÄÃ·º¼Ç°ú ¹®¼­ ÂüÁ¶
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         CollectionReference coll_npc = db.Collection("NpcInfo");
 
         string npcName = "";
@@ -197,17 +197,17 @@ public class NpcShop : MonoBehaviour
         bool isLastNpc = false;
         Dictionary<string, object> npcContainer;
 
-        //npc °ø¿ë µ¥ÀÌÅÍ(ÇÊ¿ä ½Ã Ãß°¡)
+        //npc ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½Ê¿ï¿½ ï¿½ï¿½ ï¿½ß°ï¿½)
 
-        //°³º° npc µ¥ÀÌÅÍ
+        //ï¿½ï¿½ï¿½ï¿½ npc ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         while (true)
         {
             switch (npcKey)
             {
                 case 101:
                     npcName = "A";
-                    sellType = 0;               //0 : ÆÇ¸Å/±¸¸Å °¡´É, 1 : À¯Àú°¡ ±¸¸Å¸¸ °¡´É, 2 : À¯Àú°¡ ÆÇ¸Å¸¸ °¡´É
-                    shopKind = 1001;            //shopKind°¡ µ¿ÀÏÇÏ¸é µ¿ÀÏÇÑ ¾ÆÀÌÅÛÀ» ÆÇ¸Å (+ 1000~ : Àåºñ, 2000~ : ¼Ò¸ðÇ°)
+                    sellType = 0;               //0 : ï¿½Ç¸ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, 1 : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½, 2 : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¸Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+                    shopKind = 1001;            //shopKindï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¸ï¿½ (+ 1000~ : ï¿½ï¿½ï¿½, 2000~ : ï¿½Ò¸ï¿½Ç°)
                     break;
                 case 102:
                     npcName = "B";

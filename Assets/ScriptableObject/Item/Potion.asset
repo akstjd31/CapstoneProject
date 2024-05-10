@@ -12,5 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
   m_Name: Potion
   m_EditorClassIdentifier: 
+  itemID: 101
   itemName: Potion
-  itemImage: {fileID: 21300000, guid: 276f58a9acae2424ba2a707919fea8b5, type: 3}
+  itemImage: {fileID: 21300000, guid: e0a5f6a8b36a783488c2151df8bd4ba5, type: 3}
+  itemType: 0
+  characterType: Achor
+  prefab: {fileID: 1963447442334310042, guid: ff0502c6aa2742f43a90e619c28a2905, type: 3}

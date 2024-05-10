@@ -19,9 +19,10 @@ public class EnemyCtrl : MonoBehaviour
     private Animator anim;
     private NavMeshAgent agent;
     private EnemyAI enemyAIScript;
+    private DropChanceCalculator dropCalc;
+    private DropItem dropItem;
     private Rigidbody2D rigid;
     
-    private EnemyManager enemyManagerScript;
     [SerializeField] private Enemy enemy;
 
     public Slider HPBar;
@@ -66,6 +67,8 @@ public class EnemyCtrl : MonoBehaviour
         anim = this.GetComponent<Animator>();
         agent = this.GetComponent<NavMeshAgent>();
         enemyAIScript = this.GetComponent<EnemyAI>();
+        dropItem = this.GetComponent<DropItem>();
+        dropCalc = this.GetComponent<DropChanceCalculator>();
         rigid = this.GetComponent<Rigidbody2D>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
 
@@ -108,15 +111,34 @@ public class EnemyCtrl : MonoBehaviour
         if (hpBar != null)
         {
             enemy.enemyData.hp -= status.attackDamage;
+
+            // 죽음
+            if (enemy.enemyData.hp <= 0)
+            {
+                anim.SetTrigger("Death");
+                enemyAIScript.enabled = false;
+                isDeath = true;
+                agent.isStopped = true;
+                rigid.velocity = Vector2.zero;
+                dropCalc.SetLevel(status.level);    // 죽기 전에 본인을 죽인 플레이어의 레벨정보를 넘겨준다.
+                return;
+            }
         }
 
-        if (playerViewID == enemyAIScript.GetFirstTarget().GetComponent<PhotonView>().ViewID)
+        if (enemyAIScript.GetSecondTarget() == null)
         {
-            enemyAIScript.agroMeter1 += status.attackDamage;
+            enemyAIScript.aggroMeter1 += status.attackDamage;
         }
         else
         {
-            enemyAIScript.agroMeter2 += status.attackDamage;
+            if (playerViewID == enemyAIScript.GetFirstTarget().GetComponent<PhotonView>().ViewID)
+            {
+                enemyAIScript.aggroMeter1 += status.attackDamage;
+            }
+            else
+            {
+                enemyAIScript.aggroMeter2 += status.attackDamage;
+            }
         }
 
         playerAttackDirection = attackDirection;
@@ -128,15 +150,6 @@ public class EnemyCtrl : MonoBehaviour
     {
         if (!isDeath)
         {
-            // 죽음
-            if (enemy.enemyData.hp <= 0)
-            {
-                anim.SetTrigger("Death");
-                rigid.velocity = Vector2.zero;
-                isDeath = true;
-                agent.isStopped = true;
-            }
-
             // 속도가 0이 아니면 이동상태
             if (agent.velocity != Vector3.zero && 
                 state != State.ATTACK && 
@@ -226,6 +239,8 @@ public class EnemyCtrl : MonoBehaviour
         }
         else
         {
+            dropItem.SpawnDroppedItem();
+
             DestroyHPBar();
             PhotonNetwork.Destroy(this.gameObject);
         }
@@ -282,12 +297,14 @@ public class EnemyCtrl : MonoBehaviour
         }
     }
 
-    // 애내메이션 이벤트 호출 함수
+    // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrow = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
-        arrow.GetComponent<Arrow>().SetTarget(targetPos);
-        arrow.GetComponent<Arrow>().SetDamage(enemy.enemyData.attackDamage);
+        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+        Arrow arrow = arrowPrefab.GetComponent<Arrow>();
+        arrow.SetTarget(targetPos);
+        arrow.SetDamage(enemy.enemyData.attackDamage);
+        arrow.SetOwner(this.tag);
 
         state = State.NORMAL;
         restTime = 0.0f;
