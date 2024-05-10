@@ -144,7 +144,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     partyCreator.SetActive(false);
                     playerCtrl.party.SetPartyLeaderID(playerCtrl.GetComponent<PhotonView>().ViewID);
                     readyButton[0].SetActive(true);
-                    createPartyButton.SetActive(false);
+
                     partyMemberHUD[0].GetComponentInChildren<Text>().text = PhotonNetwork.NickName;
                     break;
                 }

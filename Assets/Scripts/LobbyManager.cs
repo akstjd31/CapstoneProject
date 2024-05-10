@@ -10,15 +10,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     PhotonView canvasPV;
     PartySystem partySystemScript;
-    PhotonManager photonManager;
-
-    private string[] charTypeList;
     void Start()
     {
         canvasPV = GameObject.FindGameObjectWithTag("Canvas").GetComponent<PhotonView>();
         partySystemScript = canvasPV.GetComponent<PartySystem>();
-        photonManager = GameObject.Find("PhotonManager").GetComponent<PhotonManager>();
-
         if (PhotonNetwork.IsConnected)
         {
             // 이미 생성된 방 목록 가져오기
@@ -38,9 +33,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 CreateRoom();
             }
         }
-
-        charTypeList = new string[] { "Warrior", "Archer" };
-}
+    }
 
     private void Update()
     {
@@ -114,17 +107,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         Debug.Log("방 입장 성공");
         //PhotonNetwork.Instantiate("Player", Vector2.zero, Quaternion.identity);
-
-        // 만약 전사를 택했다면
-        if (photonManager.GetCharType().Equals(charTypeList[0]))
-        {
-            PhotonNetwork.Instantiate(charTypeList[0], Vector2.zero, Quaternion.identity);
-        }
-        else if (photonManager.GetCharType().Equals(charTypeList[1]))
-        {
-            PhotonNetwork.Instantiate(charTypeList[1], Vector2.zero, Quaternion.identity);
-        }
-        
+        PhotonNetwork.Instantiate("Unit000", Vector2.zero, Quaternion.identity);
     }
 
     public override void OnLeftLobby()

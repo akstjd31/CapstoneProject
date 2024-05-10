@@ -31,7 +31,6 @@ public class CharType : MonoBehaviour
     private GameObject nickname_canvas;
     private TMP_InputField nickname_input;
     private Text nickname_Error_Text;
-    private PhotonManager photonManager;
     private Button nickname_submit;
 
     private const string explane_warrior = "전사는 강력한 근접 전투 능력을 가진 전투 전문가입니다.\n" +
@@ -165,12 +164,12 @@ public class CharType : MonoBehaviour
             if (click_obj == warrior)
             {
                 charType_input.text = "`전사` 직업을 선택하시겠습니까?";
-                selectedCharType = "Warrior";
+                selectedCharType = "warrior";
             }
             else if (click_obj == archer)
             {
                 charType_input.text = "`아처` 직업을 선택하시겠습니까?";
-                selectedCharType = "Archer";
+                selectedCharType = "archer";
             }
 
             //ui 종료
@@ -180,8 +179,6 @@ public class CharType : MonoBehaviour
                 charType_canvas.SetActive(false);
                 isCharTypeCanvas = false;
             }
-
-            photonManager.SetCharType(selectedCharType);
         }
     }
 
