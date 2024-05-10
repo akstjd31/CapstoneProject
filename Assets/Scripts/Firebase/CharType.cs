@@ -31,7 +31,6 @@ public class CharType : MonoBehaviour
     private GameObject nickname_canvas;
     private TMP_InputField nickname_input;
     private Text nickname_Error_Text;
-    private PhotonManager photonManager;
     private Button nickname_submit;
 
     private const string explane_warrior = "전사는 강력한 근접 전투 능력을 가진 전투 전문가입니다.\n" +
@@ -181,7 +180,7 @@ public class CharType : MonoBehaviour
                 isCharTypeCanvas = false;
             }
 
-            photonManager.SetCharType(selectedCharType);
+            GameObject.Find("PhotonManager").GetComponent<PhotonManager>().SetCharType(selectedCharType);
         }
     }
 

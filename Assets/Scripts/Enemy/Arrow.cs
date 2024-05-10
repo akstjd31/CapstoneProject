@@ -47,6 +47,8 @@ public class Arrow : MonoBehaviour
     private void Start()
     {
         rigid = this.GetComponent<Rigidbody2D>();
+
+        Destroy(this.gameObject, 2f);
     }
 
     private void Update()
@@ -62,16 +64,11 @@ public class Arrow : MonoBehaviour
             {
                 shootDir = (targetPos - this.transform.position).normalized;
             }
-            
+
             rigid.velocity = shootDir * speed;
 
             float angle = Mathf.Atan2(rigid.velocity.y, rigid.velocity.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-
-            if (rigid.velocity == Vector2.zero)
-            {
-                Destroy(this.gameObject);
-            }
         }
     }
 
@@ -81,7 +78,7 @@ public class Arrow : MonoBehaviour
         {
             PlayerCtrl player = other.GetComponent<PlayerCtrl>();
 
-            if (player != null && !player.onHit)
+            if (player != null && !player.onHit && rigid.velocity != Vector2.zero)
             {
                 player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, damage, targetPos - this.transform.position);
             }
@@ -93,7 +90,7 @@ public class Arrow : MonoBehaviour
         {
             EnemyCtrl enemy = other.GetComponent<EnemyCtrl>();
 
-            if (enemy != null && !enemy.onHit)
+            if (enemy != null && !enemy.onHit && rigid.velocity != Vector2.zero)
             {
                 enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, targetPos - this.transform.position);
             }

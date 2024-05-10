@@ -1933,10 +1933,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aa87683afba2484591396bb91594d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movePower: 5
-  rollSpeed: 0
   attackDistanceSpeed: 0
-  rollCoolTime: 0
   isPlayerInRangeOfEnemy: 0
   isAttackCooldownOver: 1
   attackCoolTime: 1
@@ -1959,6 +1956,8 @@ MonoBehaviour:
   itemLayers:
     serializedVersion: 2
     m_Bits: 512
+  firePoint: {fileID: 0}
+  projectile: {fileID: 0}
 --- !u!114 &5726380531837837366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2054,7 +2053,8 @@ MonoBehaviour:
   level: 1
   maxLevel: 10
   attackDamage: 10
-  attackSpeed: 1
+  moveSpeed: 5
+  evasionRate: 5
   charType: 
   statInfo: {fileID: 0}
   stats: []
