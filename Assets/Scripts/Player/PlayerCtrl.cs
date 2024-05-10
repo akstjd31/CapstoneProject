@@ -23,11 +23,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         NORMAL, MOVE, ATTACK, ATTACKED, DIE
     }
-    public float movePower = 5f; // 이동에 필요한 힘
-    public float rollSpeed;  // 구르는 속도
-    public float attackDistanceSpeed; // 공격 시 이동하는 속도
-    public float rollCoolTime = 0.0f; // 구르기 쿨타임
 
+    public float attackDistanceSpeed; // 공격 시 이동하는 속도
 
     [SerializeField] private bool isPlayerInRangeOfEnemy = false; // 공격가능한 범위인지 아닌지?
     private EnemyCtrl enemyCtrl = null; // 공격한 적의 정보
@@ -66,7 +63,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     RawImage DungeonImage;
     Button destroyButton;
 
-    GameObject inventory;
+    Inventory inventory;
 
     Vector3 mouseWorldPosition;
 
@@ -93,6 +90,18 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     private ShowOnSaleItem showOnSaleItem;  //상점
     private bool isActiveSale = false;
+    public bool isMoveRoom = false;
+
+    private Items items; // 바닥에 놓여있는 아이템
+
+    // 바닥에 떨어진 아이템 체크포인트
+    public Transform itemCheckPoint;
+    public float itemCheckRange;
+    public LayerMask itemLayers;
+
+    // 원거리 발사 위치와 발사체
+    public Transform firePoint;
+    public Transform projectile;
 
     public void SetState(State state)
     {
@@ -112,10 +121,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         status = this.GetComponent<Status>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
-        inventory = canvas.transform.Find("Inventory").gameObject;
+        inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
 
-        recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
         state = State.NORMAL;
+        items = null;
 
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
@@ -134,14 +143,23 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
             uiManager = canvas.GetComponent<UIManager>();
+            recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
 
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
+            uiManager.hpBar.maxValue = status.MAXHP;
 
-            // HUD1 == otherPlayer
-            HUD hud1 = uiManager.hud1.GetComponent<HUD>();
-            hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
-            hud1.hpBar.maxValue = status.MAXHP;
+            if (GameObject.FindGameObjectsWithTag("Player").Length > 1)
+            {
+                GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+                otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
+            }
+
+            if (otherPlayer != null)
+            {
+                // HUD1 == otherPlayer
+                HUD hud1 = uiManager.hud1.GetComponent<HUD>();
+                hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
+                hud1.hpBar.maxValue = status.MAXHP;
+            }
         }
     }
 
@@ -198,7 +216,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                 // 공격 & 공격 쿨타임 끝나면
                 if (Input.GetMouseButtonDown(0) && isAttackCooldownOver &&
-                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.activeSelf)
+                    !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.gameObject.activeSelf)
                 {
                     state = State.ATTACK;
 
@@ -209,13 +227,29 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     // 플레이어가 보고 있는 방향에 따른 공격방향
                     //SetDirection();
 
-                    attackDistanceSpeed = 14f;
-                    isAttackCooldownOver = false;
-
-                    // 적을 공격한 상태.
-                    if (isPlayerInRangeOfEnemy)
+                    if (status.charType.Equals("Warrior"))
                     {
-                        enemyCtrl.GetComponent<PhotonView>().RPC("EnemyAttackedPlayer", RpcTarget.All, status.attackDamage);
+                        attackDistanceSpeed = 14f;
+                        isAttackCooldownOver = false;
+
+                        // 적을 공격한 상태.
+                        if (isPlayerInRangeOfEnemy)
+                        {
+                            enemyCtrl.GetComponent<PhotonView>().RPC("EnemyAttackedPlayer", RpcTarget.All, status.attackDamage);
+                        }
+                    }
+                    else
+                    {
+                        rigid.velocity = Vector2.zero;
+                        // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
+                        if (mouseWorldPosition.x - this.transform.position.x > 0)
+                        {
+                            this.transform.localScale = new Vector3(-1, 1, 1);
+                        }
+                        else
+                        {
+                            this.transform.localScale = new Vector3(1, 1, 1);
+                        }
                     }
                 }
 
@@ -256,11 +290,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 // 인벤토리 열기
                 if (Input.GetKeyDown(KeyCode.I) && isDeactiveUI)
                 {
-                    inventory.SetActive(!inventory.activeSelf);
+                    inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
 
                     //UI에 보유 금액 표기
-                    if(inventory.activeSelf)
+                    if(inventory.gameObject.activeSelf)
                     {
+                        inventory.FreshSlot();  // 아이템 리스트를 인벤토리에 추가한다. 
                         GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
                     }
                 }
@@ -286,9 +321,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 //상점 테스트 전용
                 if (showOnSaleItem != null && Input.GetKeyDown(KeyCode.O))
                 {
-                    inventory.SetActive(!inventory.activeSelf);
+                    inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
                     //UI에 보유 금액 표기
-                    if (inventory.activeSelf)
+                    if (inventory.gameObject.activeSelf)
                     {
                         GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
                     }
@@ -300,6 +335,20 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     else
                     {
                         showOnSaleItem.ShowShopUI();
+                    }
+                }
+
+                // 아이템 픽업
+                if (Input.GetKeyDown(KeyCode.Z) && items != null)
+                {
+                    if (inventory.items.Count < inventory.GetInventorySlotLength())
+                    {
+                        inventory.GetComponent<Inventory>().AddItem(items.item);
+                        Destroy(items.gameObject);
+                    }
+                    else
+                    {
+                        Debug.Log("인벤토리에 공간이 없습니다!");
                     }
                 }
             }
@@ -337,6 +386,26 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     break;
             }
         }
+    }
+
+    // 겹쳐져있는 아이템의 우선순위를 확인하여 먹는다.
+    private Items CheckItemPriority()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(itemCheckPoint.position, itemCheckRange, itemLayers);
+
+        int maxIdx = 0;
+        if (colliders.Length > 2)
+        {
+            for (var i = 1; i < colliders.Length; i++)
+            {
+                if (colliders[maxIdx].GetComponent<SpriteRenderer>().sortingOrder < colliders[i].GetComponent<SpriteRenderer>().sortingOrder)
+                {
+                    maxIdx = i;
+                }
+            }
+        }
+
+        return colliders[maxIdx].GetComponent<Items>();
     }
 
     public void DeathAnimEvent()
@@ -418,56 +487,76 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
         if (moveDir.x > 0.0f)
         {
-            this.transform.localScale = new Vector3(1, 1, 1);
+            this.transform.localScale = new Vector3(-1, 1, 1);
         }
         else if (moveDir.x < 0.0f)
         {
-            this.transform.localScale = new Vector3(-1, 1, 1);
+            this.transform.localScale = new Vector3(1, 1, 1);
         }
 
-        rigid.velocity = moveDir * movePower;
+        rigid.velocity = moveDir * status.moveSpeed;
     }
 
     void Attack()
     {
-        // 공격 범위에 포함된 적
-        hitEnemies = Physics2D.OverlapCircle(attackPoint.position, attackRange, enemyLayers);
-
-        if (hitEnemies != null)
+        if (status.charType.Equals("Warrior"))
         {
-            EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+            // 공격 범위에 포함된 적
+            hitEnemies = Physics2D.OverlapCircle(attackPoint.position, attackRange, enemyLayers);
 
-            if (enemyCtrl != null && !enemyCtrl.onHit)
+            if (hitEnemies != null)
             {
-                enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, mouseWorldPosition - this.transform.position);
+                EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+
+                if (enemyCtrl != null && !enemyCtrl.onHit)
+                {
+                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, mouseWorldPosition - this.transform.position);
+                }
             }
         }
     }
 
     void AttackDirection()
     {
-        // 방향벡터 x좌표의 값에 따른 캐릭터 반전
-        if (mouseWorldPosition.x - this.transform.position.x > 0)
+        if (status.charType.Equals("Warrior"))
         {
-            this.transform.localScale = new Vector3(1, 1, 1);
+            // 방향벡터 x좌표의 값에 따른 캐릭터 반전
+            if (mouseWorldPosition.x - this.transform.position.x > 0)
+            {
+                this.transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else
+            {
+                this.transform.localScale = new Vector3(1, 1, 1);
+
+            }
+
+            // 문제점 : 현재 마우스 위치가 가까우면 플레이어가 조금만 이동함.
+            rigid.velocity = (mouseWorldPosition - this.transform.position).normalized * attackDistanceSpeed;
+
+            float attackSpeedDropMultiplier = 5f; // 감소되는 정도
+            attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // 실제 나아가는 거리 계산
+
+            if (attackDistanceSpeed < 0.5f)
+            {
+                rigid.velocity = Vector2.zero;
+                state = State.NORMAL;
+            }
         }
-        else
-        {
-            this.transform.localScale = new Vector3(-1, 1, 1);
+    }
 
-        }
+    // 애니메이션 이벤트 호출 함수
+    public void Fire()
+    {
+        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+        Arrow arrow = arrowPrefab.GetComponent<Arrow>();
+        arrow.SetTarget(mouseWorldPosition);
+        arrow.SetDamage(status.attackDamage);
+        arrow.SetSpeed(4);
+        arrow.SetOwner(this.tag);
+        arrow.SetViewID(pv.ViewID);
 
-        // 문제점 : 현재 마우스 위치가 가까우면 플레이어가 조금만 이동함.
-        rigid.velocity = (mouseWorldPosition - this.transform.position).normalized * attackDistanceSpeed;
-
-        float attackSpeedDropMultiplier = 5f; // 감소되는 정도
-        attackDistanceSpeed -= attackDistanceSpeed * attackSpeedDropMultiplier * Time.deltaTime; // 실제 나아가는 거리 계산
-
-        if (attackDistanceSpeed < 0.5f)
-        {
-            rigid.velocity = Vector2.zero;
-            state = State.NORMAL;
-        }
+        state = State.NORMAL;
     }
 
     //// 2D 캐릭터 방향 결정
@@ -533,58 +622,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
-
-    [PunRPC]
-    void GetWeapon(int viewID)
-    {
-        // RPC로 전달된 PhotonView의 ID를 사용하여 해당 오브젝트를 찾음
-        PhotonView targetPhotonView = PhotonView.Find(viewID);
-
-        // 해당 viewID가 존재하는 경우
-        if (targetPhotonView != null)
-        {
-            string targetName = targetPhotonView.gameObject.name;
-
-            // 현 무기이름을 저장 (-7을 한 이유는 Clone 부분의 문자열을 빼주기 위함
-            weaponName = targetName.Substring(0, targetName.Length - 7);
-
-            // 무기교체 시 애니메이터 교체 (수정 필요)
-            SetAnimationController(weaponName);
-
-            //PlayerStatDisplay playerStatDisplay = playerStat.GetComponent<PlayerStatDisplay>();
-
-            // 현 플레이어 스탯 + 무기 스탯
-            ItemPickUp newItem = targetPhotonView.GetComponent<ItemPickUp>();
-            int atkDamage = status.attackDamage + newItem.GetDamage();
-            float atkSpeed = status.attackSpeed + newItem.GetSpeed();
-
-            // 적용
-            status.attackDamage = atkDamage;
-            status.attackSpeed = atkSpeed;
-
-            PhotonView.Destroy(targetPhotonView.gameObject);
-        }
-        else
-        {
-            Debug.Log("Not Found");
-        }
-    }
-
-    // 애니메이터 교체
-    void SetAnimationController(string name)
-    {
-        if (name.Equals("Sword"))
-        {
-            anim.runtimeAnimatorController = animController[0];
-        }
-    }
-    //private void OnTriggerEnter2D(Collider2D other)
-    //{
-    //    if (other.CompareTag("Enemy"))
-    //    {
-    //        isPlayerInRangeOfEnemy = true;
-    //        enemyCtrl = other.GetComponent<EnemyCtrl>();
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if(isLobbyScene && other.name == "DungeonEntrance") //&& DungeonEnterCondition()
@@ -592,16 +629,22 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             //던전 선택창 출력
             DungeonCanvas.SetActive(true);
         }
+    }
 
-        if (other.CompareTag("Weapon")) {
-            
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Item") && items == null)
+        {
+            items = CheckItemPriority();
         }
-        //if (other.CompareTag("Enemy"))
-        //{
-        //    isPlayerInRangeOfEnemy = true;
-        //    enemyCtrl = other.GetComponent<EnemyCtrl>();
+    }
 
-        //}
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Item"))
+        {
+            items = null;
+        }
     }
 
     private void MakeDungeonMap()
@@ -647,13 +690,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         DungeonCanvas.SetActive(false);
     }
 
-
-    // private void OnTriggerExit2D(Collider2D other)
-    // {
-    //     isPlayerInRangeOfEnemy = false;
-    //     enemyCtrl = null;
-    // }
-
     private bool DungeonEnterCondition()
     {
         Debug.Log($"name : {pv.name}");
@@ -694,6 +730,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             return;
 
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-        
+
+        if (itemCheckPoint == null)
+            return;
+
+        Gizmos.DrawWireSphere(itemCheckPoint.position, itemCheckRange);
+
     }
 }
