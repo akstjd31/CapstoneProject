@@ -32,7 +32,7 @@ public class DropChanceCalculator : MonoBehaviour
         this.playerLevel = level;
     }
 
-    // 아이템 등급 반환 (0 : 커먼, 1 : 레어, 2 : 레전더리)
+    // 아이템 등급 반환
     private ItemType GetGrade(float common, float rare, float legendary)
     {
         if (gradeDropProbability <= common)

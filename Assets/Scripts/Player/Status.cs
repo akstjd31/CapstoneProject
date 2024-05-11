@@ -39,8 +39,6 @@ public class Status : MonoBehaviourPunCallbacks
         //statInfo = GameObject.FindGameObjectWithTag("StatInfo").transform;
         //stats = statInfo.GetChild(0).GetComponentsInChildren<Text>();
 
-        charType = this.transform.name;
-
         if (charType.Equals("Warrior"))
         {
             InitSetting(200, 34);

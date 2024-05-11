@@ -121,6 +121,7 @@ public class EnemyCtrl : MonoBehaviour
                 agent.isStopped = true;
                 rigid.velocity = Vector2.zero;
                 dropCalc.SetLevel(status.level);    // 죽기 전에 본인을 죽인 플레이어의 레벨정보를 넘겨준다.
+                dropItem.SetCharType(status.charType);
                 return;
             }
         }

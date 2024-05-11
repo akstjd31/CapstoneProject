@@ -8,13 +8,20 @@ public enum ItemType
     COMMON, RARE, LEGENDARY
 }
 
+public enum CharacterType
+{ 
+    WARRIOR, ARCHER
+}
+
+
 [CreateAssetMenu(fileName = "Item", menuName = "ScriptableObject/Item")]
 public class Item : ScriptableObject
 {
     public int itemID;  // 아이템 ID
     public string itemName;
+    public int attackDamage;
     public Sprite itemImage;
     public ItemType itemType;
-    public string characterType;
+    public CharacterType charType;
     public GameObject prefab;
 }

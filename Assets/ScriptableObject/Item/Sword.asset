@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemID: 102
   itemName: Sword
+  attackDamage: 15
   itemImage: {fileID: 21300000, guid: 4c95fe17dc195e34ab3e54f3fe208111, type: 3}
   itemType: 2
-  characterType: Warrior
+  charType: 0
   prefab: {fileID: 733507182535477584, guid: 72245fac38274274fa7ca113f59c0ddc, type: 3}

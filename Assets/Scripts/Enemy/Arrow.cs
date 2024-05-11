@@ -69,6 +69,14 @@ public class Arrow : MonoBehaviour
 
             float angle = Mathf.Atan2(rigid.velocity.y, rigid.velocity.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+            if (owner.Equals("Enemy"))
+            {
+                if (rigid.velocity == Vector2.zero)
+                {
+                    Destroy(this.gameObject);
+                }
+            }
         }
     }
 
@@ -95,6 +103,11 @@ public class Arrow : MonoBehaviour
                 enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, targetPos - this.transform.position);
             }
 
+            Destroy(this.gameObject);
+        }
+
+        else if (other.CompareTag("Obstacle"))
+        {
             Destroy(this.gameObject);
         }
     }

@@ -22,6 +22,7 @@ TagManager:
   - TriggerObj
   - Store
   - PhotonManager
+  - Obstacle
   layers:
   - Default
   - TransparentFX

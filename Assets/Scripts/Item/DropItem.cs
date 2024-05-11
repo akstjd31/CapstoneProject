@@ -6,6 +6,7 @@ using UnityEngine;
 public class DropItem : MonoBehaviour
 {
     private DropChanceCalculator dropCalc;
+    private string charType = "";   // 직업 정보
     // Start is called before the first frame update
     void Start()
     {
@@ -20,12 +21,17 @@ public class DropItem : MonoBehaviour
         }
     }
 
+    public void SetCharType(string charType)
+    {
+        this.charType = charType;
+    }
+
     public void SpawnDroppedItem()
     {
         ItemManager itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
         Item spawnItem;
 
-        spawnItem = itemManager.GetRandomItemWithProbability(dropCalc.RandomDropItem());
+        spawnItem = itemManager.GetRandomItemWithProbability(dropCalc.RandomDropItem(), charType); 
 
         Instantiate(spawnItem.prefab, this.transform.position, Quaternion.identity); 
     }
