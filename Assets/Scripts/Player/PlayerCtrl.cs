@@ -89,8 +89,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private float deathTime = 1.0f;
 
     private ShowOnSaleItem showOnSaleItem;  //상점
+    private GameObject[] npcList;           //npc
     private bool isActiveSale = false;
     public bool isMoveRoom = false;
+    private float interactionDist = 2f;     //상호작용 거리
+    private GameObject npcParent;
 
     private Items items; // 바닥에 놓여있는 아이템
 
@@ -122,6 +125,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
+        showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();    //상점
+        npcParent = GameObject.Find("npc"); // find npc
+        npcList = null;
 
         state = State.NORMAL;
         items = null;
@@ -134,9 +140,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             //던전 선택 canvas 생성
             MakeDungeonMap();
-
-            //상점 테스트
-            showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();
         }
 
         // 던전 씬
@@ -318,26 +321,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     PartyHUDActive();
                 }
 
-                //상점 테스트 전용
-                if (showOnSaleItem != null && Input.GetKeyDown(KeyCode.O))
-                {
-                    inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
-                    //UI에 보유 금액 표기
-                    if (inventory.gameObject.activeSelf)
-                    {
-                        GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
-                    }
-
-                    if (isActiveSale)
-                    {
-                        showOnSaleItem.CloseShopUI();
-                    }
-                    else
-                    {
-                        showOnSaleItem.ShowShopUI();
-                    }
-                }
-
                 // 아이템 픽업
                 if (Input.GetKeyDown(KeyCode.Z) && items != null)
                 {
@@ -349,6 +332,69 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     else
                     {
                         Debug.Log("인벤토리에 공간이 없습니다!");
+                    }
+                }
+
+                //store off
+                if(isActiveSale)
+                {
+                    bool inRange = false;
+
+                    foreach (var npc in npcList)
+                    {
+                        float distance = Vector3.Distance(npc.transform.position, transform.position);
+                        Debug.Log($"dist : {npc.name} => {distance}");
+
+                        if (distance <= interactionDist && showOnSaleItem != null)
+                        {
+                            inRange = true;
+                            break;
+                        }
+                    }
+
+                    if(!inRange)
+                    {
+                        showOnSaleItem.CloseShopUI();
+                        inventory.gameObject.SetActive(false);
+                        isActiveSale = false;
+                    }
+                }
+
+                //store on/off (close to npc)
+                if (Input.GetKeyDown(KeyCode.O))
+                {
+                    //close UI
+                    if(isActiveSale)
+                    {
+                        showOnSaleItem.CloseShopUI();
+                        inventory.gameObject.SetActive(false);
+                        isActiveSale = false;
+                        return;
+                    }
+
+                    if (npcParent != null)
+                    {
+                        // npcParent에서 자식 GameObject들을 모두 가져와서 배열에 저장
+                        npcList = new GameObject[npcParent.transform.childCount];
+                        for (int i = 0; i < npcParent.transform.childCount; i++)
+                        {
+                            npcList[i] = npcParent.transform.GetChild(i).gameObject;
+                        }
+                    }
+
+                    Debug.Log($"npcParent in update : {npcList.Length}");
+                    //open UI
+                    foreach (var npc in npcList)
+                    {
+                        float distance = Vector3.Distance(npc.transform.position, transform.position);
+                        Debug.Log($"dist : {npc.name} => {distance}");
+
+                        if(distance <= interactionDist && showOnSaleItem != null)
+                        {
+                            showOnSaleItem.ShowShopUI();
+                            inventory.gameObject.SetActive(true);
+                            isActiveSale = true;
+                        }
                     }
                 }
             }

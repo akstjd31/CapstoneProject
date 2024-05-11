@@ -28,14 +28,24 @@ public class ShowOnSaleItem : MonoBehaviour
 
     public void ShowShopUI()
     {
-        shop = Instantiate(shopView, GameObject.Find("Canvas").transform);
-        content = shop.transform.Find("Bag/Items/Viewport/Content");
-
-        if(content == null)
+        if(shop == null)
         {
-            Debug.LogError("Can't Find ScrollView's content object");
-            return;
+            shop = Instantiate(shopView, GameObject.Find("Canvas").transform);
+            content = shop.transform.Find("Bag/Items/Viewport/Content");
+
+            if (content == null)
+            {
+                Debug.LogError("Can't Find ScrollView's content object");
+                return;
+            }
+
+            GameObject.Find("CloseButton").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                CloseShopUI();
+            });
         }
+
+        shop.SetActive(true);
         Debug.Log($"content name : {shop.name} {content.name} / {content.transform.parent}");
 
         SetOnsaleList();
@@ -44,7 +54,7 @@ public class ShowOnSaleItem : MonoBehaviour
     public void CloseShopUI()
     {
         itemList = null;
-        Destroy(shop);
+        shop.SetActive(false);
 
         Debug.Log($"Destroy : {shop == null} {content == null}");
     }
