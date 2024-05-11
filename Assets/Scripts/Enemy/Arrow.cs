@@ -11,7 +11,7 @@ public class Arrow : MonoBehaviour
 
     private int playerViewID = -1;
 
-    private int damage;
+    private float damage;
 
     private Rigidbody2D rigid;
 
@@ -24,7 +24,7 @@ public class Arrow : MonoBehaviour
         this.owner = owner;
     }
 
-    public void SetDamage(int damage)
+    public void SetDamage(float damage)
     {
         this.damage = damage;
     }

@@ -221,7 +221,7 @@ public class RoomController : MonoBehaviourPunCallbacks
     {
         while(dungeonManager.coroutineNum >= 1)
         {
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.5f);
         }
         dungeonManager.coroutineNum++;
         if(this.transform.position.x > dungeonManager.farherstX)

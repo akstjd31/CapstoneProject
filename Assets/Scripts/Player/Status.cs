@@ -16,10 +16,10 @@ public class Status : MonoBehaviourPunCallbacks
     public float MAXHP; // 최대 체력
     public int level = 0; // 플레이어 레벨
     public int maxLevel = 10; // 플레이어의 최대 레벨
-    public int attackDamage; // 공격력
+    public float attackDamage; // 공격력
     //public float attackSpeed; // 공격 속도
     public int moveSpeed = 5; // 이동 속도
-    public int evasionRate = 5; // 회피율
+    public float evasionRate = 5; // 회피율
     public string charType; // 직업
 
     [SerializeField] private Transform statInfo; // 플레이어의 스탯 정보
@@ -71,13 +71,19 @@ public class Status : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void DamageEnemyOnHitRPC(int damage, Vector3 attackDirection)
+    public void DamageEnemyOnHitRPC(float damage)
     {
         HP -= damage;
+    }
+
+    [PunRPC]
+    public void PlayerKnockbackRPC(Vector3 attackDirection)
+    {
         playerCtrl.onHit = true;
         playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
         playerCtrl.enemyAttackDirection = attackDirection;
     }
+
 
     // 플레이어 위치에 따른 텍스트 위치 조절
     void UpdateText(Vector3 playerPos)
