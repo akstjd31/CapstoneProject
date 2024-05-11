@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Pathfinder
+  m_EditorClassIdentifier: 
+  itemID: 264
+  itemName: Pathfinder
+  attackDamage: 30
+  attackSpeed: 7
+  itemImage: {fileID: 92647987, guid: 1505050134821e64ebc6e5a7c0e4c3d6, type: 3}
+  itemType: 2
+  charType: 1
+  addStatus: 1
+  addValue: 100
+  prefab: {fileID: 6525317498219594115, guid: 6bc1b386aab22a44a88c0812bd268400, type: 3}

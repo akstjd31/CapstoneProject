@@ -1958,6 +1958,7 @@ MonoBehaviour:
     m_Bits: 512
   firePoint: {fileID: 0}
   projectile: {fileID: 0}
+  animSpeed: 1
 --- !u!114 &5726380531837837366
 MonoBehaviour:
   m_ObjectHideFlags: 0

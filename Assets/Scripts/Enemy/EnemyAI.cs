@@ -26,7 +26,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private GameObject onTriggerCheckObj;
     [SerializeField] private TriggerCheck triggerCheck;
 
-    public int aggroMeter1, aggroMeter2;  // 어그로미터기
+    public float aggroMeter1, aggroMeter2;  // 어그로미터기
 
     // Start is called before the first frame update
     void Start()

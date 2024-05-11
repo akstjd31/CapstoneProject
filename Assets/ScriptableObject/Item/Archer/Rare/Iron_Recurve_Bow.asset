@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Iron_Recurve_Bow
+  m_EditorClassIdentifier: 
+  itemID: 234
+  itemName: Icycle_Long_Bow
+  attackDamage: 12
+  attackSpeed: 4
+  itemImage: {fileID: 653948734, guid: c4deef733a6ee9746858054d72bf9bf7, type: 3}
+  itemType: 1
+  charType: 1
+  addStatus: 1
+  addValue: 50
+  prefab: {fileID: 7784937304314365905, guid: 1b736e10e274efe44b10cd3d4b736711, type: 3}

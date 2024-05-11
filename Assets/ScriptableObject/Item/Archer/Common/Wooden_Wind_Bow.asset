@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Wooden_Wind_Bow
+  m_EditorClassIdentifier: 
+  itemID: 202
+  itemName: Wooden_Wind_Bow
+  attackDamage: 4
+  attackSpeed: 7
+  itemImage: {fileID: -665208654, guid: 2b7eba8a29ae6d74e96983b4aeaf22f3, type: 3}
+  itemType: 0
+  charType: 1
+  addStatus: 0
+  addValue: 0
+  prefab: {fileID: 5555366332208191159, guid: b22ccb044d99ddf4e9af78eff7073f72, type: 3}

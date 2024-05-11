@@ -7,7 +7,7 @@ using Photon.Pun;
 public struct EnemyData
 {
     public string name;
-    public int hp;
+    public float hp;
     public int attackDamage;
     public float attackDelayTime;
     public int moveSpeed;

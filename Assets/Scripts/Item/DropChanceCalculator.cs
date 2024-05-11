@@ -21,10 +21,6 @@ public class DropChanceCalculator : MonoBehaviour
 
     private void Update()
     {
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    Debug.Log(RandomDropItem() + "당첨!" + " 확률 : " + gradeDropProbability);
-        //}
     }
 
     public void SetLevel(int level)
