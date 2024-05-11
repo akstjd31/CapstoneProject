@@ -26,27 +26,41 @@ public class ShowOnSaleItem : MonoBehaviour
     }
     */
 
-    public void ShowShopUI()
+    public void ShowShopUI(int shopType)
     {
-        shop = Instantiate(shopView, GameObject.Find("Canvas").transform);
-        content = shop.transform.Find("Bag/Items/Viewport/Content");
-
-        if(content == null)
+        if(shop == null)
         {
-            Debug.LogError("Can't Find ScrollView's content object");
-            return;
-        }
-        Debug.Log($"content name : {shop.name} {content.name} / {content.transform.parent}");
+            shop = Instantiate(shopView, GameObject.Find("Canvas").transform);
+            content = shop.transform.Find("Bag/Items/Viewport/Content");
 
-        SetOnsaleList();
+            if (content == null)
+            {
+                Debug.LogError("Can't Find ScrollView's content object");
+                return;
+            }
+
+            GameObject.Find("CloseButton").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                CloseShopUI();
+            });
+        }
+
+        shop.SetActive(true);
+        //Debug.Log($"content name : {shop.name} {content.name} / {content.transform.parent}");
+
+        SetOnsaleList(shopType);
     }
 
     public void CloseShopUI()
     {
-        itemList = null;
-        Destroy(shop);
+        itemList = new List<GameObject>();
+        //판매 중이었던 아이템 삭제
+        foreach (Transform child in content)
+        {
+            Destroy(child.gameObject);
+        }
 
-        Debug.Log($"Destroy : {shop == null} {content == null}");
+        shop.SetActive(false);
     }
 
     private void SetOnsaleList(int shopKind = 1001)
