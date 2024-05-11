@@ -26,7 +26,7 @@ public class ShowOnSaleItem : MonoBehaviour
     }
     */
 
-    public void ShowShopUI()
+    public void ShowShopUI(int shopType)
     {
         if(shop == null)
         {
@@ -48,12 +48,12 @@ public class ShowOnSaleItem : MonoBehaviour
         shop.SetActive(true);
         Debug.Log($"content name : {shop.name} {content.name} / {content.transform.parent}");
 
-        SetOnsaleList();
+        SetOnsaleList(shopType);
     }
 
     public void CloseShopUI()
     {
-        itemList = null;
+        itemList = new List<GameObject>();
         shop.SetActive(false);
 
         Debug.Log($"Destroy : {shop == null} {content == null}");

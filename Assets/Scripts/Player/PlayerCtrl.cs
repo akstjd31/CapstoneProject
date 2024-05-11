@@ -164,6 +164,16 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 hud1.hpBar.maxValue = status.MAXHP;
             }
         }
+
+        if (npcParent != null)
+        {
+            // npcParent에서 자식 GameObject들을 모두 가져와서 배열에 저장
+            npcList = new GameObject[npcParent.transform.childCount];
+            for (int i = 0; i < npcParent.transform.childCount; i++)
+            {
+                npcList[i] = npcParent.transform.GetChild(i).gameObject;
+            }
+        }
     }
 
     //Graphic & Input Updates	
@@ -336,13 +346,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 }
 
                 //store off
+                //거리가 멀어지면 자동 종료
                 if(isActiveSale)
                 {
                     bool inRange = false;
 
                     foreach (var npc in npcList)
                     {
-                        float distance = Vector3.Distance(npc.transform.position, transform.position);
+                        float distance = Vector2.Distance(npc.transform.position, transform.position);
                         Debug.Log($"dist : {npc.name} => {distance}");
 
                         if (distance <= interactionDist && showOnSaleItem != null)
@@ -357,43 +368,41 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                         showOnSaleItem.CloseShopUI();
                         inventory.gameObject.SetActive(false);
                         isActiveSale = false;
+
+                        Debug.Log("auto close store ui");
                     }
                 }
+
+                Debug.Log($"isActiveSale : {isActiveSale}, inventory : {inventory.gameObject.activeSelf}");
 
                 //store on/off (close to npc)
                 if (Input.GetKeyDown(KeyCode.O))
                 {
                     //close UI
-                    if(isActiveSale)
+                    if (isActiveSale)
                     {
                         showOnSaleItem.CloseShopUI();
-                        inventory.gameObject.SetActive(false);
+                        inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
                         isActiveSale = false;
-                        return;
-                    }
 
-                    if (npcParent != null)
-                    {
-                        // npcParent에서 자식 GameObject들을 모두 가져와서 배열에 저장
-                        npcList = new GameObject[npcParent.transform.childCount];
-                        for (int i = 0; i < npcParent.transform.childCount; i++)
-                        {
-                            npcList[i] = npcParent.transform.GetChild(i).gameObject;
-                        }
+                        Debug.Log("close UI");
                     }
-
-                    Debug.Log($"npcParent in update : {npcList.Length}");
                     //open UI
-                    foreach (var npc in npcList)
+                    else
                     {
-                        float distance = Vector3.Distance(npc.transform.position, transform.position);
-                        Debug.Log($"dist : {npc.name} => {distance}");
-
-                        if(distance <= interactionDist && showOnSaleItem != null)
+                        foreach (var npc in npcList)
                         {
-                            showOnSaleItem.ShowShopUI();
-                            inventory.gameObject.SetActive(true);
-                            isActiveSale = true;
+                            float distance = Vector3.Distance(npc.transform.position, transform.position);
+                            //Debug.Log($"dist : {npc.name} => {distance}");
+
+                            if (distance <= interactionDist && showOnSaleItem != null)
+                            {
+                                Debug.Log($"open UI : npc {npc.name}");
+
+                                showOnSaleItem.ShowShopUI(int.Parse(npc.name.Split("_")[1]));
+                                inventory.gameObject.SetActive(true);
+                                isActiveSale = true;
+                            }
                         }
                     }
                 }
