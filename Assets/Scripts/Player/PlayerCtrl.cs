@@ -354,13 +354,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     foreach (var npc in npcList)
                     {
                         float distance = Vector2.Distance(npc.transform.position, transform.position);
-                        Debug.Log($"dist : {npc.name} => {distance}");
-
+                        
                         if (distance <= interactionDist && showOnSaleItem != null)
                         {
                             inRange = true;
                             break;
                         }
+
+                        //Debug.Log($"dist : {npc.name} => {distance} || ui close condition : {inRange}");
                     }
 
                     if(!inRange)
@@ -368,12 +369,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                         showOnSaleItem.CloseShopUI();
                         inventory.gameObject.SetActive(false);
                         isActiveSale = false;
-
-                        Debug.Log("auto close store ui");
                     }
                 }
-
-                Debug.Log($"isActiveSale : {isActiveSale}, inventory : {inventory.gameObject.activeSelf}");
 
                 //store on/off (close to npc)
                 if (Input.GetKeyDown(KeyCode.O))
@@ -384,8 +381,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                         showOnSaleItem.CloseShopUI();
                         inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
                         isActiveSale = false;
-
-                        Debug.Log("close UI");
                     }
                     //open UI
                     else
@@ -397,11 +392,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                             if (distance <= interactionDist && showOnSaleItem != null)
                             {
-                                Debug.Log($"open UI : npc {npc.name}");
-
                                 showOnSaleItem.ShowShopUI(int.Parse(npc.name.Split("_")[1]));
                                 inventory.gameObject.SetActive(true);
                                 isActiveSale = true;
+                                return;
                             }
                         }
                     }

@@ -46,7 +46,7 @@ public class ShowOnSaleItem : MonoBehaviour
         }
 
         shop.SetActive(true);
-        Debug.Log($"content name : {shop.name} {content.name} / {content.transform.parent}");
+        //Debug.Log($"content name : {shop.name} {content.name} / {content.transform.parent}");
 
         SetOnsaleList(shopType);
     }
@@ -54,9 +54,13 @@ public class ShowOnSaleItem : MonoBehaviour
     public void CloseShopUI()
     {
         itemList = new List<GameObject>();
-        shop.SetActive(false);
+        //판매 중이었던 아이템 삭제
+        foreach (Transform child in content)
+        {
+            Destroy(child.gameObject);
+        }
 
-        Debug.Log($"Destroy : {shop == null} {content == null}");
+        shop.SetActive(false);
     }
 
     private void SetOnsaleList(int shopKind = 1001)
