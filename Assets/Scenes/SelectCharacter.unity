@@ -2676,7 +2676,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1894923727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2692,6 +2692,7 @@ MonoBehaviour:
   inputText: {fileID: 0}
   inputPassword: {fileID: 0}
   inputButton: {fileID: 0}
+  charType: 
 --- !u!4 &1894923728
 Transform:
   m_ObjectHideFlags: 0

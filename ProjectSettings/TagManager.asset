@@ -21,6 +21,7 @@ TagManager:
   - Item
   - TriggerObj
   - Store
+  - PhotonManager
   layers:
   - Default
   - TransparentFX

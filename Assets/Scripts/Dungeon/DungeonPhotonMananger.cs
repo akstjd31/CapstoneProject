@@ -11,11 +11,13 @@ public class DungeonPhotonMananger : MonoBehaviourPunCallbacks
     PhotonView canvasPV;
     PartySystem partySystemScript;
 
-    private string charType;
     private string[] charTypeList = new string[] { "Warrior", "Archer" };
     void Start()
     {
-        
+        //if (GameObject.Find("PhotonManager").GetComponent<PhotonManager>().GetCharType() != "")
+        //{
+        //    charType = GameObject.Find("PhotonManager").GetComponent<PhotonManager>().GetCharType();
+        //}
     }
 
     private void Update()
@@ -34,11 +36,6 @@ public class DungeonPhotonMananger : MonoBehaviourPunCallbacks
                 lobbyPlayerViewID.Add(view.ViewID);
             }
         }
-    }
-
-    public void SetCharType(string charType)
-    {
-        this.charType = charType;
     }
 
     public void CreateRoom() 
@@ -87,6 +84,7 @@ public class DungeonPhotonMananger : MonoBehaviourPunCallbacks
 
         Debug.Log("방 입장 성공");
 
+        string charType = GameObject.FindGameObjectWithTag("PhotonManager").GetComponent<PhotonManager>().GetCharType();
         if (charType != "")
         {
             if (charType.Equals(charTypeList[0]))

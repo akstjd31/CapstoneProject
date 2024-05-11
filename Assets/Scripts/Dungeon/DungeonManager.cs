@@ -12,6 +12,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public float[] mapSize = new float[2] {36.0f, 20.0f};
     public int roomNum = 5;
     public int createdRoomNum = 1;
+    public int coroutineNum = 0;
     public static Vector3 playerRoomPos = new Vector3(0.0f, 0.0f ,0.0f);
     //public static GameObject[] endRooms = new GameObject[roomNum];
     public List<GameObject> rooms = new List<GameObject>();
@@ -56,7 +57,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         {
             mapCreateTimer += Time.deltaTime;
         }
-        if(mapCreateTimer > 1.0f && roomNum < 0)
+        if(mapCreateTimer > 1.0f && coroutineNum == 0)
         {
             isMapCreate = true;
         }

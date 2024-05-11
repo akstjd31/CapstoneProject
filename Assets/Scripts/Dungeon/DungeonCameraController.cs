@@ -26,41 +26,6 @@ public class DungeonCameraController : MonoBehaviour
         else
         {
             Vector3 desiredPosition;
-            if(player.GetComponent<PlayerCtrl>().isMoveRoom)
-            {
-                desiredPosition = new Vector3(player.transform.position.x, player.transform.position.y, -10);
-                transform.position = desiredPosition;
-                player.GetComponent<PlayerCtrl>().isMoveRoom = false;
-            }
-            // if((player.transform.position.x > DungeonManager.playerRoomPos.x - cameraHalfWidth && player.transform.position.x < DungeonManager.playerRoomPos.x + cameraHalfWidth) &&
-            // (player.transform.position.y > DungeonManager.playerRoomPos.y - cameraHalfHeight && player.transform.position.y < DungeonManager.playerRoomPos.y + cameraHalfHeight))
-            // {
-            //     desiredPosition = new Vector3(player.transform.position.x, player.transform.position.y, -10);
-            //     transform.position = desiredPosition;
-            // }
-            // else
-            // {
-            //     if(player.transform.position.x < DungeonManager.playerRoomPos.x - cameraHalfWidth)
-            //     {
-            //         desiredPosition = new Vector3(DungeonManager.playerRoomPos.x - cameraHalfWidth, this.transform.position.y, -10);
-            //         transform.position = desiredPosition;
-            //     }
-            //     else if(player.transform.position.x > DungeonManager.playerRoomPos.x + cameraHalfWidth)
-            //     {
-            //         desiredPosition = new Vector3(DungeonManager.playerRoomPos.x + cameraHalfWidth, this.transform.position.y, -10);
-            //         transform.position = desiredPosition;
-            //     }
-            //     if(player.transform.position.y < DungeonManager.playerRoomPos.y - cameraHalfHeight)
-            //     {
-            //         desiredPosition = new Vector3(this.transform.position.x, DungeonManager.playerRoomPos.y - cameraHalfHeight, -10);
-            //         transform.position = desiredPosition;
-            //     }
-            //     else if(player.transform.position.y > DungeonManager.playerRoomPos.y + cameraHalfHeight)
-            //     {
-            //         desiredPosition = new Vector3(this.transform.position.x, DungeonManager.playerRoomPos.y + cameraHalfHeight, -10);
-            //         transform.position = desiredPosition;
-            //     }
-            // }
             if(player.transform.position.x > DungeonManager.playerRoomPos.x - cameraHalfWidth
             && player.transform.position.x < DungeonManager.playerRoomPos.x + cameraHalfWidth)
             {

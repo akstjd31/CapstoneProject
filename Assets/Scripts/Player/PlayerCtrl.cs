@@ -4,7 +4,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using Photon.Pun;
-using Photon.Voice.Unity;
 using Photon.Realtime;
 
 
@@ -67,7 +66,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     Vector3 mouseWorldPosition;
 
-    Recorder recorder;
+    //Recorder recorder;
 
     UIManager uiManager;
     private bool isDeactiveUI;
@@ -116,8 +115,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         rigid = gameObject.GetComponent<Rigidbody2D>();
         pv = this.GetComponent<PhotonView>();
 
-        PhotonNetwork.NickName = pv.ViewID.ToString(); // 임시로 플레이어 닉네임을 ViewID로 설정. (다른 클래스에서 닉네임을 비교하기 때문에)
-
         // 공용
         //playerStat = GameObject.FindGameObjectWithTag("PlayerStat");
         anim = this.GetComponent<Animator>();
@@ -146,7 +143,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
             uiManager = canvas.GetComponent<UIManager>();
-            recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
 
             uiManager.hpBar.maxValue = status.MAXHP;
 
@@ -185,6 +181,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 if (status.HP <= 0)
                 {
+                    status.HP = 0;
                     anim.SetTrigger("Death");
                     rigid.velocity = Vector2.zero;
                     isDeath = true;
@@ -314,17 +311,17 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 }
 
                 // 보이스 참가하기
-                if (SceneManager.GetActiveScene().name == "DungeonScene")
-                {
-                    if (Input.GetKey(KeyCode.T))
-                    {
-                        recorder.TransmitEnabled = true;
-                    }
-                    else
-                    {
-                        recorder.TransmitEnabled = false;
-                    }
-                }
+                //if (SceneManager.GetActiveScene().name == "DungeonScene")
+                //{
+                    //if (Input.GetKey(KeyCode.T))
+                    //{
+                    //    recorder.TransmitEnabled = true;
+                    //}
+                    //else
+                    //{
+                    //    recorder.TransmitEnabled = false;
+                    //}
+                //}
 
                 if (partySystemScript != null)
                 {
