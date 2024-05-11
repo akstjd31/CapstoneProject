@@ -29,11 +29,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
-        if(SceneManager.GetActiveScene().name == "DungeonScene")
-        {
-            GameObject.Find("PhotonManager").GetComponent<DungeonPhotonMananger>().SetCharType(charType);
-            Destroy(gameObject);
-        }
     }
     void Start()
     {
@@ -54,6 +49,20 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         inputButton.onClick.AddListener(OnClickConnect);
     }
 
+    private void Update()
+    {
+        //if (SceneManager.GetActiveScene().name == "DungeonScene")
+        //{
+        //    if (charType != "")
+        //    {
+        //        GameObject.FindGameObjectWithTag("PhotonManager").GetComponent<DungeonPhotonMananger>().SetCharType(charType);
+        //        charType = "";
+
+        //        Destroy(gameObject);
+        //    }
+            
+        //}
+    }
     public void SetCharType(string charType)
     {
         this.charType = charType;

@@ -11,11 +11,14 @@ public class DungeonPhotonMananger : MonoBehaviourPunCallbacks
     PhotonView canvasPV;
     PartySystem partySystemScript;
 
-    private string charType;
+    [SerializeField] private string charType;
     private string[] charTypeList = new string[] { "Warrior", "Archer" };
     void Start()
     {
-        
+        //if (GameObject.Find("PhotonManager").GetComponent<PhotonManager>().GetCharType() != "")
+        //{
+        //    charType = GameObject.Find("PhotonManager").GetComponent<PhotonManager>().GetCharType();
+        //}
     }
 
     private void Update()

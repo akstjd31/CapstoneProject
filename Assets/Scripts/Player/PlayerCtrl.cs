@@ -113,8 +113,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         rigid = gameObject.GetComponent<Rigidbody2D>();
         pv = this.GetComponent<PhotonView>();
 
-        PhotonNetwork.NickName = pv.ViewID.ToString(); // 임시로 플레이어 닉네임을 ViewID로 설정. (다른 클래스에서 닉네임을 비교하기 때문에)
-
         // 공용
         //playerStat = GameObject.FindGameObjectWithTag("PlayerStat");
         anim = this.GetComponent<Animator>();
