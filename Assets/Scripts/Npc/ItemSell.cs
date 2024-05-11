@@ -42,6 +42,10 @@ public class ItemSell : MonoBehaviour
     {
         Dictionary<int, List<string>> rtValue = new();
         List<int> itemKeys = new();
+        DropChanceCalculator drop = new();
+
+        ItemType type = drop.RandomDropItem();
+        //Debug.Log($"type : {type}");
 
         switch (shopKind)
         {

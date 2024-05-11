@@ -4379,9 +4379,10 @@ GameObject:
   - component: {fileID: 521683263}
   - component: {fileID: 521683262}
   - component: {fileID: 521683264}
+  - component: {fileID: 521683265}
   m_Layer: 0
   m_Name: ShopManager
-  m_TagString: Untagged
+  m_TagString: Store
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4427,6 +4428,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9334261bab0cd2d4cab74bf7441a6cc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &521683265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521683261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 899cdfdd7e3c97d4bab60251b9051081, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gradeDropProbability: 0
+  playerLevel: 1
 --- !u!1 &535564879
 GameObject:
   m_ObjectHideFlags: 0
