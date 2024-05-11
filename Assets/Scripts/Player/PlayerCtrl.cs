@@ -398,7 +398,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     }
                 }
                 
-                //dummy
+                //dummy2
             }
             else
             {
