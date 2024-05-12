@@ -18395,9 +18395,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equippedItem: {fileID: 0}
-  items:
-  - {fileID: 11400000, guid: 0723bf7218caf3347ae7ef609c59cdcf, type: 2}
-  - {fileID: 11400000, guid: 70c516a730b7c454a987a54122a39a2d, type: 2}
+  items: []
   equippedSlotParent: {fileID: 4826380450313185438}
   intventorySlotParent: {fileID: 1999853701}
   equippedSlot: {fileID: 503435985}
