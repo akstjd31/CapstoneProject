@@ -87,7 +87,7 @@ public class Status : MonoBehaviourPunCallbacks
     {
         playerCtrl.onHit = true;
         playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
-        playerCtrl.enemyAttackDirection = attackDirection
+        playerCtrl.enemyAttackDirection = attackDirection;
     }
 
 
