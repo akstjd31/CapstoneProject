@@ -11,7 +11,6 @@ public class Slot : MonoBehaviour, IDropHandler
 
     private Item Item;
 
-
     private void Start()
     {
     }
@@ -47,7 +46,7 @@ public class Slot : MonoBehaviour, IDropHandler
     public void OnDrop(PointerEventData eventData)
     {
         GameObject targetObj = eventData.pointerDrag;
-        Drag targetDrag = this.GetComponent<Drag>();
+        Drag drag = this.GetComponent<Drag>();
 
         //// 만약 쓰레기통에 넣는다면 해당 아이템 삭제
         //if (targetObj.CompareTag("Trash"))
@@ -57,45 +56,39 @@ public class Slot : MonoBehaviour, IDropHandler
         //    return;
         //}
 
-        if (!targetDrag.isDraggable)
+        if (!drag.isDraggable)
         {
             Item targetItem = targetObj.GetComponent<Slot>().item;
-            Drag drag = targetObj.GetComponent<Drag>();
+            Drag targetDrag = targetObj.GetComponent<Drag>();
 
-            if (!drag.isEquippedItem)
+            if (!targetDrag.isEquippedItem)
             {
                 Item tmp = targetItem;
                 targetItem = item;
                 item = tmp;
 
-                targetDrag.isDraggable = true;
+                drag.isDraggable = true;
+                drag.defaultSize = drag.isEquippedItem ? new Vector2(350, 350) : new Vector2(200, 200);
+                drag.defaultItem = targetDrag.defaultItem;
+                drag.defaultSprite = drag.image.sprite;
 
-                targetDrag.defaultSize = targetDrag.isEquippedItem ? new Vector2(350, 350) : new Vector2(200, 200);
-
-                targetDrag.defaultSprite = targetDrag.image.sprite;
-
-                drag.isDraggable = false;
+                targetDrag.isDraggable = false;
             }
         }
         else
         {
-            // 장착된 아이템이 존재해도 덮어씌우기
-            if (targetDrag.isEquippedItem)
+            // 장착된 아이템 교체
+            if (drag.isEquippedItem)
             {
-                Item targetItem = targetObj.GetComponent<Slot>().item;
-                Drag drag = targetObj.GetComponent<Drag>();
+                Drag targetDrag = targetObj.GetComponent<Drag>();
 
-                Inventory inventory = this.transform.root.Find("Inventory").GetComponent<Inventory>();
-                inventory.items.Remove(this.GetComponent<Slot>().item);
+                Sprite tmpSprite = drag.defaultSprite;
+                drag.defaultSprite = targetDrag.defaultSprite;
+                targetDrag.defaultSprite = tmpSprite;
 
-                item = targetItem;
-                targetItem = null;
-
-                targetDrag.defaultSize = new Vector2(350, 350);
-
-                targetDrag.defaultSprite = targetDrag.image.sprite;
-
-                drag.isDraggable = false;
+                Item tmpItem = targetDrag.defaultItem;
+                targetDrag.defaultItem = drag.defaultItem;
+                drag.defaultItem = tmpItem;
 
             }
         }

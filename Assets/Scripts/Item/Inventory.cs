@@ -58,7 +58,7 @@ public class Inventory : MonoBehaviour
     {
         FreshSlot();
 
-        spum_SpriteList = playerCtrl.transform.Find("Root").GetComponent<SPUM_SpriteList>();
+        //spum_SpriteList = playerCtrl.transform.Find("Root").GetComponent<SPUM_SpriteList>();
     }
 
     public void SetPlayerCtrl(PlayerCtrl playerCtrl)
@@ -73,7 +73,7 @@ public class Inventory : MonoBehaviour
 
     private void Update()
     {
-        EquipItem();
+        //EquipItem();
 
         // 마우스 위치에서 PointerEventData 생성
         pointerEventData = new PointerEventData(eventSystem);
