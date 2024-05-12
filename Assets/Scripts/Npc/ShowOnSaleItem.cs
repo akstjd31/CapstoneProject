@@ -76,13 +76,13 @@ public class ShowOnSaleItem : MonoBehaviour
         SetOnsaleList();
     }
 
-    private void SetOnsaleList(int shopKind = 1001)
+    private async void SetOnsaleList(int shopKind = 1001)
     {
         GameObject temp;
         ItemSell showOnSaleItem = FindObjectOfType<ItemSell>();
 
         //이 부분이 Reroll의 영향을 받음
-        Dictionary<int, List<string>> items = showOnSaleItem.GetShopItemList(shopKind);
+        Dictionary<int, List<string>> items = await showOnSaleItem.GetShopItemList(shopKind);
 
         int numOfItem = items.Count;
         //Debug.Log($"items : {numOfItem}");

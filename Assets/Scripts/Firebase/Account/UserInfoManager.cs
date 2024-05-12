@@ -360,4 +360,111 @@ public class UserInfoManager : MonoBehaviour
             Debug.Log("Skill Level is null.");
         }
     }
+
+    public static async Task<int> GetLevel()
+    {
+        try
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+            CollectionReference coll_userdata = db.Collection("User");
+            DocumentReference doc_user = coll_userdata.Document(UserData.GetUserId());
+
+            DocumentSnapshot snapshot = await doc_user.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                Dictionary<string, object> userData = snapshot.ToDictionary();
+                if (userData != null && userData.ContainsKey("charData"))
+                {
+                    Dictionary<string, object> charDataMap = (Dictionary<string, object>)userData["charData"];
+                    if (charDataMap.ContainsKey("stats"))
+                    {
+                        Dictionary<string, object> charStats = (Dictionary<string, object>)charDataMap["stats"];
+                        if (charStats.ContainsKey("level"))
+                        {
+                            return Convert.ToInt32(charStats["level"]);
+                        }
+                        else
+                        {
+                            Debug.Log("charStats does not contain level key or is null");
+                            return -1;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("charDataMap does not contain stats key or is null");
+                        return -2;
+                    }
+                }
+                else
+                {
+                    Debug.Log("userData does not contain charData key or is null");
+                    return -3;
+                }
+            }
+            else
+            {
+                Debug.Log("Document does not exist\nMake User DB now...");
+                await UserData.MakeDB_New();
+                return 0;
+            }
+        }
+        finally
+        {
+
+        }
+    }
+
+    public static async Task SetLevel(int newLevel)
+    {
+        try
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+            CollectionReference coll_userdata = db.Collection("User");
+            DocumentReference doc_user = coll_userdata.Document(UserData.GetUserId());
+
+            DocumentSnapshot snapshot = await doc_user.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                Dictionary<string, object> userData = snapshot.ToDictionary();
+                if (userData != null && userData.ContainsKey("charData"))
+                {
+                    Dictionary<string, object> charDataMap = (Dictionary<string, object>)userData["charData"];
+                    if (charDataMap.ContainsKey("stats"))
+                    {
+                        Dictionary<string, object> charStats = (Dictionary<string, object>)charDataMap["stats"];
+                        charStats["level"] = newLevel;
+                        charDataMap["stats"] = charStats;
+
+                        Dictionary<string, object> updateData = new Dictionary<string, object>
+                    {
+                        { "charData", charDataMap }
+                    };
+
+                        await doc_user.UpdateAsync(updateData);
+                    }
+                    else
+                    {
+                        Debug.Log("charDataMap does not contain stats key or is null");
+                    }
+                }
+                else
+                {
+                    Debug.Log("userData does not contain charData key or is null");
+                }
+            }
+            else
+            {
+                Debug.Log("Document does not exist\nMake User DB now...");
+                await UserData.MakeDB_New();
+            }
+        }
+        finally
+        {
+
+        }
+    }
 }

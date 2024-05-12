@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 //���� ���ۿ� �ʿ��� ��ũ��Ʈ�� ��ư � �������� �� �� (NpcShop.cs �̿�)
@@ -38,12 +39,14 @@ public class ItemSell : MonoBehaviour
         { 2001, "a" }
     };
 
-    public Dictionary<int, List<string>> GetShopItemList(int shopKind = 1001)
+    public async Task<Dictionary<int, List<string>>> GetShopItemList(int shopKind = 1001)
     {
         Dictionary<int, List<string>> rtValue = new();
         List<int> itemKeys = new();
         DropChanceCalculator drop = FindObjectOfType<DropChanceCalculator>();
 
+        //throw player's level
+        drop.SetLevel(await UserInfoManager.GetLevel());
         ItemType type = drop.RandomDropItem();
         Debug.Log($"type : {type}");
 
