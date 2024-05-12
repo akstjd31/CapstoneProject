@@ -106,6 +106,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public Transform firePoint;
     public Transform projectile;
 
+    //public float animSpeed;   // 애니메이션 속도 테스트
+
     public void SetState(State state)
     {
         this.state = state;
@@ -170,6 +172,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         if (pv.IsMine)
         {
+            //anim.speed = animSpeed;
             if (!isDeath)
             {
                 if (status.HP <= 0)
@@ -557,7 +560,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         Arrow arrow = arrowPrefab.GetComponent<Arrow>();
         arrow.SetTarget(mouseWorldPosition);
         arrow.SetDamage(status.attackDamage);
-        arrow.SetSpeed(4);
+        arrow.SetSpeed(3.5f);
         arrow.SetOwner(this.tag);
         arrow.SetViewID(pv.ViewID);
 

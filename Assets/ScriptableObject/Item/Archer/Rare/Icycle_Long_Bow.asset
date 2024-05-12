@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Icycle_Long_Bow
+  m_EditorClassIdentifier: 
+  itemID: 230
+  itemName: Icycle_Long_Bow
+  attackDamage: 10
+  attackSpeed: 7
+  itemImage: {fileID: -971741657, guid: 2a4ca574032232d4c82a1cc5d4188ae5, type: 3}
+  itemType: 1
+  charType: 1
+  addStatus: 3
+  addValue: 5
+  prefab: {fileID: 1219249357543207780, guid: 532564da6804e2640b31d961d03b95e9, type: 3}

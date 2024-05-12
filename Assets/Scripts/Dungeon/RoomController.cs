@@ -172,20 +172,20 @@ public class RoomController : MonoBehaviourPunCallbacks
             {
                 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
-                PhotonNetwork.Instantiate(mapDir + "ShopMap", gridMapPosition, Quaternion.identity, 0);
+                PhotonNetwork.InstantiateRoomObject(mapDir + "ShopMap", gridMapPosition, Quaternion.identity, 0);
             }
             else if(this.name == dungeonManager.healRoom.name)
             {
                 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
-                PhotonNetwork.Instantiate(mapDir + "EventMap", gridMapPosition, Quaternion.identity, 0);
+                PhotonNetwork.InstantiateRoomObject(mapDir + "EventMap", gridMapPosition, Quaternion.identity, 0);
             }
             else
             {
                 //Debug.Log(mapDir + mapArray[Random.Range(0, mapArray.Length)].name);
                 gridMapPosition = new Vector3((this.transform.position.x - startPoint.transform.position.x) * dungeonManager.mapSize[0]
                 , (this.transform.position.y - startPoint.transform.position.y) * dungeonManager.mapSize[1], 0);
-                PhotonNetwork.Instantiate(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
+                PhotonNetwork.InstantiateRoomObject(mapDir + mapArray[Random.Range(0, mapArray.Length)].name, gridMapPosition, Quaternion.identity, 0);
             }
             for (int i = 0; i < 4; i++)
             {

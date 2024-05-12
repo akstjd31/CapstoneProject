@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
@@ -24,6 +25,11 @@ public class Inventory : MonoBehaviour
 
     public Button closeButton;
 
+    public GameObject explanation;
+
+    GraphicRaycaster raycaster;
+    PointerEventData pointerEventData;
+    EventSystem eventSystem;
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -33,6 +39,11 @@ public class Inventory : MonoBehaviour
         inventorySlots = intventorySlotParent.GetComponentsInChildren<Slot>();
         inventoryDrags = intventorySlotParent.GetComponentsInChildren<Drag>();
 
+        // GraphicRaycaster 가져오기
+        raycaster = this.transform.root.GetComponent<GraphicRaycaster>();
+        // EventSystem 가져오기
+        eventSystem = this.transform.root.GetComponent<EventSystem>();
+
         this.transform.SetAsLastSibling();
     }
 #endif
@@ -41,6 +52,54 @@ public class Inventory : MonoBehaviour
     {
         FreshSlot();
     }
+
+    private void Update()
+    {
+        // 마우스 위치에서 PointerEventData 생성
+        pointerEventData = new PointerEventData(eventSystem);
+        pointerEventData.position = Input.mousePosition;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        raycaster.Raycast(pointerEventData, results);
+
+        if (results.Count == 0)
+        {
+            explanation.SetActive(false);
+            return;
+        }
+
+        foreach (RaycastResult result in results)
+        {
+            Drag drag = result.gameObject.GetComponent<Drag>();
+
+            if (drag != null && drag.isDraggable)
+            {
+                explanation.SetActive(true);
+
+                RectTransform dragRectTransform = drag.GetComponent<RectTransform>();
+                float dragWidthHalf = dragRectTransform.rect.width;
+                float dragHeightHalf = dragRectTransform.rect.height;
+
+                explanation.transform.position = new Vector3(
+                    pointerEventData.position.x + dragWidthHalf,
+                    pointerEventData.position.y + dragHeightHalf
+                );
+
+                Slot slot = drag.GetComponent<Slot>();
+
+                explanation.GetComponent<Explanation>().InfoSetting(slot.item.itemImage,
+                                                                    slot.item.itemName,
+                                                                    slot.item.attackDamage,
+                                                                    slot.item.itemType,
+                                                                    slot.item.charType);
+            }
+            else
+            {
+                explanation.SetActive(false);
+            }
+        }
+    }
+
 
     public void OnClickCloseButton()
     {
@@ -89,8 +148,4 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    //public void ChangeSlot(Slot slot1, Slot slot2)
-    //{
-
-    //}
 }

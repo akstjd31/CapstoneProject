@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: King_Maker
+  m_EditorClassIdentifier: 
+  itemID: 164
+  itemName: King_Maker
+  attackDamage: 40
+  attackSpeed: 5
+  itemImage: {fileID: -1313899912, guid: f5f348b79da7c9748bdf0a20927a1c07, type: 3}
+  itemType: 2
+  charType: 0
+  addStatus: 1
+  addValue: 100
+  prefab: {fileID: 6666254807009500187, guid: 146a175b33b2d2c4f9b6eb1a3e854232, type: 3}

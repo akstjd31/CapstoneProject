@@ -8,13 +8,30 @@ public enum ItemType
     COMMON, RARE, LEGENDARY
 }
 
+public enum CharacterType
+{ 
+    WARRIOR, ARCHER
+}
+
+public enum ApplyAdditionalStatus
+{
+    NONE, HP, MOVESPEED, EVASIONRATE
+}
+
+// attackSpeed : 1 ~ 10 == Animation Speed : 0.5 ~ 1.5
+//
+
 [CreateAssetMenu(fileName = "Item", menuName = "ScriptableObject/Item")]
 public class Item : ScriptableObject
 {
     public int itemID;  // 아이템 ID
     public string itemName;
+    public int attackDamage;
+    public int attackSpeed; 
     public Sprite itemImage;
     public ItemType itemType;
-    public string characterType;
+    public CharacterType charType;
+    public ApplyAdditionalStatus addStatus;
+    public float addValue;
     public GameObject prefab;
 }
