@@ -12121,8 +12121,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -21, y: -25}
-  m_SizeDelta: {x: -200, y: 80}
+  m_AnchoredPosition: {x: 13.523987, y: -25}
+  m_SizeDelta: {x: -130.95, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1484255137
 MonoBehaviour:
@@ -12161,7 +12161,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 65378f308d5a3fc428e7292ee3d8095b, type: 3}
-    m_FontSize: 70
+    m_FontSize: 60
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -12172,7 +12172,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 0.75
-  m_Text: Name
+  m_Text: 'Name:'
 --- !u!222 &1484255139
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -18755,10 +18755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da13471bc60b52240be141c8c3711ccf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  items:
-  - {fileID: 11400000, guid: c861789953c74ff4a92e99f5a7a2bf19, type: 2}
-  - {fileID: 11400000, guid: 625899a0d1f66aa4f9e1f64a54b77a69, type: 2}
-  - {fileID: 11400000, guid: c7e60fd230a7a6e45996d359077bed7d, type: 2}
+  items: []
   equippedSlotParent: {fileID: 4826380450313185438}
   intventorySlotParent: {fileID: 1999853701}
   equippedSlot: {fileID: 503435985}
