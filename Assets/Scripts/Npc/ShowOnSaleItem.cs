@@ -15,6 +15,7 @@ public class ShowOnSaleItem : MonoBehaviour
     private Transform content;
     private List<GameObject> itemList = new List<GameObject>();
     private Button btn_reroll;
+    private bool canReroll = true;  //condition of reroll
 
     public void ShowShopUI(int shopType)
     {
@@ -22,7 +23,7 @@ public class ShowOnSaleItem : MonoBehaviour
         {
             shop = Instantiate(shopView, GameObject.Find("Canvas").transform);
             content = shop.transform.Find("Bag/Items/Viewport/Content");
-            //btn_reroll = GameObject.Find("ButtonReroll").GetComponent<Button>();
+            btn_reroll = GameObject.Find("ButtonReroll").GetComponent<Button>();
 
             if (content == null)
             {
@@ -34,10 +35,14 @@ public class ShowOnSaleItem : MonoBehaviour
             {
                 CloseShopUI();
             });
-            btn_reroll?.onClick.AddListener(() =>
+            btn_reroll.onClick.AddListener(() =>
             {
                 Debug.Log("clicked reroll");
-                Reroll();
+
+                if(canReroll)
+                {
+                    Reroll();
+                }
             });
         }
 

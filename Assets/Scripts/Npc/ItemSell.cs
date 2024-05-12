@@ -42,6 +42,10 @@ public class ItemSell : MonoBehaviour
     {
         Dictionary<int, List<string>> rtValue = new();
         List<int> itemKeys = new();
+        DropChanceCalculator drop = FindObjectOfType<DropChanceCalculator>();
+
+        ItemType type = drop.RandomDropItem();
+        Debug.Log($"type : {type}");
 
         switch (shopKind)
         {
@@ -73,7 +77,7 @@ public class ItemSell : MonoBehaviour
             if (_itemName.ContainsKey(key))
             {
                 string itemName = _itemName[key];
-                int itemPrice = _items[key][0]; //�ǸŰ�
+                int itemPrice = _items[key][0];
                 List<string> itemData = new List<string>
                 {
                     itemName, itemPrice.ToString()
