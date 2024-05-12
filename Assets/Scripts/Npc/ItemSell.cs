@@ -42,13 +42,23 @@ public class ItemSell : MonoBehaviour
     {
         Dictionary<int, List<string>> rtValue = new();
         List<int> itemKeys = new();
+        DropChanceCalculator drop = FindObjectOfType<DropChanceCalculator>();
+
+        ItemType type = drop.RandomDropItem();
+        Debug.Log($"type : {type}");
 
         switch (shopKind)
         {
             case 1001:
                 itemKeys = new()
                 {
-                    1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010
+                    1001, 1002, 1003, 1004, 1005
+                };
+                break;
+            case 2001:
+                itemKeys = new()
+                {
+                    1006, 1007, 1008, 1009, 1010
                 };
                 break;
         }
