@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ed2daaff885c0d479ce973f1f4ba257, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 0}
+  item: {fileID: 11400000, guid: 5c550eb2294d91844ac71d916bd0cf0e, type: 2}
   lerpTime: 1
   spriteRenderer: {fileID: 0}
   checkPoint: {fileID: 1018767273111757218}

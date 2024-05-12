@@ -87,6 +87,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public bool onHit = false;
     public Vector3 enemyAttackDirection;
     private float attackedDistanceSpeed = 5f;
+    private float attackAnimSpeed;
 
     private bool isDeath = false;
     private float deathTime = 1.0f;
@@ -109,12 +110,16 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public Transform firePoint;
     public Transform projectile;
 
+    private ItemManager itemManager;
+    private SPUM_SpriteList spum_SpriteList;
+
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void SetState(State state)
     {
         this.state = state;
     }
+
     void Start()
     {
         // 변수 초기화
@@ -129,6 +134,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
+        inventory.SetStatus(status);
+        itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
+        spum_SpriteList = this.transform.Find("Root").GetComponent<SPUM_SpriteList>();
+
         //recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
         showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();    //상점
         npcParent = GameObject.Find("npc"); // find npc
@@ -140,6 +149,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
+            if (pv.IsMine)
+            {
+                RandomWeaponEquip();    // 랜덤으로 무기를 뽑음.
+                anim.speed = GetAnimSpeed(status.attackSpeed);
+            }
+
             chatScript = canvas.GetComponent<Chat>();
             partySystemScript = canvas.GetComponent<PartySystem>();
 
@@ -443,6 +458,76 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     Death();
                     break;
             }
+        }
+    }
+
+    public void SetAnimSpeed(float animSpeed)
+    {
+        anim.speed = animSpeed;
+    }
+
+    public  float GetAnimSpeed(int speed)
+    {
+        float animSpeed = 1.0f;
+        switch (speed)
+        {
+            case 1:
+                animSpeed = 0.6f;
+                break;
+            case 2:
+                animSpeed = 0.7f;
+                break;
+            case 3:
+                animSpeed = 0.8f;
+                break;
+            case 4:
+                animSpeed = 0.9f;
+                break;
+            case 5:
+                animSpeed = 1.0f;
+                break;
+            case 6:
+                animSpeed = 1.1f;
+                break;
+            case 7:
+                animSpeed = 1.2f;
+                break;
+            case 8:
+                animSpeed = 1.3f;
+                break;
+            case 9:
+                animSpeed = 1.4f;
+                break;
+            case 10:
+                animSpeed = 1.5f;
+                break;
+        }
+
+        return animSpeed;
+    }
+
+    // 처음 시작할 뽑기로 커먼 아이템 자동선택
+    private void RandomWeaponEquip()
+    {
+        int rand = Random.Range(0, 5);
+        string charType = status.charType;
+
+        if (inventory != null && itemManager != null)
+        {
+            Item item = itemManager.GetRandomItemWithProbability(ItemType.COMMON, charType);
+            if (charType.Equals("Warrior"))
+            {
+                spum_SpriteList._weaponList[2].sprite = item.itemImage;  // L_Weapon
+            }
+
+            else
+            {
+                spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
+            }
+
+            inventory.equippedItem = item;
+            inventory.FreshSlot();
+            inventory.TotalStatus(item);
         }
     }
 

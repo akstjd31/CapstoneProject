@@ -11,14 +11,15 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
     public Transform defaultParent;
     public Sprite defaultSprite;
     public Color defaultColor;
+    public Item defaultItem;
 
     public Vector2 defaultSize;
-
-    Inventory inventory;
 
     public Image image;
 
     public bool isEquippedItem;
+
+    private PlayerCtrl playerCtrl;
 
     //private float inventorySlotSize
 
@@ -27,19 +28,27 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
     void Start()
     {
         image = this.GetComponent<Image>();
-        inventory = this.transform.parent.parent.parent.parent.GetComponent<Inventory>();
 
         defaultPos = Vector2.zero;
         defaultColor = new Color(0, 0, 0, 0);
         defaultParent = this.transform.parent;
         defaultSprite = this.GetComponent<Image>().sprite;
         defaultSize = this.GetComponent<RectTransform>().sizeDelta;
+        defaultItem = this.GetComponent<Slot>().item;
+    }
+
+    void Update()
+    {
+        if (isEquippedItem && defaultSprite != null)
+        {
+            this.GetComponent<Image>().sprite = defaultSprite;
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
         // 해당 슬롯에 아이템이 존재한다면
-        if (isDraggable)
+        if (isDraggable && !isEquippedItem)
         {
             // parent.parent.parent = Bag
             this.transform.SetParent(transform.root);
@@ -49,33 +58,32 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
         }
         else
         {
-            Debug.Log("슬롯에 아이템이 없습니다!");
+            Debug.Log("슬롯에 아이템이 없거나 뺄 수 없습니다!");
         }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (isDraggable)
+        if (isDraggable && !isEquippedItem)
         {
             Vector2 currentPos = eventData.position;
             this.transform.position = currentPos;
 
             this.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 250);
         }
+        
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         if (isDraggable)
-        { 
+        {
             this.transform.SetParent(defaultParent);
             this.GetComponent<RectTransform>().anchoredPosition = defaultPos;
 
             //Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             defaultColor = new Color(1, 1, 1, 1);
-
-
         }
         else
         {
@@ -85,11 +93,13 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
             defaultColor = new Color(0, 0, 0, 0);
 
             defaultSprite = null;
+            defaultItem = null;
         }
 
         this.GetComponent<RectTransform>().sizeDelta = defaultSize;
         this.GetComponent<Image>().sprite = defaultSprite;
         this.GetComponent<Image>().color = defaultColor;
+        this.GetComponent<Slot>().item = defaultItem;
         image.raycastTarget = true;
     }
 }
