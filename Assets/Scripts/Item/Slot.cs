@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Photon.Pun;
 
 public class Slot : MonoBehaviour, IDropHandler
 {
@@ -13,6 +14,14 @@ public class Slot : MonoBehaviour, IDropHandler
 
     private void Start()
     {
+    }
+
+    private void Update()
+    {
+        if (item == null && this.GetComponent<Drag>().isDraggable)
+        {
+            this.GetComponent<Drag>().isDraggable = false;
+        }
     }
 
     public Item item
@@ -53,17 +62,42 @@ public class Slot : MonoBehaviour, IDropHandler
             Item targetItem = targetObj.GetComponent<Slot>().item;
             Drag drag = targetObj.GetComponent<Drag>();
 
-            Item tmp = targetItem;
-            targetItem = item;
-            item = tmp;
+            if (!drag.isEquippedItem)
+            {
+                Item tmp = targetItem;
+                targetItem = item;
+                item = tmp;
 
-            targetDrag.isDraggable = true;
+                targetDrag.isDraggable = true;
 
-            targetDrag.defaultSize = targetDrag.isEquippedItem ? new Vector2(350, 350) : new Vector2(200, 200);
+                targetDrag.defaultSize = targetDrag.isEquippedItem ? new Vector2(350, 350) : new Vector2(200, 200);
 
-            targetDrag.defaultSprite = targetDrag.image.sprite;
+                targetDrag.defaultSprite = targetDrag.image.sprite;
 
-            drag.isDraggable = false;
+                drag.isDraggable = false;
+            }
+        }
+        else
+        {
+            // 장착된 아이템이 존재해도 덮어씌우기
+            if (targetDrag.isEquippedItem)
+            {
+                Item targetItem = targetObj.GetComponent<Slot>().item;
+                Drag drag = targetObj.GetComponent<Drag>();
+
+                Inventory inventory = this.transform.root.Find("Inventory").GetComponent<Inventory>();
+                inventory.items.Remove(this.GetComponent<Slot>().item);
+
+                item = targetItem;
+                targetItem = null;
+
+                targetDrag.defaultSize = new Vector2(350, 350);
+
+                targetDrag.defaultSprite = targetDrag.image.sprite;
+
+                drag.isDraggable = false;
+
+            }
         }
     }
 }

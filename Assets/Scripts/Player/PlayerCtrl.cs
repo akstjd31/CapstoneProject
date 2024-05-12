@@ -102,6 +102,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public Transform firePoint;
     public Transform projectile;
 
+    private Item equippedItem;
+    private ItemManager itemManager;
+    private SPUM_SpriteList spum_SpriteList;
+
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void SetState(State state)
@@ -121,6 +125,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
+        inventory.SetPlayerCtrl(this);
+        itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
+        spum_SpriteList = this.transform.Find("Root").GetComponent<SPUM_SpriteList>();
+
         //recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
 
         state = State.NORMAL;
@@ -129,6 +137,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
+            RandomWeaponEquip();    // 랜덤으로 무기를 뽑음.
+
             chatScript = canvas.GetComponent<Chat>();
             partySystemScript = canvas.GetComponent<PartySystem>();
 
@@ -386,6 +396,31 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     Death();
                     break;
             }
+        }
+    }
+
+    // 처음 시작할 뽑기로 커먼 아이템 자동선택
+    public void RandomWeaponEquip()
+    {
+        int rand = Random.Range(0, 5);
+        string charType = status.charType;
+
+        if (inventory != null && itemManager != null)
+        {
+            Item item = itemManager.GetRandomItemWithProbability(ItemType.COMMON, charType);
+            if (charType.Equals("Warrior"))
+            {
+                spum_SpriteList._weaponList[2].sprite = item.itemImage;  // L_Weapon
+            }
+
+            else
+            {
+                spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
+            }
+
+            inventory.items.Add(item);
+            inventory.SetEquippedItem(item);
+            this.equippedItem = item;
         }
     }
 

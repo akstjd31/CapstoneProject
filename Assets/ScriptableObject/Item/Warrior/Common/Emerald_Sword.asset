@@ -19,6 +19,6 @@ MonoBehaviour:
   itemImage: {fileID: -969629294, guid: b0f3520bace4c4345ab4ba08c5ac9845, type: 3}
   itemType: 0
   charType: 0
-  addStatus: 1
+  bonusStat: 1
   addValue: 25
   prefab: {fileID: 2287614009057794265, guid: f2cf4bbb372ff4b4e9b4c81305ae0ebe, type: 3}
