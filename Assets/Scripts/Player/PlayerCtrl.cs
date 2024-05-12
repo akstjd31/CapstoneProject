@@ -92,8 +92,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private float deathTime = 1.0f;
 
     private ShowOnSaleItem showOnSaleItem;  //상점
+    private GameObject[] npcList;           //npc
     private bool isActiveSale = false;
     public bool isMoveRoom = false;
+    private float interactionDist = 2f;     //상호작용 거리
+    private GameObject npcParent;
 
     private Items items; // 바닥에 놓여있는 아이템
 
@@ -127,6 +130,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
         //recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
+        showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();    //상점
+        npcParent = GameObject.Find("npc"); // find npc
+        npcList = null;
 
         state = State.NORMAL;
         items = null;
@@ -163,6 +169,16 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 HUD hud1 = uiManager.hud1.GetComponent<HUD>();
                 hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
                 hud1.hpBar.maxValue = status.MAXHP;
+            }
+        }
+
+        if (npcParent != null)
+        {
+            // npcParent에서 자식 GameObject들을 모두 가져와서 배열에 저장
+            npcList = new GameObject[npcParent.transform.childCount];
+            for (int i = 0; i < npcParent.transform.childCount; i++)
+            {
+                npcList[i] = npcParent.transform.GetChild(i).gameObject;
             }
         }
     }
@@ -324,26 +340,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     PartyHUDActive();
                 }
 
-                //상점 테스트 전용
-                if (showOnSaleItem != null && Input.GetKeyDown(KeyCode.O))
-                {
-                    inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
-                    //UI에 보유 금액 표기
-                    if (inventory.gameObject.activeSelf)
-                    {
-                        GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
-                    }
-
-                    if (isActiveSale)
-                    {
-                        showOnSaleItem.CloseShopUI();
-                    }
-                    else
-                    {
-                        showOnSaleItem.ShowShopUI();
-                    }
-                }
-
                 // 아이템 픽업
                 if (Input.GetKeyDown(KeyCode.Z) && items != null)
                 {
@@ -355,6 +351,62 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     else
                     {
                         Debug.Log("인벤토리에 공간이 없습니다!");
+                    }
+                }
+
+                //store off
+                //거리가 멀어지면 자동 종료
+                if (isActiveSale)
+                {
+                    bool inRange = false;
+
+                    foreach (var npc in npcList)
+                    {
+                        float distance = Vector2.Distance(npc.transform.position, transform.position);
+
+                        if (distance <= interactionDist && showOnSaleItem != null)
+                        {
+                            inRange = true;
+                            break;
+                        }
+
+                        //Debug.Log($"dist : {npc.name} => {distance} || ui close condition : {inRange}");
+                    }
+
+                    if (!inRange)
+                    {
+                        showOnSaleItem.CloseShopUI();
+                        inventory.gameObject.SetActive(false);
+                        isActiveSale = false;
+                    }
+                }
+
+                //store on/off (close to npc)
+                if (Input.GetKeyDown(KeyCode.O))
+                {
+                    //close UI
+                    if (isActiveSale)
+                    {
+                        showOnSaleItem.CloseShopUI();
+                        inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
+                        isActiveSale = false;
+                    }
+                    //open UI
+                    else
+                    {
+                        foreach (var npc in npcList)
+                        {
+                            float distance = Vector3.Distance(npc.transform.position, transform.position);
+                            //Debug.Log($"dist : {npc.name} => {distance}");
+
+                            if (distance <= interactionDist && showOnSaleItem != null)
+                            {
+                                showOnSaleItem.ShowShopUI(int.Parse(npc.name.Split("_")[1]));
+                                inventory.gameObject.SetActive(true);
+                                isActiveSale = true;
+                                return;
+                            }
+                        }
                     }
                 }
             }
