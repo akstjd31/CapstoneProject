@@ -106,8 +106,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public Transform firePoint;
     public Transform projectile;
 
-    public UnityEvent onAttack;
-
     public void SetState(State state)
     {
         this.state = state;
