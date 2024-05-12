@@ -1943,7 +1943,6 @@ MonoBehaviour:
   isPartyMember: 0
   isReady: 0
   party: {fileID: 0}
-  passiveSkill: {fileID: 0}
   attackPoint: {fileID: 3835016043746628366}
   attackRange: 0.55
   enemyLayers:

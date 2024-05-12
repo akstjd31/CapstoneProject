@@ -73,7 +73,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private bool isDeactiveUI;
 
     //스킬
-    public PassiveSkill passiveSkill;
+    //public PassiveSkill passiveSkill;
 
     // 공격 포인트와 범위
     public Transform attackPoint;
@@ -130,7 +130,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         //playerStat = GameObject.FindGameObjectWithTag("PlayerStat");
         anim = this.GetComponent<Animator>();
         status = this.GetComponent<Status>();
-        passiveSkill = this.GetComponent<PassiveSkill>();
+        //passiveSkill = this.GetComponent<PassiveSkill>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
@@ -625,8 +625,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 이동
     void Move()
     {
-        moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-
         // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
         if (moveDir.x > 0.0f)
         {
@@ -654,8 +652,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 if (enemyCtrl != null && !enemyCtrl.onHit)
                 {
                     //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
-                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
-                    enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+                    //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
+                    //enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
                 }
             }
         }
