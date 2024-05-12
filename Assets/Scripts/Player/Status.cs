@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using Random = UnityEngine.Random;
 
 public class Status : MonoBehaviourPunCallbacks
 {
@@ -16,10 +17,10 @@ public class Status : MonoBehaviourPunCallbacks
     public float MAXHP; // 최대 체력
     public int level = 0; // 플레이어 레벨
     public int maxLevel = 10; // 플레이어의 최대 레벨
-    public int attackDamage; // 공격력
+    public float attackDamage; // 공격력
     //public float attackSpeed; // 공격 속도
     public int moveSpeed = 5; // 이동 속도
-    public int evasionRate = 5; // 회피율
+    public float evasionRate = 5f; // 회피율
     public string charType; // 직업
 
     [SerializeField] private Transform statInfo; // 플레이어의 스탯 정보
@@ -38,8 +39,6 @@ public class Status : MonoBehaviourPunCallbacks
         // 태그로 찾은 후에 텍스트 집어넣기
         //statInfo = GameObject.FindGameObjectWithTag("StatInfo").transform;
         //stats = statInfo.GetChild(0).GetComponentsInChildren<Text>();
-
-        charType = this.transform.name;
 
         if (charType.Equals("Warrior"))
         {
@@ -70,13 +69,20 @@ public class Status : MonoBehaviourPunCallbacks
         }
     }
 
+    // 피격 RPC
     [PunRPC]
     public void DamageEnemyOnHitRPC(int damage, Vector3 attackDirection)
     {
-        HP -= damage;
-        playerCtrl.onHit = true;
-        playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
-        playerCtrl.enemyAttackDirection = attackDirection;
+        float rand = Random.Range(0f, 100f);
+
+        // 회피
+        if (rand > evasionRate)
+        {
+            HP -= damage;
+            playerCtrl.onHit = true;
+            playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
+            playerCtrl.enemyAttackDirection = attackDirection;
+        }
     }
 
     // 플레이어 위치에 따른 텍스트 위치 조절

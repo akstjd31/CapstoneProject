@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Wooden_Recurve_Bow
+  m_EditorClassIdentifier: 
+  itemID: 204
+  itemName: Wooden_Recurve_Bow
+  attackDamage: 6
+  attackSpeed: 6
+  itemImage: {fileID: -1557841073, guid: 31980db95b5a3dc47826e09436539efd, type: 3}
+  itemType: 0
+  charType: 1
+  addStatus: 2
+  addValue: 0.5
+  prefab: {fileID: 6392903824069855556, guid: 394a8d65c49662349a2196e4602e43ae, type: 3}

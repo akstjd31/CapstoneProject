@@ -14,6 +14,7 @@ public class ShowOnSaleItem : MonoBehaviour
     private GameObject shop;
     private Transform content;
     private List<GameObject> itemList = new List<GameObject>();
+    private Button btn_reroll;
 
     /*
     void Start()
@@ -32,6 +33,7 @@ public class ShowOnSaleItem : MonoBehaviour
         {
             shop = Instantiate(shopView, GameObject.Find("Canvas").transform);
             content = shop.transform.Find("Bag/Items/Viewport/Content");
+            btn_reroll = GameObject.Find("ButtonReroll").GetComponent<Button>();
 
             if (content == null)
             {
@@ -42,6 +44,11 @@ public class ShowOnSaleItem : MonoBehaviour
             GameObject.Find("CloseButton").GetComponent<Button>().onClick.AddListener(() =>
             {
                 CloseShopUI();
+            });
+            btn_reroll.onClick.AddListener(() =>
+            {
+                Debug.Log("clicked reroll");
+                Reroll();
             });
         }
 
@@ -63,11 +70,24 @@ public class ShowOnSaleItem : MonoBehaviour
         shop.SetActive(false);
     }
 
+    private void Reroll()
+    {
+        itemList = new List<GameObject>();
+        //판매 중이었던 아이템 삭제
+        foreach (Transform child in content)
+        {
+            Destroy(child.gameObject);
+        }
+
+        SetOnsaleList();
+    }
+
     private void SetOnsaleList(int shopKind = 1001)
     {
         GameObject temp;
         ItemSell showOnSaleItem = FindObjectOfType<ItemSell>();
 
+        //이 부분이 Reroll의 영향을 받음
         Dictionary<int, List<string>> items = showOnSaleItem.GetShopItemList(shopKind);
 
         int numOfItem = items.Count;

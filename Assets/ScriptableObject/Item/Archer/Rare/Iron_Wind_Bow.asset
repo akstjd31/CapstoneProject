@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Iron_Wind_Bow
+  m_EditorClassIdentifier: 
+  itemID: 232
+  itemName: Iron_Wind_Bow
+  attackDamage: 7
+  attackSpeed: 8
+  itemImage: {fileID: 1752367567, guid: fdcb9b38f30b03c428d73853fb26d93b, type: 3}
+  itemType: 1
+  charType: 1
+  addStatus: 2
+  addValue: 1
+  prefab: {fileID: 1083017157765291976, guid: 07f01fd25ceb2fd48b0fb86479f85e86, type: 3}

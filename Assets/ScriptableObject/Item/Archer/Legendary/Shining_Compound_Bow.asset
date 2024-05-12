@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Shining_Compound_Bow
+  m_EditorClassIdentifier: 
+  itemID: 263
+  itemName: Shining_Compound_Bow
+  attackDamage: 40
+  attackSpeed: 5
+  itemImage: {fileID: 344871319, guid: 7500a0d1dfa7ce24a817c3e7e16c6651, type: 3}
+  itemType: 2
+  charType: 1
+  addStatus: 2
+  addValue: 2
+  prefab: {fileID: 813297083021716867, guid: 8d8037fe3c6dc1d48b394a1ea83300f0, type: 3}

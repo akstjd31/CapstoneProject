@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Rusted_Sword
+  m_EditorClassIdentifier: 
+  itemID: 133
+  itemName: Rusted_Sword
+  attackDamage: 12
+  attackSpeed: 4
+  itemImage: {fileID: 480505994, guid: 53c5527c4250439459dc05b2a0e23ad0, type: 3}
+  itemType: 1
+  charType: 0
+  addStatus: 1
+  addValue: 50
+  prefab: {fileID: 8494896884946974638, guid: 911d08b157831da4e8ebf4b4701bedee, type: 3}

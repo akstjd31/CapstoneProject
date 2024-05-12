@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Samurai_Sword
+  m_EditorClassIdentifier: 
+  itemID: 101
+  itemName: Samurai_Sword
+  attackDamage: 4
+  attackSpeed: 4
+  itemImage: {fileID: 503084975, guid: 92e8d1a4c2424fb4085a19c4a2218692, type: 3}
+  itemType: 0
+  charType: 0
+  addStatus: 0
+  addValue: 0
+  prefab: {fileID: 6365423727710406198, guid: d17389e140d17624fbc1c95b03f8e76b, type: 3}

@@ -2202,14 +2202,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77960eec741e245278ceb081dbd136b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 100
-  MAXHP: 100
-  level: 1
+  HP: 125
+  MAXHP: 125
+  level: 0
   maxLevel: 10
-  attackDamage: 5
+  attackDamage: 38
   moveSpeed: 5
   evasionRate: 5
-  charType: 
+  charType: Archer
   statInfo: {fileID: 0}
   stats: []
 --- !u!114 &4734294809893435049

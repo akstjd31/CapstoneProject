@@ -6,6 +6,9 @@ using UnityEngine;
 public class DropItem : MonoBehaviour
 {
     private DropChanceCalculator dropCalc;
+    [SerializeField] private string charType = "";   // 직업 정보
+
+    private float plusXPos = 1;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,13 +23,28 @@ public class DropItem : MonoBehaviour
         }
     }
 
+    public void SetCharType(string charType)
+    {
+        this.charType = charType;
+    }
+
     public void SpawnDroppedItem()
     {
         ItemManager itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
         Item spawnItem;
 
-        spawnItem = itemManager.GetRandomItemWithProbability(dropCalc.RandomDropItem());
+        ItemType itemType = dropCalc.RandomDropItem();
 
-        Instantiate(spawnItem.prefab, this.transform.position, Quaternion.identity); 
+        Debug.Log(itemType + "당첨!");
+        spawnItem = itemManager.GetRandomItemWithProbability(itemType, charType);
+
+        // 보여주기식 위치 변경 -> 수정 필요
+        Vector2 newPos = new Vector2(
+            this.transform.position.x + plusXPos,
+            this.transform.position.y
+            );
+        Instantiate(spawnItem.prefab, newPos, Quaternion.identity);
+
+        plusXPos += 1;
     }
 }

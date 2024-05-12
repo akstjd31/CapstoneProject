@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Wooden_Phoenix_Bow
+  m_EditorClassIdentifier: 
+  itemID: 201
+  itemName: Wooden_Phoenix_Bow
+  attackDamage: 8
+  attackSpeed: 2
+  itemImage: {fileID: 2120297374, guid: 76bbfdb476e933245a274e835d6405e6, type: 3}
+  itemType: 0
+  charType: 1
+  addStatus: 0
+  addValue: 0
+  prefab: {fileID: 3000539817346564845, guid: 8ae2f0e466fbcc442b87fb24834086ff, type: 3}

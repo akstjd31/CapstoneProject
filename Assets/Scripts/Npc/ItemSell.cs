@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//³»ºÎ µ¿ÀÛ¿¡ ÇÊ¿äÇÑ ½ºÅ©¸³Æ®·Î ¹öÆ° µî¿¡ Àû¿ëÇÏÁö ¸» °Í (NpcShop.cs ÀÌ¿ë)
+//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Æ° ï¿½î¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ (NpcShop.cs ï¿½Ì¿ï¿½)
 public class ItemSell : MonoBehaviour
 {
     //itemKey : buyValue(-1 : can not buy), sellValue(-1 : can not sell)
@@ -42,6 +42,10 @@ public class ItemSell : MonoBehaviour
     {
         Dictionary<int, List<string>> rtValue = new();
         List<int> itemKeys = new();
+        DropChanceCalculator drop = FindObjectOfType<DropChanceCalculator>();
+
+        ItemType type = drop.RandomDropItem();
+        Debug.Log($"type : {type}");
 
         switch (shopKind)
         {
@@ -73,7 +77,7 @@ public class ItemSell : MonoBehaviour
             if (_itemName.ContainsKey(key))
             {
                 string itemName = _itemName[key];
-                int itemPrice = _items[key][0]; //ÆÇ¸Å°¡
+                int itemPrice = _items[key][0]; //ï¿½Ç¸Å°ï¿½
                 List<string> itemData = new List<string>
                 {
                     itemName, itemPrice.ToString()

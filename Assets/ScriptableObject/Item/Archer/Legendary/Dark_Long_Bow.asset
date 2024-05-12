@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Dark_Long_Bow
+  m_EditorClassIdentifier: 
+  itemID: 260
+  itemName: Dark_Long_Bow
+  attackDamage: 99
+  attackSpeed: 1
+  itemImage: {fileID: -1759598821, guid: bac0c2f8bfba26143869d79a4c0754ef, type: 3}
+  itemType: 2
+  charType: 1
+  addStatus: 0
+  addValue: 0
+  prefab: {fileID: 3361019563677417598, guid: 43b54657d386a73459e23dc67bfb27d9, type: 3}

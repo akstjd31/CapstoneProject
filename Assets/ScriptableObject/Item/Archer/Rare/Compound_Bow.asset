@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Compound_Bow
+  m_EditorClassIdentifier: 
+  itemID: 233
+  itemName: Compound_Bow
+  attackDamage: 12
+  attackSpeed: 5
+  itemImage: {fileID: 931933267, guid: c5306139c79372349b29920feba71388, type: 3}
+  itemType: 1
+  charType: 1
+  addStatus: 0
+  addValue: 0
+  prefab: {fileID: 3261896271549059172, guid: 85195d75aafdd8e4fa0eeb381bfe8e29, type: 3}

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309d25cc8ffa7c74cb326cf05e6eccff, type: 3}
+  m_Name: Icycle_Sabre
+  m_EditorClassIdentifier: 
+  itemID: 131
+  itemName: Icycle_Sabre
+  attackDamage: 12
+  attackSpeed: 5
+  itemImage: {fileID: -2067776200, guid: 146cc6a476d40b9499c9fa8f14212bca, type: 3}
+  itemType: 1
+  charType: 0
+  addStatus: 0
+  addValue: 0
+  prefab: {fileID: 7975613403575994687, guid: f1cee44608ed47043a91663e7356fcc4, type: 3}

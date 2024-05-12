@@ -5,13 +5,13 @@ using Photon.Pun;
 
 public class Arrow : MonoBehaviour
 {
-    [SerializeField] private float speed = 6f;
+    [SerializeField] private float speed;
     private Vector3 targetPos;
     private string owner = "";  // 이 화살을 쏜 사람?
 
     private int playerViewID = -1;
 
-    private int damage;
+    private float damage;
 
     private Rigidbody2D rigid;
 
@@ -24,7 +24,7 @@ public class Arrow : MonoBehaviour
         this.owner = owner;
     }
 
-    public void SetDamage(int damage)
+    public void SetDamage(float damage)
     {
         this.damage = damage;
     }
@@ -69,6 +69,14 @@ public class Arrow : MonoBehaviour
 
             float angle = Mathf.Atan2(rigid.velocity.y, rigid.velocity.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+            if (owner.Equals("Enemy"))
+            {
+                if (rigid.velocity == Vector2.zero)
+                {
+                    Destroy(this.gameObject);
+                }
+            }
         }
     }
 
@@ -95,6 +103,11 @@ public class Arrow : MonoBehaviour
                 enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, targetPos - this.transform.position);
             }
 
+            Destroy(this.gameObject);
+        }
+
+        else if (other.CompareTag("Obstacle"))
+        {
             Destroy(this.gameObject);
         }
     }
