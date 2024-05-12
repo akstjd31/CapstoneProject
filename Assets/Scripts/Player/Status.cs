@@ -71,7 +71,7 @@ public class Status : MonoBehaviourPunCallbacks
 
     // 피격 RPC
     [PunRPC]
-    public void DamageEnemyOnHitRPC(int damage, Vector3 attackDirection)
+    public void DamageEnemyOnHitRPC(float damage)
     {
         float rand = Random.Range(0f, 100f);
 
@@ -79,11 +79,17 @@ public class Status : MonoBehaviourPunCallbacks
         if (rand > evasionRate)
         {
             HP -= damage;
-            playerCtrl.onHit = true;
-            playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
-            playerCtrl.enemyAttackDirection = attackDirection;
         }
     }
+
+    [PunRPC]
+    public void PlayerKnockbackRPC(Vector3 attackDirection)
+    {
+        playerCtrl.onHit = true;
+        playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
+        playerCtrl.enemyAttackDirection = attackDirection
+    }
+
 
     // 플레이어 위치에 따른 텍스트 위치 조절
     void UpdateText(Vector3 playerPos)

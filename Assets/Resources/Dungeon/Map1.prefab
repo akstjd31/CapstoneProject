@@ -10584,6 +10584,7 @@ GameObject:
   - component: {fileID: 8359914326007082521}
   - component: {fileID: -990382368603697506}
   - component: {fileID: -8684617270109016521}
+  - component: {fileID: 7956307205049273836}
   m_Layer: 0
   m_Name: Map1
   m_TagString: Untagged
@@ -10685,6 +10686,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 36, y: 20}
   m_EdgeRadius: 0
+--- !u!114 &7956307205049273836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6610912550597531676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d414f482448a520468f6ebcfd32f3d75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isPlayerInRoom: 0
 --- !u!1001 &4719302428600531465
 PrefabInstance:
   m_ObjectHideFlags: 0
