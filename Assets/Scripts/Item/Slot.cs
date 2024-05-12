@@ -86,10 +86,16 @@ public class Slot : MonoBehaviour, IDropHandler
                 drag.defaultSprite = targetDrag.defaultSprite;
                 targetDrag.defaultSprite = tmpSprite;
 
+                this.transform.root.Find("Inventory").GetComponent<Inventory>().equippedItem = targetDrag.defaultItem;
+                this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Remove(targetDrag.defaultItem);
+
                 Item tmpItem = targetDrag.defaultItem;
                 targetDrag.defaultItem = drag.defaultItem;
                 drag.defaultItem = tmpItem;
 
+                this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Add(targetDrag.defaultItem);
+
+                item = drag.defaultItem;
             }
         }
     }

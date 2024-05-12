@@ -15,12 +15,22 @@ public class Status : MonoBehaviourPunCallbacks
 
     public float HP; // 체력
     public float MAXHP; // 최대 체력
+    private float defaultHP; // 디폴트 체력
+
     public int level = 0; // 플레이어 레벨
     public int maxLevel = 10; // 플레이어의 최대 레벨
+
     public float attackDamage; // 공격력
-    //public float attackSpeed; // 공격 속도
+    private float defaultAttackDamage; // 디폴트 공격력 (무기 포함 X)
+
+    public int attackSpeed; // 공격 속도
+
     public int moveSpeed = 5; // 이동 속도
+    private int defaultMoveSpeed; // 디폴트 이동 속도
+
     public float evasionRate = 5f; // 회피율
+    private float defaultEvasionRate; // 디폴트 회피율
+
     public string charType; // 직업
 
     [SerializeField] private Transform statInfo; // 플레이어의 스탯 정보
@@ -30,11 +40,15 @@ public class Status : MonoBehaviourPunCallbacks
     PhotonView pv; // 플레이어 pv
     string nickName; // 플레이어 닉네임
 
+    private Inventory inventory;
+
+
     private void Start()
     {
         playerCtrl = this.GetComponent<PlayerCtrl>();
         nickName = playerCtrl.GetComponent<PhotonView>().Owner.NickName;
         pv = this.GetComponent<PhotonView>();
+        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").GetComponent<Inventory>();
 
         // 태그로 찾은 후에 텍스트 집어넣기
         //statInfo = GameObject.FindGameObjectWithTag("StatInfo").transform;
@@ -50,6 +64,30 @@ public class Status : MonoBehaviourPunCallbacks
         }
 
         MAXHP = HP;
+        defaultHP = HP;
+        defaultAttackDamage = attackDamage;
+        defaultMoveSpeed = moveSpeed;
+        defaultEvasionRate = evasionRate;
+    }
+
+    public float GetDefaultHP()
+    {
+        return defaultHP;
+    }
+
+    public float GetDefaultAttackDamage()
+    {
+        return defaultAttackDamage;
+    }
+
+    public float GetDefaultEvasionRate()
+    {
+        return defaultEvasionRate;
+    }
+
+    public int GetDefaultMoveSpeed()
+    {
+        return defaultMoveSpeed;
     }
 
     private void InitSetting(int hp, int attackDamage)
@@ -60,6 +98,7 @@ public class Status : MonoBehaviourPunCallbacks
 
     private void Update()
     {
+
         // 본인한테만 스탯 정보가 보임.
         if (pv.IsMine)
         {

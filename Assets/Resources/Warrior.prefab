@@ -2053,6 +2053,7 @@ MonoBehaviour:
   level: 0
   maxLevel: 10
   attackDamage: 34
+  attackSpeed: 0
   moveSpeed: 5
   evasionRate: 5
   charType: Warrior

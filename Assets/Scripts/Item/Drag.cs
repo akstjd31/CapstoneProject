@@ -76,7 +76,6 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
 
     public void OnEndDrag(PointerEventData eventData)
     {
-
         if (isDraggable)
         {
             this.transform.SetParent(defaultParent);
@@ -102,6 +101,5 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
         this.GetComponent<Image>().color = defaultColor;
         this.GetComponent<Slot>().item = defaultItem;
         image.raycastTarget = true;
-
     }
 }

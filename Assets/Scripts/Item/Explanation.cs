@@ -24,7 +24,7 @@ public class Explanation : MonoBehaviour
         itemName.text = "Name: " + name;
 
         // AttackDamage
-        itemAttackDamage.text = "AttackDamage: " + attackDamage.ToString();
+        itemAttackDamage.text = "AttackDamage +" + attackDamage.ToString();
 
         // AttackSpeed
         itemAttackSpeed.text = "AttackSpeed: " + attackSpeed.ToString();
