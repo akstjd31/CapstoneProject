@@ -1944,7 +1944,6 @@ MonoBehaviour:
   isPartyMember: 0
   isReady: 0
   party: {fileID: 0}
-  passiveSkill: {fileID: 0}
   attackPoint: {fileID: 3835016043746628366}
   attackRange: 0.55
   enemyLayers:
@@ -2095,7 +2094,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4410033845721660709}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d566d898f8970d74d84aea0f7bc55120, type: 3}
   m_Name: 

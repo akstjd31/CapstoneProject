@@ -10,7 +10,6 @@ public class Explanation : MonoBehaviour
     public Text itemAttackDamage;
     public Text itemAttackSpeed;
     public Text itemBonusStat;
-    public Text itemBonusStatValue;
     public Text itemType;   // 아이템 등급
     public Text itemCharType;   // 직업 전용 아이템
 
