@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-//���� ���ۿ� �ʿ��� ��ũ��Ʈ�� ��ư � �������� �� �� (NpcShop.cs �̿�)
+//reference only class - no direct use (NpcShop.cs etc.)
 public class ItemSell : MonoBehaviour
 {
     //itemKey : buyValue(-1 : can not buy), sellValue(-1 : can not sell)
@@ -81,6 +81,13 @@ public class ItemSell : MonoBehaviour
             {
                 string itemName = _itemName[key];
                 int itemPrice = _items[key][0];
+
+                //filter items
+                if(itemPrice <= 0)
+                {
+                    continue;
+                }
+
                 List<string> itemData = new List<string>
                 {
                     itemName, itemPrice.ToString()

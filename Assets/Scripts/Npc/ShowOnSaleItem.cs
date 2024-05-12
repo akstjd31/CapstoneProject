@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -101,14 +102,47 @@ public class ShowOnSaleItem : MonoBehaviour
                 // 클릭된 버튼을 찾기
                 Button clickedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
 
-                string itemText = ItemSell.GetItemNameByKey(itemKeys[index]);
-                clickedButton.transform.Find("ItemName").GetComponent<Text>().text = itemText;
-                Debug.Log($"call buyItem with button : index {index}, key {itemKeys[index]}, name {itemText}");
-
+                Debug.Log($"call buyItem with button : index {index}, key {itemKeys[index]}");
+                    
                 NpcShop.BuyItem(itemKeys[index]);
             });
 
+            //setting name & value
+            string itemText = ItemSell.GetItemNameByKey(itemKeys[index]);
+            temp.transform.Find("ItemName").GetComponent<Text>().text = itemText;
+            int itemValue = ItemSell.BuyItemCost(itemKeys[index]);
+            temp.transform.Find("ItemValue").GetComponent<TextMeshProUGUI>().text = AddCommasToNumber(itemValue);
+
             itemList.Add(temp);
         }
+    }
+
+    private static string AddCommasToNumber(int number)
+    {
+        string numberStr = number.ToString();
+
+        if(numberStr.Length <= 3)
+        {
+            return numberStr;
+        }
+
+        int commaPosition = numberStr.Length % 3;
+        if (commaPosition == 0)
+        {
+            commaPosition = 3;
+        }
+        
+        string result = "";
+        for (int i = 0; i < numberStr.Length; i++)
+        {
+            result += numberStr[i];
+            if (i + 1 == commaPosition && i < numberStr.Length - 1)
+            {
+                result += ",";
+                commaPosition += 3;
+            }
+        }
+
+        return result;
     }
 }
