@@ -88,7 +88,9 @@ public class Arrow : MonoBehaviour
 
             if (player != null && !player.onHit && rigid.velocity != Vector2.zero)
             {
-                player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, damage, targetPos - this.transform.position);
+                //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, player.passiveSkill.PrideDamaged(enemy.enemyData.attackDamage));
+                player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
+                player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, damage);
             }
 
             Destroy(this.gameObject);
@@ -100,7 +102,9 @@ public class Arrow : MonoBehaviour
 
             if (enemy != null && !enemy.onHit && rigid.velocity != Vector2.zero)
             {
-                enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, targetPos - this.transform.position);
+                //enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
+                enemy.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
+                enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID);
             }
 
             Destroy(this.gameObject);

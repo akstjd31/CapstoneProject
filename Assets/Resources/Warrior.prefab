@@ -1840,6 +1840,7 @@ GameObject:
   - component: {fileID: 1127464956995650460}
   - component: {fileID: 4917115041854513549}
   - component: {fileID: 9018133177964143318}
+  - component: {fileID: 7799558153895509538}
   - component: {fileID: 3367810574857562886}
   - component: {fileID: 1746097749746490699}
   - component: {fileID: 7167822924147623151}
@@ -1943,6 +1944,7 @@ MonoBehaviour:
   isPartyMember: 0
   isReady: 0
   party: {fileID: 0}
+  passiveSkill: {fileID: 0}
   attackPoint: {fileID: 3835016043746628366}
   attackRange: 0.55
   enemyLayers:
@@ -1958,7 +1960,6 @@ MonoBehaviour:
     m_Bits: 512
   firePoint: {fileID: 0}
   projectile: {fileID: 0}
-  animSpeed: 1
 --- !u!114 &5726380531837837366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2086,6 +2087,91 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
+--- !u!114 &7799558153895509538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4410033845721660709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d566d898f8970d74d84aea0f7bc55120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackCount: 0
+  pridePercentage:
+  - 0
+  - 3
+  - 5
+  - 7
+  - 10
+  - 12.5
+  - 15
+  - 18
+  - 20
+  - 23
+  - 30
+  greedPercentage:
+  - 0
+  - 2
+  - 4
+  - 6
+  - 8
+  - 10
+  - 12
+  - 14
+  - 16
+  - 18
+  - 25
+  envyPercentage:
+  - 0
+  - 5
+  - 10
+  - 15
+  - 20
+  - 25
+  - 30
+  - 35
+  - 40
+  - 50
+  - 60
+  glutnyPercentage:
+  - 0
+  - 2
+  - 4
+  - 5
+  - 7
+  - 8
+  - 9
+  - 10
+  - 12
+  - 13
+  - 15
+  wrathPercentage:
+  - 0
+  - 0.1
+  - 0.5
+  - 1
+  - 1.5
+  - 1.7
+  - 2
+  - 2.5
+  - 3
+  - 3.5
+  - 5
+  slothPercentage:
+  - 150
+  - 180
+  - 200
+  - 250
+  - 220
+  - 250
+  - 275
+  - 300
+  - 330
+  - 370
+  - 400
 --- !u!114 &3367810574857562886
 MonoBehaviour:
   m_ObjectHideFlags: 0
