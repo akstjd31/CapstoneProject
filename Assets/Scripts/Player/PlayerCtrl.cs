@@ -109,6 +109,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 원거리 발사 위치와 발사체
     public Transform firePoint;
     public Transform projectile;
+    [SerializeField] private Vector3 arrowTargetPos;
 
     private ItemManager itemManager;
     private SPUM_SpriteList spum_SpriteList;
@@ -281,6 +282,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     }
                     else
                     {
+                        pv.RPC("SetArrowTargetTransform", RpcTarget.AllBuffered, mouseScreenPosition);
+
                         rigid.velocity = Vector2.zero;
                         // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
                         if (mouseWorldPosition.x - this.transform.position.x > 0)
@@ -511,7 +514,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    private void RandomCommonItemIndexRPC(char charType)
+    private void RandomCommonItemIndexRPC(string charType)
     {
         if (charType.Equals("Warrior"))
         {
@@ -707,24 +710,23 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    private void SetArrowTargetTransform(Vector3 targetPos)
+    {
+        arrowTargetPos = targetPos;
+    }
+
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrowPrefab = PhotonNetwork.InstantiateRoomObject(projectile.name, firePoint.position, Quaternion.identity);
+        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
 
         Arrow arrow = arrowPrefab.GetComponent<Arrow>();
-        PhotonView arrowPV = arrow.GetComponent<PhotonView>();
-
-        arrowPV.RPC("SetTarget", RpcTarget.AllBuffered, mouseWorldPosition);
-        arrowPV.RPC("SetDamage", RpcTarget.AllBuffered, status.attackDamage);
-        arrowPV.RPC("SetSpeed", RpcTarget.AllBuffered, 3.5f);
-        arrowPV.RPC("SetOwner", RpcTarget.AllBuffered, this.tag);
-        arrowPV.RPC("SetViewID", RpcTarget.AllBuffered, pv.ViewID);
-        //arrow.SetTarget(mouseWorldPosition);
-        //arrow.SetDamage(status.attackDamage);
-        //arrow.SetSpeed(3.5f);
-        //arrow.SetOwner(this.tag);
-        //arrow.SetViewID(pv.ViewID);
+        arrow.SetTarget(arrowTargetPos);
+        arrow.SetDamage(status.attackDamage);
+        arrow.SetSpeed(3.5f);
+        arrow.SetOwner(this.tag);
+        arrow.SetViewID(pv.ViewID);
 
         state = State.NORMAL;
     }

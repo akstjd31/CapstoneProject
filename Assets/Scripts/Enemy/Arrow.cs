@@ -17,31 +17,26 @@ public class Arrow : MonoBehaviour
 
     private float elapsedTime = 2.0f;
 
-    [PunRPC]
     public void SetViewID(int viewID)
     {
         this.playerViewID = viewID;
     }
 
-    [PunRPC]
     public void SetOwner(string owner)
     {
         this.owner = owner;
     }
 
-    [PunRPC]
     public void SetDamage(float damage)
     {
         this.damage = damage;
     }
 
-    [PunRPC]
     public void SetSpeed(float speed)
     {
         this.speed = speed;
     }
 
-    [PunRPC]
     public void SetTarget(Vector3 targetPos)
     {
         this.targetPos = targetPos;
@@ -55,16 +50,18 @@ public class Arrow : MonoBehaviour
     private void Start()
     {
         rigid = this.GetComponent<Rigidbody2D>();
+
+        Destroy(this.gameObject, 2f);
     }
 
     private void Update()
     {
-        elapsedTime -= Time.deltaTime;
+        //elapsedTime -= Time.deltaTime;
 
-        if (elapsedTime <= 0.0f)
-        {
-            PhotonNetwork.Destroy(this.gameObject);
-        }
+        //if (elapsedTime <= 0.0f)
+        //{
+        //    PhotonNetwork.Destroy(this.gameObject);
+        //}
 
         if (targetPos != null)
         {
@@ -87,7 +84,7 @@ public class Arrow : MonoBehaviour
             {
                 if (rigid.velocity == Vector2.zero)
                 {
-                    PhotonNetwork.Destroy(this.gameObject);
+                    Destroy(this.gameObject);
                 }
             }
         }
@@ -120,12 +117,12 @@ public class Arrow : MonoBehaviour
                 enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID);
             }
 
-            PhotonNetwork.Destroy(this.gameObject);
+            Destroy(this.gameObject);
         }
 
         else if (other.CompareTag("Obstacle"))
         {
-            PhotonNetwork.Destroy(this.gameObject);
+            Destroy(this.gameObject);
         }
     }
 }
