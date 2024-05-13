@@ -18,7 +18,7 @@ public class ItemManager : MonoBehaviour
 
     private Inventory inventory;
 
-    [SerializeField] private int randIdx;
+    public int randIdx;
     // 아이템 등급에 따른 분류
     private void Awake()
     {

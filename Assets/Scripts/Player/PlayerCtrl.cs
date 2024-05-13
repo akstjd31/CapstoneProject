@@ -158,13 +158,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 anim.speed = GetAnimSpeed(status.attackSpeed);
             }
 
-            if (randIdx == -1)
-            {
-                itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
-                //itemManager.RandomCommonItemIndex();
-            }
-            
-            pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);    // 랜덤으로 무기를 뽑음.
+            itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
+
+
+            CommonWeaponEquip(itemManager.randIdx, status.charType);
+
+            //pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, );    // 랜덤으로 무기를 뽑음.
             //CommonWeaponEquipRPC(randIdx);
 
             if (pv.IsMine)
@@ -533,8 +532,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     // 처음 시작할 뽑기로 커먼 아이템 자동선택
-    [PunRPC]
-    private void CommonWeaponEquipRPC(int rand, string charType)
+    private void CommonWeaponEquip(int rand, string charType)
     {
         if (inventory != null && itemManager != null)
         {
