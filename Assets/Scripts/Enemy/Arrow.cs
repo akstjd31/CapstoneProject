@@ -15,6 +15,21 @@ public class Arrow : MonoBehaviour
 
     private Rigidbody2D rigid;
 
+    // 화살의 위치 및 회전 값을 동기화합니다.
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // 데이터를 보냅니다.
+            stream.SendNext(transform.position);
+        }
+        else
+        {
+            // 데이터를 받습니다.
+            targetPos = (Vector3)stream.ReceiveNext();
+        }
+    }
+
     public void SetViewID(int viewID)
     {
         this.playerViewID = viewID;

@@ -101,6 +101,8 @@ MonoBehaviour:
   - EnemyKnockbackRPC
   - PlayerKnockbackRPC
   - RandomWeaponEquip
+  - RandomNumberRPC
+  - RandomCommonItemIndexRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
