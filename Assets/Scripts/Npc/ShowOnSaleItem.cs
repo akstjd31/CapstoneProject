@@ -112,6 +112,8 @@ public class ShowOnSaleItem : MonoBehaviour
             temp.transform.Find("ItemName").GetComponent<Text>().text = itemText;
             int itemValue = ItemSell.BuyItemCost(itemKeys[index]);
             temp.transform.Find("ItemValue").GetComponent<TextMeshProUGUI>().text = AddCommasToNumber(itemValue);
+            Sprite itemImage = ItemSell.GetItemImageByKey(itemKeys[index]);
+            temp.transform.Find("ItemImage").GetComponent<RawImage>().texture = itemImage.texture;
 
             itemList.Add(temp);
         }
