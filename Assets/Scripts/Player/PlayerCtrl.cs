@@ -416,7 +416,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                             if (distance <= interactionDist && showOnSaleItem != null)
                             {
-                                showOnSaleItem.ShowShopUI(int.Parse(npc.name.Split("_")[1]));
+                                showOnSaleItem.ShowShopUI();
                                 inventory.gameObject.SetActive(true);
                                 isActiveSale = true;
                                 return;

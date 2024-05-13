@@ -6,6 +6,8 @@ using UnityEngine;
 //reference only class - no direct use (NpcShop.cs etc.)
 public class ItemSell : MonoBehaviour
 {
+    private static bool executeInit = false;
+
     private static List<List<Item>> item_warrior = new List<List<Item>>(3);     //100~104 : common | 130~134 : rare | 160~164 : legendary
     private static List<List<Item>> item_archer = new List<List<Item>>(3);      //200~204 : common | 230~234 : rare | 260~264 : legendary
 
@@ -14,7 +16,7 @@ public class ItemSell : MonoBehaviour
     private static Dictionary<int, string> _itemName = new();
     private static List<int> _saleItemKeys = new();
 
-    private void InitItemList()
+    private static void InitItemList()
     {
         for (int i = 0; i < 3; i++)
         {
@@ -84,6 +86,7 @@ public class ItemSell : MonoBehaviour
             }
         }
 
+        executeInit = true;
         /*
         foreach (var kvp in _itemName)
         {
@@ -93,13 +96,13 @@ public class ItemSell : MonoBehaviour
         */
     }
 
-    public async Task<Dictionary<int, List<string>>> GetShopItemList(int shopKind = 1001)
+    public async Task<Dictionary<int, List<string>>> GetShopItemList()
     {
         Dictionary<int, List<string>> rtValue = new();
         List<int> itemKeys = new();
         DropChanceCalculator drop = FindObjectOfType<DropChanceCalculator>();
 
-        if(_items.Count == 0 && _itemName.Count == 0)
+        if(!executeInit)
         {
             InitItemList();
         }
@@ -116,7 +119,7 @@ public class ItemSell : MonoBehaviour
 
         //selected item list
         List<Item> showItem = new();
-        Debug.Log($"len item_warrior : {item_warrior.Count}/len item_archer : {item_archer.Count}");
+        //Debug.Log($"len item_warrior : {item_warrior.Count}/len item_archer : {item_archer.Count}");
         if (charType.Equals("Warrior"))
         {
             showItem = item_warrior[type_int];
@@ -127,7 +130,7 @@ public class ItemSell : MonoBehaviour
         }
 
         //get showItem's key-list
-        //_saleItemKeys
+        _saleItemKeys = new();
         for(int i = 0; i < showItem.Count; i++)
         {
             _saleItemKeys.Add(showItem[i].itemID);
@@ -155,7 +158,7 @@ public class ItemSell : MonoBehaviour
                     continue;
                 }
 
-                List<string> itemData = new List<string>
+                List<string> itemData = new()
                 {
                     itemName, itemPrice.ToString()
                 };
@@ -169,7 +172,7 @@ public class ItemSell : MonoBehaviour
     public static Sprite GetItemImageByKey(int itemKey)
     {
         Sprite rtImage = null;
-        List<Item> filterItems = null;
+        List<Item> filterItems;
         int type = -1;
 
         //warrior

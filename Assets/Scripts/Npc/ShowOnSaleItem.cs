@@ -18,7 +18,7 @@ public class ShowOnSaleItem : MonoBehaviour
     private Button btn_reroll;
     private bool canReroll = true;  //condition of reroll
 
-    public void ShowShopUI(int shopType)
+    public void ShowShopUI()
     {
         if (shop == null)
         {
@@ -50,7 +50,7 @@ public class ShowOnSaleItem : MonoBehaviour
         shop.SetActive(true);
         //Debug.Log($"content name : {shop.name} {content.name} / {content.transform.parent}");
 
-        SetOnsaleList(shopType);
+        SetOnsaleList();
     }
 
     public void CloseShopUI()
@@ -77,13 +77,13 @@ public class ShowOnSaleItem : MonoBehaviour
         SetOnsaleList();
     }
 
-    private async void SetOnsaleList(int shopKind = 1001)
+    private async void SetOnsaleList()
     {
         GameObject temp;
         ItemSell showOnSaleItem = FindObjectOfType<ItemSell>();
 
         //이 부분이 Reroll의 영향을 받음
-        Dictionary<int, List<string>> items = await showOnSaleItem.GetShopItemList(shopKind);
+        Dictionary<int, List<string>> items = await showOnSaleItem.GetShopItemList();
 
         int numOfItem = items.Count;
         //Debug.Log($"items : {numOfItem}");
