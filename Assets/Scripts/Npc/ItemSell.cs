@@ -48,7 +48,10 @@ public class ItemSell : MonoBehaviour
         //throw player's level
         drop.SetLevel(await UserInfoManager.GetLevel());
         ItemType type = drop.RandomDropItem();
-        Debug.Log($"type : {type}");
+        Debug.Log($"item grade : {type}");
+
+        string charType = await UserInfoManager.GetCharClass();
+        Debug.Log($"charType : {charType}");
 
         switch (shopKind)
         {
