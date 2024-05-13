@@ -229,6 +229,7 @@ public class CharType : MonoBehaviour
         nickname_Error_Text.text = "";
         PhotonManager.SetNickname(nickname);
         await UserData.SetNickname(nickname);
+        await UserInfoManager.SetCharClass(selectedCharType);
 
         explane.SetActive(false);
         charType_canvas.SetActive(false);
