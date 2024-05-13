@@ -114,7 +114,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private ItemManager itemManager;
     private SPUM_SpriteList spum_SpriteList;
 
-    [SerializeField] private int randIdx = -1;
+    private int randIdx = -1;
     [SerializeField] private Item equipItem;
 
     //public float animSpeed;   // 애니메이션 속도 테스트
