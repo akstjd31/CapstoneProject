@@ -18,6 +18,7 @@ public class ItemManager : MonoBehaviour
 
     private Inventory inventory;
 
+    [SerializeField] private int randIdx;
     // 아이템 등급에 따른 분류
     private void Awake()
     {
@@ -66,22 +67,23 @@ public class ItemManager : MonoBehaviour
 
         inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").GetComponent<Inventory>();
         inventory.SetItemManager(this);
+
+        randIdx = Random.Range(0, warriorCommonList.Count);
     }
 
-    [PunRPC]
-    public void RandomCommonItemIndex(int viewID)
+    public void RandomCommonItemIndex(PlayerCtrl playerCtrl)
     {
-        PhotonView playerPV = PhotonView.Find(viewID);
-        Status status = playerPV.GetComponent<Status>();
-        PlayerCtrl playerCtrl = playerPV.GetComponent<PlayerCtrl>();
+        //PhotonView playerPV = PhotonView.Find(viewID);
+        Status status = playerCtrl.GetComponent<Status>();
+        //PlayerCtrl playerCtrl = playerPV.GetComponent<PlayerCtrl>();
 
         if (status.charType.Equals("Warrior"))
         {
-            playerCtrl.SetRandIndex(Random.Range(0, warriorCommonList.Count));
+            playerCtrl.SetRandIndex(randIdx);
         }
         else
         {
-            playerCtrl.SetRandIndex(Random.Range(0, archerCommonList.Count));
+            playerCtrl.SetRandIndex(randIdx);
         }
     }
 

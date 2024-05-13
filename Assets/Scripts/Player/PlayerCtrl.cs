@@ -157,7 +157,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 anim.speed = GetAnimSpeed(status.attackSpeed);
 
-                itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
+                itemManager.RandomCommonItemIndex(this);
             }
 
             pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);    // 랜덤으로 무기를 뽑음.
