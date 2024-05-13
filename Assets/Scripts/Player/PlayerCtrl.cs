@@ -157,10 +157,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 anim.speed = GetAnimSpeed(status.attackSpeed);
 
-                
-                
+                RandomCommonItemIndex(status.charType);
             }
-            RandomCommonItemIndex(status.charType);
+
+
             pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx);    // 랜덤으로 무기를 뽑음.
             //CommonWeaponEquipRPC(randIdx);
 
