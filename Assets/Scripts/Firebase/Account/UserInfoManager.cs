@@ -361,6 +361,104 @@ public class UserInfoManager : MonoBehaviour
         }
     }
 
+    //use in SelectCharacter Scene
+    public static async Task SetCharClass(string type)
+    {
+        try
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+            CollectionReference coll_userdata = db.Collection("User");
+            DocumentReference doc_user = coll_userdata.Document(UserData.GetUserId());
+
+            DocumentSnapshot snapshot = await doc_user.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                Dictionary<string, object> userData = snapshot.ToDictionary();
+                if (userData != null && userData.ContainsKey("charData"))
+                {
+                    Dictionary<string, object> charDataMap = (Dictionary<string, object>)userData["charData"];
+                    if (charDataMap.ContainsKey("stats"))
+                    {
+                        // Update charDataMap with the new type
+                        charDataMap["type"] = type;
+
+                        Dictionary<string, object> updateData = new Dictionary<string, object>
+                    {
+                        { "charData", charDataMap }
+                    };
+
+                        await doc_user.UpdateAsync(updateData);
+                    }
+                    else
+                    {
+                        Debug.Log("charDataMap does not contain stats key or is null");
+                    }
+                }
+                else
+                {
+                    Debug.Log("userData does not contain charData key or is null");
+                }
+            }
+            else
+            {
+                Debug.Log("Document does not exist\nMake User DB now...");
+                await UserData.MakeDB_New();
+            }
+        }
+        finally
+        {
+
+        }
+    }
+
+    public static async Task<string> GetCharClass()
+    {
+        try
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+            CollectionReference coll_userdata = db.Collection("User");
+            DocumentReference doc_user = coll_userdata.Document(UserData.GetUserId());
+
+            DocumentSnapshot snapshot = await doc_user.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                Dictionary<string, object> userData = snapshot.ToDictionary();
+                if (userData != null && userData.ContainsKey("charData"))
+                {
+                    Dictionary<string, object> charDataMap = (Dictionary<string, object>)userData["charData"];
+                    if (charDataMap.ContainsKey("type"))
+                    {
+                        return charDataMap["type"].ToString();
+                    }
+                    else
+                    {
+                        Debug.Log("charDataMap does not contain type key or is null");
+                        return null; // or throw an exception depending on how you want to handle this case
+                    }
+                }
+                else
+                {
+                    Debug.Log("userData does not contain charData key or is null");
+                    return null; // or throw an exception depending on how you want to handle this case
+                }
+            }
+            else
+            {
+                Debug.Log("Document does not exist\nMake User DB now...");
+                await UserData.MakeDB_New();
+                return null;
+            }
+        }
+        finally
+        {
+
+        }
+    }
+
     public static async Task<int> GetLevel()
     {
         try
