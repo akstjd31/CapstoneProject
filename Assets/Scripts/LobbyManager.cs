@@ -124,7 +124,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.Instantiate(charTypeList[1], Vector2.zero, Quaternion.identity);
         }
-        
+
+
+        // 포톤 네트워크가 연결된 상태에서만 작동하도록 함
+        GameObject.Find("ItemManager").GetComponent<PhotonView>().RPC("SyncPlayerData", RpcTarget.AllBuffered, Random.Range(0, 5)); // 초기 데이터 동기화
     }
 
     public override void OnLeftLobby()

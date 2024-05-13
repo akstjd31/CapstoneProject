@@ -158,7 +158,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 anim.speed = GetAnimSpeed(status.attackSpeed);
             }
 
-            itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
+            //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
 
 
             CommonWeaponEquip(0, status.charType);

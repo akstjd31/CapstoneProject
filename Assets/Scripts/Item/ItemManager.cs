@@ -73,11 +73,6 @@ public class ItemManager : MonoBehaviour
 
     private void Start()
     {
-        if (PhotonNetwork.IsConnected)
-        {
-            // 포톤 네트워크가 연결된 상태에서만 작동하도록 함
-            GetComponent<PhotonView>().RPC("SyncPlayerData", RpcTarget.AllBuffered, Random.Range(0, warriorCommonList.Count)); // 초기 데이터 동기화
-        }
     }
 
     // 플레이어 데이터를 동기화하는 메서드
