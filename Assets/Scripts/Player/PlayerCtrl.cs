@@ -158,8 +158,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 anim.speed = GetAnimSpeed(status.attackSpeed);
 
                 pv.RPC("RandomCommonItemIndexRPC", RpcTarget.AllBuffered, status.charType);
-                pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx);    // 랜덤으로 무기를 뽑음.
+                //pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx);    // 랜덤으로 무기를 뽑음.
+            }
 
+            CommonWeaponEquipRPC(randIdx);
+
+            if (pv.IsMine)
+            {
                 inventory.equippedItem = equipItem;
                 inventory.FreshSlot();
                 inventory.TotalStatus(equipItem);
@@ -532,7 +537,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     // 처음 시작할 뽑기로 커먼 아이템 자동선택
-    [PunRPC]
+    //[PunRPC]
     private void CommonWeaponEquipRPC(int rand)
     {
         string charType = status.charType;
