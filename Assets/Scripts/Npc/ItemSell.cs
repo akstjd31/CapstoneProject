@@ -6,70 +6,137 @@ using UnityEngine;
 //reference only class - no direct use (NpcShop.cs etc.)
 public class ItemSell : MonoBehaviour
 {
+    private static bool executeInit = false;
+
+    private static List<List<Item>> item_warrior = new List<List<Item>>(3);     //100~104 : common | 130~134 : rare | 160~164 : legendary
+    private static List<List<Item>> item_archer = new List<List<Item>>(3);      //200~204 : common | 230~234 : rare | 260~264 : legendary
+
     //itemKey : buyValue(-1 : can not buy), sellValue(-1 : can not sell)
-    private static Dictionary<int, List<int>> _items = new()
+    private static Dictionary<int, List<int>> _items = new();
+    private static Dictionary<int, string> _itemName = new();
+    private static List<int> _saleItemKeys = new();
+
+    private static void InitItemList()
     {
-        { 1001, new List<int> { 100, 50 } },
-        { 1002, new List<int> { 100, 50 } },
-        { 1003, new List<int> { 100, -1 } },
-        { 1004, new List<int> { 200, 100 } },
-        { 1005, new List<int> { 200, 100 } },
-        { 1006, new List<int> { 100, 50 } },
-        { 1007, new List<int> { 100, 50 } },
-        { 1008, new List<int> { 100, -1 } },
-        { 1009, new List<int> { 200, 100 } },
-        { 1010, new List<int> { 200, 100 } },
+        for (int i = 0; i < 3; i++)
+        {
+            item_warrior.Add(new List<Item>());
+            item_archer.Add(new List<Item>());
+        }
 
-        { 2001, new List<int> { -1, 50 } }
-    };
-    
-    private static Dictionary<int, string> _itemName = new()
-    {
-        { 1001, "A" },
-        { 1002, "B" },
-        { 1003, "C" },
-        { 1004, "D" },
-        { 1005, "E" },
-        { 1006, "F" },
-        { 1007, "G" },
-        { 1008, "H" },
-        { 1009, "I" },
-        { 1010, "J" },
+        ItemManager itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
+        item_warrior[0] = itemManager.warriorCommonList;
+        item_warrior[1] = itemManager.warriorRareList;
+        item_warrior[2] = itemManager.warriorLegendaryList;
 
-        { 2001, "a" }
-    };
+        item_archer[0] = itemManager.archerCommonList;
+        item_archer[1] = itemManager.archerRareList;
+        item_archer[2] = itemManager.archerLegendaryList;
 
-    public async Task<Dictionary<int, List<string>>> GetShopItemList(int shopKind = 1001)
+        int buyValue = -1, sellValue = -1;
+
+        //set warrior weapon data
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < item_warrior[i].Count; j++)
+            {
+                switch(i)
+                {
+                    case 0:
+                        buyValue = 10;
+                        sellValue = 10;
+                        break;
+                    case 1:
+                        buyValue = 25;
+                        sellValue = 25;
+                        break;
+                    case 2:
+                        buyValue = 50;
+                        sellValue = 50;
+                        break;
+                }
+
+                _itemName.Add(item_warrior[i][j].itemID, item_warrior[i][j].itemName);
+                _items.Add(item_warrior[i][j].itemID, new() { buyValue, sellValue });
+            }
+        }
+        //set warrior archer data
+        for (int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < item_archer[i].Count; j++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        buyValue = 10;
+                        sellValue = 5;
+                        break;
+                    case 1:
+                        buyValue = 25;
+                        sellValue = 15;
+                        break;
+                    case 2:
+                        buyValue = 50;
+                        sellValue = 30;
+                        break;
+                }
+
+                _itemName.Add(item_archer[i][j].itemID, item_archer[i][j].itemName);
+                _items.Add(item_archer[i][j].itemID, new() { buyValue, sellValue });
+            }
+        }
+
+        executeInit = true;
+        /*
+        foreach (var kvp in _itemName)
+        {
+            Debug.Log("key: " + kvp.Key + ", name: " + kvp.Value);
+        }
+        Debug.Log($"_items : {_items.Count}/_itemName : {_itemName.Count}");
+        */
+    }
+
+    public async Task<Dictionary<int, List<string>>> GetShopItemList()
     {
         Dictionary<int, List<string>> rtValue = new();
         List<int> itemKeys = new();
         DropChanceCalculator drop = FindObjectOfType<DropChanceCalculator>();
 
+        if(!executeInit)
+        {
+            InitItemList();
+        }
+
         //throw player's level
         drop.SetLevel(await UserInfoManager.GetLevel());
         ItemType type = drop.RandomDropItem();
-        Debug.Log($"item grade : {type}");
+        int type_int = type == ItemType.COMMON ? 0
+            : type == ItemType.RARE ? 1 : 2;
+        //Debug.Log($"item grade : {type}");
 
         string charType = await UserInfoManager.GetCharClass();
-        Debug.Log($"charType : {charType}");
+        //Debug.Log($"charType : {charType}");
 
-        switch (shopKind)
+        //selected item list
+        List<Item> showItem = new();
+        //Debug.Log($"len item_warrior : {item_warrior.Count}/len item_archer : {item_archer.Count}");
+        if (charType.Equals("Warrior"))
         {
-            case 1001:
-                itemKeys = new()
-                {
-                    1001, 1002, 1003, 1004, 1005
-                };
-                break;
-            case 2001:
-                itemKeys = new()
-                {
-                    1006, 1007, 1008, 1009, 1010
-                };
-                break;
+            showItem = item_warrior[type_int];
+        }
+        else if (charType.Equals("Archer"))
+        {
+            showItem = item_archer[type_int];
         }
 
-        rtValue = Inner_GetShopItemList(itemKeys);
+        //get showItem's key-list
+        _saleItemKeys = new();
+        for(int i = 0; i < showItem.Count; i++)
+        {
+            _saleItemKeys.Add(showItem[i].itemID);
+        }
+
+        rtValue = Inner_GetShopItemList(_saleItemKeys);
 
         return rtValue;
     }
@@ -91,7 +158,7 @@ public class ItemSell : MonoBehaviour
                     continue;
                 }
 
-                List<string> itemData = new List<string>
+                List<string> itemData = new()
                 {
                     itemName, itemPrice.ToString()
                 };
@@ -102,9 +169,115 @@ public class ItemSell : MonoBehaviour
         return rtValue;
     }
 
+    public static Sprite GetItemImageByKey(int itemKey)
+    {
+        Sprite rtImage = null;
+        List<Item> filterItems;
+        int type = -1;
+
+        //warrior
+        if(itemKey < 200)
+        {
+            switch(itemKey / 10 % 10)
+            {
+                case 0:
+                    type = 0;
+                    break;
+                case 3:
+                    type = 1;
+                    break;
+                case 6:
+                    type = 2;
+                    break;
+            }
+            filterItems = item_warrior[type];
+        }
+        //archer
+        else
+        {
+            switch (itemKey / 10 % 10)
+            {
+                case 0:
+                    type = 0;
+                    break;
+                case 3:
+                    type = 1;
+                    break;
+                case 6:
+                    type = 2;
+                    break;
+            }
+            filterItems = item_archer[type];
+        }
+
+       for(int i = 0; i < filterItems.Count; i++)
+        {
+            if (filterItems[i].itemID == itemKey)
+            {
+                rtImage = filterItems[i].itemImage;
+                break;
+            }
+        }
+
+        return rtImage;
+    }
+
     public static string GetItemNameByKey(int itemKey)
     {
         return _itemName[itemKey];
+    }
+    
+    public static Item GetItemByKey(int itemKey)
+    {
+        Item rtItem = null;
+        List<Item> filterItems;
+        int type = -1;
+
+        //warrior
+        if (itemKey < 200)
+        {
+            switch (itemKey / 10 % 10)
+            {
+                case 0:
+                    type = 0;
+                    break;
+                case 3:
+                    type = 1;
+                    break;
+                case 6:
+                    type = 2;
+                    break;
+            }
+            filterItems = item_warrior[type];
+        }
+        //archer
+        else
+        {
+            switch (itemKey / 10 % 10)
+            {
+                case 0:
+                    type = 0;
+                    break;
+                case 3:
+                    type = 1;
+                    break;
+                case 6:
+                    type = 2;
+                    break;
+            }
+            filterItems = item_archer[type];
+        }
+
+        for (int i = 0; i < filterItems.Count; i++)
+        {
+            if (filterItems[i].itemID == itemKey)
+            {
+                rtItem = filterItems[i];
+                break;
+            }
+        }
+
+        return rtItem;
     }
 
     public static int BuyItemCost(int itemKey)
