@@ -23,13 +23,10 @@ public class NpcShop : MonoBehaviour
     }
 
     //release method
-    //������ ������ �������� ������ ��, �� ��ư�� ���
     public static void BuyItem(int itemKey)
     {
         //read item name
         Debug.Log($"called BuyItem method : {itemKey}");
-        //������ 1���� ���� ����
-        //���� UI�� ���� ���� �� ���� ���� ����
         BuyItem(101, itemKey, 1);
     }
 
@@ -56,8 +53,6 @@ public class NpcShop : MonoBehaviour
             int npcType = await GetNpcType(npcKey);
             int money = 0;
 
-            //Debug.Log($"npcType : {npcType}");
-            //���� ������ npc
             if (npcType == 0 || npcType == 1)
             {
                 int itemCost = ItemSell.BuyItemCost(itemKey);
@@ -69,7 +64,6 @@ public class NpcShop : MonoBehaviour
 
                 money = itemCost * count;
 
-                //������ ���� ������� �˻�
                 int userMoney = await UserInfoManager.GetUserMoney_Async();
                 //Debug.Log($"userMoney : {userMoney}");
                 if (userMoney < money)
@@ -77,8 +71,9 @@ public class NpcShop : MonoBehaviour
                     throw new NpcStoreException("No money, you can't buy this item");
                 }
 
-                //���Ÿ� �Ϸ��ϰ� ������ ���� ������Ŵ
                 AdjustMoney(-money);
+                Inventory inv = FindObjectOfType<Inventory>();
+                inv.AddItem(ItemSell.GetItemByKey(itemKey));
             }
             else
             {
@@ -107,7 +102,6 @@ public class NpcShop : MonoBehaviour
             int money = 0;
 
             //Debug.Log($"npcType : {npcType}");
-            //�Ǹ� ������ npc
             if (npcType == 0 || npcType == 2)
             {
                 int itemCost = ItemSell.SellItemCost(itemKey);
@@ -117,7 +111,6 @@ public class NpcShop : MonoBehaviour
                     throw new NpcStoreException("you can't sell this item");
                 }
 
-                //�ǸŸ� �Ϸ��ϰ� ������ ���� ������Ŵ
                 money = itemCost * count;
                 AdjustMoney(money);
             }
@@ -148,33 +141,26 @@ public class NpcShop : MonoBehaviour
 
         DocumentReference doc_npc = coll_npc.Document(npcKey.ToString());
 
-        // npc�� Ű�� �ش��ϴ� ���� ��������
         DocumentSnapshot npcSnapshot = await doc_npc.GetSnapshotAsync();
 
         if (npcSnapshot.Exists)
         {
-            // npcKey�� �ش��ϴ� �����Ͱ� �����ϴ� ���
             Dictionary<string, object> npcData = npcSnapshot.ToDictionary();
 
-            // npcKey�� �ش��ϴ� �����Ϳ��� sellType ��������
             if (npcData.ContainsKey("sellType"))
             {
-                // sellType ���� ��ȯ
                 object sellTypeObj = npcData["sellType"];
                 if (sellTypeObj is long sellTypeLong)
                 {
-                    // long���� ĳ������ �� int�� ��ȯ
                     return (int)sellTypeLong;
                 }
                 else
                 {
-                    // ĳ���� �Ұ����� ��� null ��ȯ
                     throw new NpcStoreException("Failed GetNpcType : npcData[\"sellType\"] can't be cast to int");
                 }
             }
         }
 
-        // npc�� Ű�� �ش��ϴ� �����Ͱ� ���ų� sellType�� ���� ��� �⺻���� -1 ��ȯ
         return -1;
     }
 
@@ -185,10 +171,8 @@ public class NpcShop : MonoBehaviour
 
     private static async void MakeNpcShopDB_Async()
     {
-        // Firestore �ν��Ͻ� ����
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
-        // �����͸� ������ �÷��ǰ� ���� ����
         CollectionReference coll_npc = db.Collection("NpcInfo");
 
         string npcName = "";
@@ -197,17 +181,14 @@ public class NpcShop : MonoBehaviour
         bool isLastNpc = false;
         Dictionary<string, object> npcContainer;
 
-        //npc ���� ������(�ʿ� �� �߰�)
-
-        //���� npc ������
         while (true)
         {
             switch (npcKey)
             {
                 case 101:
                     npcName = "A";
-                    sellType = 0;               //0 : �Ǹ�/���� ����, 1 : ������ ���Ÿ� ����, 2 : ������ �ǸŸ� ����
-                    shopKind = 1001;            //shopKind�� �����ϸ� ������ �������� �Ǹ� (+ 1000~ : ���, 2000~ : �Ҹ�ǰ)
+                    sellType = 0;
+                    shopKind = 1001;
                     break;
                 case 102:
                     npcName = "B";
