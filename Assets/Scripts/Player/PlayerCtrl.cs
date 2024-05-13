@@ -153,12 +153,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
+            pv.RPC("RandomCommonItemIndexRPC", RpcTarget.AllBuffered, status.charType);
+            pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx);    // 랜덤으로 무기를 뽑음.
+
             if (pv.IsMine)
             {
                 anim.speed = GetAnimSpeed(status.attackSpeed);
-                randIdx = RandomCommonItemIndex(status.charType);
-                pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx);    // 랜덤으로 무기를 뽑음.  
-
+  
                 inventory.equippedItem = equipItem;
                 inventory.FreshSlot();
                 inventory.TotalStatus(equipItem);
@@ -517,15 +518,16 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         return animSpeed;
     }
 
-    private int RandomCommonItemIndex(string charType)
+    [PunRPC]
+    private void RandomCommonItemIndexRPC(string charType)
     {
         if (charType.Equals("Warrior"))
         {
-            return Random.Range(0, itemManager.warriorCommonList.Count);
+            randIdx = Random.Range(0, itemManager.warriorCommonList.Count);
         }
         else
         {
-            return Random.Range(0, itemManager.archerCommonList.Count);
+            randIdx = Random.Range(0, itemManager.archerCommonList.Count);
         }
     }
 
