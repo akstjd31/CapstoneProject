@@ -151,7 +151,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             if (pv.IsMine)
             {
-                RandomWeaponEquip();    // 랜덤으로 무기를 뽑음.
+                pv.RPC("RandomWeaponEquip", RpcTarget.AllBuffered);    // 랜덤으로 무기를 뽑음.
                 anim.speed = GetAnimSpeed(status.attackSpeed);
             }
 
@@ -507,6 +507,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     // 처음 시작할 뽑기로 커먼 아이템 자동선택
+    [PunRPC]
     private void RandomWeaponEquip()
     {
         int rand = Random.Range(0, 5);
@@ -692,7 +693,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+        GameObject arrowPrefab = PhotonNetwork.InstantiateRoomObject(projectile.name, firePoint.position, Quaternion.identity);
         Arrow arrow = arrowPrefab.GetComponent<Arrow>();
         arrow.SetTarget(mouseWorldPosition);
         arrow.SetDamage(status.attackDamage);

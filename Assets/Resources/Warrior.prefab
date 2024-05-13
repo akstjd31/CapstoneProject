@@ -1844,6 +1844,7 @@ GameObject:
   - component: {fileID: 1746097749746490699}
   - component: {fileID: 7167822924147623151}
   - component: {fileID: 8926237017230244871}
+  - component: {fileID: 7176222570426465225}
   m_Layer: 7
   m_Name: Warrior
   m_TagString: Player
@@ -2224,6 +2225,24 @@ MonoBehaviour:
     Max: 1000
     SpeedUpPerc: 5
   restartOnDeviceChange: 1
+--- !u!114 &7176222570426465225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4410033845721660709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2151b26ed0918849b6d4ec2c85e8358, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  status: {fileID: 0}
+  playerCtrl: {fileID: 0}
+  playerPV: {fileID: 0}
+  coolTime: 0
+  durationTime: 0
+  colliders: []
 --- !u!1 &4457435718953625305
 GameObject:
   m_ObjectHideFlags: 0

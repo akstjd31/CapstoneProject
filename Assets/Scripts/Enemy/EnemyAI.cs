@@ -158,10 +158,11 @@ public class EnemyAI : MonoBehaviour
 
         if (target1 != null && target2 != null)
         {
-            float dist1 = Vector2.Distance(this.transform.position, target1.position);
-            float dist2 = Vector2.Distance(this.transform.position, target2.position);
+            // float dist1 = Vector2.Distance(this.transform.position, target1.position);
+            // float dist2 = Vector2.Distance(this.transform.position, target2.position);
 
-            if (dist1 > dist2)
+
+            if (aggroMeter1 > aggroMeter2)
             {
                 focusTarget = target2;
             }

@@ -5,13 +5,10 @@ using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PassiveSkill : MonoBehaviour
+public class PassiveSkill : Skill
 {
-    PlayerCtrl playerCtrl;
-    Status status;
     Task<List<int>> skillLevelAllTask;
     List<int> skillLevelAll;
-    PhotonView pv;
     public int attackCount = 0;
 
     public float[] pridePercentage = new float[11] {0.0f, 3.0f, 5.0f, 7.0f, 10.0f, 12.5f, 15.0f, 18.0f, 20.0f, 23.0f, 30.0f}; //교만 공격력%
@@ -23,11 +20,8 @@ public class PassiveSkill : MonoBehaviour
     public float[] wrathPercentage = new float[11] {0.0f, 0.1f, 0.5f, 1.0f, 1.5f, 1.7f, 2.0f, 2.5f, 3.0f, 3.5f, 5.0f}; //분노 초
     public float[] slothPercentage = new float[11] {150.0f, 180.0f, 200.0f, 250.0f, 220.0f, 250.0f, 275.0f, 300.0f, 330.0f, 370.0f, 400.0f}; //나태 %
     // Start is called before the first frame update
-    void Start()
+    protected void Start()
     {
-        playerCtrl = this.GetComponent<PlayerCtrl>();
-        status = this.GetComponent<Status>();
-        pv = this.GetComponent<PhotonView>();
         skillLevelAllTask = CharSkill.GetSkillLevelAll(0);
         skillLevelAll = skillLevelAllTask.Result;
     }
