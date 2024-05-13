@@ -226,6 +226,59 @@ public class ItemSell : MonoBehaviour
     {
         return _itemName[itemKey];
     }
+    
+    public static Item GetItemByKey(int itemKey)
+    {
+        Item rtItem = null;
+        List<Item> filterItems;
+        int type = -1;
+
+        //warrior
+        if (itemKey < 200)
+        {
+            switch (itemKey / 10 % 10)
+            {
+                case 0:
+                    type = 0;
+                    break;
+                case 3:
+                    type = 1;
+                    break;
+                case 6:
+                    type = 2;
+                    break;
+            }
+            filterItems = item_warrior[type];
+        }
+        //archer
+        else
+        {
+            switch (itemKey / 10 % 10)
+            {
+                case 0:
+                    type = 0;
+                    break;
+                case 3:
+                    type = 1;
+                    break;
+                case 6:
+                    type = 2;
+                    break;
+            }
+            filterItems = item_archer[type];
+        }
+
+        for (int i = 0; i < filterItems.Count; i++)
+        {
+            if (filterItems[i].itemID == itemKey)
+            {
+                rtItem = filterItems[i];
+                break;
+            }
+        }
+
+        return rtItem;
+    }
 
     public static int BuyItemCost(int itemKey)
     {
