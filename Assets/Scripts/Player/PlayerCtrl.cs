@@ -157,11 +157,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             if (pv.IsMine)
             {
                 anim.speed = GetAnimSpeed(status.attackSpeed);                
-                
-                inventory.equippedItem = equipItem;
-                inventory.FreshSlot();
-                inventory.TotalStatus(equipItem);
+               
             }
+
+            inventory.equippedItem = equipItem;
+            inventory.FreshSlot();
+            inventory.TotalStatus(equipItem);
 
             //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
             //CommonWeaponEquipRPC(randIdx);
