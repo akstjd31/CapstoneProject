@@ -15,45 +15,38 @@ public class Arrow : MonoBehaviour
 
     private Rigidbody2D rigid;
 
-    // 화살의 위치 및 회전 값을 동기화합니다.
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            // 데이터를 보냅니다.
-            stream.SendNext(transform.position);
-        }
-        else
-        {
-            // 데이터를 받습니다.
-            targetPos = (Vector3)stream.ReceiveNext();
-        }
-    }
+    private float elapsedTime = 2.0f;
 
+    [PunRPC]
     public void SetViewID(int viewID)
     {
         this.playerViewID = viewID;
     }
+
+    [PunRPC]
     public void SetOwner(string owner)
     {
         this.owner = owner;
     }
 
+    [PunRPC]
     public void SetDamage(float damage)
     {
         this.damage = damage;
     }
 
+    [PunRPC]
     public void SetSpeed(float speed)
     {
         this.speed = speed;
     }
 
+    [PunRPC]
     public void SetTarget(Vector3 targetPos)
     {
         this.targetPos = targetPos;
     }
-
+    
     public Vector3 GetTarget()
     {
         return targetPos;
@@ -62,12 +55,17 @@ public class Arrow : MonoBehaviour
     private void Start()
     {
         rigid = this.GetComponent<Rigidbody2D>();
-
-        Destroy(this.gameObject, 2f);
     }
 
     private void Update()
     {
+        elapsedTime -= Time.deltaTime;
+
+        if (elapsedTime <= 0.0f)
+        {
+            PhotonNetwork.Destroy(this.gameObject);
+        }
+
         if (targetPos != null)
         {
             Vector2 shootDir;
@@ -89,7 +87,7 @@ public class Arrow : MonoBehaviour
             {
                 if (rigid.velocity == Vector2.zero)
                 {
-                    Destroy(this.gameObject);
+                    PhotonNetwork.Destroy(this.gameObject);
                 }
             }
         }
@@ -122,12 +120,12 @@ public class Arrow : MonoBehaviour
                 enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID);
             }
 
-            Destroy(this.gameObject);
+            PhotonNetwork.Destroy(this.gameObject);
         }
 
         else if (other.CompareTag("Obstacle"))
         {
-            Destroy(this.gameObject);
+            PhotonNetwork.Destroy(this.gameObject);
         }
     }
 }

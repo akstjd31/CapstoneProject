@@ -151,11 +151,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
-            pv.RPC("RandomCommonItemIndexRPC", RpcTarget.AllBuffered);
+            pv.RPC("RandomCommonItemIndexRPC", RpcTarget.AllBuffered, status.charType);
+            CommonWeaponEquip(randIdx);    // 랜덤으로 무기를 뽑음.
 
             if (pv.IsMine)
             {
-                RandomWeaponEquip(randIdx);    // 랜덤으로 무기를 뽑음.
                 anim.speed = GetAnimSpeed(status.attackSpeed);
             }
 
@@ -511,9 +511,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    private void RandomCommonItemIndexRPC()
+    private void RandomCommonItemIndexRPC(char charType)
     {
-        if (status.charType.Equals("Warrior"))
+        if (charType.Equals("Warrior"))
         {
             randIdx = Random.Range(0, itemManager.warriorCommonList.Count);
         }
@@ -524,7 +524,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     // 처음 시작할 뽑기로 커먼 아이템 자동선택
-    private void RandomWeaponEquip(int rand)
+    private void CommonWeaponEquip(int rand)
     {
         string charType = status.charType;
 
@@ -710,15 +710,21 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrowPrefab = PhotonNetwork.Instantiate(projectile.name, firePoint.position, Quaternion.identity);
+        GameObject arrowPrefab = PhotonNetwork.InstantiateRoomObject(projectile.name, firePoint.position, Quaternion.identity);
 
         Arrow arrow = arrowPrefab.GetComponent<Arrow>();
+        PhotonView arrowPV = arrow.GetComponent<PhotonView>();
 
-        arrow.SetTarget(mouseWorldPosition);
-        arrow.SetDamage(status.attackDamage);
-        arrow.SetSpeed(3.5f);
-        arrow.SetOwner(this.tag);
-        arrow.SetViewID(pv.ViewID);
+        arrowPV.RPC("SetTarget", RpcTarget.AllBuffered, mouseWorldPosition);
+        arrowPV.RPC("SetDamage", RpcTarget.AllBuffered, status.attackDamage);
+        arrowPV.RPC("SetSpeed", RpcTarget.AllBuffered, 3.5f);
+        arrowPV.RPC("SetOwner", RpcTarget.AllBuffered, this.tag);
+        arrowPV.RPC("SetViewID", RpcTarget.AllBuffered, pv.ViewID);
+        //arrow.SetTarget(mouseWorldPosition);
+        //arrow.SetDamage(status.attackDamage);
+        //arrow.SetSpeed(3.5f);
+        //arrow.SetOwner(this.tag);
+        //arrow.SetViewID(pv.ViewID);
 
         state = State.NORMAL;
     }

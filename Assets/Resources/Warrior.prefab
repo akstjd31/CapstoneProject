@@ -1959,6 +1959,7 @@ MonoBehaviour:
     m_Bits: 512
   firePoint: {fileID: 0}
   projectile: {fileID: 0}
+  randIdx: 0
 --- !u!114 &5726380531837837366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2242,7 +2243,6 @@ MonoBehaviour:
   playerPV: {fileID: 0}
   coolTime: 0
   durationTime: 0
-  colliders: []
 --- !u!1 &4457435718953625305
 GameObject:
   m_ObjectHideFlags: 0
