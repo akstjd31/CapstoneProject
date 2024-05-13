@@ -25,8 +25,8 @@ public class Status : MonoBehaviourPunCallbacks
 
     public int attackSpeed; // 공격 속도
 
-    public int moveSpeed = 5; // 이동 속도
-    private int defaultMoveSpeed; // 디폴트 이동 속도
+    public float moveSpeed = 5; // 이동 속도
+    private float defaultMoveSpeed; // 디폴트 이동 속도
 
     public float evasionRate = 5f; // 회피율
     private float defaultEvasionRate; // 디폴트 회피율
@@ -85,7 +85,7 @@ public class Status : MonoBehaviourPunCallbacks
         return defaultEvasionRate;
     }
 
-    public int GetDefaultMoveSpeed()
+    public float GetDefaultMoveSpeed()
     {
         return defaultMoveSpeed;
     }
