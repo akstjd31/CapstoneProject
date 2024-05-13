@@ -111,6 +111,7 @@ public class ItemManager : MonoBehaviour
                 randIdxList.Add(value); // 받은 값으로 리스트 갱신
             }
         }
+    }
 
     //    [PunRPC]
     //public void RandomCommonItemIndex(int viewID)

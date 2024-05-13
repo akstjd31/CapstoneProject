@@ -2192,7 +2192,6 @@ MonoBehaviour:
   firePoint: {fileID: 8033187166185832740}
   projectile: {fileID: 2763029994035334603, guid: f6d12d5adff682a4c9ea7677c94b8267, type: 3}
   arrowTargetPos: {x: 0, y: 0, z: 0}
-  randIdx: 0
   equipItem: {fileID: 0}
 --- !u!114 &1584516156953086667
 MonoBehaviour:

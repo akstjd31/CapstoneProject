@@ -1960,7 +1960,6 @@ MonoBehaviour:
   firePoint: {fileID: 0}
   projectile: {fileID: 0}
   arrowTargetPos: {x: 0, y: 0, z: 0}
-  randIdx: 0
   equipItem: {fileID: 0}
 --- !u!114 &5726380531837837366
 MonoBehaviour:
