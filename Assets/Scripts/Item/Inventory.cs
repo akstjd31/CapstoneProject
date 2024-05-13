@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Photon.Pun;
 using Random = UnityEngine.Random;
 
 public class Inventory : MonoBehaviour
@@ -184,18 +185,21 @@ public class Inventory : MonoBehaviour
 
     private void EquipItem()
     {
-        if (spum_SpriteList != null && equippedSlot.item != null)
+        if (status != null && status.GetComponent<PhotonView>().IsMine)
         {
-            // 스펌 캐릭터에 존재하는 Weapon항목 스프라이트 중에서 무기를 들고 있는 손에 스프라이트 변경
-            foreach (SpriteRenderer sprite in spum_SpriteList._weaponList)
+            if (spum_SpriteList != null && equippedSlot.item != null)
             {
-                if (sprite.sprite != null && sprite != equippedSlot.item.itemImage)
+                // 스펌 캐릭터에 존재하는 Weapon항목 스프라이트 중에서 무기를 들고 있는 손에 스프라이트 변경
+                foreach (SpriteRenderer sprite in spum_SpriteList._weaponList)
                 {
-                    sprite.sprite = equippedSlot.item.itemImage;
-                    equippedItem = equippedSlot.item;
-                    TotalStatus(equippedSlot.item);
+                    if (sprite.sprite != null && sprite != equippedSlot.item.itemImage)
+                    {
+                        sprite.sprite = equippedSlot.item.itemImage;
+                        equippedItem = equippedSlot.item;
+                        TotalStatus(equippedSlot.item);
 
-                    break;
+                        break;
+                    }
                 }
             }
         }
