@@ -115,19 +115,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log("방 입장 성공");
         //PhotonNetwork.Instantiate("Player", Vector2.zero, Quaternion.identity);
 
+        GameObject player = null;
         // 만약 전사를 택했다면
         if (photonManager.GetCharType().Equals(charTypeList[0]))
         {
-            PhotonNetwork.Instantiate(charTypeList[0], Vector2.zero, Quaternion.identity);
+            player = PhotonNetwork.Instantiate(charTypeList[0], Vector2.zero, Quaternion.identity);
         }
         else if (photonManager.GetCharType().Equals(charTypeList[1]))
         {
-            PhotonNetwork.Instantiate(charTypeList[1], Vector2.zero, Quaternion.identity);
+            player = PhotonNetwork.Instantiate(charTypeList[1], Vector2.zero, Quaternion.identity);
         }
 
-
-        // 포톤 네트워크가 연결된 상태에서만 작동하도록 함
-        GameObject.Find("ItemManager").GetComponent<PhotonView>().RPC("SyncPlayerData", RpcTarget.AllBuffered, Random.Range(0, 5)); // 초기 데이터 동기화
+        player.transform.GetChild(0).GetComponent<PhotonView>().RPC("SetRandIndex", RpcTarget.AllBuffered, Random.Range(0, 5));
     }
 
     public override void OnLeftLobby()

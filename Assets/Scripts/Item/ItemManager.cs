@@ -17,8 +17,6 @@ public class ItemManager : MonoBehaviour
     public List<Item> archerLegendaryList;
 
     private Inventory inventory;
-
-    [SerializeField] private List<int> randIdxList;
     // 아이템 등급에 따른 분류
     private void Awake()
     {
@@ -74,56 +72,6 @@ public class ItemManager : MonoBehaviour
     private void Start()
     {
     }
-
-    // 플레이어 데이터를 동기화하는 메서드
-    [PunRPC]
-    void SyncPlayerData(int value)
-    {
-        // 값 추가
-        randIdxList.Add(value);
-    }
-
-    // 포톤 동기화를 위한 메서드
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            // 데이터를 보냄
-            stream.SendNext(randIdxList.Count); // 리스트의 길이 전송
-            foreach (int value in randIdxList)
-            {
-                stream.SendNext(value); // 리스트의 각 항목 전송
-            }
-        }
-        else
-        {
-            // 데이터를 받음
-            int count = (int)stream.ReceiveNext(); // 리스트의 길이 받음
-            randIdxList.Clear(); // 기존 리스트 초기화
-            for (int i = 0; i < count; i++)
-            {
-                int value = (int)stream.ReceiveNext(); // 리스트의 각 항목 받음
-                randIdxList.Add(value); // 받은 값으로 리스트 갱신
-            }
-        }
-    }
-
-    //    [PunRPC]
-    //public void RandomCommonItemIndex(int viewID)
-    //{
-    //    PhotonView playerPV = PhotonView.Find(viewID);
-    //    Status status = playerPV.GetComponent<Status>();
-    //    PlayerCtrl playerCtrl = playerPV.GetComponent<PlayerCtrl>();
-
-    //    if (status.charType.Equals("Warrior"))
-    //    {
-    //        playerCtrl.SetRandIndex(randIdx);
-    //    }
-    //    else
-    //    {
-    //        playerCtrl.SetRandIndex(randIdx);
-    //    }
-    //}
 
     // 아이템 드랍 확률결과로 나온 아이템 타입과 직업에 연관된 아이템 뽑기
     public Item GetRandomItemWithProbability(ItemType itemType, string charType)

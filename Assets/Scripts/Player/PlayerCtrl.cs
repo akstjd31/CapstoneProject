@@ -153,24 +153,22 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
+            pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
             if (pv.IsMine)
             {
-                anim.speed = GetAnimSpeed(status.attackSpeed);
+                anim.speed = GetAnimSpeed(status.attackSpeed);                
+                
+                inventory.equippedItem = equipItem;
+                inventory.FreshSlot();
+                inventory.TotalStatus(equipItem);
             }
 
             //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
-
-
-            CommonWeaponEquip(0, status.charType);
-
-            //pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, );    // 랜덤으로 무기를 뽑음.
             //CommonWeaponEquipRPC(randIdx);
 
             if (pv.IsMine)
             {
-                inventory.equippedItem = equipItem;
-                inventory.FreshSlot();
-                inventory.TotalStatus(equipItem);
+
             }
 
             chatScript = canvas.GetComponent<Chat>();
@@ -526,13 +524,15 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         return animSpeed;
     }
 
+    [PunRPC]
     public void SetRandIndex(int rand)
     {
         this.randIdx = rand;
     }
 
     // 처음 시작할 뽑기로 커먼 아이템 자동선택
-    private void CommonWeaponEquip(int rand, string charType)
+    [PunRPC]
+    private void CommonWeaponEquipRPC(int rand, string charType)
     {
         if (inventory != null && itemManager != null)
         {
