@@ -161,7 +161,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
 
 
-            CommonWeaponEquip(itemManager.randIdx, status.charType);
+            CommonWeaponEquip(0, status.charType);
 
             //pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, );    // 랜덤으로 무기를 뽑음.
             //CommonWeaponEquipRPC(randIdx);
