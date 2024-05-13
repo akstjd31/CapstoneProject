@@ -115,6 +115,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private SPUM_SpriteList spum_SpriteList;
 
     [SerializeField] private int randIdx;
+    [SerializeField] private Item equipItem;
 
     //public float animSpeed;   // 애니메이션 속도 테스트
 
@@ -152,13 +153,16 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
-            pv.RPC("RandomCommonItemIndexRPC", RpcTarget.AllBuffered, status.charType);
-            CommonWeaponEquip(randIdx);    // 랜덤으로 무기를 뽑음.
-
             if (pv.IsMine)
             {
                 anim.speed = GetAnimSpeed(status.attackSpeed);
             }
+
+            pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, RandomCommonItemIndex(status.charType));    // 랜덤으로 무기를 뽑음.   
+
+            inventory.equippedItem = equipItem;
+            inventory.FreshSlot();
+            inventory.TotalStatus(equipItem);
 
             chatScript = canvas.GetComponent<Chat>();
             partySystemScript = canvas.GetComponent<PartySystem>();
@@ -513,42 +517,42 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         return animSpeed;
     }
 
-    [PunRPC]
-    private void RandomCommonItemIndexRPC(string charType)
+    private int RandomCommonItemIndex(string charType)
     {
         if (charType.Equals("Warrior"))
         {
-            randIdx = Random.Range(0, itemManager.warriorCommonList.Count);
+            return Random.Range(0, itemManager.warriorCommonList.Count);
         }
         else
         {
-            randIdx = Random.Range(0, itemManager.archerCommonList.Count);
+            return Random.Range(0, itemManager.archerCommonList.Count);
         }
     }
 
     // 처음 시작할 뽑기로 커먼 아이템 자동선택
-    private void CommonWeaponEquip(int rand)
+    [PunRPC]
+    private void CommonWeaponEquipRPC(int rand)
     {
         string charType = status.charType;
 
-        if (inventory != null && itemManager != null)
+        if (pv.IsMine)
         {
-            Item item = null;
-            if (charType.Equals("Warrior"))
+            if (inventory != null && itemManager != null)
             {
-                item = itemManager.warriorCommonList[rand];
-                spum_SpriteList._weaponList[2].sprite = item.itemImage;  // L_Weapon
-            }
+                Item item = null;
+                if (charType.Equals("Warrior"))
+                {
+                    item = itemManager.warriorCommonList[rand];
+                    spum_SpriteList._weaponList[2].sprite = item.itemImage;  // L_Weapon
+                }
 
-            else
-            {
-                item = itemManager.archerCommonList[rand];
-                spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
+                else
+                {
+                    item = itemManager.archerCommonList[rand];
+                    spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
+                }
+                equipItem = item;
             }
-
-            inventory.equippedItem = item;
-            inventory.FreshSlot();
-            inventory.TotalStatus(item);
         }
     }
 
