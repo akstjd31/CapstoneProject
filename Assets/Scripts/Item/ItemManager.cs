@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 // 전체적인 아이템 관리 및 전달 스크립트
 public class ItemManager : MonoBehaviour
@@ -65,6 +66,23 @@ public class ItemManager : MonoBehaviour
 
         inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").GetComponent<Inventory>();
         inventory.SetItemManager(this);
+    }
+
+    [PunRPC]
+    public void RandomCommonItemIndex(int viewID)
+    {
+        PhotonView playerPV = PhotonView.Find(viewID);
+        Status status = playerPV.GetComponent<Status>();
+        PlayerCtrl playerCtrl = playerPV.GetComponent<PlayerCtrl>();
+
+        if (status.charType.Equals("Warrior"))
+        {
+            playerCtrl.SetRandIndex(Random.Range(0, warriorCommonList.Count));
+        }
+        else
+        {
+            playerCtrl.SetRandIndex(Random.Range(0, archerCommonList.Count));
+        }
     }
 
     // 아이템 드랍 확률결과로 나온 아이템 타입과 직업에 연관된 아이템 뽑기
