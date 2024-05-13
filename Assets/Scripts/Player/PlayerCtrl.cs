@@ -157,11 +157,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 anim.speed = GetAnimSpeed(status.attackSpeed);
 
-                pv.RPC("RandomCommonItemIndexRPC", RpcTarget.AllBuffered, status.charType);
-                //pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx);    // 랜덤으로 무기를 뽑음.
+                
+                
             }
-
-            CommonWeaponEquipRPC(randIdx);
+            RandomCommonItemIndex(status.charType);
+            pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx);    // 랜덤으로 무기를 뽑음.
+            //CommonWeaponEquipRPC(randIdx);
 
             if (pv.IsMine)
             {
@@ -524,7 +525,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    private void RandomCommonItemIndexRPC(string charType)
+    private void RandomCommonItemIndex(string charType)
     {
         if (charType.Equals("Warrior"))
         {
@@ -537,29 +538,26 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     // 처음 시작할 뽑기로 커먼 아이템 자동선택
-    //[PunRPC]
+    [PunRPC]
     private void CommonWeaponEquipRPC(int rand)
     {
         string charType = status.charType;
 
-        if (pv.IsMine)
+        if (inventory != null && itemManager != null)
         {
-            if (inventory != null && itemManager != null)
+            Item item = null;
+            if (charType.Equals("Warrior"))
             {
-                Item item = null;
-                if (charType.Equals("Warrior"))
-                {
-                    item = itemManager.warriorCommonList[rand];
-                    spum_SpriteList._weaponList[2].sprite = item.itemImage;  // L_Weapon
-                }
-
-                else
-                {
-                    item = itemManager.archerCommonList[rand];
-                    spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
-                }
-                equipItem = item;
+                item = itemManager.warriorCommonList[rand];
+                spum_SpriteList._weaponList[2].sprite = item.itemImage;  // L_Weapon
             }
+
+            else
+            {
+                item = itemManager.archerCommonList[rand];
+                spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
+            }
+            equipItem = item;
         }
     }
 
