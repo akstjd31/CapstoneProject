@@ -103,12 +103,15 @@ public class EnemyCtrl : MonoBehaviour
 
     // 플레이어한테 피격당했을 떄 RPC
     [PunRPC]
-    public void DamagePlayerOnHitRPC(int playerViewID, float damage)
+    public void DamagePlayerOnHitRPC(int playerViewID)
     {
+        PhotonView playerPV = PhotonView.Find(playerViewID);
+        Status status = playerPV.GetComponent<Status>();
+
         // 플레이어의 공격력만큼 체력에서 깎음
         if (hpBar != null)
         {
-            enemy.enemyData.hp -= damage;
+            enemy.enemyData.hp -= status.attackDamage;
 
             // 죽음
             if (enemy.enemyData.hp <= 0)
@@ -126,17 +129,17 @@ public class EnemyCtrl : MonoBehaviour
 
         if (enemyAIScript.GetSecondTarget() == null)
         {
-            enemyAIScript.aggroMeter1 += (int)damage;
+            enemyAIScript.aggroMeter1 += status.attackDamage;
         }
         else
         {
             if (playerViewID == enemyAIScript.GetFirstTarget().GetComponent<PhotonView>().ViewID)
             {
-                enemyAIScript.aggroMeter1 += (int)damage;
+                enemyAIScript.aggroMeter1 += status.attackDamage;
             }
             else
             {
-                enemyAIScript.aggroMeter2 += (int)damage;
+                enemyAIScript.aggroMeter2 += status.attackDamage;
             }
         }
     }
@@ -264,8 +267,9 @@ public class EnemyCtrl : MonoBehaviour
                 if (player != null && !player.onHit)
                 {
                     // 몹의 데미지만큼 플레이어에게 피해를 입힘.
-                    player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, player.passiveSkill.PrideDamaged(enemy.enemyData.attackDamage));
-                    player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
+                    //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, player.passiveSkill.PrideDamaged(enemy.enemyData.attackDamage));
+                    //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, enemy.enemyData.attackDamage);
+                    //player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
                 }
             }
         }

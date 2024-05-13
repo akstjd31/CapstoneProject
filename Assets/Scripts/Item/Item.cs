@@ -13,7 +13,7 @@ public enum CharacterType
     WARRIOR, ARCHER
 }
 
-public enum ApplyAdditionalStatus
+public enum BonusStat
 {
     NONE, HP, MOVESPEED, EVASIONRATE
 }
@@ -31,7 +31,7 @@ public class Item : ScriptableObject
     public Sprite itemImage;
     public ItemType itemType;
     public CharacterType charType;
-    public ApplyAdditionalStatus addStatus;
+    public BonusStat bonusStat;
     public float addValue;
     public GameObject prefab;
 }

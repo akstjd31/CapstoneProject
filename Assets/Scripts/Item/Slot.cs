@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Photon.Pun;
 
 public class Slot : MonoBehaviour, IDropHandler
 {
@@ -10,9 +11,16 @@ public class Slot : MonoBehaviour, IDropHandler
 
     private Item Item;
 
-
     private void Start()
     {
+    }
+
+    private void Update()
+    {
+        if (item == null && this.GetComponent<Drag>().isDraggable)
+        {
+            this.GetComponent<Drag>().isDraggable = false;
+        }
     }
 
     public Item item
@@ -38,7 +46,7 @@ public class Slot : MonoBehaviour, IDropHandler
     public void OnDrop(PointerEventData eventData)
     {
         GameObject targetObj = eventData.pointerDrag;
-        Drag targetDrag = this.GetComponent<Drag>();
+        Drag drag = this.GetComponent<Drag>();
 
         //// 만약 쓰레기통에 넣는다면 해당 아이템 삭제
         //if (targetObj.CompareTag("Trash"))
@@ -48,22 +56,47 @@ public class Slot : MonoBehaviour, IDropHandler
         //    return;
         //}
 
-        if (!targetDrag.isDraggable)
+        if (!drag.isDraggable)
         {
             Item targetItem = targetObj.GetComponent<Slot>().item;
-            Drag drag = targetObj.GetComponent<Drag>();
+            Drag targetDrag = targetObj.GetComponent<Drag>();
 
-            Item tmp = targetItem;
-            targetItem = item;
-            item = tmp;
+            if (!targetDrag.isEquippedItem)
+            {
+                Item tmp = targetItem;
+                targetItem = item;
+                item = tmp;
 
-            targetDrag.isDraggable = true;
+                drag.isDraggable = true;
+                drag.defaultSize = drag.isEquippedItem ? new Vector2(350, 350) : new Vector2(200, 200);
+                drag.defaultItem = targetDrag.defaultItem;
+                drag.defaultSprite = drag.image.sprite;
 
-            targetDrag.defaultSize = targetDrag.isEquippedItem ? new Vector2(350, 350) : new Vector2(200, 200);
+                targetDrag.isDraggable = false;
+            }
+        }
+        else
+        {
+            // 장착된 아이템 교체
+            if (drag.isEquippedItem)
+            {
+                Drag targetDrag = targetObj.GetComponent<Drag>();
 
-            targetDrag.defaultSprite = targetDrag.image.sprite;
+                Sprite tmpSprite = drag.defaultSprite;
+                drag.defaultSprite = targetDrag.defaultSprite;
+                targetDrag.defaultSprite = tmpSprite;
 
-            drag.isDraggable = false;
+                this.transform.root.Find("Inventory").GetComponent<Inventory>().equippedItem = targetDrag.defaultItem;
+                this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Remove(targetDrag.defaultItem);
+
+                Item tmpItem = targetDrag.defaultItem;
+                targetDrag.defaultItem = drag.defaultItem;
+                drag.defaultItem = tmpItem;
+
+                this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Add(targetDrag.defaultItem);
+
+                item = drag.defaultItem;
+            }
         }
     }
 }

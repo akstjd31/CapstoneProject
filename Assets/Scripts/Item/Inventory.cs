@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class Inventory : MonoBehaviour
 {
+    public Item equippedItem;
     public List<Item> items;
 
     [SerializeField]
@@ -30,6 +32,11 @@ public class Inventory : MonoBehaviour
     GraphicRaycaster raycaster;
     PointerEventData pointerEventData;
     EventSystem eventSystem;
+
+    [SerializeField] private Status status;
+    [SerializeField] private SPUM_SpriteList spum_SpriteList;
+    [SerializeField] private ItemManager itemManager;
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -51,10 +58,29 @@ public class Inventory : MonoBehaviour
     void Awake()
     {
         FreshSlot();
+
+        spum_SpriteList = status.transform.Find("Root").GetComponent<SPUM_SpriteList>();
+    }
+
+    public Item GetEquippedItem()
+    {
+        return equippedSlot.item;
+    }
+
+    public void SetStatus(Status status)
+    {
+        this.status = status;
+    }
+
+    public void SetItemManager(ItemManager itemManager)
+    {
+        this.itemManager = itemManager;
     }
 
     private void Update()
     {
+        EquipItem();
+
         // 마우스 위치에서 PointerEventData 생성
         pointerEventData = new PointerEventData(eventSystem);
         pointerEventData.position = Input.mousePosition;
@@ -80,16 +106,30 @@ public class Inventory : MonoBehaviour
                 float dragWidthHalf = dragRectTransform.rect.width;
                 float dragHeightHalf = dragRectTransform.rect.height;
 
-                explanation.transform.position = new Vector3(
-                    pointerEventData.position.x + dragWidthHalf,
-                    pointerEventData.position.y + dragHeightHalf
-                );
+                if (!drag.isEquippedItem)
+                {
+                    explanation.transform.position = new Vector3(
+                        pointerEventData.position.x + dragWidthHalf,
+                        pointerEventData.position.y + dragHeightHalf * 1.25f
+                    );
+                }
+                else
+                {
+                    explanation.transform.position = new Vector3(
+                        pointerEventData.position.x - dragWidthHalf * 0.75f,
+                        pointerEventData.position.y - dragHeightHalf * 0.75f
+                    );
+                }
+
 
                 Slot slot = drag.GetComponent<Slot>();
 
                 explanation.GetComponent<Explanation>().InfoSetting(slot.item.itemImage,
                                                                     slot.item.itemName,
                                                                     slot.item.attackDamage,
+                                                                    slot.item.attackSpeed,
+                                                                    slot.item.bonusStat,
+                                                                    slot.item.addValue,
                                                                     slot.item.itemType,
                                                                     slot.item.charType);
             }
@@ -109,28 +149,22 @@ public class Inventory : MonoBehaviour
     public void FreshSlot()
     {
         int i = 0;
-        Item item = null;
 
-        if (equippedDrag.isDraggable)
-        {
-            item = equippedSlot.item;
-            items.Remove(item);
-        }
+        equippedSlot.item = equippedItem;
+        equippedDrag.isDraggable = true;
+        equippedDrag.defaultItem = equippedItem;
 
         for (i = 0; i < items.Count && i < inventorySlots.Length; i++)
         {
             inventorySlots[i].item = items[i];
             inventoryDrags[i].isDraggable = true;
+            inventoryDrags[i].defaultItem = items[i];
         }
         for (; i < inventorySlots.Length; i++)
         {
             inventorySlots[i].item = null;
             inventoryDrags[i].isDraggable = false;
-        }
-
-        if (item != null)
-        {
-            items.Add(item);
+            inventoryDrags[i].defaultItem = null;
         }
     }
 
@@ -148,4 +182,47 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    private void EquipItem()
+    {
+        if (spum_SpriteList != null && equippedSlot.item != null)
+        {
+            // 스펌 캐릭터에 존재하는 Weapon항목 스프라이트 중에서 무기를 들고 있는 손에 스프라이트 변경
+            foreach (SpriteRenderer sprite in spum_SpriteList._weaponList)
+            {
+                if (sprite.sprite != null && sprite != equippedSlot.item.itemImage)
+                {
+                    sprite.sprite = equippedSlot.item.itemImage;
+                    equippedItem = equippedSlot.item;
+                    TotalStatus(equippedSlot.item);
+
+                    break;
+                }
+            }
+        }
+    }
+    
+    public void TotalStatus(Item equippedItem)
+    {
+        status.attackDamage = status.GetDefaultAttackDamage() + equippedItem.attackDamage;
+        status.attackSpeed = equippedItem.attackSpeed;
+
+        PlayerCtrl playerCtrl = status.GetComponent<PlayerCtrl>();
+        playerCtrl.SetAnimSpeed(playerCtrl.GetAnimSpeed(status.attackSpeed));
+
+        if (equippedSlot.item.bonusStat != BonusStat.NONE)
+        {
+            switch (equippedItem.bonusStat)
+            {
+                case BonusStat.HP:
+                    status.MAXHP = status.GetDefaultHP() + equippedItem.addValue;
+                    break;
+                case BonusStat.MOVESPEED:
+                    status.moveSpeed = status.GetDefaultMoveSpeed() + (int)equippedItem.addValue;
+                    break;
+                case BonusStat.EVASIONRATE:
+                    status.evasionRate = status.GetDefaultEvasionRate() + equippedItem.addValue;
+                    break;
+            }
+        }
+    }
 }

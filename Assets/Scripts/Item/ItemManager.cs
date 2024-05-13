@@ -7,13 +7,15 @@ public class ItemManager : MonoBehaviour
 {
     public ItemSO itemSO;
 
-    [SerializeField] private List<Item> warriorCommonList;
-    [SerializeField] private List<Item> warriorRareList;
-    [SerializeField] private List<Item> warriorLegendaryList;
+    public List<Item> warriorCommonList;
+    public List<Item> warriorRareList;
+    public List<Item> warriorLegendaryList;
 
-    [SerializeField] private List<Item> archerCommonList;
-    [SerializeField] private List<Item> archerRareList;
-    [SerializeField] private List<Item> archerLegendaryList;
+    public List<Item> archerCommonList;
+    public List<Item> archerRareList;
+    public List<Item> archerLegendaryList;
+
+    private Inventory inventory;
 
     // 아이템 등급에 따른 분류
     private void Start()
@@ -60,6 +62,9 @@ public class ItemManager : MonoBehaviour
                 }
             }
         }
+
+        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").GetComponent<Inventory>();
+        inventory.SetItemManager(this);
     }
 
     // 아이템 드랍 확률결과로 나온 아이템 타입과 직업에 연관된 아이템 뽑기

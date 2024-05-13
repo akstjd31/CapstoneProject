@@ -56,24 +56,26 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
         playerCtrl = other.GetComponent<PlayerCtrl>();
         if(playerCtrl.isPartyMember)
         {
-            //if(playerCtrl.isReady && )
-            // if(playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2)
-            // {
-            //     partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
-            //     partyPlayersID[1] = playerCtrl.party.GetPartyMemberID();
-            //     roomName = PhotonView.Find(partyPlayersID[0]).Controller.NickName;
-            //     this.transform.localScale = new Vector3(this.transform.localScale.x - 0.2f, this.transform.localScale.y - 0.2f, this.transform.localScale.z - 0.2f);
-            //     foreach (int playerID in partyPlayersID)
-            //     {
-            //         PhotonView playerView = PhotonView.Find(playerID);
-            //         playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID, roomName);
-            //     }
-            // }
+            if(playerCtrl.isReady && PhotonView.Find(playerCtrl.party.GetPartyMemberID()).GetComponent<PlayerCtrl>().isReady)
+            {
+                if(playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2)
+                {
+                    partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
+                    partyPlayersID[1] = playerCtrl.party.GetPartyMemberID();
+                    roomName = PhotonView.Find(partyPlayersID[0]).Controller.NickName;
+                    this.transform.localScale = new Vector3(this.transform.localScale.x - 0.2f, this.transform.localScale.y - 0.2f, this.transform.localScale.z - 0.2f);
+                    foreach (int playerID in partyPlayersID)
+                    {
+                        PhotonView playerView = PhotonView.Find(playerID);
+                        playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID, roomName);
+                    }
+                }
+            }
 
             //for test
-            partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
-            PhotonView playerView = PhotonView.Find(partyPlayersID[0]);
-            playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID[0], roomName);
+            // partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
+            // PhotonView playerView = PhotonView.Find(partyPlayersID[0]);
+            // playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID[0], roomName);
         }
     }
 }
