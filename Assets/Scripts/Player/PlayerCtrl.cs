@@ -114,7 +114,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private ItemManager itemManager;
     private SPUM_SpriteList spum_SpriteList;
 
-    [SerializeField] private int randIdx;
+    [SerializeField] private int randIdx = -1;
     [SerializeField] private Item equipItem;
 
     //public float animSpeed;   // 애니메이션 속도 테스트
@@ -158,7 +158,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 anim.speed = GetAnimSpeed(status.attackSpeed);
             }
 
-            itemManager.RandomCommonItemIndex(this);
+            if (randIdx == -1)
+            {
+                itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
+                //itemManager.RandomCommonItemIndex();
+            }
+            
             pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);    // 랜덤으로 무기를 뽑음.
             //CommonWeaponEquipRPC(randIdx);
 

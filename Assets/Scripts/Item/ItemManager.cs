@@ -71,11 +71,12 @@ public class ItemManager : MonoBehaviour
         randIdx = Random.Range(0, warriorCommonList.Count);
     }
 
-    public void RandomCommonItemIndex(PlayerCtrl playerCtrl)
+    [PunRPC]
+    public void RandomCommonItemIndex(int viewID)
     {
-        //PhotonView playerPV = PhotonView.Find(viewID);
-        Status status = playerCtrl.GetComponent<Status>();
-        //PlayerCtrl playerCtrl = playerPV.GetComponent<PlayerCtrl>();
+        PhotonView playerPV = PhotonView.Find(viewID);
+        Status status = playerPV.GetComponent<Status>();
+        PlayerCtrl playerCtrl = playerPV.GetComponent<PlayerCtrl>();
 
         if (status.charType.Equals("Warrior"))
         {
