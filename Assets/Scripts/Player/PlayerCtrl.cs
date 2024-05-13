@@ -156,13 +156,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             if (pv.IsMine)
             {
                 anim.speed = GetAnimSpeed(status.attackSpeed);
+                randIdx = RandomCommonItemIndex(status.charType);
+                pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx);    // 랜덤으로 무기를 뽑음.  
+
+                inventory.equippedItem = equipItem;
+                inventory.FreshSlot();
+                inventory.TotalStatus(equipItem);
             }
-
-            pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, RandomCommonItemIndex(status.charType));    // 랜덤으로 무기를 뽑음.   
-
-            inventory.equippedItem = equipItem;
-            inventory.FreshSlot();
-            inventory.TotalStatus(equipItem);
 
             chatScript = canvas.GetComponent<Chat>();
             partySystemScript = canvas.GetComponent<PartySystem>();
