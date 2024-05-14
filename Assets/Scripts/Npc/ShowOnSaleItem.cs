@@ -102,7 +102,7 @@ public class ShowOnSaleItem : MonoBehaviour
                 // 클릭된 버튼을 찾기
                 Button clickedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
 
-                Debug.Log($"call buyItem with button : index {index}, key {itemKeys[index]}");
+                //Debug.Log($"call buyItem with button : index {index}, key {itemKeys[index]}");
                     
                 NpcShop.BuyItem(itemKeys[index]);
             });

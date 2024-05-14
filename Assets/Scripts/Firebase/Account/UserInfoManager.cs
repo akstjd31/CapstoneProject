@@ -151,7 +151,7 @@ public class UserInfoManager : MonoBehaviour
 #pragma warning disable CS4014
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
-            Debug.Log($"Call GetUserMoney : {nowMoney}");
+            //Debug.Log($"Call GetUserMoney : {nowMoney}");
             GetUserMoney_Async();
         }
 
