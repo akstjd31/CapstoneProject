@@ -6,16 +6,16 @@ using Photon.Pun;
 public class Arrow : MonoBehaviour
 {
     [SerializeField] private float speed;
-    private Vector3 targetPos;
-    private string owner = "";  // 이 화살을 쏜 사람?
+    [SerializeField] private Vector3 targetPos;
+    [SerializeField] string owner = "";  // 이 화살을 쏜 사람?
 
-    private int playerViewID = -1;
+    [SerializeField] private int playerViewID = -1;
 
-    private float damage;
+    [SerializeField] private float damage;
 
     private Rigidbody2D rigid;
 
-    private float elapsedTime = 2.0f;
+    //private float elapsedTime = 2.0f;
 
     public void SetViewID(int viewID)
     {
@@ -37,6 +37,7 @@ public class Arrow : MonoBehaviour
         this.speed = speed;
     }
 
+    [PunRPC]
     public void SetTarget(Vector3 targetPos)
     {
         this.targetPos = targetPos;
