@@ -17,6 +17,15 @@ public class Arrow : MonoBehaviour
 
     //private float elapsedTime = 2.0f;
 
+    [PunRPC]
+    public void InitializeArrow(Vector3 dir, float spd, string tag, int viewID)
+    {
+        targetPos = dir;
+        speed = spd;
+        owner = tag;
+        playerViewID = viewID;
+    }
+
     public void SetViewID(int viewID)
     {
         this.playerViewID = viewID;

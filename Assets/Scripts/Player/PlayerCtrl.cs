@@ -715,19 +715,47 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+        if (pv.IsMine)
+        {
+            // 총알 프리팹을 firePoint 위치에 인스턴스화
+            GameObject arrowPrefab = PhotonNetwork.Instantiate(projectile.name, firePoint.position, firePoint.rotation);
 
-        //PhotonView arrowPV = arrowPrefab.GetComponent<PhotonView>();
-        Arrow arrow = arrowPrefab.GetComponent<Arrow>();
+            // PhotonView와 Arrow 컴포넌트를 가져옴
+            PhotonView arrowPV = arrowPrefab.GetComponent<PhotonView>();
+            if (arrowPV == null)
+            {
+                Debug.LogError("PhotonView component is missing on the instantiated arrow prefab.");
+                return;
+            }
 
-        //arrowPV.RPC("SetTarget", RpcTarget.AllBuffered, mouseWorldPosition);
-        arrow.SetTarget(mouseWorldPosition);
-        arrow.SetDamage(status.attackDamage);
-        arrow.SetSpeed(3.5f);
-        arrow.SetOwner(this.tag);
-        arrow.SetViewID(pv.ViewID);
+            Arrow arrow = arrowPV.GetComponent<Arrow>();
+            if (arrow == null)
+            {
+                Debug.LogError("Arrow component is missing on the instantiated arrow prefab.");
+                return;
+            }
 
-        state = State.NORMAL;
+            // RPC를 사용하여 다른 클라이언트에 총알의 초기 설정 전송
+            arrowPV.RPC("InitializeArrow", RpcTarget.AllBuffered, mouseWorldPosition, 3.5f, this.tag, pv.ViewID);
+
+            // 상태 변경
+            state = State.NORMAL;
+        }
+
+
+        //GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+
+        ////PhotonView arrowPV = arrowPrefab.GetComponent<PhotonView>();
+        //Arrow arrow = arrowPrefab.GetComponent<Arrow>();
+
+        ////arrowPV.RPC("SetTarget", RpcTarget.AllBuffered, mouseWorldPosition);
+        //arrow.SetTarget(mouseWorldPosition);
+        //arrow.SetDamage(status.attackDamage);
+        //arrow.SetSpeed(3.5f);
+        //arrow.SetOwner(this.tag);
+        //arrow.SetViewID(pv.ViewID);
+
+        //state = State.NORMAL;
     }
 
     
