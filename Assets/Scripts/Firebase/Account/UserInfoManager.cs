@@ -13,6 +13,7 @@ public class UserInfoManager : MonoBehaviour
     private static UserInfoManager instance;
     private static FirebaseUser currentUser; // Firebase 사용자 정보를 저장할 변수
     private static Dictionary<string, int> skillLevel; //스킬 데이터의 원본
+    private static Inventory inv;
 
     private bool isDebug = true;
     private static int nowMoney = 0;
@@ -29,6 +30,8 @@ public class UserInfoManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        inv = FindObjectOfType<Inventory>();
 
         // 3초마다 GetUserMoney 함수를 호출합니다.
         InvokeRepeating("WrapGetUserMoney", 0f, 3f);
@@ -105,6 +108,17 @@ public class UserInfoManager : MonoBehaviour
                     await docUser.UpdateAsync("userData", userContainer);
 
                     nowMoney = updateMoney;
+
+                    //상점 이용 시, 인벤토리에 반영
+                    if(inv != null)
+                    {
+                        inv.Refresh_InvMoney();
+                    }
+                    else
+                    {
+                        inv = FindObjectOfType<Inventory>();
+                        inv.Refresh_InvMoney();
+                    }
                 }
                 else
                 {
@@ -137,7 +151,7 @@ public class UserInfoManager : MonoBehaviour
 #pragma warning disable CS4014
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
-            Debug.Log($"Call GetUserMoney : {nowMoney}");
+            //Debug.Log($"Call GetUserMoney : {nowMoney}");
             GetUserMoney_Async();
         }
 
@@ -178,6 +192,18 @@ public class UserInfoManager : MonoBehaviour
                         //Debug.Log($"userDataMap[\"money\"] : {userDataMap["money"]}");
                         nowMoney = Convert.ToInt32(userDataMap["money"]);
                         //Debug.Log($"get money from server : {money} {FirebaseAuth.DefaultInstance.CurrentUser.Email}");
+
+                        //통신 때마다 보유 금액 업데이트
+                        if (inv != null)
+                        {
+                            inv.Refresh_InvMoney();
+                        }
+                        else
+                        {
+                            inv = FindObjectOfType<Inventory>();
+                            inv.Refresh_InvMoney();
+                        }
+
                         return nowMoney;
                     }
                     else

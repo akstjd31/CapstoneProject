@@ -26,7 +26,7 @@ public class NpcShop : MonoBehaviour
     public static void BuyItem(int itemKey)
     {
         //read item name
-        Debug.Log($"called BuyItem method : {itemKey}");
+        //Debug.Log($"called BuyItem method : {itemKey}");
         BuyItem(101, itemKey, 1);
     }
 
@@ -40,7 +40,7 @@ public class NpcShop : MonoBehaviour
 
     public static void BuyItem(int npcKey, int itemKey, int count)
     {
-        Debug.Log($"Buy item : npc({npcKey}), item({itemKey}), count({count})");
+        //Debug.Log($"Buy item : npc({npcKey}), item({itemKey}), count({count})");
         BuyItem_Async(npcKey, itemKey, count);
     }
 
@@ -88,7 +88,7 @@ public class NpcShop : MonoBehaviour
     }
     public static void SellItem(int npcKey, int itemKey, int count)
     {
-        Debug.Log($"Sell item : npc({npcKey}), item({itemKey}), count({count})");
+        //Debug.Log($"Sell item : npc({npcKey}), item({itemKey}), count({count})");
         SellItem_Async(npcKey, itemKey, count);
     }
 

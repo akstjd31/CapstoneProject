@@ -38,6 +38,9 @@ public class Inventory : MonoBehaviour
     [SerializeField] private SPUM_SpriteList spum_SpriteList;
     [SerializeField] private ItemManager itemManager;
 
+    private PlayerCtrl playerCtrl;
+    private Text nowMoney;
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -61,6 +64,7 @@ public class Inventory : MonoBehaviour
         FreshSlot();
 
         spum_SpriteList = status.transform.Find("Root").GetComponent<SPUM_SpriteList>();
+        playerCtrl = FindObjectOfType<PlayerCtrl>();
     }
 
     public Item GetEquippedItem()
@@ -93,6 +97,56 @@ public class Inventory : MonoBehaviour
         {
             explanation.SetActive(false);
             return;
+        }
+
+        //상점인 경우
+        if(playerCtrl.IsEnableStore())
+        {
+            if(Input.GetMouseButtonDown(0))
+            {
+                Item selectedItem = null;
+                int delIndex = -1;
+
+                foreach (var result in results)
+                {
+                    string name = result.gameObject.transform.parent.name;
+                    //Debug.Log($"result : {name}");   //Slot ~ Slot (11)
+
+                    if(!name.StartsWith("Slot"))
+                    {
+                        continue;
+                    }
+
+                    if (name.Equals("Slot"))
+                    {
+                        selectedItem = items[0];
+                        delIndex = 0;
+                    }
+                    else
+                    {
+                        string index = name.Split("(")[1];
+                        index = index.Substring(0, index.Length - 1);    //1~11
+                        //Debug.Log($"index : {index}");
+                        delIndex = int.Parse(index);
+
+                        selectedItem = items[delIndex];
+                    }
+                }
+
+                //Debug.Log($"delIndex : {delIndex}");
+
+                if (selectedItem != null)
+                {
+                    int itemKey = selectedItem.itemID;
+                    //Debug.Log($"itemKey : {itemKey}");
+
+                    NpcShop.SellItem(101, itemKey, 1);
+                    DeleteItem_Index(delIndex);
+                    //Debug.Log("sell item complete");
+
+                    return;
+                }
+            }
         }
 
         foreach (RaycastResult result in results)
@@ -167,6 +221,8 @@ public class Inventory : MonoBehaviour
             inventoryDrags[i].isDraggable = false;
             inventoryDrags[i].defaultItem = null;
         }
+
+        Refresh_InvMoney();
     }
 
     public int GetInventorySlotLength()
@@ -179,6 +235,15 @@ public class Inventory : MonoBehaviour
         if (items.Count < inventorySlots.Length)
         {
             items.Add(item);
+            FreshSlot();
+        }
+    }
+
+    public void DeleteItem_Index(int index)
+    {
+        if (items.Count != 0)
+        {
+            items.RemoveAt(index);
             FreshSlot();
         }
     }
@@ -227,6 +292,23 @@ public class Inventory : MonoBehaviour
                     status.evasionRate = status.GetDefaultEvasionRate() + equippedItem.addValue;
                     break;
             }
+        }
+    }
+
+    public void Refresh_InvMoney()
+    {
+        //refresh money
+        if (playerCtrl == null || nowMoney == null)
+        {
+            playerCtrl = FindObjectOfType<PlayerCtrl>();
+            nowMoney = GameObject.Find("DoubleCurrencyBox")?.GetComponentInChildren<Text>();
+        }
+
+        if (nowMoney != null && playerCtrl.IsEnableInventory())
+        {
+            nowMoney.text = UserInfoManager.GetNowMoney().ToString();
+            //Canvas.ForceUpdateCanvases();
+            nowMoney.enabled = true;
         }
     }
 }
