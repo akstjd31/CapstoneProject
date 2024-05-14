@@ -38,6 +38,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] private ItemManager itemManager;
 
     private PlayerCtrl playerCtrl;
+    private Text nowMoney;
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -218,6 +219,17 @@ public class Inventory : MonoBehaviour
             inventorySlots[i].item = null;
             inventoryDrags[i].isDraggable = false;
             inventoryDrags[i].defaultItem = null;
+        }
+
+        //refresh money
+        if(playerCtrl == null || nowMoney == null)
+        {
+            playerCtrl = FindObjectOfType<PlayerCtrl>();
+            nowMoney = GameObject.Find("DoubleCurrencyBox")?.GetComponentInChildren<Text>();
+        }
+        else if(nowMoney != null && playerCtrl.IsEnableInventory())
+        {
+            nowMoney.text = UserInfoManager.GetNowMoney().ToString();
         }
     }
 
