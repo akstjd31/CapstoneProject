@@ -18,7 +18,7 @@ public class ItemManager : MonoBehaviour
     private Inventory inventory;
 
     // 아이템 등급에 따른 분류
-    private void Start()
+    private void Awake()
     {
         warriorCommonList = new List<Item>();
         warriorRareList = new List<Item>();

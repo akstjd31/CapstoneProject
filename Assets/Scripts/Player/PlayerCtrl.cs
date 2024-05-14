@@ -109,9 +109,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 원거리 발사 위치와 발사체
     public Transform firePoint;
     public Transform projectile;
+    [SerializeField] private Vector3 arrowTargetPos;
 
     private ItemManager itemManager;
     private SPUM_SpriteList spum_SpriteList;
+
+    [SerializeField] private int randIdx;
+    [SerializeField] private Item equipItem;
 
     //public float animSpeed;   // 애니메이션 속도 테스트
 
@@ -151,8 +155,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             if (pv.IsMine)
             {
-                pv.RPC("RandomWeaponEquip", RpcTarget.AllBuffered);    // 랜덤으로 무기를 뽑음.
                 anim.speed = GetAnimSpeed(status.attackSpeed);
+                randIdx = RandomCommonItemIndex(status.charType);
+                pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx);    // 랜덤으로 무기를 뽑음.  
+
+                inventory.equippedItem = equipItem;
+                inventory.FreshSlot();
+                inventory.TotalStatus(equipItem);
             }
 
             chatScript = canvas.GetComponent<Chat>();
@@ -277,6 +286,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     }
                     else
                     {
+                        pv.RPC("SetArrowTargetTransform", RpcTarget.AllBuffered, mouseScreenPosition);
+
                         rigid.velocity = Vector2.zero;
                         // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
                         if (mouseWorldPosition.x - this.transform.position.x > 0)
@@ -506,29 +517,42 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         return animSpeed;
     }
 
+    private int RandomCommonItemIndex(string charType)
+    {
+        if (charType.Equals("Warrior"))
+        {
+            return Random.Range(0, itemManager.warriorCommonList.Count);
+        }
+        else
+        {
+            return Random.Range(0, itemManager.archerCommonList.Count);
+        }
+    }
+
     // 처음 시작할 뽑기로 커먼 아이템 자동선택
     [PunRPC]
-    private void RandomWeaponEquip()
+    private void CommonWeaponEquipRPC(int rand)
     {
-        int rand = Random.Range(0, 5);
         string charType = status.charType;
 
-        if (inventory != null && itemManager != null)
+        if (pv.IsMine)
         {
-            Item item = itemManager.GetRandomItemWithProbability(ItemType.COMMON, charType);
-            if (charType.Equals("Warrior"))
+            if (inventory != null && itemManager != null)
             {
-                spum_SpriteList._weaponList[2].sprite = item.itemImage;  // L_Weapon
-            }
+                Item item = null;
+                if (charType.Equals("Warrior"))
+                {
+                    item = itemManager.warriorCommonList[rand];
+                    spum_SpriteList._weaponList[2].sprite = item.itemImage;  // L_Weapon
+                }
 
-            else
-            {
-                spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
+                else
+                {
+                    item = itemManager.archerCommonList[rand];
+                    spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
+                }
+                equipItem = item;
             }
-
-            inventory.equippedItem = item;
-            inventory.FreshSlot();
-            inventory.TotalStatus(item);
         }
     }
 
@@ -690,12 +714,19 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    private void SetArrowTargetTransform(Vector3 targetPos)
+    {
+        arrowTargetPos = targetPos;
+    }
+
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrowPrefab = PhotonNetwork.InstantiateRoomObject(projectile.name, firePoint.position, Quaternion.identity);
+        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+
         Arrow arrow = arrowPrefab.GetComponent<Arrow>();
-        arrow.SetTarget(mouseWorldPosition);
+        arrow.SetTarget(arrowTargetPos);
         arrow.SetDamage(status.attackDamage);
         arrow.SetSpeed(3.5f);
         arrow.SetOwner(this.tag);
@@ -703,6 +734,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
         state = State.NORMAL;
     }
+
+    
 
     //// 2D 캐릭터 방향 결정
     //void SetDirection()
