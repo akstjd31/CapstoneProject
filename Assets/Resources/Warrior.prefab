@@ -2054,12 +2054,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HP: 200
   MAXHP: 200
+  defaultHP: 0
   level: 0
   maxLevel: 10
   attackDamage: 34
+  defaultAttackDamage: 0
   attackSpeed: 0
   moveSpeed: 5
+  defaultMoveSpeed: 0
   evasionRate: 5
+  defaultEvasionRate: 0
   charType: Warrior
   statInfo: {fileID: 0}
   stats: []

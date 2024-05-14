@@ -261,7 +261,8 @@ public class Inventory : MonoBehaviour
                     {
                         sprite.sprite = equippedSlot.item.itemImage;
                         equippedItem = equippedSlot.item;
-                        TotalStatus(equippedSlot.item);
+                        playerCtrl.SetEquipItem(equippedItem);
+                        playerCtrl.TotalStatus(equippedSlot.item);
 
                         break;
                     }
@@ -269,29 +270,21 @@ public class Inventory : MonoBehaviour
             }
         }
     }
-    
-    public void TotalStatus(Item equippedItem)
+
+    public void Refresh_InvMoney()
     {
-        status.attackDamage = status.GetDefaultAttackDamage() + equippedItem.attackDamage;
-        status.attackSpeed = equippedItem.attackSpeed;
-
-        PlayerCtrl playerCtrl = status.GetComponent<PlayerCtrl>();
-        playerCtrl.SetAnimSpeed(playerCtrl.GetAnimSpeed(status.attackSpeed));
-
-        if (equippedSlot.item.bonusStat != BonusStat.NONE)
+        //refresh money
+        if (playerCtrl == null || nowMoney == null)
         {
-            switch (equippedItem.bonusStat)
-            {
-                case BonusStat.HP:
-                    status.MAXHP = status.GetDefaultHP() + equippedItem.addValue;
-                    break;
-                case BonusStat.MOVESPEED:
-                    status.moveSpeed = status.GetDefaultMoveSpeed() + (int)equippedItem.addValue;
-                    break;
-                case BonusStat.EVASIONRATE:
-                    status.evasionRate = status.GetDefaultEvasionRate() + equippedItem.addValue;
-                    break;
-            }
+            playerCtrl = FindObjectOfType<PlayerCtrl>();
+            nowMoney = GameObject.Find("DoubleCurrencyBox")?.GetComponentInChildren<Text>();
+        }
+
+        if (nowMoney != null && playerCtrl.IsEnableInventory())
+        {
+            nowMoney.text = UserInfoManager.GetNowMoney().ToString();
+            //Canvas.ForceUpdateCanvases();
+            nowMoney.enabled = true;
         }
     }
 
