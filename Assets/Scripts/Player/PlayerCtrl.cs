@@ -736,26 +736,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
 
             // RPC를 사용하여 다른 클라이언트에 총알의 초기 설정 전송
-            arrowPV.RPC("InitializeArrow", RpcTarget.AllBuffered, mouseWorldPosition, 3.5f, this.tag, pv.ViewID);
+            arrowPV.RPC("InitializeArrow", RpcTarget.AllBuffered, mouseWorldPosition, 3.5f, status.attackDamage, this.tag, pv.ViewID);
 
             // 상태 변경
             state = State.NORMAL;
         }
-
-
-        //GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
-
-        ////PhotonView arrowPV = arrowPrefab.GetComponent<PhotonView>();
-        //Arrow arrow = arrowPrefab.GetComponent<Arrow>();
-
-        ////arrowPV.RPC("SetTarget", RpcTarget.AllBuffered, mouseWorldPosition);
-        //arrow.SetTarget(mouseWorldPosition);
-        //arrow.SetDamage(status.attackDamage);
-        //arrow.SetSpeed(3.5f);
-        //arrow.SetOwner(this.tag);
-        //arrow.SetViewID(pv.ViewID);
-
-        //state = State.NORMAL;
     }
 
     

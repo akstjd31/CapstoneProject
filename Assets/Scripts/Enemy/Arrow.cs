@@ -18,42 +18,13 @@ public class Arrow : MonoBehaviour
     //private float elapsedTime = 2.0f;
 
     [PunRPC]
-    public void InitializeArrow(Vector3 dir, float spd, string tag, int viewID)
+    public void InitializeArrow(Vector3 dir, float spd, float dam, string tag, int viewID)
     {
         targetPos = dir;
         speed = spd;
+        damage = dam;
         owner = tag;
         playerViewID = viewID;
-    }
-
-    public void SetViewID(int viewID)
-    {
-        this.playerViewID = viewID;
-    }
-
-    public void SetOwner(string owner)
-    {
-        this.owner = owner;
-    }
-
-    public void SetDamage(float damage)
-    {
-        this.damage = damage;
-    }
-
-    public void SetSpeed(float speed)
-    {
-        this.speed = speed;
-    }
-
-    public void SetTarget(Vector3 targetPos)
-    {
-        this.targetPos = targetPos;
-    }
-    
-    public Vector3 GetTarget()
-    {
-        return targetPos;
     }
 
     private void Start()
