@@ -308,14 +308,33 @@ public class EnemyCtrl : MonoBehaviour
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
-        Arrow arrow = arrowPrefab.GetComponent<Arrow>();
-        arrow.SetTarget(targetPos);
-        arrow.SetDamage(enemy.enemyData.attackDamage);
-        arrow.SetOwner(this.tag);
+        if (enemyPV.IsMine)
+        {
+            // 총알 프리팹을 firePoint 위치에 인스턴스화
+            GameObject arrowPrefab = PhotonNetwork.Instantiate(projectile.name, firePoint.position, firePoint.rotation);
 
-        state = State.NORMAL;
-        restTime = 0.0f;
+            // PhotonView와 Arrow 컴포넌트를 가져옴
+            PhotonView arrowPV = arrowPrefab.GetComponent<PhotonView>();
+            if (arrowPV == null)
+            {
+                Debug.LogError("PhotonView component is missing on the instantiated arrow prefab.");
+                return;
+            }
+
+            Arrow arrow = arrowPV.GetComponent<Arrow>();
+            if (arrow == null)
+            {
+                Debug.LogError("Arrow component is missing on the instantiated arrow prefab.");
+                return;
+            }
+
+            // RPC를 사용하여 다른 클라이언트에 총알의 초기 설정 전송
+            arrowPV.RPC("InitializeArrow", RpcTarget.AllBuffered, targetPos, 3.5f, enemy.enemyData.attackDamage, this.tag, enemyPV.ViewID);
+
+            // 상태 변경
+            state = State.NORMAL;
+            restTime = 0.0f;
+        }
     }
 
     // 공격이나 피격당할 때 몹마다 가지고 있는 딜레이타임별로 쉬기

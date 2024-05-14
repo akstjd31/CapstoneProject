@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 // 전체적인 아이템 관리 및 전달 스크립트
 public class ItemManager : MonoBehaviour
@@ -16,7 +17,6 @@ public class ItemManager : MonoBehaviour
     public List<Item> archerLegendaryList;
 
     private Inventory inventory;
-
     // 아이템 등급에 따른 분류
     private void Awake()
     {
@@ -65,6 +65,12 @@ public class ItemManager : MonoBehaviour
 
         inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").GetComponent<Inventory>();
         inventory.SetItemManager(this);
+
+        
+    }
+
+    private void Start()
+    {
     }
 
     // 아이템 드랍 확률결과로 나온 아이템 타입과 직업에 연관된 아이템 뽑기
