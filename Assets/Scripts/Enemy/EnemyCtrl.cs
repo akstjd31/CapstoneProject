@@ -18,7 +18,7 @@ public class EnemyCtrl : MonoBehaviour
     private PhotonView enemyPV;
     private Animator anim;
     private NavMeshAgent agent;
-    private EnemyAI enemyAIScript;
+    private EnemyAI enemyAI;
     private DropChanceCalculator dropCalc;
     private DropItem dropItem;
     private Rigidbody2D rigid;
@@ -66,7 +66,7 @@ public class EnemyCtrl : MonoBehaviour
         enemyPV = this.GetComponent<PhotonView>();
         anim = this.GetComponent<Animator>();
         agent = this.GetComponent<NavMeshAgent>();
-        enemyAIScript = this.GetComponent<EnemyAI>();
+        enemyAI = this.GetComponent<EnemyAI>();
         dropItem = this.GetComponent<DropItem>();
         dropCalc = this.GetComponent<DropChanceCalculator>();
         rigid = this.GetComponent<Rigidbody2D>();
@@ -96,9 +96,9 @@ public class EnemyCtrl : MonoBehaviour
         this.state = state;
     }
 
-    public void SetEnemy(Enemy enemy)
+    public Enemy GetEnemy()
     {
-        this.enemy = enemy;
+        return enemy;
     }
 
     // 플레이어한테 피격당했을 떄 RPC
@@ -117,7 +117,7 @@ public class EnemyCtrl : MonoBehaviour
             if (enemy.enemyData.hp <= 0)
             {
                 anim.SetTrigger("Death");
-                enemyAIScript.enabled = false;
+                enemyAI.enabled = false;
                 isDeath = true;
                 agent.isStopped = true;
                 rigid.velocity = Vector2.zero;
@@ -127,19 +127,19 @@ public class EnemyCtrl : MonoBehaviour
             }
         }
 
-        if (enemyAIScript.GetSecondTarget() == null)
+        if (enemyAI.GetSecondTarget() == null)
         {
-            enemyAIScript.aggroMeter1 += status.attackDamage;
+            enemyAI.aggroMeter1 += status.attackDamage;
         }
         else
         {
-            if (playerViewID == enemyAIScript.GetFirstTarget().GetComponent<PhotonView>().ViewID)
+            if (playerViewID == enemyAI.GetFirstTarget().GetComponent<PhotonView>().ViewID)
             {
-                enemyAIScript.aggroMeter1 += status.attackDamage;
+                enemyAI.aggroMeter1 += status.attackDamage;
             }
             else
             {
-                enemyAIScript.aggroMeter2 += status.attackDamage;
+                enemyAI.aggroMeter2 += status.attackDamage;
             }
         }
     }
@@ -166,15 +166,15 @@ public class EnemyCtrl : MonoBehaviour
             }
 
             // 적의 타겟이 존재할 때
-            if (enemyAIScript.GetFocusTarget() != null)
+            if (enemyAI.GetFocusTarget() != null)
             {
                 // 적이 플레이어와 어느정도 가까이 있으면 공격
                 if (IsEnemyClosetPlayer() && state != State.ATTACK && state != State.NORMAL && !onHit)
                 {
                     state = State.ATTACK;
-                    targetPos = enemyAIScript.GetFocusTarget().position;
+                    targetPos = enemyAI.GetFocusTarget().position;
                     agent.isStopped = true;
-                    enemyAIScript.isLookingAtPlayer = false;    // 공격할 때 플레이어가 움직여도 그 방향 유지
+                    enemyAI.isLookingAtPlayer = false;    // 공격할 때 플레이어가 움직여도 그 방향 유지
 
                 }
             }
@@ -210,14 +210,16 @@ public class EnemyCtrl : MonoBehaviour
             FollowEnemyHPBar();
         }
 
-        // 넉백
-        
+        if (enemyAI.GetFocusTarget() != null && enemyAI.isLookingAtPlayer)
+        {
+            FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
+        }
     }
 
     // 플레이어가 소유한 범위포인트에 따른 반환
     private bool IsEnemyClosetPlayer()
     {
-        if (enemyAIScript.GetFocusTarget() != null && state != State.ATTACK)
+        if (enemyAI.GetFocusTarget() != null && state != State.ATTACK)
         {
             // 공격 범위에 들어간 적
             Collider2D players = Physics2D.OverlapCircle(detectionPoint.position, detectionRange, playerLayers);
@@ -278,6 +280,18 @@ public class EnemyCtrl : MonoBehaviour
         }
     }
 
+    // 적의 위치에 따른 스케일 뒤집기
+    private void FlipHorizontalRelativeToTarget(Vector2 target)
+    {
+        if (target.x - this.transform.position.x > 0)
+        {
+            this.transform.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            this.transform.localScale = new Vector3(-1, 1, 1);
+        }
+    }
 
     // 공격 방향
     private void AttackDirection()
@@ -347,7 +361,7 @@ public class EnemyCtrl : MonoBehaviour
         else
         {
             agent.isStopped = false;
-            enemyAIScript.isLookingAtPlayer = true;
+            enemyAI.isLookingAtPlayer = true;
         }
     }
 

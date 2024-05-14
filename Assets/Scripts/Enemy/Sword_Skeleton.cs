@@ -10,7 +10,7 @@ public class Sword_Skeleton : Enemy
         enemyData.hp = 100;
         enemyData.attackDamage = 10;
         enemyData.attackDelayTime = 1f;
-        enemyData.moveSpeed = 5;
+        enemyData.moveSpeed = 3.5f;
         enemyData.evasionRate = 0;
         enemyData.enemyType = EnemyType.SHORT_DISTANCE;
     }
