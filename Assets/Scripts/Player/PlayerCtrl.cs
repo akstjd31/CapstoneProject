@@ -706,12 +706,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    private void SetArrowTargetTransform(Vector3 targetPos)
-    {
-        arrowTargetPos = targetPos;
-    }
-
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
