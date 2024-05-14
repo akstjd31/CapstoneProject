@@ -103,35 +103,44 @@ public class Inventory : MonoBehaviour
             if(Input.GetMouseButtonDown(0))
             {
                 Item selectedItem = null;
+                int delIndex = -1;
 
                 foreach (var result in results)
                 {
                     string name = result.gameObject.transform.parent.name;
-                    Debug.Log($"result : {name}");   //slot ~ slot (11)
+                    //Debug.Log($"result : {name}");   //Slot ~ Slot (11)
 
-                    if(!name.StartsWith("slot"))
+                    if(!name.StartsWith("Slot"))
                     {
                         continue;
                     }
 
-                    if (name.Equals("slot"))
+                    if (name.Equals("Slot"))
                     {
                         selectedItem = items[0];
+                        delIndex = 0;
                     }
                     else
                     {
-                        string index = name.Split("(")[1].Substring(0, name.Split("(")[1].Length - 2);    //1~11
-                        Debug.Log($"index : {index}");
-                        selectedItem = items[int.Parse(index)];
+                        string index = name.Split("(")[1];
+                        index = index.Substring(0, index.Length - 1);    //1~11
+                        //Debug.Log($"index : {index}");
+                        delIndex = int.Parse(index);
+
+                        selectedItem = items[delIndex];
                     }
                 }
+
+                Debug.Log($"delIndex : {delIndex}");
 
                 if (selectedItem != null)
                 {
                     int itemKey = selectedItem.itemID;
                     Debug.Log($"itemKey : {itemKey}");
 
-
+                    NpcShop.SellItem(101, itemKey, 1);
+                    DeleteItem_Index(delIndex);
+                    Debug.Log("sell item complete");
 
                     return;
                 }
@@ -222,6 +231,15 @@ public class Inventory : MonoBehaviour
         if (items.Count < inventorySlots.Length)
         {
             items.Add(item);
+            FreshSlot();
+        }
+    }
+
+    public void DeleteItem_Index(int index)
+    {
+        if (items.Count != 0)
+        {
+            items.RemoveAt(index);
             FreshSlot();
         }
     }
