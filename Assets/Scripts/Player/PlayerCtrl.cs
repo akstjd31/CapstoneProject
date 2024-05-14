@@ -715,13 +715,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrowPrefab = PhotonNetwork.InstantiateRoomObject(projectile.name, firePoint.position, Quaternion.identity);
+        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
 
-        PhotonView arrowPV = arrowPrefab.GetComponent<PhotonView>();
-        Arrow arrow = arrowPV.GetComponent<Arrow>();
+        //PhotonView arrowPV = arrowPrefab.GetComponent<PhotonView>();
+        Arrow arrow = arrowPrefab.GetComponent<Arrow>();
 
-        arrowPV.RPC("SetTarget", RpcTarget.AllBuffered, mouseWorldPosition);
-        //arrow.SetTarget(arrowTargetPos);
+        //arrowPV.RPC("SetTarget", RpcTarget.AllBuffered, mouseWorldPosition);
+        arrow.SetTarget(mouseWorldPosition);
         arrow.SetDamage(status.attackDamage);
         arrow.SetSpeed(3.5f);
         arrow.SetOwner(this.tag);
