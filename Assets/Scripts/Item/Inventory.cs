@@ -132,16 +132,16 @@ public class Inventory : MonoBehaviour
                     }
                 }
 
-                Debug.Log($"delIndex : {delIndex}");
+                //Debug.Log($"delIndex : {delIndex}");
 
                 if (selectedItem != null)
                 {
                     int itemKey = selectedItem.itemID;
-                    Debug.Log($"itemKey : {itemKey}");
+                    //Debug.Log($"itemKey : {itemKey}");
 
                     NpcShop.SellItem(101, itemKey, 1);
                     DeleteItem_Index(delIndex);
-                    Debug.Log("sell item complete");
+                    //Debug.Log("sell item complete");
 
                     return;
                 }
@@ -221,16 +221,7 @@ public class Inventory : MonoBehaviour
             inventoryDrags[i].defaultItem = null;
         }
 
-        //refresh money
-        if(playerCtrl == null || nowMoney == null)
-        {
-            playerCtrl = FindObjectOfType<PlayerCtrl>();
-            nowMoney = GameObject.Find("DoubleCurrencyBox")?.GetComponentInChildren<Text>();
-        }
-        else if(nowMoney != null && playerCtrl.IsEnableInventory())
-        {
-            nowMoney.text = UserInfoManager.GetNowMoney().ToString();
-        }
+        Refresh_InvMoney();
     }
 
     public int GetInventorySlotLength()
@@ -297,6 +288,23 @@ public class Inventory : MonoBehaviour
                     status.evasionRate = status.GetDefaultEvasionRate() + equippedItem.addValue;
                     break;
             }
+        }
+    }
+
+    public void Refresh_InvMoney()
+    {
+        //refresh money
+        if (playerCtrl == null || nowMoney == null)
+        {
+            playerCtrl = FindObjectOfType<PlayerCtrl>();
+            nowMoney = GameObject.Find("DoubleCurrencyBox")?.GetComponentInChildren<Text>();
+        }
+
+        if (nowMoney != null && playerCtrl.IsEnableInventory())
+        {
+            nowMoney.text = UserInfoManager.GetNowMoney().ToString();
+            //Canvas.ForceUpdateCanvases();
+            nowMoney.enabled = true;
         }
     }
 }
