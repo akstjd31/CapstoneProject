@@ -2208,12 +2208,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HP: 125
   MAXHP: 125
+  defaultHP: 0
   level: 0
   maxLevel: 10
   attackDamage: 38
+  defaultAttackDamage: 0
   attackSpeed: 0
   moveSpeed: 5
+  defaultMoveSpeed: 0
   evasionRate: 5
+  defaultEvasionRate: 0
   charType: Archer
   statInfo: {fileID: 0}
   stats: []

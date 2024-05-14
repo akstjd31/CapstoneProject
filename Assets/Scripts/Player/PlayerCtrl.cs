@@ -162,7 +162,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 inventory.FreshSlot();
             }
 
-            inventory.TotalStatus(equipItem);
+            TotalStatus(equipItem);
 
 
             //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
@@ -470,6 +470,35 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     break;
                 case State.DIE:
                     Death();
+                    break;
+            }
+        }
+    }
+
+    public void SetEquipItem(Item item)
+    {
+        this.equipItem = item;
+    }
+
+    public void TotalStatus(Item equippedItem)
+    {
+        status.attackDamage = status.GetDefaultAttackDamage() + equippedItem.attackDamage;
+        status.attackSpeed = equippedItem.attackSpeed;
+
+        SetAnimSpeed(GetAnimSpeed(status.attackSpeed));
+
+        if (equippedItem.bonusStat != BonusStat.NONE)
+        {
+            switch (equippedItem.bonusStat)
+            {
+                case BonusStat.HP:
+                    status.MAXHP = status.GetDefaultHP() + equippedItem.addValue;
+                    break;
+                case BonusStat.MOVESPEED:
+                    status.moveSpeed = status.GetDefaultMoveSpeed() + (int)equippedItem.addValue;
+                    break;
+                case BonusStat.EVASIONRATE:
+                    status.evasionRate = status.GetDefaultEvasionRate() + equippedItem.addValue;
                     break;
             }
         }

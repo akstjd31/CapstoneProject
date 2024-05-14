@@ -261,36 +261,12 @@ public class Inventory : MonoBehaviour
                     {
                         sprite.sprite = equippedSlot.item.itemImage;
                         equippedItem = equippedSlot.item;
-                        TotalStatus(equippedSlot.item);
+                        playerCtrl.SetEquipItem(equippedItem);
+                        playerCtrl.TotalStatus(equippedSlot.item);
 
                         break;
                     }
                 }
-            }
-        }
-    }
-    
-    public void TotalStatus(Item equippedItem)
-    {
-        status.attackDamage = status.GetDefaultAttackDamage() + equippedItem.attackDamage;
-        status.attackSpeed = equippedItem.attackSpeed;
-
-        PlayerCtrl playerCtrl = status.GetComponent<PlayerCtrl>();
-        playerCtrl.SetAnimSpeed(playerCtrl.GetAnimSpeed(status.attackSpeed));
-
-        if (equippedSlot.item.bonusStat != BonusStat.NONE)
-        {
-            switch (equippedItem.bonusStat)
-            {
-                case BonusStat.HP:
-                    status.MAXHP = status.GetDefaultHP() + equippedItem.addValue;
-                    break;
-                case BonusStat.MOVESPEED:
-                    status.moveSpeed = status.GetDefaultMoveSpeed() + (int)equippedItem.addValue;
-                    break;
-                case BonusStat.EVASIONRATE:
-                    status.evasionRate = status.GetDefaultEvasionRate() + equippedItem.addValue;
-                    break;
             }
         }
     }

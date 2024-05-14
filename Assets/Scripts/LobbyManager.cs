@@ -120,10 +120,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (photonManager.GetCharType().Equals(charTypeList[0]))
         {
             player = PhotonNetwork.Instantiate(charTypeList[0], Vector2.zero, Quaternion.identity);
+            player.transform.GetChild(0).GetComponent<Status>().charType = charTypeList[0];
         }
         else if (photonManager.GetCharType().Equals(charTypeList[1]))
         {
             player = PhotonNetwork.Instantiate(charTypeList[1], Vector2.zero, Quaternion.identity);
+            player.transform.GetChild(0).GetComponent<Status>().charType = charTypeList[1];
         }
 
         player.transform.GetChild(0).GetComponent<PhotonView>().RPC("SetRandIndex", RpcTarget.AllBuffered, Random.Range(0, 5));

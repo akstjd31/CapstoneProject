@@ -15,21 +15,21 @@ public class Status : MonoBehaviourPunCallbacks
 
     public float HP; // 체력
     public float MAXHP; // 최대 체력
-    private float defaultHP; // 디폴트 체력
+    [SerializeField] private float defaultHP; // 디폴트 체력
 
     public int level = 0; // 플레이어 레벨
     public int maxLevel = 10; // 플레이어의 최대 레벨
 
     public float attackDamage; // 공격력
-    private float defaultAttackDamage; // 디폴트 공격력 (무기 포함 X)
+    [SerializeField] private float defaultAttackDamage; // 디폴트 공격력 (무기 포함 X)
 
     public int attackSpeed; // 공격 속도
 
     public float moveSpeed = 5; // 이동 속도
-    private float defaultMoveSpeed; // 디폴트 이동 속도
+    [SerializeField] private float defaultMoveSpeed; // 디폴트 이동 속도
 
     public float evasionRate = 5f; // 회피율
-    private float defaultEvasionRate; // 디폴트 회피율
+    [SerializeField] private float defaultEvasionRate; // 디폴트 회피율
 
     public string charType; // 직업
 
@@ -42,6 +42,17 @@ public class Status : MonoBehaviourPunCallbacks
 
     private Inventory inventory;
 
+    private void Awake()
+    {
+        if (charType.Equals("Warrior"))
+        {
+            InitSetting(200, 34);
+        }
+        else if (charType.Equals("Archer"))
+        {
+            InitSetting(125, 38);
+        }
+    }
 
     private void Start()
     {
@@ -53,21 +64,6 @@ public class Status : MonoBehaviourPunCallbacks
         // 태그로 찾은 후에 텍스트 집어넣기
         //statInfo = GameObject.FindGameObjectWithTag("StatInfo").transform;
         //stats = statInfo.GetChild(0).GetComponentsInChildren<Text>();
-
-        if (charType.Equals("Warrior"))
-        {
-            InitSetting(200, 34);
-        }
-        else if (charType.Equals("Archer"))
-        {
-            InitSetting(125, 38);
-        }
-
-        MAXHP = HP;
-        defaultHP = HP;
-        defaultAttackDamage = attackDamage;
-        defaultMoveSpeed = moveSpeed;
-        defaultEvasionRate = evasionRate;
     }
 
     public float GetDefaultHP()
@@ -94,6 +90,12 @@ public class Status : MonoBehaviourPunCallbacks
     {
         this.HP = hp;
         this.attackDamage = attackDamage;
+
+        MAXHP = hp;
+        defaultHP = hp;
+        defaultAttackDamage = attackDamage;
+        defaultMoveSpeed = moveSpeed;
+        defaultEvasionRate = evasionRate;
     }
 
     private void Update()
