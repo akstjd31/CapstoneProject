@@ -287,21 +287,4 @@ public class Inventory : MonoBehaviour
             nowMoney.enabled = true;
         }
     }
-
-    public void Refresh_InvMoney()
-    {
-        //refresh money
-        if (playerCtrl == null || nowMoney == null)
-        {
-            playerCtrl = FindObjectOfType<PlayerCtrl>();
-            nowMoney = GameObject.Find("DoubleCurrencyBox")?.GetComponentInChildren<Text>();
-        }
-
-        if (nowMoney != null && playerCtrl.IsEnableInventory())
-        {
-            nowMoney.text = UserInfoManager.GetNowMoney().ToString();
-            //Canvas.ForceUpdateCanvases();
-            nowMoney.enabled = true;
-        }
-    }
 }
