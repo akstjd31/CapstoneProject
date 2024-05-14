@@ -37,6 +37,8 @@ public class Inventory : MonoBehaviour
     [SerializeField] private SPUM_SpriteList spum_SpriteList;
     [SerializeField] private ItemManager itemManager;
 
+    private PlayerCtrl playerCtrl;
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -60,6 +62,7 @@ public class Inventory : MonoBehaviour
         FreshSlot();
 
         spum_SpriteList = status.transform.Find("Root").GetComponent<SPUM_SpriteList>();
+        playerCtrl = FindObjectOfType<PlayerCtrl>();
     }
 
     public Item GetEquippedItem()
@@ -92,6 +95,47 @@ public class Inventory : MonoBehaviour
         {
             explanation.SetActive(false);
             return;
+        }
+
+        //상점인 경우
+        if(playerCtrl.IsEnableStore())
+        {
+            if(Input.GetMouseButtonDown(0))
+            {
+                Item selectedItem = null;
+
+                foreach (var result in results)
+                {
+                    string name = result.gameObject.transform.parent.name;
+                    Debug.Log($"result : {name}");   //slot ~ slot (11)
+
+                    if(!name.StartsWith("slot"))
+                    {
+                        continue;
+                    }
+
+                    if (name.Equals("slot"))
+                    {
+                        selectedItem = items[0];
+                    }
+                    else
+                    {
+                        string index = name.Split("(")[1].Substring(0, name.Split("(")[1].Length - 2);    //1~11
+                        Debug.Log($"index : {index}");
+                        selectedItem = items[int.Parse(index)];
+                    }
+                }
+
+                if (selectedItem != null)
+                {
+                    int itemKey = selectedItem.itemID;
+                    Debug.Log($"itemKey : {itemKey}");
+
+
+
+                    return;
+                }
+            }
         }
 
         foreach (RaycastResult result in results)

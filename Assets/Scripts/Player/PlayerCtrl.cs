@@ -882,4 +882,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         Gizmos.DrawWireSphere(itemCheckPoint.position, itemCheckRange);
 
     }
+
+    public bool IsEnableStore()
+    {
+        return isActiveSale;
+    }
 }
