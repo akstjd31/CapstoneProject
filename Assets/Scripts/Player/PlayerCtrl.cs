@@ -114,7 +114,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private ItemManager itemManager;
     private SPUM_SpriteList spum_SpriteList;
 
-    [SerializeField] private int randIdx;
+    [SerializeField] private int randIdx = -1;
     [SerializeField] private Item equipItem;
 
     //public float animSpeed;   // 애니메이션 속도 테스트
@@ -153,16 +153,20 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
+            pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
             if (pv.IsMine)
             {
                 anim.speed = GetAnimSpeed(status.attackSpeed);
-                randIdx = RandomCommonItemIndex(status.charType);
-                pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx);    // 랜덤으로 무기를 뽑음.  
 
                 inventory.equippedItem = equipItem;
                 inventory.FreshSlot();
-                inventory.TotalStatus(equipItem);
             }
+
+            inventory.TotalStatus(equipItem);
+
+
+            //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
+            //CommonWeaponEquipRPC(randIdx);
 
             chatScript = canvas.GetComponent<Chat>();
             partySystemScript = canvas.GetComponent<PartySystem>();
@@ -286,8 +290,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     }
                     else
                     {
-                        pv.RPC("SetArrowTargetTransform", RpcTarget.AllBuffered, mouseScreenPosition);
-
                         rigid.velocity = Vector2.zero;
                         // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
                         if (mouseWorldPosition.x - this.transform.position.x > 0)
@@ -428,6 +430,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                             if (distance <= interactionDist && showOnSaleItem != null)
                             {
                                 showOnSaleItem.ShowShopUI();
+                                inventory.transform.SetAsLastSibling();
                                 inventory.gameObject.SetActive(true);
                                 isActiveSale = true;
                                 return;
@@ -517,42 +520,31 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         return animSpeed;
     }
 
-    private int RandomCommonItemIndex(string charType)
+    [PunRPC]
+    public void SetRandIndex(int rand)
     {
-        if (charType.Equals("Warrior"))
-        {
-            return Random.Range(0, itemManager.warriorCommonList.Count);
-        }
-        else
-        {
-            return Random.Range(0, itemManager.archerCommonList.Count);
-        }
+        this.randIdx = rand;
     }
 
     // 처음 시작할 뽑기로 커먼 아이템 자동선택
     [PunRPC]
-    private void CommonWeaponEquipRPC(int rand)
+    private void CommonWeaponEquipRPC(int rand, string charType)
     {
-        string charType = status.charType;
-
-        if (pv.IsMine)
+        if (inventory != null && itemManager != null)
         {
-            if (inventory != null && itemManager != null)
+            Item item = null;
+            if (charType.Equals("Warrior"))
             {
-                Item item = null;
-                if (charType.Equals("Warrior"))
-                {
-                    item = itemManager.warriorCommonList[rand];
-                    spum_SpriteList._weaponList[2].sprite = item.itemImage;  // L_Weapon
-                }
-
-                else
-                {
-                    item = itemManager.archerCommonList[rand];
-                    spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
-                }
-                equipItem = item;
+                item = itemManager.warriorCommonList[rand];
+                spum_SpriteList._weaponList[2].sprite = item.itemImage;  // L_Weapon
             }
+
+            else
+            {
+                item = itemManager.archerCommonList[rand];
+                spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
+            }
+            equipItem = item;
         }
     }
 
@@ -723,16 +715,32 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
+        if (pv.IsMine)
+        {
+            // 총알 프리팹을 firePoint 위치에 인스턴스화
+            GameObject arrowPrefab = PhotonNetwork.Instantiate(projectile.name, firePoint.position, firePoint.rotation);
 
-        Arrow arrow = arrowPrefab.GetComponent<Arrow>();
-        arrow.SetTarget(arrowTargetPos);
-        arrow.SetDamage(status.attackDamage);
-        arrow.SetSpeed(3.5f);
-        arrow.SetOwner(this.tag);
-        arrow.SetViewID(pv.ViewID);
+            // PhotonView와 Arrow 컴포넌트를 가져옴
+            PhotonView arrowPV = arrowPrefab.GetComponent<PhotonView>();
+            if (arrowPV == null)
+            {
+                Debug.LogError("PhotonView component is missing on the instantiated arrow prefab.");
+                return;
+            }
 
-        state = State.NORMAL;
+            Arrow arrow = arrowPV.GetComponent<Arrow>();
+            if (arrow == null)
+            {
+                Debug.LogError("Arrow component is missing on the instantiated arrow prefab.");
+                return;
+            }
+
+            // RPC를 사용하여 다른 클라이언트에 총알의 초기 설정 전송
+            arrowPV.RPC("InitializeArrow", RpcTarget.AllBuffered, mouseWorldPosition, 3.5f, status.attackDamage, this.tag, pv.ViewID);
+
+            // 상태 변경
+            state = State.NORMAL;
+        }
     }
 
     

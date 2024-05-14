@@ -110,6 +110,10 @@ MonoBehaviour:
   - SetViewID
   - SetArrowTargetTransform
   - CommonWeaponEquipRPC
+  - RandomCommonItemIndex
+  - SyncPlayerData
+  - SetRandIndex
+  - InitializeArrow
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
