@@ -290,8 +290,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     }
                     else
                     {
-                        //pv.RPC("SetArrowTargetTransform", RpcTarget.AllBuffered, mouseScreenPosition);
-
                         rigid.velocity = Vector2.zero;
                         // 플레이어 좌, 우 스케일 값 변경 (뒤집기)
                         if (mouseWorldPosition.x - this.transform.position.x > 0)
@@ -708,21 +706,21 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
-    // [PunRPC]
-    // private void SetArrowTargetTransform(Vector3 targetPos)
-    // {
-    //     arrowTargetPos = targetPos;
-    // }
+    [PunRPC]
+    private void SetArrowTargetTransform(Vector3 targetPos)
+    {
+        arrowTargetPos = targetPos;
+    }
 
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        GameObject arrowPrefab = PhotonNetwork.InstantiateRoomObject(projectile.name, firePoint.position, Quaternion.identity);
+        GameObject arrowPrefab = Instantiate(projectile.gameObject, firePoint.position, Quaternion.identity);
 
         Arrow arrow = arrowPrefab.GetComponent<Arrow>();
 
-        //arrow.SetTarget(arrowTargetPos);
-        arrow.GetComponent<PhotonView>().RPC("SetTarget", RpcTarget.All, mouseWorldPosition);
+        pv.RPC("SetArrowTargetTransform", RpcTarget.AllBuffered, mouseWorldPosition);
+        arrow.SetTarget(arrowTargetPos);
         arrow.SetDamage(status.attackDamage);
         arrow.SetSpeed(3.5f);
         arrow.SetOwner(this.tag);

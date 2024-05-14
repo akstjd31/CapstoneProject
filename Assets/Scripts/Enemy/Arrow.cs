@@ -37,7 +37,6 @@ public class Arrow : MonoBehaviour
         this.speed = speed;
     }
 
-    [PunRPC]
     public void SetTarget(Vector3 targetPos)
     {
         this.targetPos = targetPos;
