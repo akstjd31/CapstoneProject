@@ -15,10 +15,13 @@ public class Arrow : MonoBehaviour
 
     private Rigidbody2D rigid;
 
+    private float elapsedTime = 2.0f;
+
     public void SetViewID(int viewID)
     {
         this.playerViewID = viewID;
     }
+
     public void SetOwner(string owner)
     {
         this.owner = owner;
@@ -38,7 +41,7 @@ public class Arrow : MonoBehaviour
     {
         this.targetPos = targetPos;
     }
-
+    
     public Vector3 GetTarget()
     {
         return targetPos;
@@ -53,6 +56,13 @@ public class Arrow : MonoBehaviour
 
     private void Update()
     {
+        //elapsedTime -= Time.deltaTime;
+
+        //if (elapsedTime <= 0.0f)
+        //{
+        //    PhotonNetwork.Destroy(this.gameObject);
+        //}
+
         if (targetPos != null)
         {
             Vector2 shootDir;

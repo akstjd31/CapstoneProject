@@ -101,6 +101,15 @@ MonoBehaviour:
   - EnemyKnockbackRPC
   - PlayerKnockbackRPC
   - RandomWeaponEquip
+  - RandomNumberRPC
+  - RandomCommonItemIndexRPC
+  - SetTarget
+  - SetDamage
+  - SetOwner
+  - SetSpeed
+  - SetViewID
+  - SetArrowTargetTransform
+  - CommonWeaponEquipRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
