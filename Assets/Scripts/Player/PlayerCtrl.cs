@@ -86,7 +86,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public bool onHit = false;
     public Vector3 enemyAttackDirection;
-    private float attackedDistanceSpeed = 5f;
+    public float knockBackDistanceSpeed;
+    public float originalKnockBackDistanceSpeed;
     private float attackAnimSpeed;
 
     private bool isDeath = false;
@@ -616,33 +617,34 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     // 넉백
+
     private void KnockBack()
     {
         if (onHit && status.HP > 0)
         {
             if (enemyAttackDirection.x < 0f)
             {
-                this.transform.localScale = new Vector3(1, 1, 1);
+                this.transform.localScale = new Vector3(-1, 1, 1);
             }
             else
             {
-                this.transform.localScale = new Vector3(-1, 1, 1);
+                this.transform.localScale = new Vector3(1, 1, 1);
             }
 
             anim.Play("Idle", -1, 0f);
             anim.speed = 0;
             rigid.velocity = Vector2.zero;
 
-            rigid.velocity = enemyAttackDirection.normalized * attackedDistanceSpeed;
+            rigid.velocity = enemyAttackDirection.normalized * knockBackDistanceSpeed;
 
-            float attackedSpeedDropMultiplier = 6f;
-            attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime;
+            float attackedSpeedDropMultiplier = 7f;
+            knockBackDistanceSpeed -= knockBackDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime;
 
-            if (attackedDistanceSpeed < 0.1f)
+            if (knockBackDistanceSpeed < 0.1f)
             {
                 rigid.velocity = Vector2.zero;
                 onHit = false;
-                attackedDistanceSpeed = 5f;
+                knockBackDistanceSpeed = originalKnockBackDistanceSpeed;
                 anim.speed = 1f;
                 state = State.NORMAL;
             }
@@ -693,18 +695,45 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             if (hitEnemies != null)
             {
-                EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+                Enemy enemy = hitEnemies.GetComponent<Enemy>();
 
-                if (enemyCtrl != null && !enemyCtrl.onHit)
+                if (enemy != null)
                 {
-                    //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
-                    //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
-                    //enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+                    if (enemy.enemyData.enemyType == EnemyType.BOSS)
+                    {
+                        float rand = Random.Range(0, 100f);
+                        BossCtrl bossCtrl = hitEnemies.GetComponent<BossCtrl>();
+
+                        if (bossCtrl != null && !bossCtrl.onHit)
+                        {
+                            if (rand > enemy.enemyData.evasionRate && bossCtrl.GetState() != BossCtrl.State.LASERCAST)
+                            {
+                                bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
+                                bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+                            }
+                            else
+                            {
+                                // 무적으로 인한 회피 or 확률로 나온 회피
+                                Debug.Log("회피!");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+
+                        if (enemyCtrl != null && !enemyCtrl.onHit)
+                        {
+                            //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
+                            enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
+                            enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+                        }
+                    }
                 }
             }
         }
     }
-
+        
 
     void AttackDirection()
     {

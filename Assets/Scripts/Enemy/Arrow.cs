@@ -88,13 +88,41 @@ public class Arrow : MonoBehaviour
 
         else if (other.CompareTag("Enemy") && !owner.Equals(other.tag))
         {
-            EnemyCtrl enemy = other.GetComponent<EnemyCtrl>();
+            Enemy enemy = other.GetComponent<Enemy>();
 
-            if (enemy != null && !enemy.onHit && rigid.velocity != Vector2.zero)
+            if (enemy.enemyData.enemyType == EnemyType.BOSS)
             {
-                //enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
-                enemy.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
-                enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID);
+                BossCtrl bossCtrl = other.GetComponent<BossCtrl>();
+
+                if (bossCtrl != null &&
+                    !bossCtrl.onHit &&
+                    rigid.velocity != Vector2.zero &&
+                    bossCtrl.GetState() != BossCtrl.State.LASERCAST)
+                {
+                    float rand = Random.Range(0, 100f);
+
+                    if (rand > enemy.enemyData.evasionRate)
+                    {
+                        //enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
+                        bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
+                        bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID);
+                    }
+                    else
+                    {
+                        Debug.Log("회피!");
+                    }
+                }
+            }
+            else
+            {
+                EnemyCtrl enemyCtrl = other.GetComponent<EnemyCtrl>();
+
+                if (enemyCtrl != null && !enemyCtrl.onHit && rigid.velocity != Vector2.zero)
+                {
+                    //enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
+                    enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
+                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID);
+                }
             }
 
             Destroy(this.gameObject);

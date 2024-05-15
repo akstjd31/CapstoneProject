@@ -40,7 +40,6 @@ public class EnemyAI : MonoBehaviour
         enemyPV = this.GetComponent<PhotonView>();
 
         aggroMeter1 = 0; aggroMeter2 = 0;
-        agent.speed = enemyCtrl.GetEnemy().enemyData.moveSpeed;
     }
 
     // Update is called once per frame
