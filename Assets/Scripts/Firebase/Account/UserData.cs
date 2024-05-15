@@ -400,7 +400,8 @@ public class UserData : MonoBehaviour
             { "stats", charStats },
             { "skill",  charSkill },
             { "itemList", new List<string>() },
-            { "stack", 0 }
+            { "stack", 0 },
+            { "skillPoint", 0 }
         };
         
         Dictionary<string, object> userContainer = new()

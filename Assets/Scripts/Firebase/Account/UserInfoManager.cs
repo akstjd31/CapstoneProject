@@ -364,6 +364,116 @@ public class UserInfoManager : MonoBehaviour
         }
     }
 
+    public static async Task<int> GetSkillPoint()
+    {
+        try
+        {
+            FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            // 현재 사용자 가져오기
+            FirebaseUser user = auth.CurrentUser;
+            if (user == null)
+            {
+                Debug.Log("User is null");
+                return 0;
+            }
+
+            // Firestore에서 사용자 문서 가져오기
+            DocumentReference docUser = db.Collection("User").Document(UserData.GetUserId());
+            DocumentSnapshot snapshot = await docUser.GetSnapshotAsync();
+
+            // 문서가 존재하는지 확인
+            if (snapshot.Exists)
+            {
+                // 사용자 데이터에서 스킬 포인트 추출
+                IDictionary<string, object> userData = snapshot.ToDictionary();
+                if (userData != null && userData.ContainsKey("charData"))
+                {
+                    IDictionary<string, object> charData = userData["charData"] as IDictionary<string, object>;
+                    if (charData != null && charData.ContainsKey("skillPoint"))
+                    {
+                        return Convert.ToInt32(charData["skillPoint"]);
+                    }
+                    else
+                    {
+                        Debug.Log("Skill point not found in charData");
+                        return 0;
+                    }
+                }
+                else
+                {
+                    Debug.Log("charData not found in user data");
+                    return 0;
+                }
+            }
+            else
+            {
+                Debug.Log("User document not found");
+                return 0;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to get skill point: " + e.Message);
+            return 0;
+        }
+    }
+
+    public static async Task SetSkillPoint(int newSkillPoint)
+    {
+        try
+        {
+            FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            // 현재 사용자 가져오기
+            FirebaseUser user = auth.CurrentUser;
+            if (user == null)
+            {
+                Debug.Log("User is null");
+                return;
+            }
+
+            // Firestore에서 사용자 문서 가져오기
+            DocumentReference docUser = db.Collection("User").Document(UserData.GetUserId());
+            DocumentSnapshot snapshot = await docUser.GetSnapshotAsync();
+
+            // 문서가 존재하는지 확인
+            if (snapshot.Exists)
+            {
+                // 사용자 데이터에서 charData 가져오기
+                IDictionary<string, object> userData = snapshot.ToDictionary();
+                if (userData != null && userData.ContainsKey("charData"))
+                {
+                    IDictionary<string, object> charData = userData["charData"] as IDictionary<string, object>;
+                    if (charData != null)
+                    {
+                        // skillPoint 업데이트
+                        charData["skillPoint"] = newSkillPoint;
+
+                        // Firestore에 업데이트된 데이터 저장
+                        await docUser.SetAsync(userData);
+                    }
+                    else
+                    {
+                        Debug.Log("charData not found in user data");
+                    }
+                }
+                else
+                {
+                    Debug.Log("charData not found in user data");
+                }
+            }
+            else
+            {
+                Debug.Log("User document not found");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to set skill point: " + e.Message);
+        }
+    }
+
     public static UserInfoManager GetInstance()
     {
         return instance;

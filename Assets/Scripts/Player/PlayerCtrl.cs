@@ -394,8 +394,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                         if (distance <= interactionDist && showOnSaleItem != null)
                         {
-                            inRange = true;
-                            break;
+                            //store
+                            if(npc.name.StartsWith("npc"))
+                            {
+                                inRange = true;
+                                break;
+                            }
                         }
 
                         //Debug.Log($"dist : {npc.name} => {distance} || ui close condition : {inRange}");
@@ -427,7 +431,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                             float distance = Vector3.Distance(npc.transform.position, transform.position);
                             //Debug.Log($"dist : {npc.name} => {distance}");
 
-                            if (distance <= interactionDist && showOnSaleItem != null)
+                            //store
+                            if(distance <= interactionDist && npc.name.StartsWith("npc") && showOnSaleItem != null)
                             {
                                 showOnSaleItem.ShowShopUI();
                                 inventory.transform.SetAsLastSibling();
@@ -435,6 +440,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                                 isActiveSale = true;
                                 return;
                             }
+                            //skill UI
+                            else if(distance <= interactionDist && npc.name.StartsWith("skill") && showOnSaleItem != null)
+                            {
+                                SceneManager.LoadScene("Skill_UI", LoadSceneMode.Additive);
+                            }
+                            
                         }
                     }
                 }

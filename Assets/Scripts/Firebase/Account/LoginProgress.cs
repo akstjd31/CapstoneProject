@@ -290,6 +290,7 @@ public class LoginProgress : MonoBehaviour
 
     private void OnDestroy()
     {
+        auth = FirebaseAuth.DefaultInstance;
         auth.StateChanged -= AuthStateChanged;
     }
 
