@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CharSkill : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class CharSkill : MonoBehaviour
         //교만, 탐욕, 색욕, 질투, 먹보, 분노, 나태
         //1001~1007
     };
+    private static Button closeUI;
+    private static int skill_point;
 
     async void Start()
     {
@@ -29,12 +32,19 @@ public class CharSkill : MonoBehaviour
         {
             int index = i;
 
-            btn_skill[i].onClick.AddListener(() =>
+            btn_skill[i].onClick.AddListener(async () =>
             {
+                skill_point = await UserInfoManager.GetSkillPoint();
                 UpgradeSkill(btn_skill[index].transform.parent.name);
             });
             //Debug.Log($"{btn_skill[i].transform.parent.name}");
         }
+
+        closeUI = GameObject.Find("ButtonX").GetComponent<Button>();
+        closeUI.onClick.AddListener(() =>
+        {
+            SceneManager.UnloadSceneAsync("Skill_UI");
+        });
     }
 
     private static async Task InitSkill()
@@ -44,6 +54,7 @@ public class CharSkill : MonoBehaviour
         userSkill = UserInfoManager.GetSkillLevel();
         Debug.Log($"Skill level initialized: ");
         //Show_Dictionary(userSkill);
+        skill_point = await UserInfoManager.GetSkillPoint();
     }
 
     public static void SetSkillLevel(int skillNum, int level)
@@ -107,8 +118,13 @@ public class CharSkill : MonoBehaviour
 
     //UI에서 접근하는 메소드
     //parameter는 영어 이름
-    public static void UpgradeSkill(string skillName)
+    public static async void UpgradeSkill(string skillName)
     {
+        if(skill_point < 1)
+        {
+            return;
+        }
+
         //"pride", "greed", "lust", "envy", "glutny", "wrath", "sloth"
         //교만, 탐욕, 색욕, 질투, 먹보, 분노, 나태
         List<string> skillName_kr = new()
@@ -151,6 +167,8 @@ public class CharSkill : MonoBehaviour
         //parameter는 한글 이름
         int skillNum = SkillData.Skill_NameToNum(skillName_kr[index]);
         Debug.Log($"Upgrade by button => {skillNum} {skillName}");
+
+        await UserInfoManager.SetSkillPoint(--skill_point);
 
         LevelUpSkill(skillNum);
     }
