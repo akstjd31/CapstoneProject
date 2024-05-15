@@ -24,7 +24,11 @@ public class ChestController : MonoBehaviourPunCallbacks
         if (other.tag == "Player")
         {
             Debug.Log("asdfasdf");
-            PhotonNetwork.InstantiateRoomObject(mapDir + "Heart", this.transform.position, Quaternion.identity, 0);
+            int randInt = Random.Range(0, 11);
+            if(randInt < 2)
+            {
+                PhotonNetwork.InstantiateRoomObject(mapDir + "Heart", this.transform.position, Quaternion.identity, 0);
+            }
             PhotonNetwork.Destroy(this.gameObject);
         }
     }
