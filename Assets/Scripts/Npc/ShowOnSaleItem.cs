@@ -14,9 +14,8 @@ public class ShowOnSaleItem : MonoBehaviour
 
     private GameObject shop;
     private Transform content;
-    private List<GameObject> itemList = new List<GameObject>();
+    private List<GameObject> itemList = new();
     private Button btn_reroll;
-    private bool canReroll = true;  //condition of reroll
 
     public void ShowShopUI()
     {
@@ -39,8 +38,9 @@ public class ShowOnSaleItem : MonoBehaviour
             btn_reroll.onClick.AddListener(() =>
             {
                 Debug.Log("clicked reroll");
+                int money = UserInfoManager.GetNowMoney();
 
-                if(canReroll)
+                if(money >= 5)
                 {
                     Reroll();
                 }
@@ -65,8 +65,10 @@ public class ShowOnSaleItem : MonoBehaviour
         shop.SetActive(false);
     }
 
-    private void Reroll()
+    private async void Reroll()
     {
+        await UserInfoManager.SetUserMoney_Async(-5);
+
         itemList = new List<GameObject>();
         //판매 중이었던 아이템 삭제
         foreach (Transform child in content)
