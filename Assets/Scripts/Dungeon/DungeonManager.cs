@@ -53,15 +53,15 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if(!isMapCreate)
+        if (!isMapCreate)
         {
             mapCreateTimer += Time.deltaTime;
         }
-        if(mapCreateTimer > 1.0f && coroutineNum == 0)
+        if (mapCreateTimer > 5.0f && coroutineNum == 0)
         {
             isMapCreate = true;
         }
-        if(isMapCreate && !specialRoomSelect)
+        if (isMapCreate && !specialRoomSelect)
         {
             for(int i = 0; i < endRoomIndexChecker; i++)
             {
