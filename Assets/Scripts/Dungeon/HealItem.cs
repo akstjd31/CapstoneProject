@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
-public class HealItem : Items
+public class HealItem : MonoBehaviour
 {
     public int healRate = 50;
     // Start is called before the first frame update

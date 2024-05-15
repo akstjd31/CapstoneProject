@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -3236637973679658639}
   - component: {fileID: -6834450012381180228}
   - component: {fileID: -392735087985753808}
+  - component: {fileID: 6469707326177435440}
   m_Layer: 0
   m_Name: Heart
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 7032504208520913426}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4196776389635344329}
@@ -146,6 +147,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed5dd1af88b739646a7335531e8f4245, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healRate: 50
+--- !u!114 &6469707326177435440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7032504208520913426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ed2daaff885c0d479ce973f1f4ba257, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
