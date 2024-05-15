@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using Photon.Realtime;
 using Photon.Pun;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class ChestController : MonoBehaviourPunCallbacks
+public class HealItem : Items
 {
-    string mapDir = "Dungeon/";
+    public int healRate = 50;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,12 +17,18 @@ public class ChestController : MonoBehaviourPunCallbacks
     {
         
     }
+
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.gameObject.CompareTag("Player"))
         {
-            Debug.Log("asdfasdf");
-            PhotonNetwork.InstantiateRoomObject(mapDir + "Heart", this.transform.position, Quaternion.identity, 0);
+            Status status = other.GetComponent<Status>();
+            
+            status.HP += healRate;
+            if(status.HP > status.MAXHP)
+            {
+                status.HP = status.MAXHP;
+            }
             PhotonNetwork.Destroy(this.gameObject);
         }
     }

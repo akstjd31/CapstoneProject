@@ -75,6 +75,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
                     bossRoomDistance = endRoomDistance;
                     bossRoom = endRooms[i];
                     endRooms[i] = null;
+                    endRoomIndexChecker--;
                 }
             }
             while(true)
@@ -88,6 +89,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
                 {
                     shopRoom = endRooms[rannum];
                     endRooms[rannum] = null;
+                    endRoomIndexChecker--;
                     break;
                 }
             }
@@ -105,9 +107,9 @@ public class DungeonManager : MonoBehaviourPunCallbacks
                     break;
                 }
             }
-            PhotonNetwork.Instantiate(mapDir + healRoomMarker.name, healRoom.transform.position, Quaternion.identity, 0);
-            PhotonNetwork.Instantiate(mapDir + shopRoomMarker.name, shopRoom.transform.position, Quaternion.identity, 0);
-            PhotonNetwork.Instantiate(mapDir + bossRoomMarker.name, bossRoom.transform.position, Quaternion.identity, 0);
+            PhotonNetwork.InstantiateRoomObject(mapDir + healRoomMarker.name, healRoom.transform.position, Quaternion.identity, 0);
+            PhotonNetwork.InstantiateRoomObject(mapDir + shopRoomMarker.name, shopRoom.transform.position, Quaternion.identity, 0);
+            PhotonNetwork.InstantiateRoomObject(mapDir + bossRoomMarker.name, bossRoom.transform.position, Quaternion.identity, 0);
             specialRoomSelect = true;
 
             Debug.Log(farherstMX +" "+ farherstX +" "+ farherstMY +" "+ farherstY);

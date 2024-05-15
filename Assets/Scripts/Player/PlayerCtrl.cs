@@ -486,6 +486,25 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
+    public PlayerCtrl GetPartyMember(PlayerCtrl playerCtrl) //파티원 정보 게터
+    {
+        if(party.GetPartyHeadCount() == 1) //혼자라면 나를 리턴
+        {
+            return playerCtrl;
+        }
+        else
+        {
+            if(party.GetPartyLeaderID() == pv.ViewID) //파티장이 나라면 파티원 리턴
+            {
+                return PhotonView.Find(party.GetPartyMemberID()).GetComponent<PlayerCtrl>();
+            }
+            else                                      //내가 파티원이라면 파티장 playerCtrl리턴
+            {
+                return PhotonView.Find(party.GetPartyLeaderID()).GetComponent<PlayerCtrl>();
+            }
+        }
+    }
+
     public void SetEquipItem(Item item)
     {
         this.equipItem = item;
