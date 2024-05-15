@@ -26,6 +26,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private string charType = "";
 
+    public static int playerWeaponID;
+
     void Awake()
     {
         DontDestroyOnLoad(gameObject);

@@ -153,17 +153,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
-            pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
             if (pv.IsMine)
             {
-                anim.speed = GetAnimSpeed(status.attackSpeed);
-
-                inventory.equippedItem = equipItem;
-                inventory.FreshSlot();
+                PhotonManager.playerWeaponID = randIdx;
             }
-
-            TotalStatus(equipItem);
-
 
             //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
             //CommonWeaponEquipRPC(randIdx);
@@ -181,6 +174,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 던전 씬
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
+            randIdx = PhotonManager.playerWeaponID;
+
             uiManager = canvas.GetComponent<UIManager>();
 
             uiManager.hpBar.maxValue = status.MAXHP;
@@ -199,6 +194,18 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 hud1.hpBar.maxValue = status.MAXHP;
             }
         }
+        pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
+
+        anim.speed = GetAnimSpeed(status.attackSpeed);
+
+        if (pv.IsMine)
+        {
+            inventory.equippedItem = equipItem;
+            inventory.FreshSlot();
+        }
+
+        TotalStatus(equipItem);
+
 
         if (npcParent != null)
         {
