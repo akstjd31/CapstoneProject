@@ -106,10 +106,10 @@ public class EnemyCtrl : MonoBehaviour
     public void DamagePlayerOnHitRPC(int playerViewID)
     {
         PhotonView playerPV = PhotonView.Find(playerViewID);
-        PassiveSkill passiveSkill = playerPV.GetComponent<PassiveSkill>();
+        //PassiveSkill passiveSkill = playerPV.GetComponent<PassiveSkill>();
         Status status = playerPV.GetComponent<Status>();
 
-        passiveSkill.attackCount++;
+        //passiveSkill.attackCount++;
         // 플레이어의 공격력만큼 체력에서 깎음
         if (hpBar != null)
         {

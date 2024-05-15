@@ -130,7 +130,7 @@ public class Status : MonoBehaviourPunCallbacks
             {
                 playerCtrl.GetPartyMember(playerCtrl).GetComponent<Status>().HP -= damage * playerCtrl.GetPartyMember(playerCtrl).GetComponent<Status>().damageTakenRate;
             }
-            passiveSkill.attackCount = 0;
+            //passiveSkill.attackCount = 0;
             HP -= damage * damageTakenRate;
         }
     }
