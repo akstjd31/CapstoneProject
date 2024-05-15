@@ -103,7 +103,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1424553304504775062}
   m_Layer: 8
-  m_Name: LaserCreatePoint
+  m_Name: LazerCreatePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -134,7 +134,7 @@ GameObject:
   m_Component:
   - component: {fileID: 509539464271239578}
   m_Layer: 8
-  m_Name: RocketORLaserPoint
+  m_Name: RocketORLazerPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -388,9 +388,11 @@ MonoBehaviour:
   rectangleSize: {x: 20, y: 2}
   rocketCoolTime: 0
   rocketFire: 0
-  laserPrefab: {fileID: 7904077485712178411, guid: a80a1f18c8b60304a815c3d9b80c8f7c, type: 3}
-  laserCreatePoint: {fileID: 1424553304504775062}
-  laserCoolTime: 0
+  lazerPrefab: {fileID: 7904077485712178411, guid: a80a1f18c8b60304a815c3d9b80c8f7c, type: 3}
+  lazerCreatePoint: {fileID: 1424553304504775062}
+  lazerCoolTime: 0
+  lazerFire: 0
+  warningLazerPrefab: {fileID: 5976399806492482624, guid: 3685dd151e598204f81441f1014b9b66, type: 3}
 --- !u!195 &6237778322135040964
 NavMeshAgent:
   m_ObjectHideFlags: 0

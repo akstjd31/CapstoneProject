@@ -12,7 +12,7 @@ public class BossCtrl : MonoBehaviour
     
     public enum State
     { 
-        NORMAL, MOVE, ATTACKED, GLOWING, RANGEATTACK, IMMUNE, MELEE, LASERCAST, ARMORBUFF, DEATH
+        NORMAL, MOVE, ATTACKED, GLOWING, RANGEATTACK, SPECIAL_LAZER, MELEE, LAZERCAST, ARMORBUFF, DEATH
     }
 
     public Enemy enemy;
@@ -67,11 +67,15 @@ public class BossCtrl : MonoBehaviour
     [SerializeField] private bool rocketFire = false;
 
     // 레이저
-    public Transform laserPrefab;
-    public Transform laserCreatePoint;
-    [SerializeField] private float laserCoolTime = 0.0f;
-    private float laserDefaultCoolTime = 15.0f;
-    [SerializeField] private bool laserFire = false;
+    public Transform lazerPrefab;
+    public Transform lazerCreatePoint;
+    [SerializeField] private float lazerCoolTime = 0.0f;
+    private float lazerDefaultCoolTime = 15.0f;
+    [SerializeField] private bool lazerFire = false;
+
+    // 중간 패턴 1
+    public Transform warningLazerPrefab;
+    
 
     public State GetState()
     {
@@ -114,11 +118,11 @@ public class BossCtrl : MonoBehaviour
 
                 if (rand == 0)
                 {
-                    if (laserCoolTime <= 0.0f)
+                    if (lazerCoolTime <= 0.0f)
                     {
-                        laserCoolTime = laserDefaultCoolTime;
+                        lazerCoolTime = lazerDefaultCoolTime;
                         FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
-                        state = State.LASERCAST;
+                        state = State.LAZERCAST;
                         agent.isStopped = true;
                         anim.SetBool("isLaserFire", true);
                     }
@@ -152,8 +156,23 @@ public class BossCtrl : MonoBehaviour
             if (IsEnemyClosetPlayer() &&
                 state == State.MOVE)
             {
-                state = State.MELEE;
-                anim.SetBool("isMelee", true);
+                float rand = Random.Range(0, 100f);
+
+                if (rand <= 50f)
+                {
+                    agent.isStopped = true;
+                    anim.SetBool("isSpecialLazerFire", true);
+                    state = State.SPECIAL_LAZER;
+                }
+                //else if (rand <= 20f)
+                //{
+
+                //}
+                else
+                {
+                    state = State.MELEE;
+                    anim.SetBool("isMelee", true);
+                }
             }
 
             CoolTimeCalculator();
@@ -176,13 +195,16 @@ public class BossCtrl : MonoBehaviour
                 break;
             case State.RANGEATTACK:
                 break;
-            case State.LASERCAST:
-                CheckLaserEnd();
+            case State.LAZERCAST:
+                CheckLazerEnd();
+                break;
+            case State.SPECIAL_LAZER:
+                SecialLazerEndCheck();
                 break;
         }
 
         if (enemyAI.GetFocusTarget() != null && enemyAI.isLookingAtPlayer && 
-            state != State.LASERCAST)
+            state != State.LAZERCAST)
         {
             FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
         }
@@ -193,6 +215,27 @@ public class BossCtrl : MonoBehaviour
         }
     }
 
+    private void SecialLazerEndCheck()
+    {
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.normalizedTime >= 1.0f)
+        {
+            agent.isStopped = false;
+            state = State.NORMAL;
+            anim.SetBool("isSpecialLazerFire", false);
+            restTime = 0.0f;
+        }
+    }
+
+    // 중간 패턴 1 애니메이션 이벤트 함수
+    private void SpecialLazer()
+    {
+        GameObject lazerPrefab = Instantiate(warningLazerPrefab.gameObject, Vector2.zero, Quaternion.identity);
+        WarningLazer warningLazer = lazerPrefab.GetComponent<WarningLazer>();
+
+        warningLazer.SetTarget(enemyAI.GetFocusTarget());
+    }
+
     private void CoolTimeCalculator()
     {
         if (rocketCoolTime > 0.0f)
@@ -200,50 +243,55 @@ public class BossCtrl : MonoBehaviour
             rocketCoolTime -= Time.deltaTime;
         }
 
-        if (laserCoolTime > 0.0f)
+        if (lazerCoolTime > 0.0f)
         {
-            laserCoolTime -= Time.deltaTime;
+            lazerCoolTime -= Time.deltaTime;
         }
     }
 
-    private void CheckLaserEnd()
+    private void CheckLazerEnd()
     {
-        bool flag = GameObject.Find("Laser(Clone)");
+        bool flag = GameObject.Find("Lazer(Clone)");
 
-        if (laserFire && !flag)
+        if (lazerFire && !flag)
         {
             anim.speed = 1f;
-            anim.SetBool("isLaserFire", false);
+            anim.SetBool("isLazerFire", false);
             restTime = 0.0f;
             state = State.NORMAL;
-            laserFire = false;
+            lazerFire = false;
         }
     }
 
     // 레이저 발사 애니메이션 이벤트 함수
-    private void LaserFire()
+    private void LazerFire()
     {
-        GameObject layerObj = Instantiate(laserPrefab.gameObject, laserCreatePoint.position, Quaternion.identity);
+        GameObject layerObj = Instantiate(lazerPrefab.gameObject, lazerCreatePoint.position, Quaternion.identity);
 
-        Laser laser = layerObj.GetComponent<Laser>();
-        laser.SetDamage(enemy.enemyData.attackDamage * 2.0f);
-        laser.SetViewID(pv.ViewID);
-        laser.SetStartPos(this.transform);
+        Lazer lazer = layerObj.GetComponent<Lazer>();
+        lazer.SetDamage(enemy.enemyData.attackDamage * 2.0f);
+        lazer.SetViewID(pv.ViewID);
+        lazer.SetStartPos(this.transform);
 
         if (this.transform.localScale.x < 0)
         {
-            laser.transform.localScale = new Vector3(-4, 4, 4);
+            lazer.transform.localScale = new Vector3(-4, 4, 4);
         }
 
-        laserFire = true;
+        lazerFire = true;
     }
 
     // 플레이어가 직사각형 범위에 포함되었는지 확인하여 반환
     private bool IsPlayerInRectangleRange()
     {
-        Collider2D hitPlayers = Physics2D.OverlapBox(rocketAndLaserPoint.position, rectangleSize, 0f, playerLayers);
+        if (state == State.MOVE)
+        {
+            Collider2D hitPlayers = Physics2D.OverlapBox(rocketAndLaserPoint.position, rectangleSize, 0f, playerLayers);
 
-        return hitPlayers != null;
+            return hitPlayers != null;
+        }
+
+        return false;
     }
 
     // 로켓 발사 애니메이션 이벤트 함수
@@ -422,7 +470,7 @@ public class BossCtrl : MonoBehaviour
     // 플레이어가 소유한 범위포인트에 따른 반환
     private bool IsEnemyClosetPlayer()
     {
-        if (enemyAI.GetFocusTarget() != null && state != State.MELEE)
+        if (enemyAI.GetFocusTarget() != null && state == State.MOVE)
         {
             // 공격 범위에 들어간 적
             Collider2D players = Physics2D.OverlapCircle(detectionPoint.position, detectionRange, playerLayers);

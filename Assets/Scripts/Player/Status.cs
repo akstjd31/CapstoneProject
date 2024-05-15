@@ -137,6 +137,12 @@ public class Status : MonoBehaviourPunCallbacks
 
             if (targetPV.GetComponent<Enemy>().enemyData.enemyType == EnemyType.BOSS)
             {
+                if (targetPV.GetComponent<BossCtrl>().GetState() == BossCtrl.State.LAZERCAST)
+                {
+                    playerCtrl.knockBackDistanceSpeed = 12f;
+                    return;
+                }
+
                 playerCtrl.knockBackDistanceSpeed = 9f;
             }
             else
