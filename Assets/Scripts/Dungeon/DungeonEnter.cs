@@ -52,7 +52,6 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
     void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("Enter Trigger");
-        this.transform.localScale = new Vector3(this.transform.localScale.x + 0.1f, this.transform.localScale.y + 0.1f, this.transform.localScale.z + 0.1f);
         playerCtrl = other.GetComponent<PlayerCtrl>();
         if(playerCtrl.isPartyMember)
         {
@@ -63,7 +62,6 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
                     partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
                     partyPlayersID[1] = playerCtrl.party.GetPartyMemberID();
                     roomName = PhotonView.Find(partyPlayersID[0]).Controller.NickName;
-                    this.transform.localScale = new Vector3(this.transform.localScale.x - 0.2f, this.transform.localScale.y - 0.2f, this.transform.localScale.z - 0.2f);
                     foreach (int playerID in partyPlayersID)
                     {
                         PhotonView playerView = PhotonView.Find(playerID);
