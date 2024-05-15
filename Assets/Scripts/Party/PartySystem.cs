@@ -139,7 +139,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
                     // 방을 생성한다.
                     GameObject room = PhotonNetwork.InstantiateRoomObject(partyRoom.name, Vector3.zero, Quaternion.identity);
 
-                    this.GetComponent<PhotonView>().RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID, room.GetComponent<PhotonView>().ViewID);
+                    canvasPV.RPC("PartyRoomSetting", RpcTarget.AllBuffered, inputField.text, targetPhotonView.ViewID, room.GetComponent<PhotonView>().ViewID);
                     Debug.Log(PhotonNetwork.NickName + " 가 방을 생성하였습니다.");
                     partyCreator.SetActive(false);
                     playerCtrl.party.SetPartyLeaderID(playerCtrl.GetComponent<PhotonView>().ViewID);
