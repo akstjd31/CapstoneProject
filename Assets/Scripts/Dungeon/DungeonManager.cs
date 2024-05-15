@@ -75,7 +75,6 @@ public class DungeonManager : MonoBehaviourPunCallbacks
                     bossRoomDistance = endRoomDistance;
                     bossRoom = endRooms[i];
                     endRooms[i] = null;
-                    endRoomIndexChecker--;
                 }
             }
             while(true)
