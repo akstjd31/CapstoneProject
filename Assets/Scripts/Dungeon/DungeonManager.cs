@@ -106,9 +106,9 @@ public class DungeonManager : MonoBehaviourPunCallbacks
                     break;
                 }
             }
-            PhotonNetwork.InstantiateRoomObject(mapDir + healRoomMarker.name, healRoom.transform.position, Quaternion.identity, 0);
-            PhotonNetwork.InstantiateRoomObject(mapDir + shopRoomMarker.name, shopRoom.transform.position, Quaternion.identity, 0);
-            PhotonNetwork.InstantiateRoomObject(mapDir + bossRoomMarker.name, bossRoom.transform.position, Quaternion.identity, 0);
+            PhotonNetwork.Instantiate(mapDir + healRoomMarker.name, healRoom.transform.position, Quaternion.identity, 0);
+            PhotonNetwork.Instantiate(mapDir + shopRoomMarker.name, shopRoom.transform.position, Quaternion.identity, 0);
+            PhotonNetwork.Instantiate(mapDir + bossRoomMarker.name, bossRoom.transform.position, Quaternion.identity, 0);
             specialRoomSelect = true;
 
             Debug.Log(farherstMX +" "+ farherstX +" "+ farherstMY +" "+ farherstY);
