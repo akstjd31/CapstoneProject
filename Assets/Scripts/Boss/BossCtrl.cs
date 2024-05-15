@@ -124,7 +124,7 @@ public class BossCtrl : MonoBehaviour
                         FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
                         state = State.LAZERCAST;
                         agent.isStopped = true;
-                        anim.SetBool("isLaserFire", true);
+                        anim.SetBool("isLazerFire", true);
                     }
                 }
                 else
@@ -170,7 +170,6 @@ public class BossCtrl : MonoBehaviour
                 //}
                 else
                 {
-                    state = State.MELEE;
                     anim.SetBool("isMelee", true);
                 }
             }
@@ -284,14 +283,9 @@ public class BossCtrl : MonoBehaviour
     // 플레이어가 직사각형 범위에 포함되었는지 확인하여 반환
     private bool IsPlayerInRectangleRange()
     {
-        if (state == State.MOVE)
-        {
-            Collider2D hitPlayers = Physics2D.OverlapBox(rocketAndLaserPoint.position, rectangleSize, 0f, playerLayers);
+        Collider2D hitPlayers = Physics2D.OverlapBox(rocketAndLaserPoint.position, rectangleSize, 0f, playerLayers);
 
-            return hitPlayers != null;
-        }
-
-        return false;
+        return hitPlayers != null;
     }
 
     // 로켓 발사 애니메이션 이벤트 함수
@@ -424,6 +418,7 @@ public class BossCtrl : MonoBehaviour
     // Melee 애니메이션 이벤트 함수 (공격 애니메이션에 맞춰서 이동)
     private void MeleeAnimEventFunc()
     {
+        state = State.MELEE;
         agent.isStopped = true;
         targetPos = enemyAI.GetFocusTarget().position;
         enemyAI.isLookingAtPlayer = false;
@@ -470,7 +465,7 @@ public class BossCtrl : MonoBehaviour
     // 플레이어가 소유한 범위포인트에 따른 반환
     private bool IsEnemyClosetPlayer()
     {
-        if (enemyAI.GetFocusTarget() != null && state == State.MOVE)
+        if (enemyAI.GetFocusTarget() != null)
         {
             // 공격 범위에 들어간 적
             Collider2D players = Physics2D.OverlapCircle(detectionPoint.position, detectionRange, playerLayers);
