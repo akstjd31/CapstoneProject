@@ -19,7 +19,6 @@ public class CharSkill : MonoBehaviour
         //±³¸¸, Å½¿å, »ö¿å, ÁúÅõ, ¸Ôº¸, ºÐ³ë, ³ªÅÂ
         //1001~1007
     };
-    private static Button closeUI;
     private static int skill_point;
 
     //explantion
@@ -30,6 +29,9 @@ public class CharSkill : MonoBehaviour
     private int layerMask;
 
     private PlayerCtrl pc;
+    private Button btn_close;
+    [SerializeField]
+    private GameObject btn_prefab;
 
     private async void Init()
     {
@@ -44,6 +46,15 @@ public class CharSkill : MonoBehaviour
             SceneManager.SetActiveScene(skillUIScene);
             currentUser = UserInfoManager.GetCurrentUser();
             GameObject.Find("Main Camera").GetComponent<Camera>().enabled = true;
+
+            GameObject btn = Instantiate(btn_prefab, GameObject.Find("Canvas").transform);
+            btn.name = "prefab_close_btn";
+            btn.transform.position = new Vector2(0, 0);
+            btn.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                Debug.Log("prefab click");
+                CloseSkillUI();
+            });
             Init();
         }
         else
@@ -54,6 +65,7 @@ public class CharSkill : MonoBehaviour
         //OpenPartyButton, CreatePartyButton
 
         btn_skill = GameObject.Find("Images").GetComponentsInChildren<Button>();
+        btn_close = GameObject.Find("ButtonX").GetComponent<Button>();
         pc = FindObjectOfType<PlayerCtrl>();
         pc.DisableLobbyUI();
 
@@ -71,6 +83,8 @@ public class CharSkill : MonoBehaviour
 
         explane.SetActive(false);
         layerMask = LayerMask.GetMask("Skill_UI");
+        //Invoke();
+        
     }
 
     private void Update()
@@ -80,8 +94,15 @@ public class CharSkill : MonoBehaviour
 
         if (hit.collider != null)
         {
-            Debug.Log($"hit coll : {hit.collider.name}");
+            Debug.Log($"hit coll : {hit.collider.name} {hit.transform.tag}");
         }
+    }
+
+    private async void Invoke()
+    {
+        await Task.Delay(10000);
+
+        btn_close.onClick.Invoke();
     }
 
     private void OnDestroy()
@@ -221,25 +242,6 @@ public class CharSkill : MonoBehaviour
         UserInfoManager.SetSkillLevel(userSkill);
     }
 
-    //Å×½ºÆ® ¿ë ¸Þ¼Òµå
-    public static void Debug_SkillUp_1001()
-    {
-        LevelUpSkill(1001);
-    }
-    public static void Debug_SkillUp_10001()
-    {
-        LevelUpSkill(10001);
-    }
-    public static void Debug_SkillUp_20001()
-    {
-        LevelUpSkill(20001);
-    }
-
-    public static void Debug_ShowSkill()
-    {
-        Show_Dictionary(userSkill);
-    }
-
     private static void Show_Dictionary(Dictionary<string, int> dict)
     {
         string data = "";
@@ -261,6 +263,7 @@ public class CharSkill : MonoBehaviour
 
     public static void CloseSkillUI()
     {
+        Debug.Log("clicked close");
         SceneManager.UnloadSceneAsync("Skill_UI");
     }
 }
