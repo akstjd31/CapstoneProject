@@ -205,7 +205,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
 
         this.GetComponent<PhotonView>().RPC("RemovePlayerViewID", RpcTarget.AllBuffered, leftPlayerPV.ViewID);
-        //lobbyPlayerViewID.Remove(leftPlayerPV.ViewID);
+        lobbyPlayerViewID.Remove(leftPlayerPV.ViewID);
 
 
         if (leftPlayerPV.IsMine)

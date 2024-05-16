@@ -106,8 +106,10 @@ public class EnemyCtrl : MonoBehaviour
     public void DamagePlayerOnHitRPC(int playerViewID)
     {
         PhotonView playerPV = PhotonView.Find(playerViewID);
+        //PassiveSkill passiveSkill = playerPV.GetComponent<PassiveSkill>();
         Status status = playerPV.GetComponent<Status>();
 
+        //passiveSkill.attackCount++;
         // 플레이어의 공격력만큼 체력에서 깎음
         if (hpBar != null)
         {
@@ -268,8 +270,8 @@ public class EnemyCtrl : MonoBehaviour
                 {
                     // 몹의 데미지만큼 플레이어에게 피해를 입힘.
                     //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, player.passiveSkill.PrideDamaged(enemy.enemyData.attackDamage));
-                    //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, enemy.enemyData.attackDamage);
-                    //player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
+                    player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, enemy.enemyData.attackDamage);
+                    player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
                 }
             }
         }

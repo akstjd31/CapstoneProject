@@ -153,17 +153,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
-            pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
             if (pv.IsMine)
             {
-                anim.speed = GetAnimSpeed(status.attackSpeed);
-
-                inventory.equippedItem = equipItem;
-                inventory.FreshSlot();
+                PhotonManager.playerWeaponID = randIdx;
             }
-
-            TotalStatus(equipItem);
-
 
             //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
             //CommonWeaponEquipRPC(randIdx);
@@ -181,6 +174,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 던전 씬
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
+            randIdx = PhotonManager.playerWeaponID;
+
             uiManager = canvas.GetComponent<UIManager>();
 
             uiManager.hpBar.maxValue = status.MAXHP;
@@ -199,6 +194,18 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 hud1.hpBar.maxValue = status.MAXHP;
             }
         }
+        pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
+
+        anim.speed = GetAnimSpeed(status.attackSpeed);
+
+        if (pv.IsMine)
+        {
+            inventory.equippedItem = equipItem;
+            inventory.FreshSlot();
+        }
+
+        TotalStatus(equipItem);
+
 
         if (npcParent != null)
         {
@@ -489,6 +496,25 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
+    public PlayerCtrl GetPartyMember(PlayerCtrl playerCtrl) //파티원 정보 게터
+    {
+        if(party.GetPartyHeadCount() == 1) //혼자라면 나를 리턴
+        {
+            return playerCtrl;
+        }
+        else
+        {
+            if(party.GetPartyLeaderID() == pv.ViewID) //파티장이 나라면 파티원 리턴
+            {
+                return PhotonView.Find(party.GetPartyMemberID()).GetComponent<PlayerCtrl>();
+            }
+            else                                      //내가 파티원이라면 파티장 playerCtrl리턴
+            {
+                return PhotonView.Find(party.GetPartyLeaderID()).GetComponent<PlayerCtrl>();
+            }
+        }
+    }
+
     public void SetEquipItem(Item item)
     {
         this.equipItem = item;
@@ -712,8 +738,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 if (enemyCtrl != null && !enemyCtrl.onHit)
                 {
                     //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
-                    //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
-                    //enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
+                    enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
                 }
             }
         }

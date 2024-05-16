@@ -2217,6 +2217,11 @@ MonoBehaviour:
   moveSpeed: 5
   defaultMoveSpeed: 0
   evasionRate: 5
+  goldEarnRate: 1
+  superArmorDuration: 1
+  damageTakenRate: 1
+  coolTimeRate: 1
+  isEnvy: 0
   defaultEvasionRate: 0
   charType: Archer
   statInfo: {fileID: 0}
