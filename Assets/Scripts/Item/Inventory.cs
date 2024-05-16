@@ -126,23 +126,18 @@ public class Inventory : MonoBehaviour
                     {
                         string index = name.Split("(")[1];
                         index = index.Substring(0, index.Length - 1);    //1~11
-                        //Debug.Log($"index : {index}");
                         delIndex = int.Parse(index);
 
                         selectedItem = items[delIndex] == null ? null : items[delIndex];
                     }
                 }
 
-                //Debug.Log($"delIndex : {delIndex}");
-
                 if (selectedItem != null)
                 {
                     int itemKey = selectedItem.itemID;
-                    //Debug.Log($"itemKey : {itemKey}");
 
-                    NpcShop.SellItem(101, itemKey, 1);
+                    NpcShop.SellItem(itemKey, 1);
                     DeleteItem_Index(delIndex);
-                    //Debug.Log("sell item complete");
 
                     return;
                 }

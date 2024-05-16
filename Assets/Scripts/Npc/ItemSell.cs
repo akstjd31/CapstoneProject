@@ -44,15 +44,15 @@ public class ItemSell : MonoBehaviour
                 {
                     case 0:
                         buyValue = 10;
-                        sellValue = 10;
+                        sellValue = 5;
                         break;
                     case 1:
                         buyValue = 25;
-                        sellValue = 25;
+                        sellValue = 15;
                         break;
                     case 2:
                         buyValue = 50;
-                        sellValue = 50;
+                        sellValue = 30;
                         break;
                 }
 
