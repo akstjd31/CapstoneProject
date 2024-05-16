@@ -117,6 +117,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     [SerializeField] private int randIdx = -1;
     [SerializeField] private Item equipItem;
 
+    private GameObject openPartyButton;
+    private GameObject createPartyButton;
+    private GameObject InputMessage;
+    private GameObject Send;
+
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void SetState(State state)
@@ -995,5 +1000,36 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public bool IsEnableInventory()
     {
         return inventory.enabled;
+    }
+
+    public void EnableLobbyUI()
+    {
+        if (openPartyButton == null || createPartyButton == null || InputMessage == null || Send == null)
+        {
+            openPartyButton = GameObject.Find("OpenPartyButton");
+            createPartyButton = GameObject.Find("CreatePartyButton");
+            InputMessage = GameObject.Find("InputMessage");
+            Send = GameObject.Find("Send");
+        }
+
+        openPartyButton.SetActive(true);
+        createPartyButton.SetActive(true);
+        InputMessage.SetActive(true);
+        Send.SetActive(true);
+    }
+    public void DisableLobbyUI()
+    {
+        if (openPartyButton == null && createPartyButton == null || InputMessage == null || Send == null)
+        {
+            openPartyButton = GameObject.Find("OpenPartyButton");
+            createPartyButton = GameObject.Find("CreatePartyButton");
+            InputMessage = GameObject.Find("InputMessage");
+            Send = GameObject.Find("Send");
+        }
+
+        openPartyButton.SetActive(false);
+        createPartyButton.SetActive(false);
+        InputMessage.SetActive(false);
+        Send.SetActive(false);
     }
 }

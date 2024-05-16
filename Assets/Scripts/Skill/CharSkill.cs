@@ -29,6 +29,8 @@ public class CharSkill : MonoBehaviour
     private RaycastHit2D hit;
     private int layerMask;
 
+    private PlayerCtrl pc;
+
     private async void Init()
     {
         await InitSkill();
@@ -49,7 +51,11 @@ public class CharSkill : MonoBehaviour
             Debug.LogError("Skill_UI scene is not loaded.");
         }
 
+        //OpenPartyButton, CreatePartyButton
+
         btn_skill = GameObject.Find("Images").GetComponentsInChildren<Button>();
+        pc = FindObjectOfType<PlayerCtrl>();
+        pc.DisableLobbyUI();
 
         for (int i = 0; i< btn_skill.Length; i++)
         {
@@ -71,12 +77,16 @@ public class CharSkill : MonoBehaviour
     {
         pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         hit = Physics2D.Raycast(pos, Vector2.zero, Mathf.Infinity, layerMask);
-        Debug.Log($"hit : {hit.point} {hit.transform?.name}");
 
         if (hit.collider != null)
         {
             Debug.Log($"hit coll : {hit.collider.name}");
         }
+    }
+
+    private void OnDestroy()
+    {
+        pc.EnableLobbyUI();
     }
 
     private static async Task InitSkill()
