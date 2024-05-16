@@ -115,9 +115,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     [SerializeField] private int randIdx = -1;
     [SerializeField] private Item equipItem;
 
-    [SerializeField] private Transform remotePlayer;
-    [SerializeField] private HUD localHUD, remoteHUD;
-
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void SetState(State state)
@@ -176,22 +173,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
             randIdx = PhotonManager.playerWeaponID;
-
-            uiManager = canvas.GetComponent<UIManager>();
-
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
-            if (players.Length > 1)
-            {
-                remotePlayer = players[0].transform == this.transform ? players[1].transform : players[0].transform;
-            }
-
-            localHUD = uiManager.localHUD;
-
-            if (remotePlayer != null)
-                remoteHUD = uiManager.remoteHUD;
-
-            localHUD.hpBar.maxValue = this.status.MAXHP;
         }
 
         pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
@@ -242,22 +223,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 else
                 {
                     isDeactiveUI = true;
-
-                    if (uiManager != null)
-                    {
-                        localHUD.hpBarText.text = string.Format("{0} / {1}", this.status.HP, this.status.MAXHP);
-                        localHUD.hpBar.value = this.status.HP;
-                        
-                        // 원격 플레이어 HUD
-                        if (remotePlayer != null)
-                        {
-                            remoteHUD.nickName.text = remotePlayer.gameObject.GetComponent<PhotonView>().Controller.NickName;
-
-                            Status remotePlayerStatus = remotePlayer.GetComponent<Status>();
-                            remoteHUD.hpBarText.text = string.Format("{0} / {1}", remotePlayerStatus.HP, remotePlayerStatus.MAXHP);
-                            remoteHUD.hpBar.value = remotePlayerStatus.HP;
-                        }
-                    }
                 }
 
                 moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
