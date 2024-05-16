@@ -7,4 +7,5 @@ public class HUD : MonoBehaviour
 {
     public Text nickName;
     public Slider hpBar;
+    public Text hpBarText;
 }

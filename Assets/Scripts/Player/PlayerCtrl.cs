@@ -82,8 +82,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     Collider2D hitEnemies;  // 공격 대상
 
-    GameObject otherPlayer;
-
     public bool onHit = false;
     public Vector3 enemyAttackDirection;
     private float attackedDistanceSpeed = 5f;
@@ -116,6 +114,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     [SerializeField] private int randIdx = -1;
     [SerializeField] private Item equipItem;
+
+    private PhotonView remotePlayerPV;
+    private HUD localHUD, remoteHUD;
 
     //public float animSpeed;   // 애니메이션 속도 테스트
 
@@ -178,22 +179,29 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             uiManager = canvas.GetComponent<UIManager>();
 
-            uiManager.hpBar.maxValue = status.MAXHP;
-
-            if (GameObject.FindGameObjectsWithTag("Player").Length > 1)
+            foreach (Player player in PhotonNetwork.PlayerList)
             {
-                GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-                otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
+                // 예: 특정 플레이어의 닉네임을 찾는 경우
+                if (!player.NickName.Equals(this.pv.Controller.NickName))
+                {
+                    // 플레이어 찾음, 이후 이 플레이어의 PhotonView를 찾는 로직 작성
+                    PhotonView targetPhotonView = GetPhotonViewByPlayer(player);
+                    if (targetPhotonView != null)
+                    {
+                        remotePlayerPV = targetPhotonView;
+                        break;
+                    }
+                }
             }
 
-            if (otherPlayer != null)
-            {
-                // HUD1 == otherPlayer
-                HUD hud1 = uiManager.hud1.GetComponent<HUD>();
-                hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
-                hud1.hpBar.maxValue = status.MAXHP;
-            }
+            localHUD = uiManager.localHUD;
+
+            if (remotePlayerPV != null)
+                remoteHUD = uiManager.remoteHUD;
+
+            localHUD.hpBar.maxValue = this.status.MAXHP;
         }
+
         pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
 
         anim.speed = GetAnimSpeed(status.attackSpeed);
@@ -216,6 +224,18 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 npcList[i] = npcParent.transform.GetChild(i).gameObject;
             }
         }
+    }
+
+    PhotonView GetPhotonViewByPlayer(Player player)
+    {
+        foreach (PhotonView pv in FindObjectsOfType<PhotonView>())
+        {
+            if (pv.Owner == player)
+            {
+                return pv;
+            }
+        }
+        return null;
     }
 
     //Graphic & Input Updates	
@@ -245,13 +265,17 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                     if (uiManager != null)
                     {
-                        uiManager.hpText.text = string.Format("{0} / {1}", this.status.HP, this.status.MAXHP);
-                        uiManager.hpBar.value = status.HP;
-
-                        if (otherPlayer != null)
+                        localHUD.hpBarText.text = string.Format("{0} / {1}", this.status.HP, this.status.MAXHP);
+                        localHUD.hpBar.value = this.status.HP;
+                        
+                        // 원격 플레이어 HUD
+                        if (remotePlayerPV != null)
                         {
-                            HUD hud = uiManager.hud1.GetComponent<HUD>();
-                            hud.hpBar.value = otherPlayer.GetComponent<Status>().HP;
+                            remoteHUD.nickName.text = remotePlayerPV.Controller.NickName;
+
+                            Status remotePlayerStatus = remotePlayerPV.GetComponent<Status>();
+                            remoteHUD.hpBarText.text = string.Format("{0} / {1}", remotePlayerStatus.HP, remotePlayerStatus.MAXHP);
+                            remoteHUD.hpBar.value = remotePlayerStatus.HP;
                         }
                     }
                 }
