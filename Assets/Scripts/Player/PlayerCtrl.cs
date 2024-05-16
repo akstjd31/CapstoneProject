@@ -416,6 +416,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 //store on/off (close to npc)
                 if (Input.GetKeyDown(KeyCode.O))
                 {
+                    showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();
+
                     //close UI
                     if (isActiveSale)
                     {
