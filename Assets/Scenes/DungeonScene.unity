@@ -4871,7 +4871,7 @@ GameObject:
   - component: {fileID: 1025951648}
   - component: {fileID: 1025951647}
   m_Layer: 5
-  m_Name: OtherPlayerHUD
+  m_Name: RemoteHUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5200,7 +5200,7 @@ GameObject:
   - component: {fileID: 1077121224}
   - component: {fileID: 1077121225}
   m_Layer: 5
-  m_Name: MyHUD
+  m_Name: LocalHUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7038,8 +7038,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b36ad8bf7145e642966cf8fa8fddb4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  remoteHUD: {fileID: 0}
-  localHUD: {fileID: 0}
+  remoteHUD: {fileID: 1025951647}
+  localHUD: {fileID: 1077121225}
 --- !u!1 &1499187051
 GameObject:
   m_ObjectHideFlags: 0
