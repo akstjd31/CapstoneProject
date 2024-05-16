@@ -75,6 +75,8 @@ public class Status : MonoBehaviourPunCallbacks
 
         if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
+            HP = MAXHP;
+
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
             if (players.Length > 1)

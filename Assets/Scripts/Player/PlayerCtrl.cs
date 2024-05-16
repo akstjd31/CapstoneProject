@@ -69,7 +69,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     //Recorder recorder;
 
-    UIManager uiManager;
     private bool isDeactiveUI;
 
     //스킬
