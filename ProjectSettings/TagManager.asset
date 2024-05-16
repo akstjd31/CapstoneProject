@@ -23,6 +23,7 @@ TagManager:
   - Store
   - PhotonManager
   - Obstacle
+  - SkillUI
   layers:
   - Default
   - TransparentFX
@@ -34,7 +35,7 @@ TagManager:
   - Players
   - Enemies
   - Items
-  - 
+  - Skill_UI
   - 
   - 
   - 

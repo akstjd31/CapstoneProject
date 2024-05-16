@@ -445,6 +445,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                             //skill UI
                             else if(distance <= interactionDist && npc.name.StartsWith("skill") && showOnSaleItem != null)
                             {
+                                //GameObject.Find("Main Camera").GetComponent<Camera>().enabled = false;
                                 SceneManager.LoadScene("Skill_UI", LoadSceneMode.Additive);
                             }
                             
