@@ -115,8 +115,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     [SerializeField] private int randIdx = -1;
     [SerializeField] private Item equipItem;
 
-    private PhotonView remotePlayerPV;
-    private HUD localHUD, remoteHUD;
+    [SerializeField] private PhotonView remotePlayerPV;
+    [SerializeField] private HUD localHUD, remoteHUD;
 
     //public float animSpeed;   // 애니메이션 속도 테스트
 
