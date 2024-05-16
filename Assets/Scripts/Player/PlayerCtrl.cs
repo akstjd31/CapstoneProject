@@ -69,7 +69,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     //Recorder recorder;
 
-    UIManager uiManager;
     private bool isDeactiveUI;
 
     //스킬
@@ -114,9 +113,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     [SerializeField] private int randIdx = -1;
     [SerializeField] private Item equipItem;
-
-    private PhotonView remotePlayerPV;
-    private HUD localHUD, remoteHUD;
 
     //public float animSpeed;   // 애니메이션 속도 테스트
 
@@ -176,30 +172,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
             randIdx = PhotonManager.playerWeaponID;
-
-            uiManager = canvas.GetComponent<UIManager>();
-
-            foreach (Player player in PhotonNetwork.PlayerList)
-            {
-                // 예: 특정 플레이어의 닉네임을 찾는 경우
-                if (!player.NickName.Equals(this.pv.Controller.NickName))
-                {
-                    // 플레이어 찾음, 이후 이 플레이어의 PhotonView를 찾는 로직 작성
-                    PhotonView targetPhotonView = GetPhotonViewByPlayer(player);
-                    if (targetPhotonView != null)
-                    {
-                        remotePlayerPV = targetPhotonView;
-                        break;
-                    }
-                }
-            }
-
-            localHUD = uiManager.localHUD;
-
-            if (remotePlayerPV != null)
-                remoteHUD = uiManager.remoteHUD;
-
-            localHUD.hpBar.maxValue = this.status.MAXHP;
         }
 
         pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
@@ -226,18 +198,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
-    PhotonView GetPhotonViewByPlayer(Player player)
-    {
-        foreach (PhotonView pv in FindObjectsOfType<PhotonView>())
-        {
-            if (pv.Owner == player)
-            {
-                return pv;
-            }
-        }
-        return null;
-    }
-
     //Graphic & Input Updates	
     void Update()
     {
@@ -262,22 +222,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 else
                 {
                     isDeactiveUI = true;
-
-                    if (uiManager != null)
-                    {
-                        localHUD.hpBarText.text = string.Format("{0} / {1}", this.status.HP, this.status.MAXHP);
-                        localHUD.hpBar.value = this.status.HP;
-                        
-                        // 원격 플레이어 HUD
-                        if (remotePlayerPV != null)
-                        {
-                            remoteHUD.nickName.text = remotePlayerPV.Controller.NickName;
-
-                            Status remotePlayerStatus = remotePlayerPV.GetComponent<Status>();
-                            remoteHUD.hpBarText.text = string.Format("{0} / {1}", remotePlayerStatus.HP, remotePlayerStatus.MAXHP);
-                            remoteHUD.hpBar.value = remotePlayerStatus.HP;
-                        }
-                    }
                 }
 
                 moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
