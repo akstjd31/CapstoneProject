@@ -149,7 +149,7 @@ public class UserInfoManager : MonoBehaviour
     public static void GetUserMoney()
     {
 #pragma warning disable CS4014
-        if (SceneManager.GetActiveScene().name == "LobbyScene")
+        if (SceneManager.GetActiveScene().name != "TitleScene" && SceneManager.GetActiveScene().name != "NameScene")
         {
             //Debug.Log($"Call GetUserMoney : {nowMoney}");
             GetUserMoney_Async();
@@ -157,17 +157,6 @@ public class UserInfoManager : MonoBehaviour
 
         //instance.StartCoroutine(instance.RunGetUserMoneyAsync());
 #pragma warning restore CS4014
-    }
-
-    private IEnumerator RunGetUserMoneyAsync()
-    {
-        //추후 수정
-        if(SceneManager.GetActiveScene().name != "LobbyScene")
-        {
-            yield return null;
-        }
-
-        yield return GetUserMoney_Async();
     }
 
     public static async Task<int> GetUserMoney_Async()
@@ -229,7 +218,6 @@ public class UserInfoManager : MonoBehaviour
         }
         finally
         {
-            //Debug.Log("call NpcShop.ReleaseSemaPhore in GetMoney");
             NpcShop.ReleaseSemaphore();
         }
     }

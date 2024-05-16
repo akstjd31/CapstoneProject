@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class CharSkill : MonoBehaviour
 {
@@ -21,14 +22,36 @@ public class CharSkill : MonoBehaviour
     private static Button closeUI;
     private static int skill_point;
 
-    async void Start()
+    //explantion
+    [SerializeField]
+    private GameObject explane;
+    private Vector2 pos;
+    private RaycastHit2D hit;
+    private int layerMask;
+
+    private async void Init()
     {
-        currentUser = UserInfoManager.GetCurrentUser();
         await InitSkill();
+    }
+
+    void Start()
+    {
+        Scene skillUIScene = SceneManager.GetSceneByName("Skill_UI");
+        if (skillUIScene.IsValid() && skillUIScene.isLoaded)
+        {
+            SceneManager.SetActiveScene(skillUIScene);
+            currentUser = UserInfoManager.GetCurrentUser();
+            GameObject.Find("Main Camera").GetComponent<Camera>().enabled = true;
+            Init();
+        }
+        else
+        {
+            Debug.LogError("Skill_UI scene is not loaded.");
+        }
 
         btn_skill = GameObject.Find("Images").GetComponentsInChildren<Button>();
-        
-        for(int i = 0; i< btn_skill.Length; i++)
+
+        for (int i = 0; i< btn_skill.Length; i++)
         {
             int index = i;
 
@@ -40,11 +63,20 @@ public class CharSkill : MonoBehaviour
             //Debug.Log($"{btn_skill[i].transform.parent.name}");
         }
 
-        closeUI = GameObject.Find("ButtonX").GetComponent<Button>();
-        closeUI.onClick.AddListener(() =>
+        explane.SetActive(false);
+        layerMask = LayerMask.GetMask("Skill_UI");
+    }
+
+    private void Update()
+    {
+        pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        hit = Physics2D.Raycast(pos, Vector2.zero, Mathf.Infinity, layerMask);
+        Debug.Log($"hit : {hit.point} {hit.transform?.name}");
+
+        if (hit.collider != null)
         {
-            SceneManager.UnloadSceneAsync("Skill_UI");
-        });
+            Debug.Log($"hit coll : {hit.collider.name}");
+        }
     }
 
     private static async Task InitSkill()
@@ -215,6 +247,11 @@ public class CharSkill : MonoBehaviour
         {
             Debug.Log("Skill Level is null.");
         }
+    }
+
+    public static void CloseSkillUI()
+    {
+        SceneManager.UnloadSceneAsync("Skill_UI");
     }
 }
 

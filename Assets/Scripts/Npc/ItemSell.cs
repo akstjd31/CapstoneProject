@@ -16,6 +16,8 @@ public class ItemSell : MonoBehaviour
     private static Dictionary<int, string> _itemName = new();
     private static List<int> _saleItemKeys = new();
 
+    private static readonly int numOfItem = 5; 
+
     private static void InitItemList()
     {
         for (int i = 0; i < 3; i++)
@@ -44,15 +46,15 @@ public class ItemSell : MonoBehaviour
                 {
                     case 0:
                         buyValue = 10;
-                        sellValue = 10;
+                        sellValue = 5;
                         break;
                     case 1:
                         buyValue = 25;
-                        sellValue = 25;
+                        sellValue = 15;
                         break;
                     case 2:
                         buyValue = 50;
-                        sellValue = 50;
+                        sellValue = 30;
                         break;
                 }
 
@@ -109,25 +111,43 @@ public class ItemSell : MonoBehaviour
 
         //throw player's level
         drop.SetLevel(await UserInfoManager.GetLevel());
-        ItemType type = drop.RandomDropItem();
-        int type_int = type == ItemType.COMMON ? 0
-            : type == ItemType.RARE ? 1 : 2;
-        //Debug.Log($"item grade : {type}");
-
         string charType = await UserInfoManager.GetCharClass();
-        //Debug.Log($"charType : {charType}");
-
         //selected item list
         List<Item> showItem = new();
-        //Debug.Log($"len item_warrior : {item_warrior.Count}/len item_archer : {item_archer.Count}");
-        if (charType.Equals("Warrior"))
+
+        for (int i = 0; i < numOfItem; i++)
         {
-            showItem = item_warrior[type_int];
+            ItemType type = drop.RandomDropItem();
+            int type_int = type == ItemType.COMMON ? 0
+                : type == ItemType.RARE ? 1 : 2;
+            int index = -1;
+
+            if (charType.Equals("Warrior"))
+            {
+                index = Random.Range(0, item_warrior[type_int].Count);
+
+                //prevent duplication
+                if (showItem.Contains(item_warrior[type_int][index]))
+                {
+                    i--;
+                    continue;
+                }
+                showItem.Add(item_warrior[type_int][index]);
+            }
+            if (charType.Equals("Archer"))
+            {
+                index = Random.Range(0, item_archer[type_int].Count);
+
+                //prevent duplication
+                if (showItem.Contains(item_archer[type_int][index]))
+                {
+                    i--;
+                    continue;
+                }
+                showItem.Add(item_archer[type_int][index]);
+            }
         }
-        else if (charType.Equals("Archer"))
-        {
-            showItem = item_archer[type_int];
-        }
+
 
         //get showItem's key-list
         _saleItemKeys = new();

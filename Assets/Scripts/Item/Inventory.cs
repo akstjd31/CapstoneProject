@@ -119,30 +119,25 @@ public class Inventory : MonoBehaviour
 
                     if (name.Equals("Slot"))
                     {
-                        selectedItem = items[0];
+                        selectedItem = items[0] == null ? null : items[0];
                         delIndex = 0;
                     }
                     else
                     {
                         string index = name.Split("(")[1];
                         index = index.Substring(0, index.Length - 1);    //1~11
-                        //Debug.Log($"index : {index}");
                         delIndex = int.Parse(index);
 
-                        selectedItem = items[delIndex];
+                        selectedItem = items[delIndex] == null ? null : items[delIndex];
                     }
                 }
-
-                //Debug.Log($"delIndex : {delIndex}");
 
                 if (selectedItem != null)
                 {
                     int itemKey = selectedItem.itemID;
-                    //Debug.Log($"itemKey : {itemKey}");
 
-                    NpcShop.SellItem(101, itemKey, 1);
+                    NpcShop.SellItem(itemKey, 1);
                     DeleteItem_Index(delIndex);
-                    //Debug.Log("sell item complete");
 
                     return;
                 }
@@ -195,6 +190,68 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public void ShowExplanationStore()
+    {
+        // 마우스 위치에서 PointerEventData 생성
+        pointerEventData = new PointerEventData(eventSystem);
+        pointerEventData.position = Input.mousePosition;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        raycaster.Raycast(pointerEventData, results);
+
+        Debug.Log($"ShowExplanationStore : {results.Count}");
+        if (results.Count == 0)
+        {
+            explanation.SetActive(false);
+            return;
+        }
+
+        foreach (RaycastResult result in results)
+        {
+            //drag 변수 대체 필요
+            Drag drag = result.gameObject.GetComponent<Drag>();
+
+            if (drag != null && drag.isDraggable)
+            {
+                explanation.SetActive(true);
+
+                RectTransform dragRectTransform = drag.GetComponent<RectTransform>();
+                float dragWidthHalf = dragRectTransform.rect.width;
+                float dragHeightHalf = dragRectTransform.rect.height;
+
+                if (!drag.isEquippedItem)
+                {
+                    explanation.transform.position = new Vector3(
+                        pointerEventData.position.x + dragWidthHalf,
+                        pointerEventData.position.y + dragHeightHalf * 1.25f
+                    );
+                }
+                else
+                {
+                    explanation.transform.position = new Vector3(
+                        pointerEventData.position.x - dragWidthHalf * 0.75f,
+                        pointerEventData.position.y - dragHeightHalf * 0.75f
+                    );
+                }
+
+
+                Slot slot = drag.GetComponent<Slot>();
+
+                explanation.GetComponent<Explanation>().InfoSetting(slot.item.itemImage,
+                                                                    slot.item.itemName,
+                                                                    slot.item.attackDamage,
+                                                                    slot.item.attackSpeed,
+                                                                    slot.item.bonusStat,
+                                                                    slot.item.addValue,
+                                                                    slot.item.itemType,
+                                                                    slot.item.charType);
+            }
+            else
+            {
+                explanation.SetActive(false);
+            }
+        }
+    }
 
     public void OnClickCloseButton()
     {
