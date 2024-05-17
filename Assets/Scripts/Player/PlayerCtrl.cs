@@ -442,7 +442,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
             else
             {
-
+                rigid.velocity = Vector2.zero;
             }
         }
     }

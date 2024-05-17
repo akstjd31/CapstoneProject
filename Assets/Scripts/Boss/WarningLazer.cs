@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class WarningLazer : MonoBehaviour
 {
-    [SerializeField] private float speed = 4f;
     [SerializeField] private float warningTime = 4f;
     private Transform target;
     private Vector3 lastTargetPos;
-
-    private Rigidbody2D rigid;
+    private Vector3 targetVelocity = Vector3.zero;
+    private float lerpTime = 0.5f;
+    private float startDelay = 1f;
 
     public Transform specialLazerPrefab;
-    private ParticleSystem particleSystem;
     public void SetTarget(Transform target)
     {
         this.target = target;
@@ -20,8 +19,6 @@ public class WarningLazer : MonoBehaviour
 
     private void Start()
     {
-        rigid = this.GetComponent<Rigidbody2D>();
-        particleSystem = specialLazerPrefab.gameObject.GetComponent<ParticleSystem>();
     }
 
     private void Update()
@@ -44,9 +41,12 @@ public class WarningLazer : MonoBehaviour
 
     private void MoveTowardsTarget()
     {
-        lastTargetPos = target.position;
-        Vector2 shootDir = (target.position - this.transform.position).normalized;
+        
+        //Vector2 shootDir = (target.position - this.transform.position).normalized;
 
-        rigid.velocity = shootDir * speed;
+        // 부드럽게 이동
+        transform.position = Vector3.SmoothDamp(transform.position, target.position, ref targetVelocity, lerpTime);
+        lastTargetPos = transform.position;
+        //rigid.velocity = shootDir * speed;
     }
 }

@@ -63,19 +63,26 @@ public class BossCtrl : MonoBehaviour
     public Transform rocketAndLaserPoint;
     public Vector2 rectangleSize = new Vector2(20.0f, 2.0f); // 직사각형의 가로와 세로 길이
     [SerializeField] private float rocketCoolTime = 0.0f;
-    private float rocketDefaultCoolTime = 15.0f;
+    private float rocketDefaultCoolTime = 30.0f;
     [SerializeField] private bool rocketFire = false;
 
     // 레이저
     public Transform lazerPrefab;
     public Transform lazerCreatePoint;
     [SerializeField] private float lazerCoolTime = 0.0f;
-    private float lazerDefaultCoolTime = 15.0f;
+    private float lazerDefaultCoolTime = 30.0f;
     [SerializeField] private bool lazerFire = false;
 
     // 중간 패턴 1
     public Transform warningLazerPrefab;
-    
+    [SerializeField] private bool specialLazerFire = false;
+    [SerializeField] private float spcialLazerCoolTime = 0.0f;
+    private float spcialLazerDefaultCoolTime = 60.0f;
+
+    // 중간 패턴 2
+    [SerializeField] private float armorBuffCoolTime = 0.0f;
+    private float armorBuffDefaultCoolTime = 60.0f;
+    private float armorBuffDurationTime = 20.0f;
 
     public State GetState()
     {
@@ -124,7 +131,6 @@ public class BossCtrl : MonoBehaviour
                         FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
                         state = State.LAZERCAST;
                         agent.isStopped = true;
-                        anim.SetBool("isLazerFire", true);
                     }
                 }
                 else
@@ -135,7 +141,6 @@ public class BossCtrl : MonoBehaviour
                         agent.isStopped = true;
                         FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
                         state = State.RANGEATTACK;
-                        anim.SetBool("isRangeAttack", true);
                     }
                 }
 
@@ -156,22 +161,23 @@ public class BossCtrl : MonoBehaviour
             if (IsEnemyClosetPlayer() &&
                 state == State.MOVE)
             {
-                float rand = Random.Range(0, 100f);
-
-                if (rand <= 50f)
+                //float rand = Random.Range(0, 100f);
+                if (armorBuffCoolTime <= 0.0f)
                 {
+                    armorBuffCoolTime = armorBuffDefaultCoolTime;
                     agent.isStopped = true;
-                    anim.SetBool("isSpecialLazerFire", true);
-                    state = State.SPECIAL_LAZER;
+                    state = State.ARMORBUFF;
                 }
-                //else if (rand <= 20f)
+                //if (spcialLazerCoolTime <= 0.0f)
                 //{
-
+                //    spcialLazerCoolTime = spcialLazerDefaultCoolTime;
+                //    agent.isStopped = true;
+                //    state = State.SPECIAL_LAZER;
                 //}
-                else
-                {
-                    anim.SetBool("isMelee", true);
-                }
+                //else
+                //{
+                //    state = State.MELEE;
+                //}
             }
 
             CoolTimeCalculator();
@@ -184,21 +190,32 @@ public class BossCtrl : MonoBehaviour
         {
             case State.NORMAL:
                 attackAndRest();
+                IdleAndMoveAnimation();
+                break;
+            case State.MOVE:
+                IdleAndMoveAnimation();
                 break;
             case State.MELEE:
                 //RangeAttack();
+                MeleeAnimation();
                 MeleeMove();
                 break;
             case State.ATTACKED:
                 KnockBack();
                 break;
             case State.RANGEATTACK:
+                RangeAttackAnimation();
                 break;
             case State.LAZERCAST:
+                LazerAnimation();
                 CheckLazerEnd();
                 break;
             case State.SPECIAL_LAZER:
                 SecialLazerEndCheck();
+                SpecialLazerAnimation();
+                break;
+            case State.ARMORBUFF:
+                ArmorBuffAnimation();
                 break;
         }
 
@@ -214,27 +231,88 @@ public class BossCtrl : MonoBehaviour
         }
     }
 
+    private void IdleAndMoveAnimation()
+    {
+        anim.SetBool("isMelee", false);
+        anim.SetBool("isRangeAttack", false);
+        anim.SetBool("isLazerFire", false);
+        anim.SetBool("isSpecialLazerFire", false);
+        anim.SetBool("isArmorBuff", false);
+    }
+
+    private void MeleeAnimation()
+    {
+        anim.SetBool("isMelee", true);
+        anim.SetBool("isRangeAttack", false);
+        anim.SetBool("isLazerFire", false);
+        anim.SetBool("isSpecialLazerFire", false);
+        anim.SetBool("isArmorBuff", false);
+    }
+
+    private void RangeAttackAnimation()
+    {
+        anim.SetBool("isMelee", false);
+        anim.SetBool("isRangeAttack", true);
+        anim.SetBool("isLazerFire", false);
+        anim.SetBool("isSpecialLazerFire", false);
+        anim.SetBool("isArmorBuff", false);
+    }
+
+    private void LazerAnimation()
+    {
+        anim.SetBool("isMelee", false);
+        anim.SetBool("isRangeAttack", false);
+        anim.SetBool("isLazerFire", true);
+        anim.SetBool("isSpecialLazerFire", false);
+        anim.SetBool("isArmorBuff", false);
+    }
+
+    private void SpecialLazerAnimation()
+    {
+        anim.SetBool("isMelee", false);
+        anim.SetBool("isRangeAttack", false);
+        anim.SetBool("isLazerFire", false);
+        anim.SetBool("isSpecialLazerFire", true);
+        anim.SetBool("isArmorBuff", false);
+    }
+
+    private void ArmorBuffAnimation()
+    {
+        anim.SetBool("isMelee", false);
+        anim.SetBool("isRangeAttack", false);
+        anim.SetBool("isLazerFire", false);
+        anim.SetBool("isSpecialLazerFire", false);
+        anim.SetBool("isArmorBuff", true);
+    }
+
     private void SecialLazerEndCheck()
     {
-        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-        if (stateInfo.normalizedTime >= 1.0f)
+        if (specialLazerFire)
         {
             agent.isStopped = false;
             state = State.NORMAL;
-            anim.SetBool("isSpecialLazerFire", false);
             restTime = 0.0f;
+            specialLazerFire = false;
         }
     }
 
-    // 중간 패턴 1 애니메이션 이벤트 함수
+    // 중간 패턴 1 : 즉사 레이저 애니메이션 이벤트 함수
     private void SpecialLazer()
     {
-        GameObject lazerPrefab = Instantiate(warningLazerPrefab.gameObject, Vector2.zero, Quaternion.identity);
+        GameObject lazerPrefab = Instantiate(warningLazerPrefab.gameObject, this.transform.position, Quaternion.identity);
         WarningLazer warningLazer = lazerPrefab.GetComponent<WarningLazer>();
 
         warningLazer.SetTarget(enemyAI.GetFocusTarget());
+        specialLazerFire = true;
     }
 
+    // 중간 패턴 2 : 아머 강화 애니메이션 이벤트 함수
+    private void ArmorBuff()
+    {
+        
+    }
+
+    // 쿨타임 계산
     private void CoolTimeCalculator()
     {
         if (rocketCoolTime > 0.0f)
@@ -246,6 +324,16 @@ public class BossCtrl : MonoBehaviour
         {
             lazerCoolTime -= Time.deltaTime;
         }
+
+        if (spcialLazerCoolTime > 0.0f)
+        {
+            spcialLazerCoolTime -= Time.deltaTime;
+        }
+
+        if (armorBuffCoolTime > 0.0f)
+        {
+            armorBuffCoolTime -= Time.deltaTime;
+        }
     }
 
     private void CheckLazerEnd()
@@ -255,7 +343,6 @@ public class BossCtrl : MonoBehaviour
         if (lazerFire && !flag)
         {
             anim.speed = 1f;
-            anim.SetBool("isLazerFire", false);
             restTime = 0.0f;
             state = State.NORMAL;
             lazerFire = false;
@@ -300,7 +387,6 @@ public class BossCtrl : MonoBehaviour
         rocketArm.SetDamage(enemy.enemyData.attackDamage * 1.5f);
 
         anim.speed = 1f;
-        anim.SetBool("isRangeAttack", false);
         restTime = 0.0f;
         state = State.NORMAL;
     }
@@ -358,11 +444,16 @@ public class BossCtrl : MonoBehaviour
 
     private void KnockBack()
     {
-        if (onHit && enemy.enemyData.hp > 0)
+        if (onHit && enemy.enemyData.hp > 0 && state != State.LAZERCAST)
         {
             rigid.velocity = Vector2.zero;
-            anim.Play("Idle", -1, 0f);
-            anim.speed = 0;
+
+            if (state == State.MELEE)
+            {
+                anim.Play("Idle", -1, 0f);
+                anim.speed = 0;
+            }
+
             agent.isStopped = true;
 
             rigid.velocity = playerAttackDirection * attackedDistanceSpeed;
@@ -377,7 +468,7 @@ public class BossCtrl : MonoBehaviour
                 attackedDistanceSpeed = 3f;
                 anim.speed = 1f;
                 state = State.NORMAL;
-                restTime = 0.0f;
+                restTime = 2.0f;
             }
         }
     }
@@ -418,7 +509,7 @@ public class BossCtrl : MonoBehaviour
     // Melee 애니메이션 이벤트 함수 (공격 애니메이션에 맞춰서 이동)
     private void MeleeAnimEventFunc()
     {
-        state = State.MELEE;
+        isMelee = true;
         agent.isStopped = true;
         targetPos = enemyAI.GetFocusTarget().position;
         enemyAI.isLookingAtPlayer = false;
@@ -427,7 +518,7 @@ public class BossCtrl : MonoBehaviour
     // 이동 공격
     private void MeleeMove()
     {
-        if (agent.isStopped)
+        if (agent.isStopped && isMelee)
         {
             rigid.velocity = (targetPos - this.transform.position) * attackDistanceSpeed;
 
@@ -437,7 +528,7 @@ public class BossCtrl : MonoBehaviour
 
             if (attackDistanceSpeed < 1f)
             {
-                anim.SetBool("isMelee", false);
+                isMelee = false;
                 rigid.velocity = Vector2.zero;
                 attackDistanceSpeed = 8f;
                 state = State.NORMAL;

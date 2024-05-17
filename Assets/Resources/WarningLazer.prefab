@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 5976399806492482626}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 15.123531, y: 7.8702908, z: 0}
-  m_LocalScale: {x: 0.5, y: 50, z: 1}
+  m_LocalScale: {x: 1.8, y: 50, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -121,6 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a6e151f7d88c704a8c1b7001d3cc8cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  warningTime: 4
   specialLazerPrefab: {fileID: 4889762333992746303, guid: e98a67c88dc2370478b18aedb35da4ba, type: 3}
 --- !u!50 &5283348138731100671
 Rigidbody2D:
