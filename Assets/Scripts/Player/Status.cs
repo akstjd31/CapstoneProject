@@ -158,7 +158,7 @@ public class Status : MonoBehaviourPunCallbacks
     public void PlayerKnockbackRPC(Vector3 attackDirection)
     {
         playerCtrl.onHit = true;
-        playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
+        playerCtrl.ChangeState(PlayerCtrl.State.ATTACKED);
         playerCtrl.enemyAttackDirection = attackDirection;
     }
 

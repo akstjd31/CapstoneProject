@@ -116,9 +116,15 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     //public float animSpeed;   // 애니메이션 속도 테스트
 
-    public void SetState(State state)
+    public void ChangeState(State state)
     {
-        this.state = state;
+        pv.RPC("ChangeStateRPC", RpcTarget.All, (int)state);
+    }
+
+    [PunRPC]
+    private void ChangeStateRPC(int state)
+    {
+        this.state = (State)state;
     }
 
     void Start()
@@ -144,7 +150,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         npcParent = GameObject.Find("npc"); // find npc
         npcList = null;
 
-        state = State.NORMAL;
+        ChangeState(State.NORMAL);
         items = null;
 
         // 로비 씬
@@ -230,12 +236,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 {
                     if (moveDir.x != 0 || moveDir.y != 0)
                     {
-                        state = State.MOVE;
+                        ChangeState(State.MOVE);
                     }
                     else
                     {
                         rigid.velocity = Vector2.zero;
-                        state = State.NORMAL;
+                        ChangeState(State.NORMAL);
                     }
                 }
 
@@ -243,7 +249,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 if (Input.GetMouseButtonDown(0) && isAttackCooldownOver &&
                     !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.gameObject.activeSelf)
                 {
-                    state = State.ATTACK;
+                    ChangeState(State.ATTACK);
 
                     Vector3 mouseScreenPosition = Input.mousePosition;
 
@@ -607,7 +613,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public void DeathAnimEvent()
     {
-        state = State.DIE;
+        ChangeState(State.DIE);
         anim.speed = 0f;
     }
 
@@ -652,7 +658,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 onHit = false;
                 attackedDistanceSpeed = 5f;
                 anim.speed = 1f;
-                state = State.NORMAL;
+                ChangeState(State.NORMAL);
             }
         }
     }
@@ -738,7 +744,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             if (attackDistanceSpeed < 0.5f)
             {
                 rigid.velocity = Vector2.zero;
-                state = State.NORMAL;
+                ChangeState(State.NORMAL);
             }
         }
     }
@@ -770,7 +776,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             arrowPV.RPC("InitializeArrow", RpcTarget.AllBuffered, mouseWorldPosition, 3.5f, status.attackDamage, this.tag, pv.ViewID);
 
             // 상태 변경
-            state = State.NORMAL;
+            ChangeState(State.NORMAL);
         }
     }
 
