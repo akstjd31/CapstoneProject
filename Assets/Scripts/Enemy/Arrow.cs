@@ -127,6 +127,12 @@ public class Arrow : MonoBehaviour
             Destroy(this.gameObject);
         }
 
+        else if (other.CompareTag("Jewel"))
+        {
+            other.GetComponent<BejeweledPillar>().ChangeJewelColor();
+            Destroy(this.gameObject);
+        }
+
         else if (other.CompareTag("Obstacle"))
         {
             Destroy(this.gameObject);

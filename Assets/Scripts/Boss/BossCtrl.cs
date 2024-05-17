@@ -12,7 +12,7 @@ public class BossCtrl : MonoBehaviour
     
     public enum State
     { 
-        NORMAL, MOVE, ATTACKED, GLOWING, RANGEATTACK, SPECIAL_LAZER, MELEE, LAZERCAST, ARMORBUFF, DEATH
+        NORMAL, MOVE, ATTACKED, INVINCIBILITY, RANGEATTACK, SPECIAL_LAZER, MELEE, LAZERCAST, ARMORBUFF, DEATH
     }
 
     public Enemy enemy;
@@ -90,7 +90,7 @@ public class BossCtrl : MonoBehaviour
     private float armorBuffElapsedTime;
     private float armorBuffDurationTime = 20.0f;
 
-    private bool isInvincibility = false;
+    //private bool isInvincibility = false;
 
 
 
@@ -125,6 +125,12 @@ public class BossCtrl : MonoBehaviour
                 state == State.NORMAL)
             {
                 state = State.MOVE;
+            }
+
+            // 체력이 30퍼 이하가 되면 히든 패턴 시작
+            if (enemy.enemyData.hp <= enemy.enemyData.maxHp * 0.3f)
+            {
+                state = State.INVINCIBILITY;
             }
             
             // 로켓 손 or 레이저 발사
@@ -302,6 +308,9 @@ public class BossCtrl : MonoBehaviour
             case State.ARMORBUFF:
                 ArmorBuffAnimation();
                 break;
+            case State.INVINCIBILITY:
+                InvincibilityAnimation();
+                break;
         }
 
         if (enemyAI.GetFocusTarget() != null && enemyAI.isLookingAtPlayer && 
@@ -329,6 +338,7 @@ public class BossCtrl : MonoBehaviour
         anim.SetBool("isLazerFire", false);
         anim.SetBool("isSpecialLazerFire", false);
         anim.SetBool("isArmorBuff", false);
+        anim.SetBool("isInvincibility", false);
     }
 
     private void MeleeAnimation()
@@ -338,6 +348,7 @@ public class BossCtrl : MonoBehaviour
         anim.SetBool("isLazerFire", false);
         anim.SetBool("isSpecialLazerFire", false);
         anim.SetBool("isArmorBuff", false);
+        anim.SetBool("isInvincibility", false);
     }
 
     private void RangeAttackAnimation()
@@ -347,6 +358,7 @@ public class BossCtrl : MonoBehaviour
         anim.SetBool("isLazerFire", false);
         anim.SetBool("isSpecialLazerFire", false);
         anim.SetBool("isArmorBuff", false);
+        anim.SetBool("isInvincibility", false);
     }
 
     private void LazerAnimation()
@@ -356,6 +368,7 @@ public class BossCtrl : MonoBehaviour
         anim.SetBool("isLazerFire", true);
         anim.SetBool("isSpecialLazerFire", false);
         anim.SetBool("isArmorBuff", false);
+        anim.SetBool("isInvincibility", false);
     }
 
     private void SpecialLazerAnimation()
@@ -365,6 +378,7 @@ public class BossCtrl : MonoBehaviour
         anim.SetBool("isLazerFire", false);
         anim.SetBool("isSpecialLazerFire", true);
         anim.SetBool("isArmorBuff", false);
+        anim.SetBool("isInvincibility", false);
     }
 
     private void ArmorBuffAnimation()
@@ -374,7 +388,19 @@ public class BossCtrl : MonoBehaviour
         anim.SetBool("isLazerFire", false);
         anim.SetBool("isSpecialLazerFire", false);
         anim.SetBool("isArmorBuff", true);
+        anim.SetBool("isInvincibility", false);
     }
+
+    private void InvincibilityAnimation()
+    {
+        anim.SetBool("isMelee", false);
+        anim.SetBool("isRangeAttack", false);
+        anim.SetBool("isLazerFire", false);
+        anim.SetBool("isSpecialLazerFire", false);
+        anim.SetBool("isArmorBuff", true);
+        anim.SetBool("isInvincibility", true);
+    }
+
 
     private void SecialLazerEndCheck()
     {
@@ -425,6 +451,13 @@ public class BossCtrl : MonoBehaviour
         agent.isStopped = false;
         restTime = 1.0f;
         state = State.NORMAL;
+    }
+
+    // 히든 패턴 : 2분 동안 재단 색 보스 머리에 뜨는 색하고 같은걸로 변경하기
+    private void Invincibility()
+    {
+        anim.speed = 0f;
+
     }
 
     // 쿨타임 계산
@@ -521,7 +554,7 @@ public class BossCtrl : MonoBehaviour
         attackerCharType = status.charType;
 
         // 골렘 기준 버프효과가 지속되고 있으며, 플레이어 기준 때린 사람의 직업이 디버프 효과를 받고 있는 직업과 동일하다면
-        if (armorBuffObj != null && attackerCharType.Equals(debuffPlayerCharType))
+        if (armorBuffObj != null && attackerCharType.Equals(debuffPlayerCharType) || state == State.INVINCIBILITY)
         {
             Debug.Log("무적!");
             return;

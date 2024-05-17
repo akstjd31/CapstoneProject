@@ -1964,6 +1964,7 @@ MonoBehaviour:
   arrowTargetPos: {x: 0, y: 0, z: 0}
   randIdx: -1
   equipItem: {fileID: 0}
+  canInteractJewel: 0
 --- !u!114 &5726380531837837366
 MonoBehaviour:
   m_ObjectHideFlags: 0

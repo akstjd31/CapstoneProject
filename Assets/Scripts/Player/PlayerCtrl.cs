@@ -118,7 +118,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     [SerializeField] private int randIdx = -1;
     [SerializeField] private Item equipItem;
 
+    private Transform jewel;
+    //[SerializeField] private bool canInteractJewel = false;
     //public float animSpeed;   // 애니메이션 속도 테스트
+
 
     public void SetState(State state)
     {
@@ -277,6 +280,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
                     // 플레이어가 보고 있는 방향에 따른 공격방향
                     //SetDirection();
+
+                    if (jewel != null)
+                    {
+                        jewel.GetComponent<BejeweledPillar>().ChangeJewelColor();
+                        //InteractJewel(mouseWorldPosition);
+                    }
 
                     if (status.charType.Equals("Warrior"))
                     {
@@ -857,6 +866,33 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 partySystemScript.leavingParty.gameObject.SetActive(false);
             }
+        }
+    }
+
+    private void InteractJewel(Vector2 mousePosition)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+
+        Debug.Log(hit.collider.name);
+        if (hit.collider != null && hit.collider.CompareTag("Jewel"))
+        {
+            hit.collider.GetComponent<BejeweledPillar>().ChangeJewelColor();
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.collider.CompareTag("Jewel"))
+        {
+            jewel = col.collider.transform;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D col)
+    {
+        if (col.collider.CompareTag("Jewel"))
+        {
+            jewel = null;
         }
     }
 

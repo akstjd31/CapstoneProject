@@ -23,6 +23,7 @@ TagManager:
   - Store
   - PhotonManager
   - Obstacle
+  - Jewel
   layers:
   - Default
   - TransparentFX
