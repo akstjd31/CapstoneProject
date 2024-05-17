@@ -23,7 +23,7 @@ public class CharSkill : MonoBehaviour
 
     //explantion
     [SerializeField]
-    private GameObject explane;
+    private static GameObject explane;
     private Vector2 pos;
     private RaycastHit2D hit;
     private int layerMask;
@@ -33,6 +33,7 @@ public class CharSkill : MonoBehaviour
     [SerializeField]
     private GameObject btn_prefab;
     private static GameObject btn_Lobby_close;
+    private static string col_name = "";
 
     private async void Init()
     {
@@ -81,7 +82,8 @@ public class CharSkill : MonoBehaviour
             //Debug.Log($"{btn_skill[i].transform.parent.name}");
         }
 
-        explane.SetActive(false);
+        //explane.SetActive(false);
+        explane = pc.GetSkillExplane();
         layerMask = LayerMask.GetMask("Skill_UI");
         //Invoke();
         
@@ -98,19 +100,44 @@ public class CharSkill : MonoBehaviour
             explane.SetActive(true);
 
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            explane.transform.position = mousePosition;
+            Debug.Log($"pos : {mousePosition}");
+            //explane.transform.position = mousePosition;
+            //pc.SetSkillExplanePos(mousePosition);
+            col_name = hit.collider.name;
+
+            Explane_Pos.SetSkillExplanePos_SetMousePos();
+
+            /*
+            if (hit.collider.name.Equals("envy") || hit.collider.name.Equals("pride") || hit.collider.name.Equals("greed"))
+            {
+                Explane_Pos.SetSkillExplanePos_Under(mousePosition);
+            }
+            else if(hit.collider.name.Equals("sloth") || hit.collider.name.Equals("lust"))
+            {
+                Explane_Pos.SetSkillExplanePos_Collider(hit.transform.position);
+            }
+            else
+            {
+                Explane_Pos.SetSkillExplanePos_Collider2(hit.transform.position);
+            }
+            */
         }
         else
         {
+            col_name = "";
             explane.SetActive(false);
         }
+
+        Debug.DrawRay(pos, Vector3.forward * 10, Color.red);
     }
 
-    private async void Invoke()
+    public static string GetSkillDesc()
     {
-        await Task.Delay(10000);
+        SkillData.GetSkillDesc(
+            SkillData.Skill_NameToNum(
+                SkillData.GetSkillNameKr(col_name)));
 
-        btn_close.onClick.Invoke();
+        return col_name;
     }
 
     private void OnDestroy()
@@ -277,6 +304,11 @@ public class CharSkill : MonoBehaviour
         }
         SceneManager.UnloadSceneAsync("Skill_UI");
     }
+
+    public static void SetExplane(GameObject ex)
+    {
+        explane = ex;
+    }
 }
 
 class SkillData
@@ -332,6 +364,47 @@ class SkillData
     public static string GetSkillDesc(int skillNum)
     {
         return skill_desc[skillNum];
+    }
+
+    public static string GetSkillNameKr(string en)
+    {
+        List<string> skillName_kr = new()
+        {
+            "±³¸¸", "Å½¿å", "»ö¿å", "ÁúÅõ", "¸Ôº¸", "ºÐ³ë", "³ªÅÂ"
+        };
+
+        int index = -1;
+        switch (en)
+        {
+            case "pride":
+                index = 0;
+                break;
+            case "greed":
+                index = 1;
+                break;
+            case "lust":
+                index = 2;
+                break;
+            case "envy":
+                index = 3;
+                break;
+            case "glutny":
+                index = 4;
+                break;
+            case "wrath":
+                index = 5;
+                break;
+            case "sloth":
+                index = 6;
+                break;
+        }
+
+        if (index == -1)
+        {
+            Debug.Log($"skillName {en} is not exist");
+            return "";
+        }
+        return skillName_kr[index];
     }
 
     public static string Skill_NumToName(int skillNum)

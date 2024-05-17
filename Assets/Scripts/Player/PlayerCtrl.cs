@@ -119,6 +119,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private GameObject InputMessage;
     private GameObject Send;
 
+    private GameObject skill_explane;
+
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void ChangeState(State state)
@@ -154,6 +156,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();    //상점
         npcParent = GameObject.Find("npc"); // find npc
         npcList = null;
+
+        //Skill UI
+        skill_explane = GameObject.Find("Skill_Explane");
+        Explane_Pos.skill_explane = skill_explane;
+        skill_explane.SetActive(false);
 
         ChangeState(State.NORMAL);
         items = null;
@@ -444,6 +451,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             }
         }
+
+        Explane_Pos.SetMousePos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
     void LateUpdate()
@@ -1005,5 +1014,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         createPartyButton.SetActive(false);
         InputMessage.SetActive(false);
         Send.SetActive(false);
+    }
+    public GameObject GetSkillExplane()
+    {
+        return skill_explane;
+    }
+
+    public void SetSkillExplanePos(Vector3 pos)
+    {
+        skill_explane.transform.position = pos;
     }
 }
