@@ -8878,6 +8878,10 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 6800917589052720841, guid: 1a67b40728aa4ea47986dde5945cc4bf, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6800917589052720843, guid: 1a67b40728aa4ea47986dde5945cc4bf, type: 3}
       propertyPath: m_Name
       value: Golem(Boss)
@@ -8892,11 +8896,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6800917589052720846, guid: 1a67b40728aa4ea47986dde5945cc4bf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.41
+      value: 7.76
       objectReference: {fileID: 0}
     - target: {fileID: 6800917589052720846, guid: 1a67b40728aa4ea47986dde5945cc4bf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.23
+      value: 6.76
       objectReference: {fileID: 0}
     - target: {fileID: 6800917589052720846, guid: 1a67b40728aa4ea47986dde5945cc4bf, type: 3}
       propertyPath: m_LocalPosition.z

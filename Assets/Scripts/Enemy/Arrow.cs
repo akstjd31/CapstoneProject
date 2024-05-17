@@ -96,8 +96,7 @@ public class Arrow : MonoBehaviour
 
                 if (bossCtrl != null &&
                     !bossCtrl.onHit &&
-                    rigid.velocity != Vector2.zero &&
-                    bossCtrl.GetState() != BossCtrl.State.LAZERCAST)
+                    rigid.velocity != Vector2.zero)
                 {
                     float rand = Random.Range(0, 100f);
 
