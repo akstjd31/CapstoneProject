@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Random = UnityEngine.Random;
 
@@ -38,8 +39,10 @@ public class Status : MonoBehaviourPunCallbacks
 
     public string charType; // 직업
 
+    private GameObject canvas;
     [SerializeField] private Transform statInfo; // 플레이어의 스탯 정보
     public Text[] stats; // 스탯 정보가 담긴 텍스트
+    private UIManager uiManager;
 
     PlayerCtrl playerCtrl; // 플레이어 스크립트
     PhotonView pv; // 플레이어 pv
@@ -65,8 +68,27 @@ public class Status : MonoBehaviourPunCallbacks
         playerCtrl = this.GetComponent<PlayerCtrl>();
         nickName = playerCtrl.GetComponent<PhotonView>().Owner.NickName;
         pv = this.GetComponent<PhotonView>();
-        inventory = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").GetComponent<Inventory>();
+        canvas = GameObject.FindGameObjectWithTag("Canvas");
+        inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
+        uiManager = canvas.GetComponent<UIManager>();
         passiveSkill = playerCtrl.GetComponent<PassiveSkill>();
+
+        if (SceneManager.GetActiveScene().name == "DungeonScene")
+        {
+            HP = MAXHP;
+
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+            if (pv.IsMine)
+            {
+                if (players.Length > 1)
+                {
+                    uiManager.remotePlayerStatus = players[0] == this.gameObject ? players[1].GetComponent<Status>() : players[0].GetComponent<Status>();
+                }
+
+                uiManager.localPlayerStatus = this;
+            }
+        }
 
         // 태그로 찾은 후에 텍스트 집어넣기
         //statInfo = GameObject.FindGameObjectWithTag("StatInfo").transform;
@@ -139,7 +161,7 @@ public class Status : MonoBehaviourPunCallbacks
     public void PlayerKnockbackRPC(Vector3 attackDirection)
     {
         playerCtrl.onHit = true;
-        playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
+        playerCtrl.ChangeState(PlayerCtrl.State.ATTACKED);
         playerCtrl.enemyAttackDirection = attackDirection;
     }
 
