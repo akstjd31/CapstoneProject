@@ -133,7 +133,7 @@ public class Status : MonoBehaviourPunCallbacks
         // 본인한테만 스탯 정보가 보임.
         if (pv.IsMine)
         {
-            Vector3 playerPos = Camera.main.WorldToScreenPoint(playerCtrl.transform.position);
+            //Vector3 playerPos = Camera.main.WorldToScreenPoint(playerCtrl.transform.position);
 
             //UpdateText(playerPos);
         }
