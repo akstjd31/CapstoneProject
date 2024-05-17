@@ -29,11 +29,13 @@ public class CharSkill : MonoBehaviour
     private int layerMask;
 
     private PlayerCtrl pc;
-    private Button btn_close;
     [SerializeField]
     private GameObject btn_prefab;
     private static GameObject btn_Lobby_close;
     private static string col_name = "";
+
+    private static string skill_point_text = "";
+    private static Text point_text;
 
     private async void Init()
     {
@@ -66,7 +68,7 @@ public class CharSkill : MonoBehaviour
         //OpenPartyButton, CreatePartyButton
 
         btn_skill = GameObject.Find("Images").GetComponentsInChildren<Button>();
-        btn_close = GameObject.Find("ButtonX").GetComponent<Button>();
+        point_text = GameObject.Find("SkillPoint").GetComponentInChildren<Text>();
         pc = FindObjectOfType<PlayerCtrl>();
         pc.DisableLobbyUI();
 
@@ -96,48 +98,26 @@ public class CharSkill : MonoBehaviour
 
         if (hit.collider != null)
         {
-            Debug.Log($"hit coll : {hit.collider.name} {hit.transform.tag}");
+            Debug.Log("hit!!");
             explane.SetActive(true);
-
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Debug.Log($"pos : {mousePosition}");
-            //explane.transform.position = mousePosition;
-            //pc.SetSkillExplanePos(mousePosition);
+            
             col_name = hit.collider.name;
 
             Explane_Pos.SetSkillExplanePos_SetMousePos();
-
-            /*
-            if (hit.collider.name.Equals("envy") || hit.collider.name.Equals("pride") || hit.collider.name.Equals("greed"))
-            {
-                Explane_Pos.SetSkillExplanePos_Under(mousePosition);
-            }
-            else if(hit.collider.name.Equals("sloth") || hit.collider.name.Equals("lust"))
-            {
-                Explane_Pos.SetSkillExplanePos_Collider(hit.transform.position);
-            }
-            else
-            {
-                Explane_Pos.SetSkillExplanePos_Collider2(hit.transform.position);
-            }
-            */
         }
         else
         {
+            Debug.Log("no hit@@");
             col_name = "";
             explane.SetActive(false);
         }
-
-        Debug.DrawRay(pos, Vector3.forward * 10, Color.red);
     }
 
     public static string GetSkillDesc()
     {
-        SkillData.GetSkillDesc(
-            SkillData.Skill_NameToNum(
+        return SkillData.GetSkillDesc(
+                SkillData.Skill_NameToNum(
                 SkillData.GetSkillNameKr(col_name)));
-
-        return col_name;
     }
 
     private void OnDestroy()
@@ -153,6 +133,9 @@ public class CharSkill : MonoBehaviour
         Debug.Log($"Skill level initialized: ");
         //Show_Dictionary(userSkill);
         skill_point = await UserInfoManager.GetSkillPoint();
+
+        skill_point_text = "SKILL Point : " + skill_point;
+        point_text.text = skill_point_text;
     }
 
     public static void SetSkillLevel(int skillNum, int level)
@@ -267,6 +250,8 @@ public class CharSkill : MonoBehaviour
         Debug.Log($"Upgrade by button => {skillNum} {skillName}");
 
         await UserInfoManager.SetSkillPoint(--skill_point);
+        skill_point_text = "SKILL Point : " + skill_point;
+        point_text.text = skill_point_text;
 
         LevelUpSkill(skillNum);
     }
