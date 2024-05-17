@@ -19,15 +19,23 @@ public class CharSkill : MonoBehaviour
         //±³¸¸, Å½¿å, »ö¿å, ÁúÅõ, ¸Ôº¸, ºÐ³ë, ³ªÅÂ
         //1001~1007
     };
-    private static Button closeUI;
     private static int skill_point;
 
     //explantion
     [SerializeField]
-    private GameObject explane;
+    private static GameObject explane;
     private Vector2 pos;
     private RaycastHit2D hit;
     private int layerMask;
+
+    private PlayerCtrl pc;
+    [SerializeField]
+    private GameObject btn_prefab;
+    private static GameObject btn_Lobby_close;
+    private static string col_name = "";
+
+    private static string skill_point_text = "";
+    private static Text point_text;
 
     private async void Init()
     {
@@ -42,6 +50,14 @@ public class CharSkill : MonoBehaviour
             SceneManager.SetActiveScene(skillUIScene);
             currentUser = UserInfoManager.GetCurrentUser();
             GameObject.Find("Main Camera").GetComponent<Camera>().enabled = true;
+
+            btn_Lobby_close = Instantiate(btn_prefab, GameObject.Find("Canvas").transform);
+            btn_Lobby_close.name = "prefab_close_btn";
+            btn_Lobby_close.transform.position = new Vector2(1880, 1040);
+            btn_Lobby_close.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                CloseSkillUI();
+            });
             Init();
         }
         else
@@ -49,7 +65,12 @@ public class CharSkill : MonoBehaviour
             Debug.LogError("Skill_UI scene is not loaded.");
         }
 
+        //OpenPartyButton, CreatePartyButton
+
         btn_skill = GameObject.Find("Images").GetComponentsInChildren<Button>();
+        point_text = GameObject.Find("SkillPoint").GetComponentInChildren<Text>();
+        pc = FindObjectOfType<PlayerCtrl>();
+        pc.DisableLobbyUI();
 
         for (int i = 0; i< btn_skill.Length; i++)
         {
@@ -63,20 +84,45 @@ public class CharSkill : MonoBehaviour
             //Debug.Log($"{btn_skill[i].transform.parent.name}");
         }
 
-        explane.SetActive(false);
+        //explane.SetActive(false);
+        explane = pc.GetSkillExplane();
         layerMask = LayerMask.GetMask("Skill_UI");
+        //Invoke();
+        
     }
 
     private void Update()
     {
         pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         hit = Physics2D.Raycast(pos, Vector2.zero, Mathf.Infinity, layerMask);
-        Debug.Log($"hit : {hit.point} {hit.transform?.name}");
 
         if (hit.collider != null)
         {
-            Debug.Log($"hit coll : {hit.collider.name}");
+            Debug.Log("hit!!");
+            explane.SetActive(true);
+            
+            col_name = hit.collider.name;
+
+            Explane_Pos.SetSkillExplanePos_SetMousePos();
         }
+        else
+        {
+            Debug.Log("no hit@@");
+            col_name = "";
+            explane.SetActive(false);
+        }
+    }
+
+    public static string GetSkillDesc()
+    {
+        return SkillData.GetSkillDesc(
+                SkillData.Skill_NameToNum(
+                SkillData.GetSkillNameKr(col_name)));
+    }
+
+    private void OnDestroy()
+    {
+        pc.EnableLobbyUI();
     }
 
     private static async Task InitSkill()
@@ -87,6 +133,9 @@ public class CharSkill : MonoBehaviour
         Debug.Log($"Skill level initialized: ");
         //Show_Dictionary(userSkill);
         skill_point = await UserInfoManager.GetSkillPoint();
+
+        skill_point_text = "SKILL Point : " + skill_point;
+        point_text.text = skill_point_text;
     }
 
     public static void SetSkillLevel(int skillNum, int level)
@@ -201,6 +250,8 @@ public class CharSkill : MonoBehaviour
         Debug.Log($"Upgrade by button => {skillNum} {skillName}");
 
         await UserInfoManager.SetSkillPoint(--skill_point);
+        skill_point_text = "SKILL Point : " + skill_point;
+        point_text.text = skill_point_text;
 
         LevelUpSkill(skillNum);
     }
@@ -209,25 +260,6 @@ public class CharSkill : MonoBehaviour
     private static void UpdataSkillData()
     {
         UserInfoManager.SetSkillLevel(userSkill);
-    }
-
-    //Å×½ºÆ® ¿ë ¸Þ¼Òµå
-    public static void Debug_SkillUp_1001()
-    {
-        LevelUpSkill(1001);
-    }
-    public static void Debug_SkillUp_10001()
-    {
-        LevelUpSkill(10001);
-    }
-    public static void Debug_SkillUp_20001()
-    {
-        LevelUpSkill(20001);
-    }
-
-    public static void Debug_ShowSkill()
-    {
-        Show_Dictionary(userSkill);
     }
 
     private static void Show_Dictionary(Dictionary<string, int> dict)
@@ -251,7 +283,16 @@ public class CharSkill : MonoBehaviour
 
     public static void CloseSkillUI()
     {
+        if(btn_Lobby_close != null)
+        {
+            Destroy(btn_Lobby_close);
+        }
         SceneManager.UnloadSceneAsync("Skill_UI");
+    }
+
+    public static void SetExplane(GameObject ex)
+    {
+        explane = ex;
     }
 }
 
@@ -308,6 +349,47 @@ class SkillData
     public static string GetSkillDesc(int skillNum)
     {
         return skill_desc[skillNum];
+    }
+
+    public static string GetSkillNameKr(string en)
+    {
+        List<string> skillName_kr = new()
+        {
+            "±³¸¸", "Å½¿å", "»ö¿å", "ÁúÅõ", "¸Ôº¸", "ºÐ³ë", "³ªÅÂ"
+        };
+
+        int index = -1;
+        switch (en)
+        {
+            case "pride":
+                index = 0;
+                break;
+            case "greed":
+                index = 1;
+                break;
+            case "lust":
+                index = 2;
+                break;
+            case "envy":
+                index = 3;
+                break;
+            case "glutny":
+                index = 4;
+                break;
+            case "wrath":
+                index = 5;
+                break;
+            case "sloth":
+                index = 6;
+                break;
+        }
+
+        if (index == -1)
+        {
+            Debug.Log($"skillName {en} is not exist");
+            return "";
+        }
+        return skillName_kr[index];
     }
 
     public static string Skill_NumToName(int skillNum)

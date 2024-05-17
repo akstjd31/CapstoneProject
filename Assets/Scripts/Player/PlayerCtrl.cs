@@ -114,6 +114,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     [SerializeField] private int randIdx = -1;
     [SerializeField] private Item equipItem;
 
+    private GameObject openPartyButton;
+    private GameObject createPartyButton;
+    private GameObject InputMessage;
+    private GameObject Send;
+
+    private GameObject skill_explane;
+
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void ChangeState(State state)
@@ -149,6 +156,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();    //상점
         npcParent = GameObject.Find("npc"); // find npc
         npcList = null;
+
+        //Skill UI
+        skill_explane = GameObject.Find("Skill_Explane");
+        Explane_Pos.skill_explane = skill_explane;
+        skill_explane.SetActive(false);
 
         ChangeState(State.NORMAL);
         items = null;
@@ -439,6 +451,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             }
         }
+
+        Explane_Pos.SetMousePos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
     void LateUpdate()
@@ -969,5 +983,45 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public bool IsEnableInventory()
     {
         return inventory.enabled;
+    }
+
+    public void EnableLobbyUI()
+    {
+        if (openPartyButton == null || createPartyButton == null || InputMessage == null || Send == null)
+        {
+            openPartyButton = GameObject.Find("OpenPartyButton");
+            createPartyButton = GameObject.Find("CreatePartyButton");
+            InputMessage = GameObject.Find("InputMessage");
+            Send = GameObject.Find("Send");
+        }
+
+        openPartyButton.SetActive(true);
+        createPartyButton.SetActive(true);
+        InputMessage.SetActive(true);
+        Send.SetActive(true);
+    }
+    public void DisableLobbyUI()
+    {
+        if (openPartyButton == null && createPartyButton == null || InputMessage == null || Send == null)
+        {
+            openPartyButton = GameObject.Find("OpenPartyButton");
+            createPartyButton = GameObject.Find("CreatePartyButton");
+            InputMessage = GameObject.Find("InputMessage");
+            Send = GameObject.Find("Send");
+        }
+
+        openPartyButton.SetActive(false);
+        createPartyButton.SetActive(false);
+        InputMessage.SetActive(false);
+        Send.SetActive(false);
+    }
+    public GameObject GetSkillExplane()
+    {
+        return skill_explane;
+    }
+
+    public void SetSkillExplanePos(Vector3 pos)
+    {
+        skill_explane.transform.position = pos;
     }
 }
