@@ -32,6 +32,7 @@ public class CharSkill : MonoBehaviour
     private Button btn_close;
     [SerializeField]
     private GameObject btn_prefab;
+    private static GameObject btn_Lobby_close;
 
     private async void Init()
     {
@@ -47,12 +48,11 @@ public class CharSkill : MonoBehaviour
             currentUser = UserInfoManager.GetCurrentUser();
             GameObject.Find("Main Camera").GetComponent<Camera>().enabled = true;
 
-            GameObject btn = Instantiate(btn_prefab, GameObject.Find("Canvas").transform);
-            btn.name = "prefab_close_btn";
-            btn.transform.position = new Vector2(0, 0);
-            btn.GetComponent<Button>().onClick.AddListener(() =>
+            btn_Lobby_close = Instantiate(btn_prefab, GameObject.Find("Canvas").transform);
+            btn_Lobby_close.name = "prefab_close_btn";
+            btn_Lobby_close.transform.position = new Vector2(1880, 1040);
+            btn_Lobby_close.GetComponent<Button>().onClick.AddListener(() =>
             {
-                Debug.Log("prefab click");
                 CloseSkillUI();
             });
             Init();
@@ -95,6 +95,14 @@ public class CharSkill : MonoBehaviour
         if (hit.collider != null)
         {
             Debug.Log($"hit coll : {hit.collider.name} {hit.transform.tag}");
+            explane.SetActive(true);
+
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            explane.transform.position = mousePosition;
+        }
+        else
+        {
+            explane.SetActive(false);
         }
     }
 
@@ -263,7 +271,10 @@ public class CharSkill : MonoBehaviour
 
     public static void CloseSkillUI()
     {
-        Debug.Log("clicked close");
+        if(btn_Lobby_close != null)
+        {
+            Destroy(btn_Lobby_close);
+        }
         SceneManager.UnloadSceneAsync("Skill_UI");
     }
 }
