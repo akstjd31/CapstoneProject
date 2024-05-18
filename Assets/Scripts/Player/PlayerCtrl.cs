@@ -740,9 +740,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                 if (enemy != null)
                 {
-                  if(hitEnemies.CompareTag("Chest"))
+                  if(enemy.CompareTag("Chest"))
                   {
-                    ChestController chestController = hitEnemies.GetComponent<ChestController>();
+                    ChestController chestController = enemy.GetComponent<ChestController>();
 
                     chestController.ChestBreak();
                   }
