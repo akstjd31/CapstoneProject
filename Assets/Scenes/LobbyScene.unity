@@ -3375,6 +3375,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nickName: {fileID: 1461519807}
   hpBar: {fileID: 1623513607}
+  hpBarText: {fileID: 0}
+  charSkillImage: {fileID: 0}
+  charSkillCoolTime: {fileID: 0}
+  weaponSkillImage: {fileID: 0}
+  weaponSkillCoolTime: {fileID: 0}
 --- !u!1 &292597148
 GameObject:
   m_ObjectHideFlags: 0
@@ -21271,6 +21276,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nickName: {fileID: 1257617367}
   hpBar: {fileID: 1634220166}
+  hpBarText: {fileID: 0}
+  charSkillImage: {fileID: 0}
+  charSkillCoolTime: {fileID: 0}
+  weaponSkillImage: {fileID: 0}
+  weaponSkillCoolTime: {fileID: 0}
 --- !u!222 &1786317338
 CanvasRenderer:
   m_ObjectHideFlags: 0

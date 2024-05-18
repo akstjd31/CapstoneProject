@@ -24,6 +24,7 @@ TagManager:
   - PhotonManager
   - Obstacle
   - SkillUI
+  - Chest
   layers:
   - Default
   - TransparentFX

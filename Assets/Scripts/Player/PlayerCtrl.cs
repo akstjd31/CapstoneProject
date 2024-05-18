@@ -55,6 +55,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public bool isPartyMember = false; // 파티에 이미 속해있는 상태인지 아닌지 확인하는 변수
     public bool isReady = false; // 파티에 이미 속해있고 던전 입장 준비가 됐는지 확인하는 변수
+    public bool isInDungeon = false;
 
     public Party party;
 
@@ -489,6 +490,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
+    public Item GetEquipItem()
+    {
+        return this.equipItem;
+    }
     public void SetEquipItem(Item item)
     {
         this.equipItem = item;
@@ -707,13 +712,22 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             if (hitEnemies != null)
             {
-                EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
-
-                if (enemyCtrl != null && !enemyCtrl.onHit)
+                if(hitEnemies.CompareTag("Chest"))
                 {
-                    //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
-                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
-                    enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+                    ChestController chestController = hitEnemies.GetComponent<ChestController>();
+
+                    chestController.ChestBreak();
+                }
+                else
+                {
+                    EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+
+                    if (enemyCtrl != null && !enemyCtrl.onHit)
+                    {
+                        //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
+                        enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
+                        enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+                    }
                 }
             }
         }

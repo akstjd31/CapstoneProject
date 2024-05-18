@@ -1845,6 +1845,7 @@ GameObject:
   - component: {fileID: 7167822924147623151}
   - component: {fileID: 8926237017230244871}
   - component: {fileID: 7176222570426465225}
+  - component: {fileID: 4698027752933056346}
   m_Layer: 7
   m_Name: Warrior
   m_TagString: Player
@@ -1943,6 +1944,7 @@ MonoBehaviour:
   state: 0
   isPartyMember: 0
   isReady: 0
+  isInDungeon: 0
   party: {fileID: 0}
   attackPoint: {fileID: 3835016043746628366}
   attackRange: 0.55
@@ -2252,8 +2254,36 @@ MonoBehaviour:
   status: {fileID: 0}
   playerCtrl: {fileID: 0}
   playerPV: {fileID: 0}
-  coolTime: 0
+  charSkillCoolTime: 0
   durationTime: 0
+  isInDungeon: 0
+  Hud: {fileID: 0}
+  effect: {fileID: 0}
+  warriorSkillSprite: {fileID: 21300000, guid: 759d2db469762114a91216bb2268dffe, type: 3}
+--- !u!114 &4698027752933056346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4410033845721660709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1db13b9210e36dd46be990fd1d414273, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  status: {fileID: 0}
+  playerCtrl: {fileID: 0}
+  playerPV: {fileID: 0}
+  charSkillCoolTime: 0
+  durationTime: 0
+  isInDungeon: 1
+  Hud: {fileID: 0}
+  weaponSkillCoolTime: 0
+  weaponSkillSprite: {fileID: 0}
+  effect: {fileID: 0}
+  effectDir: Effects/WeaponSkill/
+  thisWeaponSkillCoolTime: 0
 --- !u!1 &4457435718953625305
 GameObject:
   m_ObjectHideFlags: 0
