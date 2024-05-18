@@ -1943,6 +1943,7 @@ MonoBehaviour:
   state: 0
   isPartyMember: 0
   isReady: 0
+  isInDungeon: 0
   party: {fileID: 0}
   attackPoint: {fileID: 3835016043746628366}
   attackRange: 0.55
@@ -2254,8 +2255,22 @@ MonoBehaviour:
   status: {fileID: 0}
   playerCtrl: {fileID: 0}
   playerPV: {fileID: 0}
-  coolTime: 0
+  charSkillCoolTime: 0
+  weaponSkillCoolTime: 0
   durationTime: 0
+  isInDungeon: 0
+  Hud: {fileID: 0}
+  weaponEffect: {fileID: 0}
+  charEffect: {fileID: 0}
+  WeaponEffectDir: Effects/WeaponSkill/
+  charEffectDir: Effects/CharSkill/
+  warriorSkillSprite: {fileID: 21300000, guid: 759d2db469762114a91216bb2268dffe, type: 3}
+  weaponSkillSprite:
+  - {fileID: 21300000, guid: 987ed8fda16f2cb4a8430bed76e3ac87, type: 3}
+  - {fileID: 21300000, guid: cc69b1c750639a94caef77d2e51ecb12, type: 3}
+  - {fileID: 21300000, guid: 7e013bb77493f4544ba03068ea16e205, type: 3}
+  - {fileID: 21300000, guid: 807818eb32253794c9c48246e7be0007, type: 3}
+  - {fileID: 21300000, guid: 3cc8276cee501894db48e5ec1e7a9513, type: 3}
 --- !u!1 &4457435718953625305
 GameObject:
   m_ObjectHideFlags: 0

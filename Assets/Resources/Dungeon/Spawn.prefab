@@ -1168,13 +1168,14 @@ GameObject:
   - component: {fileID: 8159146726611711487}
   - component: {fileID: -4944724075844706874}
   - component: {fileID: -1084149849341373236}
+  - component: {fileID: -4922204465787952306}
   m_Layer: 0
   m_Name: Spawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8159146726611711487
 Transform:
   m_ObjectHideFlags: 0
@@ -1254,11 +1255,6 @@ MonoBehaviour:
   - {fileID: 6671084173881694252, guid: 7ae8eb8be33bc1c41870fe4709d6b681, type: 3}
   - {fileID: 8874482460912848076, guid: 8fd1aa853dc2edf48afb8ea2e4cde672, type: 3}
   doorList: 00000000
-  doorObject:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   makePlayMap: 0
 --- !u!114 &-1084149849341373236
 MonoBehaviour:
@@ -1282,6 +1278,19 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &-4922204465787952306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6403420414911489873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53d597d245c19484ea49a30c454c035e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridMap: 0
 --- !u!1 &6943477812696470712
 GameObject:
   m_ObjectHideFlags: 0

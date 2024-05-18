@@ -30,11 +30,18 @@ public class RoomController : MonoBehaviourPunCallbacks
     void Awake()
     {
         roomView = GetComponent<PhotonView>();
-        startPoint = GameObject.Find("Spawn");
-        dungeonManager = startPoint.transform.parent.GetComponent<DungeonManager>();
     }
     void Start()
     {
+        startPoint = GameObject.Find("Spawn(Clone)");
+        if (this.name == "Spawn(Clone)")
+        {
+            dungeonManager = this.transform.parent.GetComponent<DungeonManager>();
+        }
+        else
+        {
+            dungeonManager = startPoint.transform.parent.GetComponent<DungeonManager>();
+        }
         //Invoke("CreateRoom", 0.3f);
         StartCoroutine(CreateRoom());
         //CreateRoom();
@@ -159,7 +166,7 @@ public class RoomController : MonoBehaviourPunCallbacks
             }
             doorCheck = true;
         }
-        if(dungeonManager.isMapCreate && dungeonManager.specialRoomSelect && makeDoor && doorCheck && !makePlayMap)
+        if(dungeonManager.isMapCreate && dungeonManager.specialRoomSelect && makeDoor && doorCheck && !makePlayMap && dungeonManager.gridMapCreateTimer > 0.1f)
         {
             Vector3 gridMapPosition;
             if(this.name == dungeonManager.bossRoom.name)
@@ -209,6 +216,7 @@ public class RoomController : MonoBehaviourPunCallbacks
                     }
                 }
             }
+            dungeonManager.gridMapCreateTimer++;
             makePlayMap = true;
         }
     }
@@ -224,23 +232,6 @@ public class RoomController : MonoBehaviourPunCallbacks
             yield return new WaitForSeconds(0.5f);
         }
         dungeonManager.coroutineNum++;
-        if(this.transform.position.x > dungeonManager.farherstX)
-        {
-            dungeonManager.farherstX = (int)this.transform.position.x;
-        }
-        else if(this.transform.position.y > dungeonManager.farherstY)
-        {
-            dungeonManager.farherstY = (int)this.transform.position.y;
-        }
-        else if(this.transform.position.x < dungeonManager.farherstMX)
-        {
-            dungeonManager.farherstMX = (int)this.transform.position.x;
-        }
-        else if(this.transform.position.y < dungeonManager.farherstMY)
-        {
-            dungeonManager.farherstMY = (int)this.transform.position.y;
-        }
-
         int roomNumTemp = dungeonManager.roomNum;
         RaycastHit2D hit;
         mapSpawnPoints = this.gameObject.transform.GetChild(0).GetComponentsInChildren<Transform>();
@@ -373,7 +364,7 @@ public class RoomController : MonoBehaviourPunCallbacks
             if(mapSpawnPoints.Length == 1)
             {
                 dungeonManager.endRooms.Add(this.gameObject);
-                dungeonManager.endRoomIndexChecker++;
+                Debug.Log(this.name);
             }
             for(int i = 2; i < mapSpawnPoints.Length; i++)
             {
@@ -466,5 +457,10 @@ public class RoomController : MonoBehaviourPunCallbacks
         }
         dungeonManager.coroutineNum--;
         yield break;
+    }
+
+    public void Reset()
+    {
+        PhotonNetwork.Destroy(this.gameObject);
     }
 }

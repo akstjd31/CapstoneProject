@@ -55,6 +55,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public bool isPartyMember = false; // 파티에 이미 속해있는 상태인지 아닌지 확인하는 변수
     public bool isReady = false; // 파티에 이미 속해있고 던전 입장 준비가 됐는지 확인하는 변수
+    public bool isInDungeon = false;
 
     public Party party;
 
@@ -512,6 +513,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
+    public Item GetEquipItem()
+    {
+        return this.equipItem;
+    }
     public void SetEquipItem(Item item)
     {
         this.equipItem = item;
@@ -735,6 +740,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                 if (enemy != null)
                 {
+                  if(hitEnemies.CompareTag("Chest"))
+                  {
+                    ChestController chestController = hitEnemies.GetComponent<ChestController>();
+
+                    chestController.ChestBreak();
+                  }
                     if (enemy.enemyData.enemyType == EnemyType.BOSS)
                     {
                         float rand = Random.Range(0, 100f);

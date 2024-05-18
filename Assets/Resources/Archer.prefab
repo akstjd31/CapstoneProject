@@ -2175,6 +2175,7 @@ MonoBehaviour:
   state: 0
   isPartyMember: 0
   isReady: 0
+  isInDungeon: 0
   party: {fileID: 0}
   attackPoint: {fileID: 0}
   attackRange: 0.5
@@ -2495,8 +2496,13 @@ MonoBehaviour:
   status: {fileID: 0}
   playerCtrl: {fileID: 0}
   playerPV: {fileID: 0}
-  coolTime: 0
+  CharSkillCoolTime: 0
+  WeaponSkillCoolTime: 0
   durationTime: 0
+  isInDungeon: 0
+  Hud: {fileID: 0}
+  effect: {fileID: 0}
+  archerSkillSprite: {fileID: 21300000, guid: 628ca2a32dd8a3d408b9d2407fea6050, type: 3}
 --- !u!1 &4751091562744504963
 GameObject:
   m_ObjectHideFlags: 0
