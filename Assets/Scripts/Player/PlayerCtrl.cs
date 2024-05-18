@@ -283,7 +283,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                     if (jewel != null)
                     {
-                        jewel.GetComponent<BejeweledPillar>().ChangeJewelColor();
+                        jewel.GetComponent<PhotonView>().RPC("ChangeJewelColor", RpcTarget.All);
                         //InteractJewel(mouseWorldPosition);
                     }
 

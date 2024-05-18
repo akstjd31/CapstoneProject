@@ -23,6 +23,8 @@ public class BossCtrl : MonoBehaviour
     private NavMeshAgent agent;
     private PhotonView pv;
     private GameObject canvas;
+    private DropChanceCalculator dropCalc;
+    private DropItem dropItem;
 
     [SerializeField] private State state;
 
@@ -49,7 +51,7 @@ public class BossCtrl : MonoBehaviour
 
     // 죽음
     private bool isDeath = false;
-    private float deathTime = 1.0f;
+    private float deathTime = 2.0f;
 
     // 피격
     [SerializeField] private string attackerCharType;
@@ -90,13 +92,28 @@ public class BossCtrl : MonoBehaviour
     private float armorBuffElapsedTime;
     private float armorBuffDurationTime = 20.0f;
 
+    // 히든 패턴
+    public GameObject jewelColorObj;
+    public Transform hiddenPatternTimer;
+    private Text timerText;
+    [SerializeField] private List<BejeweledPillar> bejeweledPillars;
+    private bool HiddenPatternStart = false;
+    private float remainingTime = 120f;
+    [SerializeField] private bool[] isComplete;
+    private Color[] colors = { Color.red, Color.blue, Color.green, Color.yellow };
+    private int randColorIdx;
+
     //private bool isInvincibility = false;
-
-
 
     public State GetState()
     {
         return state;
+    }
+
+    [PunRPC]
+    void ChangeStateRPC(int state)
+    {
+        this.state = (State)state;
     }
 
     private void Awake()
@@ -112,8 +129,14 @@ public class BossCtrl : MonoBehaviour
         rigid = this.GetComponent<Rigidbody2D>();
         pv = this.GetComponent<PhotonView>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
+        dropItem = this.GetComponent<DropItem>();
+        dropCalc = this.GetComponent<DropChanceCalculator>();
 
         HPInitSetting();
+
+        bejeweledPillars = new List<BejeweledPillar>();
+
+        pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
     }
 
     private void FixedUpdate()
@@ -124,13 +147,47 @@ public class BossCtrl : MonoBehaviour
                 restTime >= enemy.enemyData.attackDelayTime &&
                 state == State.NORMAL)
             {
-                state = State.MOVE;
+                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.MOVE);
+            }
+            
+            // 시간안에 히든패턴 파훼를 못할 시 플레이어 즉사
+            if (HiddenPatternStart && remainingTime <= 0.0f)
+            {
+                if (enemyAI.GetFirstTarget() != null && enemyAI.GetSecondTarget() != null)
+                {
+                    enemyAI.GetFirstTarget().GetComponent<Status>().HP = 0f;
+                    enemyAI.GetSecondTarget().GetComponent<Status>().HP = 0f;
+                }
+                else
+                {
+                    if (enemyAI.GetFirstTarget() != null)
+                    {
+                        enemyAI.GetFirstTarget().GetComponent<Status>().HP = 0f;
+                    }
+                    
+                    if (enemyAI.GetSecondTarget() != null)
+                    {
+                        enemyAI.GetSecondTarget().GetComponent<Status>().HP = 0f;
+                    }
+                }
+
+                enemyAI.isLookingAtPlayer = false;
+                agent.isStopped = true;
             }
 
             // 체력이 30퍼 이하가 되면 히든 패턴 시작
-            if (enemy.enemyData.hp <= enemy.enemyData.maxHp * 0.3f)
+            if (enemy.enemyData.hp <= enemy.enemyData.maxHp * 0.3f && !HiddenPatternStart)
             {
+                anim.Play("Idle");
+                rigid.velocity = Vector2.zero;
+                HiddenPatternStart = true;
+                agent.isStopped = true;
+                enemyAI.isLookingAtPlayer = false;
                 state = State.INVINCIBILITY;
+                GameObject timer = PhotonNetwork.Instantiate(hiddenPatternTimer.gameObject.name, Vector2.zero, Quaternion.identity);
+                timer.transform.parent = canvas.transform;
+                timer.GetComponent<RectTransform>().anchoredPosition = new Vector2(160, -60);
+                timerText = timer.GetComponentInChildren<Text>();
             }
             
             // 로켓 손 or 레이저 발사
@@ -147,7 +204,7 @@ public class BossCtrl : MonoBehaviour
                             {
                                 armorBuffCoolTime = armorBuffDefaultCoolTime;
                                 agent.isStopped = true;
-                                state = State.ARMORBUFF;
+                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.ARMORBUFF);
                                 armorBuffElapsedTime = armorBuffDurationTime;
                             }
                         }
@@ -157,18 +214,18 @@ public class BossCtrl : MonoBehaviour
                             {
                                 spcialLazerCoolTime = spcialLazerDefaultCoolTime;
                                 agent.isStopped = true;
-                                state = State.SPECIAL_LAZER;
+                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.SPECIAL_LAZER);
                             }
                         }
                         else
                         {
-                            state = State.MELEE;
+                            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.MELEE);
                         }
 
                     }
                     else
                     {
-                        state = State.MELEE;
+                        pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.MELEE);
                     }
                 }
                 else
@@ -183,7 +240,7 @@ public class BossCtrl : MonoBehaviour
                             {
                                 lazerCoolTime = lazerDefaultCoolTime;
                                 FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
-                                state = State.LAZERCAST;
+                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.LAZERCAST);
                                 agent.isStopped = true;
                             }
                         }
@@ -194,85 +251,18 @@ public class BossCtrl : MonoBehaviour
                                 rocketCoolTime = rocketDefaultCoolTime;
                                 agent.isStopped = true;
                                 FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
-                                state = State.RANGEATTACK;
+                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.RANGEATTACK);
                             }
                         }
                     }
                 }
             }
-            //if (state == State.MOVE &&
-            //    IsPlayerInRectangleRange())
-            //{
-            //    int rand = Random.Range(0, 2);
-
-            //    if (rand == 0)
-            //    {
-            //        if (lazerCoolTime <= 0.0f)
-            //        {
-            //            lazerCoolTime = lazerDefaultCoolTime;
-            //            FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
-            //            state = State.LAZERCAST;
-            //            agent.isStopped = true;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (rocketCoolTime <= 0.0f)
-            //        {
-            //            rocketCoolTime = rocketDefaultCoolTime;
-            //            agent.isStopped = true;
-            //            FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
-            //            state = State.RANGEATTACK;
-            //        }
-            //    }
-
-            //int randNum = Random.Range(0, 2);
-
-            //if (randNum == 0)
-            //{
-            //    state = State.RANGEATTACK;
-            //    anim.SetBool("isRangeAttack", true);
-            //}
-            //else
-            //{
-            //    state = State.LASERCAST;
-            //    // 레이저에 해당되는 애니메이션 세팅
-            //}
-            //}
-
-            //if (IsEnemyClosetPlayer() &&
-            //    state == State.MOVE)
-            //{
-            //    if (armorBuffCoolTime <= 0.0f || spcialLazerCoolTime <= 0.0f)
-            //    {
-            //        float rand = Random.Range(0, 100f);
-            //        if 
-            //        if (armorBuffCoolTime <= 0.0f)
-            //        {
-            //            armorBuffCoolTime = armorBuffDefaultCoolTime;
-            //            agent.isStopped = true;
-            //            state = State.ARMORBUFF;
-            //            armorBuffElapsedTime = armorBuffDurationTime;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        state = State.MELEE;
-            //    }
-
-            //if (spcialLazerCoolTime <= 0.0f)
-            //{
-            //    spcialLazerCoolTime = spcialLazerDefaultCoolTime;
-            //    agent.isStopped = true;
-            //    state = State.SPECIAL_LAZER;
-            //}
-            //else
-            //{
-            //    state = State.MELEE;
-            //}
-            //}
 
             CoolTimeCalculator();
+        }
+        else
+        {
+            rigid.velocity = Vector2.zero;
         }
     }
 
@@ -310,6 +300,11 @@ public class BossCtrl : MonoBehaviour
                 break;
             case State.INVINCIBILITY:
                 InvincibilityAnimation();
+                JewelColorCheck();
+                HiddenPatternRemainingTime();
+                break;
+            case State.DEATH:
+                Death();
                 break;
         }
 
@@ -322,6 +317,7 @@ public class BossCtrl : MonoBehaviour
         if (hpBar != null)
         {
             hpBar.value = enemy.enemyData.hp;
+            //enemy.enemyData.hp = enemy.enemyData.maxHp * 0.31f;
         }
 
         if (armorBuffElapsedTime <= 0.0f && armorBuffObj != null)
@@ -397,7 +393,7 @@ public class BossCtrl : MonoBehaviour
         anim.SetBool("isRangeAttack", false);
         anim.SetBool("isLazerFire", false);
         anim.SetBool("isSpecialLazerFire", false);
-        anim.SetBool("isArmorBuff", true);
+        anim.SetBool("isArmorBuff", false);
         anim.SetBool("isInvincibility", true);
     }
 
@@ -406,7 +402,6 @@ public class BossCtrl : MonoBehaviour
     {
         if (specialLazerFire)
         {
-
             specialLazerFire = false;
         }
     }
@@ -420,7 +415,7 @@ public class BossCtrl : MonoBehaviour
         warningLazer.SetTarget(enemyAI.GetFocusTarget());
 
         agent.isStopped = false;
-        state = State.NORMAL;
+        pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
         restTime = 0.0f;
     }
 
@@ -450,14 +445,102 @@ public class BossCtrl : MonoBehaviour
 
         agent.isStopped = false;
         restTime = 1.0f;
-        state = State.NORMAL;
+        pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
+    }
+
+    // 죽음
+    private void Death()
+    {
+        if (deathTime >= 0.0f)
+        {
+            deathTime -= Time.deltaTime;
+        }
+        else
+        {
+            dropItem.GetComponent<PhotonView>().RPC("SpawnDroppedItem", RpcTarget.All);
+
+            PhotonNetwork.Destroy(hpBar.gameObject);
+            PhotonNetwork.Destroy(this.gameObject);
+        }
     }
 
     // 히든 패턴 : 2분 동안 재단 색 보스 머리에 뜨는 색하고 같은걸로 변경하기
     private void Invincibility()
     {
         anim.speed = 0f;
+        
+        GameObject[] jewelObjs = GameObject.FindGameObjectsWithTag("Jewel");
+        
+        // 보스방에 있는 기둥의 정보 불러오기
+        foreach (GameObject jewelObj in jewelObjs)
+        {
+            bejeweledPillars.Add(jewelObj.GetComponent<BejeweledPillar>());
+        }
 
+        // 랜덤으로 선택된 색을 입힘.
+        int rand = Random.Range(0, colors.Length);
+        jewelColorObj.SetActive(true);
+        jewelColorObj.GetComponent<SpriteRenderer>().color = colors[rand];
+
+        foreach (BejeweledPillar jewelPillar in bejeweledPillars)
+        {
+            jewelPillar.SetColor(colors[rand]);
+        }
+
+        for (var i = 0; i < bejeweledPillars.Count; i++)
+        {
+            isComplete[i] = false;
+        }
+    }
+
+    private void JewelColorCheck()
+    {
+        if (bejeweledPillars.Count > 0)
+        {
+            bool allTrue = true;
+            foreach (bool value in isComplete)
+            {
+                if (!value)
+                {
+                    allTrue = false;
+                    break;
+                }
+            }
+
+            if (allTrue)
+            {
+                anim.speed = 1f;
+                restTime = 0.0f;
+                agent.isStopped = false;
+                enemyAI.isLookingAtPlayer = true;
+                onHit = false;
+                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
+                jewelColorObj.SetActive(false);
+                return;
+            }
+
+            for (var i = 0; i < bejeweledPillars.Count; i++)
+            {
+                if (!isComplete[i] && bejeweledPillars[i].flag)
+                {
+                    isComplete[i] = true;
+                }
+            }
+        }
+    }
+
+    private void HiddenPatternRemainingTime()
+    {
+        remainingTime -= Time.deltaTime;
+
+        int min, sec;
+        min = (int)remainingTime / 60;
+        sec = (int)remainingTime - min * 60;
+
+        if (timerText != null)
+        {
+            timerText.text = min + " : " + sec;
+        }
     }
 
     // 쿨타임 계산
@@ -497,7 +580,7 @@ public class BossCtrl : MonoBehaviour
         {
             anim.speed = 1f;
             restTime = 0.0f;
-            state = State.NORMAL;
+            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
             lazerFire = false;
         }
     }
@@ -541,7 +624,7 @@ public class BossCtrl : MonoBehaviour
 
         anim.speed = 1f;
         restTime = 0.0f;
-        state = State.NORMAL;
+        pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
     }
 
     // 플레이어한테 피격당했을 떄 RPC
@@ -568,13 +651,14 @@ public class BossCtrl : MonoBehaviour
             // 죽음
             if (enemy.enemyData.hp <= 0)
             {
+                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.DEATH);
                 anim.SetTrigger("Death");
                 enemyAI.enabled = false;
                 isDeath = true;
                 agent.isStopped = true;
                 rigid.velocity = Vector2.zero;
-                //dropCalc.SetLevel(status.level);    // 죽기 전에 본인을 죽인 플레이어의 레벨정보를 넘겨준다.
-                //dropItem.SetCharType(status.charType);
+                dropCalc.SetLevel(status.level);    // 죽기 전에 본인을 죽인 플레이어의 레벨정보를 넘겨준다.
+                dropItem.SetCharType(status.charType);
                 return;
             }
         }
@@ -603,7 +687,7 @@ public class BossCtrl : MonoBehaviour
         {
             onHit = true;
             playerAttackDirection = attackDirection;
-            state = State.ATTACKED;
+            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.ATTACKED);
         }
 
         attackerCharType = "";
@@ -616,7 +700,7 @@ public class BossCtrl : MonoBehaviour
         {
             rigid.velocity = Vector2.zero;
             onHit = false;
-            state = State.NORMAL;
+            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
             restTime = 1.0f;
             return;
         }
@@ -644,7 +728,7 @@ public class BossCtrl : MonoBehaviour
                 onHit = false;
                 attackedDistanceSpeed = 3f;
                 anim.speed = 1f;
-                state = State.NORMAL;
+                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
                 restTime = 1.5f;
             }
         }
@@ -708,7 +792,7 @@ public class BossCtrl : MonoBehaviour
                 isMelee = false;
                 rigid.velocity = Vector2.zero;
                 attackDistanceSpeed = 8f;
-                state = State.NORMAL;
+                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
                 restTime = 0.0f;
             }
         }

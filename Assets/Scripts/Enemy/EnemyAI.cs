@@ -91,6 +91,11 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    public TriggerCheck GetTriggerCheck()
+    {
+        return triggerCheck;
+    }
+
     private void CheckAggroMeterAndChangeFocus()
     {
         if (target1 != null && target2 != null)

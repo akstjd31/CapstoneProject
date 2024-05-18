@@ -247,9 +247,9 @@ public class EnemyCtrl : MonoBehaviour
         }
         else
         {
-            dropItem.SpawnDroppedItem();
+            dropItem.GetComponent<PhotonView>().RPC("SpawnDroppedItem", RpcTarget.All);
 
-            DestroyHPBar();
+            PhotonNetwork.Destroy(hpBar.gameObject);
             PhotonNetwork.Destroy(this.gameObject);
         }
     }
@@ -389,11 +389,6 @@ public class EnemyCtrl : MonoBehaviour
                 restTime = 0.0f;
             }
         }
-    }
-
-    public void DestroyHPBar()
-    {
-        Destroy(hpBar.gameObject);
     }
 
     // HP UI가 적을 따라다님.
