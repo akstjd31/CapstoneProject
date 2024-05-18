@@ -88,7 +88,8 @@ public class CharSkill : MonoBehaviour
         explane = pc.GetSkillExplane();
         layerMask = LayerMask.GetMask("Skill_UI");
         //Invoke();
-        
+
+        pc.SetIsSkillUI(true);
     }
 
     private void Update()
@@ -122,6 +123,7 @@ public class CharSkill : MonoBehaviour
 
     private void OnDestroy()
     {
+        pc.SetIsSkillUI(false);
         pc.EnableLobbyUI();
     }
 

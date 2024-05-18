@@ -25,7 +25,7 @@ public class Explane_Pos : MonoBehaviour
 
     public static void SetMousePos(Vector3 pos)
     {
-        //Debug.Log($"SetMousePos : {pos}");
+        Debug.Log($"SetMousePos : {pos}");
         mousePos_pc = pos;
     }
  

@@ -120,6 +120,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private GameObject Send;
 
     private GameObject skill_explane;
+    private bool isSkillUI = false;
 
     //public float animSpeed;   // 애니메이션 속도 테스트
 
@@ -438,6 +439,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                             //skill UI
                             else if(distance <= interactionDist && npc.name.StartsWith("skill") && showOnSaleItem != null)
                             {
+                                isSkillUI = true;
                                 //GameObject.Find("Main Camera").GetComponent<Camera>().enabled = false;
                                 SceneManager.LoadScene("Skill_UI", LoadSceneMode.Additive);
                             }
@@ -452,7 +454,19 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
         }
 
-        Explane_Pos.SetMousePos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        if(isSkillUI)
+        {
+            Explane_Pos.SetMousePos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+
+            int layerMask = LayerMask.GetMask("Skill_UI");
+            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, Mathf.Infinity, layerMask);
+
+            if (hit.collider != null)
+            {
+                Debug.Log($"hit in PlayerCtrl : {hit.collider.name}");
+            }
+        }
     }
 
     void LateUpdate()
@@ -1023,5 +1037,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public void SetSkillExplanePos(Vector3 pos)
     {
         skill_explane.transform.position = pos;
+    }
+    public void SetIsSkillUI(bool b)
+    {
+        isSkillUI = b;
     }
 }
