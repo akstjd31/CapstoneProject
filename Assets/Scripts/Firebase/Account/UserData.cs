@@ -345,26 +345,6 @@ public class UserData : MonoBehaviour
             { "1007", 0 }
         };
 
-        //근접 캐릭터 스킬 정보
-        Dictionary<string, int> char_skill_warrior = new()
-        {
-            { "10001", 0 },
-            { "10002", 0 },
-            { "10003", 0 },
-            { "10004", 0 },
-            { "10005", 0 },
-        };
-
-        //원거리 캐릭터 스킬 정보
-        Dictionary<string, int> char_skill_archer = new()
-        {
-            { "20001", 0 },
-            { "20002", 0 },
-            { "20003", 0 },
-            { "20004", 0 },
-            { "20005", 0 },
-        };
-
         //캐릭터 스텟
         Dictionary<string, int> charStats = new()
         {
@@ -380,9 +360,7 @@ public class UserData : MonoBehaviour
         //유저 귀속 스킬 정보
         Dictionary<string, object> charSkill = new()
         {
-            { "common", char_common_skill },
-            { "warrior", char_skill_warrior },
-            { "archer", char_skill_archer }
+            { "common", char_common_skill }
         };
 
 

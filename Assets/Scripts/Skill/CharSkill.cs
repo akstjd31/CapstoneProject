@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class CharSkill : MonoBehaviour
 {
@@ -113,7 +114,7 @@ public class CharSkill : MonoBehaviour
 
         if (hit.collider != null)
         {
-            Debug.Log("hit!!");
+            Debug.Log($"hit!! {hit.collider.name}");
             explane.SetActive(true);
             
             col_name = hit.collider.name;
@@ -122,9 +123,14 @@ public class CharSkill : MonoBehaviour
         }
         else
         {
-            Debug.Log("no hit@@");
+            //Debug.Log("no hit@@");
             col_name = "";
             explane.SetActive(false);
+        }
+
+        if(Input.GetKeyDown(KeyCode.O))
+        {
+            CloseSkillUI();
         }
     }
 
@@ -152,6 +158,100 @@ public class CharSkill : MonoBehaviour
 
         skill_point_text = "SKILL Point : " + skill_point;
         point_text.text = skill_point_text;
+        await SetLevelState();
+    }
+
+    public static async Task SetLevelState()
+    {
+        await UserInfoManager.GetCharSkillAsync();
+        userSkill = UserInfoManager.GetSkillLevel();
+
+        BoxCollider2D[] images = GameObject.Find("Images").GetComponentsInChildren<BoxCollider2D>();
+
+        GameObject[] list = new GameObject[images.Length];
+        for(int i = 0; i < list.Length; i++)
+        {
+            list[i] = images[i].gameObject;
+        }
+
+
+        List<string> skillName_kr = new()
+        {
+            "±³¸¸", "Å½¿å", "»ö¿å", "ÁúÅõ", "¸Ôº¸", "ºÐ³ë", "³ªÅÂ"
+        };
+
+        List<int> value = await GetSkillLevelAll(0);
+
+        for(int i = 0; i < list.Length; i++)
+        {
+            int index = -1;
+
+            Debug.Log($"list name : {list[i].name} {list[i].transform.parent.name} {list[i].transform.parent.parent.name}");
+
+            switch (list[i].name)
+            {
+                case "pride":
+                    index = 0;
+                    break;
+                case "greed":
+                    index = 1;
+                    break;
+                case "lust":
+                    index = 2;
+                    break;
+                case "envy":
+                    index = 3;
+                    break;
+                case "glutny":
+                    index = 4;
+                    break;
+                case "wrath":
+                    index = 5;
+                    break;
+                case "sloth":
+                    index = 6;
+                    break;
+                default:
+                    switch(list[i].transform.parent.name)
+                    {
+                        case "pride":
+                            index = 0;
+                            break;
+                        case "greed":
+                            index = 1;
+                            break;
+                        case "lust":
+                            index = 2;
+                            break;
+                        case "envy":
+                            index = 3;
+                            break;
+                        case "glutny":
+                            index = 4;
+                            break;
+                        case "wrath":
+                            index = 5;
+                            break;
+                        case "sloth":
+                            index = 6;
+                            break;
+                    }
+                    break;
+            }
+
+            if(index == -1)
+            {
+                Debug.Log($"not valid skill : {list[i].name} {index}");
+                return;
+            }
+
+            Debug.Log($"{value[index]} {list[i].name}");
+
+            var now = list[i].transform.Find("level");
+            Debug.Log($"now : {now}");
+
+            now.GetComponent<TextMeshProUGUI>().text = "Lv." + value[index];
+        }
     }
 
     public static void SetSkillLevel(int skillNum, int level)
@@ -172,6 +272,8 @@ public class CharSkill : MonoBehaviour
         {
             await InitSkill();
         }
+
+        Show_Dictionary(userSkill);
 
         if (!userSkill.ContainsKey(skillNum.ToString()))
         {
@@ -267,7 +369,7 @@ public class CharSkill : MonoBehaviour
 
         await UserInfoManager.SetSkillPoint(--skill_point);
         skill_point_text = "SKILL Point : " + skill_point;
-        //point_text.text = skill_point_text;
+        point_text.text = skill_point_text;
 
         LevelUpSkill(skillNum);
     }
@@ -319,7 +421,7 @@ public class CharSkill : MonoBehaviour
             point_text = GameObject.Find("SkillPoint").GetComponentInChildren<Text>();
         }
 
-        point_text.text = name;
+        //point_text.text = name;
     }
 }
 

@@ -344,6 +344,7 @@ public class UserInfoManager : MonoBehaviour
 
                 // 업데이트된 데이터를 문서에 반영합니다.
                 await doc_user.UpdateAsync("charData", charData);
+                await CharSkill.SetLevelState();
             }
         }
         else
