@@ -180,7 +180,7 @@ public class EnemyCtrl : MonoBehaviour
                 if (IsEnemyClosetPlayer() && state != State.ATTACK && state != State.NORMAL && !onHit)
                 {
                     ChangeState(State.ATTACK);
-                    targetPos = enemyAIScript.GetFocusTarget().position;
+                    targetPos = enemyAI.GetFocusTarget().position;
                     agent.isStopped = true;
                     enemyAI.isLookingAtPlayer = false;    // 공격할 때 플레이어가 움직여도 그 방향 유지
 

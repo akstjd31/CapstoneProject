@@ -186,7 +186,7 @@ public class Status : MonoBehaviourPunCallbacks
 
             playerCtrl.originalKnockBackDistanceSpeed = playerCtrl.knockBackDistanceSpeed;
             playerCtrl.onHit = true;
-            playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
+            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)PlayerCtrl.State.ATTACKED);
             playerCtrl.enemyAttackDirection = attackDirection;
         }
     }
