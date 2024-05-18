@@ -51,6 +51,8 @@ public class Status : MonoBehaviourPunCallbacks
 
     private Inventory inventory;
 
+    private float randNum;
+
     private void Awake()
     {
         if (charType.Equals("Warrior"))
@@ -143,10 +145,9 @@ public class Status : MonoBehaviourPunCallbacks
     [PunRPC]
     public void DamageEnemyOnHitRPC(float damage)
     {
-        float rand = Random.Range(0f, 100f);
+        randNum = Random.Range(0, 100f);
 
-        // 회피
-        if (rand > evasionRate)
+        if (randNum > evasionRate)
         {
             if(isEnvy)
             {
@@ -155,14 +156,39 @@ public class Status : MonoBehaviourPunCallbacks
             //passiveSkill.attackCount = 0;
             HP -= damage * damageTakenRate;
         }
+        else
+        {
+            Debug.Log("회피!");
+        }
     }
 
     [PunRPC]
-    public void PlayerKnockbackRPC(Vector3 attackDirection)
+    public void PlayerKnockbackRPC(int enemyViewID, Vector3 attackDirection)
     {
-        playerCtrl.onHit = true;
-        playerCtrl.ChangeState(PlayerCtrl.State.ATTACKED);
-        playerCtrl.enemyAttackDirection = attackDirection;
+        if (randNum > evasionRate)
+        {
+            PhotonView targetPV = PhotonView.Find(enemyViewID);
+
+            if (targetPV.GetComponent<Enemy>().enemyData.enemyType == EnemyType.BOSS)
+            {
+                if (targetPV.GetComponent<BossCtrl>().GetState() == BossCtrl.State.LAZERCAST)
+                {
+                    playerCtrl.knockBackDistanceSpeed = 12f;
+                    return;
+                }
+
+                playerCtrl.knockBackDistanceSpeed = 9f;
+            }
+            else
+            {
+                playerCtrl.knockBackDistanceSpeed = 5f;
+            }
+
+            playerCtrl.originalKnockBackDistanceSpeed = playerCtrl.knockBackDistanceSpeed;
+            playerCtrl.onHit = true;
+            playerCtrl.SetState(PlayerCtrl.State.ATTACKED);
+            playerCtrl.enemyAttackDirection = attackDirection;
+        }
     }
 
 
