@@ -2,13 +2,73 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class UIManager : MonoBehaviour
 {
+    public Status localPlayerStatus, remotePlayerStatus;
     // 원격 플레이어
-    public GameObject hud1;
+    public HUD remoteHUD;
 
     // 로컬 플레이어
-    public Slider hpBar;
-    public Text hpText;
+    public HUD localHUD;
+
+    private void Update()
+    {
+        UpdateHUD();
+    }
+
+    private void UpdateHUD()
+    {
+        // 둘다 생존하고 있는 경우
+        if (localPlayerStatus != null && remotePlayerStatus != null)
+        {
+            localHUD.hpBarText.text = string.Format("{0} / {1}", localPlayerStatus.HP, localPlayerStatus.MAXHP);
+
+            // 만약 MAXHP가 변경되었을 경우 갱신
+            if (localHUD.hpBar.maxValue != localPlayerStatus.MAXHP)
+            {
+                localHUD.hpBar.maxValue = this.localPlayerStatus.MAXHP;
+            }
+            
+            localHUD.hpBar.value = this.localPlayerStatus.HP;
+
+
+            remoteHUD.nickName.text = this.remotePlayerStatus.GetComponent<PhotonView>().Controller.NickName;
+            remoteHUD.hpBarText.text = string.Format("{0} / {1}", remotePlayerStatus.HP, remotePlayerStatus.MAXHP);
+            
+            if (remoteHUD.hpBar.maxValue != remotePlayerStatus.MAXHP)
+            {
+                remoteHUD.hpBar.maxValue = this.remotePlayerStatus.MAXHP;
+            }
+
+            remoteHUD.hpBar.value = this.remotePlayerStatus.HP;
+        }
+        // 원격 플레이어 생존 시
+        else if (localPlayerStatus == null)
+        {
+            remoteHUD.nickName.text = this.remotePlayerStatus.GetComponent<PhotonView>().Controller.NickName;
+            remoteHUD.hpBarText.text = string.Format("{0} / {1}", remotePlayerStatus.HP, remotePlayerStatus.MAXHP);
+
+            if (remoteHUD.hpBar.maxValue != remotePlayerStatus.MAXHP)
+            {
+                remoteHUD.hpBar.maxValue = this.remotePlayerStatus.MAXHP;
+            }
+
+            remoteHUD.hpBar.value = this.remotePlayerStatus.HP;
+        }
+
+        // 로컬 플레이어 생존 시
+        else if (remotePlayerStatus == null)
+        {
+            localHUD.hpBarText.text = string.Format("{0} / {1}", localPlayerStatus.HP, localPlayerStatus.MAXHP);
+
+            if (localHUD.hpBar.maxValue != localPlayerStatus.MAXHP)
+            {
+                localHUD.hpBar.maxValue = this.localPlayerStatus.MAXHP;
+            }
+
+            localHUD.hpBar.value = this.localPlayerStatus.HP;
+        }
+    }
 }

@@ -69,7 +69,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     //Recorder recorder;
 
-    UIManager uiManager;
     private bool isDeactiveUI;
 
     //스킬
@@ -81,8 +80,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public LayerMask enemyLayers;
 
     Collider2D hitEnemies;  // 공격 대상
-
-    GameObject otherPlayer;
 
     public bool onHit = false;
     public Vector3 enemyAttackDirection;
@@ -119,13 +116,25 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     [SerializeField] private Item equipItem;
 
     private Transform jewel;
-    //[SerializeField] private bool canInteractJewel = false;
+    
+    private GameObject openPartyButton;
+    private GameObject createPartyButton;
+    private GameObject InputMessage;
+    private GameObject Send;
+
+    private GameObject skill_explane;
+
     //public float animSpeed;   // 애니메이션 속도 테스트
 
-
-    public void SetState(State state)
+    public void ChangeState(State state)
     {
-        this.state = state;
+        pv.RPC("ChangeStateRPC", RpcTarget.All, (int)state);
+    }
+
+    [PunRPC]
+    private void ChangeStateRPC(int state)
+    {
+        this.state = (State)state;
     }
 
     void Start()
@@ -151,23 +160,21 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         npcParent = GameObject.Find("npc"); // find npc
         npcList = null;
 
-        state = State.NORMAL;
+        //Skill UI
+        skill_explane = GameObject.Find("Skill_Explane");
+        Explane_Pos.skill_explane = skill_explane;
+        skill_explane.SetActive(false);
+
+        ChangeState(State.NORMAL);
         items = null;
 
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
-            pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
             if (pv.IsMine)
             {
-                anim.speed = GetAnimSpeed(status.attackSpeed);
-
-                inventory.equippedItem = equipItem;
-                inventory.FreshSlot();
+                PhotonManager.playerWeaponID = randIdx;
             }
-
-            TotalStatus(equipItem);
-
 
             //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
             //CommonWeaponEquipRPC(randIdx);
@@ -185,24 +192,21 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 던전 씬
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
-            uiManager = canvas.GetComponent<UIManager>();
-
-            uiManager.hpBar.maxValue = status.MAXHP;
-
-            if (GameObject.FindGameObjectsWithTag("Player").Length > 1)
-            {
-                GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-                otherPlayer = players[0] == this.gameObject ? players[1] : players[0];
-            }
-
-            if (otherPlayer != null)
-            {
-                // HUD1 == otherPlayer
-                HUD hud1 = uiManager.hud1.GetComponent<HUD>();
-                hud1.nickName.text = otherPlayer.GetComponent<PhotonView>().Controller.NickName;
-                hud1.hpBar.maxValue = status.MAXHP;
-            }
+            randIdx = PhotonManager.playerWeaponID;
         }
+
+        pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
+
+        anim.speed = GetAnimSpeed(status.attackSpeed);
+
+        if (pv.IsMine)
+        {
+            inventory.equippedItem = equipItem;
+            inventory.FreshSlot();
+        }
+
+        TotalStatus(equipItem);
+
 
         if (npcParent != null)
         {
@@ -239,18 +243,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 else
                 {
                     isDeactiveUI = true;
-
-                    if (uiManager != null)
-                    {
-                        uiManager.hpText.text = string.Format("{0} / {1}", this.status.HP, this.status.MAXHP);
-                        uiManager.hpBar.value = status.HP;
-
-                        if (otherPlayer != null)
-                        {
-                            HUD hud = uiManager.hud1.GetComponent<HUD>();
-                            hud.hpBar.value = otherPlayer.GetComponent<Status>().HP;
-                        }
-                    }
                 }
 
                 moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
@@ -259,12 +251,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 {
                     if (moveDir.x != 0 || moveDir.y != 0)
                     {
-                        state = State.MOVE;
+                        ChangeState(State.MOVE);
                     }
                     else
                     {
                         rigid.velocity = Vector2.zero;
-                        state = State.NORMAL;
+                        ChangeState(State.NORMAL);
                     }
                 }
 
@@ -272,7 +264,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 if (Input.GetMouseButtonDown(0) && isAttackCooldownOver &&
                     !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.gameObject.activeSelf)
                 {
-                    state = State.ATTACK;
+                    ChangeState(State.ATTACK);
 
                     Vector3 mouseScreenPosition = Input.mousePosition;
 
@@ -404,8 +396,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                         if (distance <= interactionDist && showOnSaleItem != null)
                         {
-                            inRange = true;
-                            break;
+                            //store
+                            if(npc.name.StartsWith("npc"))
+                            {
+                                inRange = true;
+                                break;
+                            }
                         }
 
                         //Debug.Log($"dist : {npc.name} => {distance} || ui close condition : {inRange}");
@@ -422,6 +418,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 //store on/off (close to npc)
                 if (Input.GetKeyDown(KeyCode.O))
                 {
+                    showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();
+
                     //close UI
                     if (isActiveSale)
                     {
@@ -437,7 +435,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                             float distance = Vector3.Distance(npc.transform.position, transform.position);
                             //Debug.Log($"dist : {npc.name} => {distance}");
 
-                            if (distance <= interactionDist && showOnSaleItem != null)
+                            //store
+                            if(distance <= interactionDist && npc.name.StartsWith("npc") && showOnSaleItem != null)
                             {
                                 showOnSaleItem.ShowShopUI();
                                 inventory.transform.SetAsLastSibling();
@@ -445,6 +444,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                                 isActiveSale = true;
                                 return;
                             }
+                            //skill UI
+                            else if(distance <= interactionDist && npc.name.StartsWith("skill") && showOnSaleItem != null)
+                            {
+                                //GameObject.Find("Main Camera").GetComponent<Camera>().enabled = false;
+                                SceneManager.LoadScene("Skill_UI", LoadSceneMode.Additive);
+                            }
+                            
                         }
                     }
                 }
@@ -454,6 +460,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 rigid.velocity = Vector2.zero;
             }
         }
+
+        Explane_Pos.SetMousePos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
     void LateUpdate()
@@ -481,6 +489,25 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 case State.DIE:
                     Death();
                     break;
+            }
+        }
+    }
+
+    public PlayerCtrl GetPartyMember(PlayerCtrl playerCtrl) //파티원 정보 게터
+    {
+        if(party.GetPartyHeadCount() == 1) //혼자라면 나를 리턴
+        {
+            return playerCtrl;
+        }
+        else
+        {
+            if(party.GetPartyLeaderID() == pv.ViewID) //파티장이 나라면 파티원 리턴
+            {
+                return PhotonView.Find(party.GetPartyMemberID()).GetComponent<PlayerCtrl>();
+            }
+            else                                      //내가 파티원이라면 파티장 playerCtrl리턴
+            {
+                return PhotonView.Find(party.GetPartyLeaderID()).GetComponent<PlayerCtrl>();
             }
         }
     }
@@ -609,7 +636,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public void DeathAnimEvent()
     {
-        state = State.DIE;
+        ChangeState(State.DIE);
         anim.speed = 0f;
     }
 
@@ -655,7 +682,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 onHit = false;
                 knockBackDistanceSpeed = originalKnockBackDistanceSpeed;
                 anim.speed = 1f;
-                state = State.NORMAL;
+                ChangeState(State.NORMAL);
             }
         }
     }
@@ -768,7 +795,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             if (attackDistanceSpeed < 0.5f)
             {
                 rigid.velocity = Vector2.zero;
-                state = State.NORMAL;
+                ChangeState(State.NORMAL);
             }
         }
     }
@@ -800,7 +827,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             arrowPV.RPC("InitializeArrow", RpcTarget.AllBuffered, mouseWorldPosition, 3.5f, status.attackDamage, this.tag, pv.ViewID);
 
             // 상태 변경
-            state = State.NORMAL;
+            ChangeState(State.NORMAL);
         }
     }
 
@@ -1020,5 +1047,45 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     public bool IsEnableInventory()
     {
         return inventory.enabled;
+    }
+
+    public void EnableLobbyUI()
+    {
+        if (openPartyButton == null || createPartyButton == null || InputMessage == null || Send == null)
+        {
+            openPartyButton = GameObject.Find("OpenPartyButton");
+            createPartyButton = GameObject.Find("CreatePartyButton");
+            InputMessage = GameObject.Find("InputMessage");
+            Send = GameObject.Find("Send");
+        }
+
+        openPartyButton.SetActive(true);
+        createPartyButton.SetActive(true);
+        InputMessage.SetActive(true);
+        Send.SetActive(true);
+    }
+    public void DisableLobbyUI()
+    {
+        if (openPartyButton == null && createPartyButton == null || InputMessage == null || Send == null)
+        {
+            openPartyButton = GameObject.Find("OpenPartyButton");
+            createPartyButton = GameObject.Find("CreatePartyButton");
+            InputMessage = GameObject.Find("InputMessage");
+            Send = GameObject.Find("Send");
+        }
+
+        openPartyButton.SetActive(false);
+        createPartyButton.SetActive(false);
+        InputMessage.SetActive(false);
+        Send.SetActive(false);
+    }
+    public GameObject GetSkillExplane()
+    {
+        return skill_explane;
+    }
+
+    public void SetSkillExplanePos(Vector3 pos)
+    {
+        skill_explane.transform.position = pos;
     }
 }

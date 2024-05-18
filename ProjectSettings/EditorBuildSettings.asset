@@ -24,13 +24,13 @@ EditorBuildSettings:
     path: Assets/Scenes/TestScene.unity
     guid: 985e79ad54da6664fbd982611ea107bf
   - enabled: 0
-    path: Assets/Scenes/Map1.unity
+    path: 
     guid: 3aa2472bf581e1f448ff7b1f38438d68
   - enabled: 0
-    path: Assets/Scenes/Map2.unity
+    path: 
     guid: fc49792f75c298b44a375aea5016215d
   - enabled: 0
-    path: Assets/Scenes/Map3.unity
+    path: 
     guid: 8cd96ea259239d94e891c79094d9a1cf
   - enabled: 1
     path: Assets/Scenes/LobbyScene.unity
@@ -41,4 +41,52 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PhotonLobbyScene.unity
     guid: e2be0fdc27b13bc4caf3bc4d793fb3d6
+  - enabled: 1
+    path: Assets/Scenes/CastleMap3.unity
+    guid: 3fd501aa30dbff545b19d6d07b5123d0
+  - enabled: 1
+    path: Assets/Scenes/CastleMap4.unity
+    guid: 39f2605947ee6694596119ca52991c40
+  - enabled: 1
+    path: Assets/Scenes/CastleMap5.unity
+    guid: 8d1b2c15703f9f84bbd006262a3ec773
+  - enabled: 1
+    path: Assets/Scenes/MAP1_UPDATE.unity
+    guid: 4c7371b9a148b344f9be524a45f18482
+  - enabled: 1
+    path: Assets/Scenes/MAP2_UPDATE.unity
+    guid: fdba5b9174ed1274d80e3736d2d57be6
+  - enabled: 1
+    path: Assets/Scenes/MAP3_UPDATE.unity
+    guid: abc072607ab97694791b84ba36f85f79
+  - enabled: 1
+    path: Assets/Scenes/MAP4_UPDATE.unity
+    guid: e190971d6c52352459529ddadd1c8121
+  - enabled: 1
+    path: Assets/Scenes/MAP5_UPDATE.unity
+    guid: 6be1009ff7878844190dfea9ed6b88c8
+  - enabled: 1
+    path: Assets/Scenes/Map_Boss.unity
+    guid: 267b1c173ec4e4f488f89523772bfda4
+  - enabled: 1
+    path: Assets/Scenes/Map_BoxEvent.unity
+    guid: 035faa5001cc5c44996e43212288a3bf
+  - enabled: 1
+    path: Assets/Scenes/MAP_EVENT_BOX.unity
+    guid: 3bcd5567e7cb62e40be7bf5045080726
+  - enabled: 1
+    path: Assets/Scenes/MAP_EVENT_SHOP.unity
+    guid: a8356f4239cfae841afaad1c55baa84c
+  - enabled: 1
+    path: Assets/Scenes/Map_Shop.unity
+    guid: b7321479224222e46a65509ed9d89983
+  - enabled: 1
+    path: Assets/Scenes/Skill_UI.unity
+    guid: 8e5e87dae77d75a4fa0e3258229d86ca
+  - enabled: 1
+    path: Assets/Scenes/Stat_UI.unity
+    guid: d74284e5ad9ce744d9d0ea549eedfef0
+  - enabled: 1
+    path: Assets/Scenes/Town.unity
+    guid: ee6fad7a6f3311a4ca2e2af72391ff4f
   m_configObjects: {}

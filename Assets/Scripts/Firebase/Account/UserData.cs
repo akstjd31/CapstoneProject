@@ -103,6 +103,7 @@ public class UserData : MonoBehaviour
 
     private void Start()
     {
+        /*
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             //Debug.Log($"task : {task}\n{task.Result}");     //System.Threading.Tasks.UnwrapPromise`1[Firebase.DependencyStatus]     //Available
@@ -118,6 +119,7 @@ public class UserData : MonoBehaviour
                 return;
             }
         });
+        */
 
         loginErrorMsg = GameObject.Find("Error_msg").GetComponent<Text>();
         loginErrorMsg.text = "";
@@ -400,7 +402,8 @@ public class UserData : MonoBehaviour
             { "stats", charStats },
             { "skill",  charSkill },
             { "itemList", new List<string>() },
-            { "stack", 0 }
+            { "stack", 0 },
+            { "skillPoint", 0 }
         };
         
         Dictionary<string, object> userContainer = new()

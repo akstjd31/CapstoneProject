@@ -15,7 +15,7 @@ public class EnemyCtrl : MonoBehaviour
         NORMAL, MOVE, ATTACK, ATTACKED, DIE
     }
 
-    private PhotonView enemyPV;
+    private PhotonView pv;
     private Animator anim;
     private NavMeshAgent agent;
     private EnemyAI enemyAI;
@@ -63,7 +63,7 @@ public class EnemyCtrl : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        enemyPV = this.GetComponent<PhotonView>();
+        pv = this.GetComponent<PhotonView>();
         anim = this.GetComponent<Animator>();
         agent = this.GetComponent<NavMeshAgent>();
         enemyAI = this.GetComponent<EnemyAI>();
@@ -77,7 +77,7 @@ public class EnemyCtrl : MonoBehaviour
         detectionRange = enemy.enemyData.enemyType == EnemyType.LONG_DISTANCE ? 7 : 3;  // 원거리, 근거리몹에 따라 범위가 다름.
 
         HPInitSetting();
-        state = State.NORMAL;
+        ChangeState(State.NORMAL);
 
         status = null;
     }
@@ -91,9 +91,15 @@ public class EnemyCtrl : MonoBehaviour
         hpBar.value = enemy.enemyData.hp;
     }
 
-    public void SetState(State state)
+    public void ChangeState(State state)
     {
-        this.state = state;
+        pv.RPC("ChangeStateRPC", RpcTarget.All, (int)state);
+    }
+
+    [PunRPC]
+    private void ChangeStateRPC(int state)
+    {
+        this.state = (State)state;
     }
 
     public Enemy GetEnemy()
@@ -106,8 +112,10 @@ public class EnemyCtrl : MonoBehaviour
     public void DamagePlayerOnHitRPC(int playerViewID)
     {
         PhotonView playerPV = PhotonView.Find(playerViewID);
+        //PassiveSkill passiveSkill = playerPV.GetComponent<PassiveSkill>();
         Status status = playerPV.GetComponent<Status>();
 
+        //passiveSkill.attackCount++;
         // 플레이어의 공격력만큼 체력에서 깎음
         if (hpBar != null)
         {
@@ -149,7 +157,7 @@ public class EnemyCtrl : MonoBehaviour
     {
         playerAttackDirection = attackDirection;
         onHit = true;
-        state = State.ATTACKED;
+        ChangeState(State.ATTACKED);
     }
 
     private void FixedUpdate()
@@ -162,7 +170,7 @@ public class EnemyCtrl : MonoBehaviour
                 !onHit &&
                 restTime >= enemy.enemyData.attackDelayTime)
             {
-                state = State.MOVE;
+                ChangeState(State.MOVE);
             }
 
             // 적의 타겟이 존재할 때
@@ -171,8 +179,8 @@ public class EnemyCtrl : MonoBehaviour
                 // 적이 플레이어와 어느정도 가까이 있으면 공격
                 if (IsEnemyClosetPlayer() && state != State.ATTACK && state != State.NORMAL && !onHit)
                 {
-                    state = State.ATTACK;
-                    targetPos = enemyAI.GetFocusTarget().position;
+                    ChangeState(State.ATTACK);
+                    targetPos = enemyAIScript.GetFocusTarget().position;
                     agent.isStopped = true;
                     enemyAI.isLookingAtPlayer = false;    // 공격할 때 플레이어가 움직여도 그 방향 유지
 
@@ -235,7 +243,7 @@ public class EnemyCtrl : MonoBehaviour
 
     public void DeathAnimEvent()
     {
-        state = State.DIE;
+        ChangeState(State.DIE);
         anim.speed = 0f;
     }
 
@@ -270,8 +278,8 @@ public class EnemyCtrl : MonoBehaviour
                 {
                     // 몹의 데미지만큼 플레이어에게 피해를 입힘.
                     //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, player.passiveSkill.PrideDamaged(enemy.enemyData.attackDamage));
-                    //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, enemy.enemyData.attackDamage);
-                    //player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
+                    player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, enemy.enemyData.attackDamage);
+                    player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
                 }
             }
         }
@@ -309,7 +317,7 @@ public class EnemyCtrl : MonoBehaviour
             {
                 rigid.velocity = Vector2.zero;
                 attackDistanceSpeed = 10f;
-                state = State.NORMAL;
+                ChangeState(State.NORMAL);
                 restTime = 0.0f;
             }
         }
@@ -322,33 +330,30 @@ public class EnemyCtrl : MonoBehaviour
     // 애니메이션 이벤트 호출 함수
     public void Fire()
     {
-        if (enemyPV.IsMine)
+        // 총알 프리팹을 firePoint 위치에 인스턴스화
+        GameObject arrowPrefab = PhotonNetwork.Instantiate(projectile.name, firePoint.position, firePoint.rotation);
+
+        // PhotonView와 Arrow 컴포넌트를 가져옴
+        PhotonView arrowPV = arrowPrefab.GetComponent<PhotonView>();
+        if (arrowPV == null)
         {
-            // 총알 프리팹을 firePoint 위치에 인스턴스화
-            GameObject arrowPrefab = PhotonNetwork.Instantiate(projectile.name, firePoint.position, firePoint.rotation);
-
-            // PhotonView와 Arrow 컴포넌트를 가져옴
-            PhotonView arrowPV = arrowPrefab.GetComponent<PhotonView>();
-            if (arrowPV == null)
-            {
-                Debug.LogError("PhotonView component is missing on the instantiated arrow prefab.");
-                return;
-            }
-
-            Arrow arrow = arrowPV.GetComponent<Arrow>();
-            if (arrow == null)
-            {
-                Debug.LogError("Arrow component is missing on the instantiated arrow prefab.");
-                return;
-            }
-
-            // RPC를 사용하여 다른 클라이언트에 총알의 초기 설정 전송
-            arrowPV.RPC("InitializeArrow", RpcTarget.AllBuffered, targetPos, 3.5f, enemy.enemyData.attackDamage, this.tag, enemyPV.ViewID);
-
-            // 상태 변경
-            state = State.NORMAL;
-            restTime = 0.0f;
+            Debug.LogError("PhotonView component is missing on the instantiated arrow prefab.");
+            return;
         }
+
+        Arrow arrow = arrowPV.GetComponent<Arrow>();
+        if (arrow == null)
+        {
+            Debug.LogError("Arrow component is missing on the instantiated arrow prefab.");
+            return;
+        }
+
+        // RPC를 사용하여 다른 클라이언트에 총알의 초기 설정 전송
+        arrowPV.RPC("InitializeArrow", RpcTarget.AllBuffered, targetPos, 3.5f, enemy.enemyData.attackDamage, this.tag, pv.ViewID);
+
+        // 상태 변경
+        ChangeState(State.NORMAL);
+        restTime = 0.0f;
     }
 
     // 공격이나 피격당할 때 몹마다 가지고 있는 딜레이타임별로 쉬기
@@ -385,7 +390,7 @@ public class EnemyCtrl : MonoBehaviour
                 onHit = false;
                 attackedDistanceSpeed = 3f;
                 anim.speed = 1f;
-                state = State.NORMAL;
+                ChangeState(State.NORMAL);
                 restTime = 0.0f;
             }
         }

@@ -24,6 +24,7 @@ TagManager:
   - PhotonManager
   - Obstacle
   - Jewel
+  - SkillUI
   layers:
   - Default
   - TransparentFX
@@ -35,7 +36,7 @@ TagManager:
   - Players
   - Enemies
   - Items
-  - 
+  - Skill_UI
   - 
   - 
   - 
@@ -60,4 +61,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Skill_UI
+    uniqueID: 3762606909
     locked: 0

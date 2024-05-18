@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ShowOnSaleItem : MonoBehaviour
@@ -14,9 +15,10 @@ public class ShowOnSaleItem : MonoBehaviour
 
     private GameObject shop;
     private Transform content;
-    private List<GameObject> itemList = new List<GameObject>();
+    private List<GameObject> itemList = new();
     private Button btn_reroll;
-    private bool canReroll = true;  //condition of reroll
+
+    private Inventory inv;
 
     public void ShowShopUI()
     {
@@ -39,8 +41,9 @@ public class ShowOnSaleItem : MonoBehaviour
             btn_reroll.onClick.AddListener(() =>
             {
                 Debug.Log("clicked reroll");
+                int money = UserInfoManager.GetNowMoney();
 
-                if(canReroll)
+                if(money >= 5)
                 {
                     Reroll();
                 }
@@ -65,8 +68,10 @@ public class ShowOnSaleItem : MonoBehaviour
         shop.SetActive(false);
     }
 
-    private void Reroll()
+    private async void Reroll()
     {
+        await UserInfoManager.SetUserMoney_Async(-5);
+
         itemList = new List<GameObject>();
         //판매 중이었던 아이템 삭제
         foreach (Transform child in content)
@@ -115,8 +120,36 @@ public class ShowOnSaleItem : MonoBehaviour
             Sprite itemImage = ItemSell.GetItemImageByKey(itemKeys[index]);
             temp.transform.Find("ItemImage").GetComponent<RawImage>().texture = itemImage.texture;
 
+            /*
+            //explanation with mouse hover
+            EventTrigger trigger = temp.gameObject.AddComponent<EventTrigger>();
+
+            // PointerEnter 이벤트 추가
+            EventTrigger.Entry pointerEnter = new EventTrigger.Entry();
+            pointerEnter.eventID = EventTriggerType.PointerEnter;
+            pointerEnter.callback.AddListener((data) => { OnPointerEnter(); });
+            trigger.triggers.Add(pointerEnter);
+
+            // PointerExit 이벤트 추가
+            EventTrigger.Entry pointerExit = new EventTrigger.Entry();
+            pointerExit.eventID = EventTriggerType.PointerExit;
+            pointerExit.callback.AddListener((data) => { OnPointerExit(); });
+            trigger.triggers.Add(pointerExit);
+            */
+
             itemList.Add(temp);
         }
+    }
+
+    void OnPointerEnter()
+    {
+        inv = FindObjectOfType<Inventory>();
+        inv.ShowExplanationStore();
+    }
+
+    void OnPointerExit()
+    {
+        inv.ShowExplanationStore();
     }
 
     private static string AddCommasToNumber(int number)
