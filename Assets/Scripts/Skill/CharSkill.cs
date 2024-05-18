@@ -37,6 +37,8 @@ public class CharSkill : MonoBehaviour
     private static string skill_point_text = "";
     private static Text point_text;
 
+    private static GameObject dy_coll;
+
     private async void Init()
     {
         await InitSkill();
@@ -58,6 +60,18 @@ public class CharSkill : MonoBehaviour
             {
                 CloseSkillUI();
             });
+
+            /*
+            dy_coll = new GameObject("dy_coll");
+            dy_coll.transform.parent = btn_Lobby_close.transform;
+            dy_coll.transform.position = new Vector2(dy_coll.transform.position.x - 100, dy_coll.transform.position.y - 100);
+            dy_coll.AddComponent<RectTransform>().sizeDelta = new Vector2(500, 300);
+            dy_coll.transform.position = new Vector2(dy_coll.transform.position.x - 200, dy_coll.transform.position.y - 200);
+            BoxCollider2D box = dy_coll.AddComponent<BoxCollider2D>();
+            box.size = new Vector2(500, 300);
+            box.isTrigger = true;
+            */
+
             Init();
         }
         else
@@ -253,7 +267,7 @@ public class CharSkill : MonoBehaviour
 
         await UserInfoManager.SetSkillPoint(--skill_point);
         skill_point_text = "SKILL Point : " + skill_point;
-        point_text.text = skill_point_text;
+        //point_text.text = skill_point_text;
 
         LevelUpSkill(skillNum);
     }
@@ -295,6 +309,17 @@ public class CharSkill : MonoBehaviour
     public static void SetExplane(GameObject ex)
     {
         explane = ex;
+    }
+
+    //for build debug
+    public static void SetHitName(string name)
+    {
+        if(point_text == null)
+        {
+            point_text = GameObject.Find("SkillPoint").GetComponentInChildren<Text>();
+        }
+
+        point_text.text = name;
     }
 }
 

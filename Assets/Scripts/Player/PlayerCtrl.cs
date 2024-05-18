@@ -465,6 +465,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             if (hit.collider != null)
             {
                 Debug.Log($"hit in PlayerCtrl : {hit.collider.name}");
+                CharSkill.SetHitName(hit.collider.name);
+            }
+            else
+            {
+                CharSkill.SetHitName("no hit");
             }
         }
     }
@@ -1009,7 +1014,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             Send = GameObject.Find("Send");
         }
 
-        openPartyButton.SetActive(true);
+        openPartyButton?.SetActive(true);
         createPartyButton.SetActive(true);
         InputMessage.SetActive(true);
         Send.SetActive(true);
@@ -1024,7 +1029,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             Send = GameObject.Find("Send");
         }
 
-        openPartyButton.SetActive(false);
+        openPartyButton?.SetActive(false);
         createPartyButton.SetActive(false);
         InputMessage.SetActive(false);
         Send.SetActive(false);
