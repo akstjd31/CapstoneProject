@@ -321,6 +321,9 @@ GameObject:
   - component: {fileID: 5825587941090296931}
   - component: {fileID: 7715814372802380446}
   - component: {fileID: 3880987136748364942}
+  - component: {fileID: 461068818791501652}
+  - component: {fileID: 553423913903183731}
+  - component: {fileID: 2678385003455547443}
   m_Layer: 8
   m_Name: Golem(Boss)
   m_TagString: Enemy
@@ -467,7 +470,10 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 461068818791501652}
+  - {fileID: 553423913903183731}
+  - {fileID: 2678385003455547443}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -625,3 +631,74 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   charType: 
+--- !u!114 &461068818791501652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9090852874685010490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 1
+  m_UseLocal: 1
+--- !u!114 &553423913903183731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9090852874685010490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e7cb724808c322458aa4d15f5035fa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &2678385003455547443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9090852874685010490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 4
+    SynchronizeType: 1
+    Name: isMelee
+  - Type: 4
+    SynchronizeType: 1
+    Name: isRangeAttack
+  - Type: 4
+    SynchronizeType: 1
+    Name: isLazerFire
+  - Type: 4
+    SynchronizeType: 1
+    Name: isSpecialLazerFire
+  - Type: 4
+    SynchronizeType: 1
+    Name: isArmorBuff
+  - Type: 4
+    SynchronizeType: 1
+    Name: isInvincibility
+  - Type: 9
+    SynchronizeType: 1
+    Name: Death
+  m_SynchronizeLayers:
+  - SynchronizeType: 0
+    LayerIndex: 0

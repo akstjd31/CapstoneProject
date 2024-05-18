@@ -91,6 +91,7 @@ public class BossCtrl : MonoBehaviour
     private float armorBuffDefaultCoolTime = 60.0f;
     private float armorBuffElapsedTime;
     private float armorBuffDurationTime = 20.0f;
+    int rand;
 
     // 히든 패턴
     public GameObject jewelColorObj;
@@ -184,7 +185,7 @@ public class BossCtrl : MonoBehaviour
                 agent.isStopped = true;
                 enemyAI.isLookingAtPlayer = false;
                 state = State.INVINCIBILITY;
-                GameObject timer = PhotonNetwork.Instantiate(hiddenPatternTimer.gameObject.name, Vector2.zero, Quaternion.identity);
+                GameObject timer = Instantiate(hiddenPatternTimer.gameObject, Vector2.zero, Quaternion.identity);
                 timer.transform.parent = canvas.transform;
                 timer.GetComponent<RectTransform>().anchoredPosition = new Vector2(160, -60);
                 timerText = timer.GetComponentInChildren<Text>();
@@ -416,12 +417,12 @@ public class BossCtrl : MonoBehaviour
     {
         armorBuffObj = Instantiate(armorBuffPrefab.gameObject, armorBuffPoint.position, Quaternion.identity);
 
-        int rand = Random.Range(0, 2);
-
         ArmorBuff armorBuff = armorBuffObj.GetComponent<ArmorBuff>();
         armorBuff.SetTarget(armorBuffPoint);
         armorBuff.SetDurationTime(armorBuffDurationTime);
-        
+
+        pv.RPC("RandomNumber", RpcTarget.All);
+
         // 전사 디버프
         if (rand == 1)
         {
@@ -438,6 +439,12 @@ public class BossCtrl : MonoBehaviour
         agent.isStopped = false;
         restTime = 1.0f;
         pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
+    }
+
+    [PunRPC]
+    private void RandomNumber()
+    {
+        rand = Random.Range(0, 2);
     }
 
     // 죽음
@@ -581,7 +588,7 @@ public class BossCtrl : MonoBehaviour
     // 레이저 발사 애니메이션 이벤트 함수
     private void LazerFire()
     {
-        GameObject layerObj = PhotonNetwork.Instantiate(lazerPrefab.name, lazerCreatePoint.position, Quaternion.identity);
+        GameObject layerObj = Instantiate(lazerPrefab.gameObject, lazerCreatePoint.position, Quaternion.identity);
 
         Lazer lazer = layerObj.GetComponent<Lazer>();
         lazer.SetDamage(enemy.enemyData.attackDamage * 2.0f);
@@ -608,7 +615,7 @@ public class BossCtrl : MonoBehaviour
     private void RocketFire()
     {
         anim.speed = 0f;
-        GameObject golemArm = PhotonNetwork.Instantiate(rocketArmPrefab.name, rocketFirePoint.position, Quaternion.identity);
+        GameObject golemArm = Instantiate(rocketArmPrefab.gameObject, rocketFirePoint.position, Quaternion.identity);
 
         RocketArm rocketArm = golemArm.GetComponent<RocketArm>();
         rocketArm.SetTargetPos(enemyAI.GetFocusTarget());
@@ -683,8 +690,6 @@ public class BossCtrl : MonoBehaviour
             playerAttackDirection = attackDirection;
             pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.ATTACKED);
         }
-
-        attackerCharType = "";
     }
 
 
@@ -693,6 +698,7 @@ public class BossCtrl : MonoBehaviour
         if (armorBuffObj != null &&
             attackerCharType.Equals(debuffPlayerCharType))
         {
+            attackerCharType = "";
             rigid.velocity = Vector2.zero;
             onHit = false;
             pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
