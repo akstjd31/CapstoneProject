@@ -23,6 +23,7 @@ TagManager:
   - Store
   - PhotonManager
   - Obstacle
+  - Jewel
   - SkillUI
   layers:
   - Default

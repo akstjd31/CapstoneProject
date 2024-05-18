@@ -83,7 +83,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public bool onHit = false;
     public Vector3 enemyAttackDirection;
-    private float attackedDistanceSpeed = 5f;
+    public float knockBackDistanceSpeed;
+    public float originalKnockBackDistanceSpeed;
     private float attackAnimSpeed;
 
     private bool isDeath = false;
@@ -114,6 +115,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     [SerializeField] private int randIdx = -1;
     [SerializeField] private Item equipItem;
 
+    private Transform jewel;
+    
     private GameObject openPartyButton;
     private GameObject createPartyButton;
     private GameObject InputMessage;
@@ -270,6 +273,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
                     // 플레이어가 보고 있는 방향에 따른 공격방향
                     //SetDirection();
+
+                    if (jewel != null)
+                    {
+                        jewel.GetComponent<PhotonView>().RPC("ChangeJewelColor", RpcTarget.All);
+                        //InteractJewel(mouseWorldPosition);
+                    }
 
                     if (status.charType.Equals("Warrior"))
                     {
@@ -450,7 +459,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
             else
             {
-
+                rigid.velocity = Vector2.zero;
             }
         }
 
@@ -663,33 +672,34 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     // 넉백
+
     private void KnockBack()
     {
         if (onHit && status.HP > 0)
         {
             if (enemyAttackDirection.x < 0f)
             {
-                this.transform.localScale = new Vector3(1, 1, 1);
+                this.transform.localScale = new Vector3(-1, 1, 1);
             }
             else
             {
-                this.transform.localScale = new Vector3(-1, 1, 1);
+                this.transform.localScale = new Vector3(1, 1, 1);
             }
 
             anim.Play("Idle", -1, 0f);
             anim.speed = 0;
             rigid.velocity = Vector2.zero;
 
-            rigid.velocity = enemyAttackDirection.normalized * attackedDistanceSpeed;
+            rigid.velocity = enemyAttackDirection.normalized * knockBackDistanceSpeed;
 
-            float attackedSpeedDropMultiplier = 6f;
-            attackedDistanceSpeed -= attackedDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime;
+            float attackedSpeedDropMultiplier = 7f;
+            knockBackDistanceSpeed -= knockBackDistanceSpeed * attackedSpeedDropMultiplier * Time.deltaTime;
 
-            if (attackedDistanceSpeed < 0.1f)
+            if (knockBackDistanceSpeed < 0.1f)
             {
                 rigid.velocity = Vector2.zero;
                 onHit = false;
-                attackedDistanceSpeed = 5f;
+                knockBackDistanceSpeed = originalKnockBackDistanceSpeed;
                 anim.speed = 1f;
                 ChangeState(State.NORMAL);
             }
@@ -740,18 +750,45 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             if (hitEnemies != null)
             {
-                EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+                Enemy enemy = hitEnemies.GetComponent<Enemy>();
 
-                if (enemyCtrl != null && !enemyCtrl.onHit)
+                if (enemy != null)
                 {
-                    //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
-                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
-                    enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+                    if (enemy.enemyData.enemyType == EnemyType.BOSS)
+                    {
+                        float rand = Random.Range(0, 100f);
+                        BossCtrl bossCtrl = hitEnemies.GetComponent<BossCtrl>();
+
+                        if (bossCtrl != null && !bossCtrl.onHit)
+                        {
+                            if (rand > enemy.enemyData.evasionRate)
+                            {
+                                bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
+                                bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+                            }
+                            else
+                            {
+                                // 무적으로 인한 회피 or 확률로 나온 회피
+                                Debug.Log("회피!");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        EnemyCtrl enemyCtrl = hitEnemies.GetComponent<EnemyCtrl>();
+
+                        if (enemyCtrl != null && !enemyCtrl.onHit)
+                        {
+                            //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
+                            enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
+                            enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+                        }
+                    }
                 }
             }
         }
     }
-
+        
 
     void AttackDirection()
     {
@@ -875,6 +912,33 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 partySystemScript.leavingParty.gameObject.SetActive(false);
             }
+        }
+    }
+
+    private void InteractJewel(Vector2 mousePosition)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+
+        Debug.Log(hit.collider.name);
+        if (hit.collider != null && hit.collider.CompareTag("Jewel"))
+        {
+            hit.collider.GetComponent<BejeweledPillar>().ChangeJewelColor();
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.collider.CompareTag("Jewel"))
+        {
+            jewel = col.collider.transform;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D col)
+    {
+        if (col.collider.CompareTag("Jewel"))
+        {
+            jewel = null;
         }
     }
 

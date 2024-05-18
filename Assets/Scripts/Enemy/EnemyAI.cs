@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour
     public EnemySO enemySO;
 
     private NavMeshAgent agent;
+    private EnemyCtrl enemyCtrl;
 
     [SerializeField] private Transform target1, target2; // 2인 멀티 플레이어
 
@@ -31,6 +32,7 @@ public class EnemyAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        enemyCtrl = this.GetComponent<EnemyCtrl>();
         agent = this.GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
@@ -76,9 +78,6 @@ public class EnemyAI : MonoBehaviour
             {
                 agent.SetDestination(focusTarget.position);
 
-                if (isLookingAtPlayer)
-                    FlipHorizontalRelativeToTarget(focusTarget.position);
-
                 CheckAggroMeterAndChangeFocus();
             }
             else
@@ -90,6 +89,11 @@ public class EnemyAI : MonoBehaviour
                 }
             }
         }
+    }
+
+    public TriggerCheck GetTriggerCheck()
+    {
+        return triggerCheck;
     }
 
     private void CheckAggroMeterAndChangeFocus()
@@ -130,19 +134,6 @@ public class EnemyAI : MonoBehaviour
         yield return new WaitForSeconds(waitForSec);
         FollowClosetPlayer();
         //spriteRenderer.color = Color.red;
-    }
-
-    // 적의 위치에 따른 스케일 뒤집기
-    private void FlipHorizontalRelativeToTarget(Vector2 target)
-    {
-        if (target.x - this.transform.position.x > 0)
-        {
-            this.transform.localScale = new Vector3(1, 1, 1);
-        }
-        else
-        {
-            this.transform.localScale = new Vector3(-1, 1, 1);
-        }
     }
 
     // 포커싱 대상 정하기 (적과 플레이어와 가까우면 포커싱)

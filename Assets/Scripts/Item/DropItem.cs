@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 // 드랍되는 아이템이 정해지면, 실제로 생성하여 드랍시키는 스크립트
 public class DropItem : MonoBehaviour
@@ -28,6 +29,7 @@ public class DropItem : MonoBehaviour
         this.charType = charType;
     }
 
+    [PunRPC]
     public void SpawnDroppedItem()
     {
         ItemManager itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();

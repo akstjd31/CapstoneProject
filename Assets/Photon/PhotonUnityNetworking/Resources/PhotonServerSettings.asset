@@ -114,6 +114,12 @@ MonoBehaviour:
   - SyncPlayerData
   - SetRandIndex
   - InitializeArrow
+  - BossKnockbackRPC
+  - SpawnDroppedItem
+  - SetState
+  - ChangeStateRPC
+  - ChangeJewelColor
+  - RandomNumber
   - ChangeStateRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
