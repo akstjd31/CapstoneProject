@@ -23,6 +23,7 @@ TagManager:
   - Store
   - PhotonManager
   - Obstacle
+  - Jewel
   - SkillUI
   - Chest
   layers:
@@ -61,4 +62,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Skill_UI
+    uniqueID: 3762606909
     locked: 0

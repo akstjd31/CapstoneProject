@@ -1952,6 +1952,8 @@ MonoBehaviour:
     m_Bits: 256
   onHit: 0
   enemyAttackDirection: {x: 0, y: 0, z: 0}
+  knockBackDistanceSpeed: 0
+  originalKnockBackDistanceSpeed: 0
   isMoveRoom: 0
   itemCheckPoint: {fileID: 5333576331982244535}
   itemCheckRange: 0.8
