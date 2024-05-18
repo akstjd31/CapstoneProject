@@ -458,7 +458,7 @@ public class BossCtrl : MonoBehaviour
         {
             dropItem.GetComponent<PhotonView>().RPC("SpawnDroppedItem", RpcTarget.All);
 
-            PhotonNetwork.Destroy(hpBar.gameObject);
+            Destroy(hpBar.gameObject);
             PhotonNetwork.Destroy(this.gameObject);
         }
     }
