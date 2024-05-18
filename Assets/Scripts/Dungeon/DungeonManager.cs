@@ -64,14 +64,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         {
             if(endRooms.Count < 3)
             {
-                for(int i = rooms.Count - 1; i >= 0; i--)
-                {
-                    rooms[i].GetComponent<RoomController>().Reset();
-                }
-                PhotonNetwork.Destroy(spawnPoint);
-                spawnPoint = PhotonNetwork.Instantiate(mapDir + "Spawn", new Vector3(500.0f, 500.0f, 0.0f), Quaternion.identity);
-                isMapCreate = false;
-                bossRoomDistance = 0;
+                DungeonReset();
             }
             for(int i = 0; i < endRooms.Count; i++)
             {
@@ -147,5 +140,25 @@ public class DungeonManager : MonoBehaviourPunCallbacks
                 }
             }
         }
+    }
+    void DungeonReset()
+    {
+        for (int i = rooms.Count - 1; i >= 0; i--)
+        {
+            rooms[i].GetComponent<RoomController>().Reset();
+            rooms.Remove(rooms[i]);
+        }
+        for (int i = endRooms.Count - 1; i >= 0; i--)
+        {
+            endRooms.Remove(endRooms[i]);
+        }
+        roomNum = 8;
+        createdRoomNum = 1;
+        coroutineNum = 0;
+        mapCreateTimer = 0.0f;
+        PhotonNetwork.Destroy(spawnPoint);
+        spawnPoint = PhotonNetwork.Instantiate(mapDir + "Spawn", new Vector3(500.0f, 500.0f, 0.0f), Quaternion.identity);
+        isMapCreate = false;
+        bossRoomDistance = 0;
     }
 }

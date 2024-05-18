@@ -14,9 +14,10 @@ public class ArcherActiveSkill : ActiveSkill
     // Start is called before the first frame update
     void Start()
     {
-        Hud = GameObject.Find("LocalHUD").GetComponent<HUD>();
-        if(Hud != null)
+        isInDungeon = false;
+        if (GameObject.Find("LocalHUD"))
         {
+            Hud = GameObject.Find("LocalHUD").GetComponent<HUD>();
             isInDungeon = true;
         }
         if(isInDungeon)

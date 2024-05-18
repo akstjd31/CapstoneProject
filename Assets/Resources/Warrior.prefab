@@ -1845,7 +1845,6 @@ GameObject:
   - component: {fileID: 7167822924147623151}
   - component: {fileID: 8926237017230244871}
   - component: {fileID: 7176222570426465225}
-  - component: {fileID: 4698027752933056346}
   m_Layer: 7
   m_Name: Warrior
   m_TagString: Player
@@ -2255,35 +2254,22 @@ MonoBehaviour:
   playerCtrl: {fileID: 0}
   playerPV: {fileID: 0}
   charSkillCoolTime: 0
+  weaponSkillCoolTime: 0
   durationTime: 0
   isInDungeon: 0
   Hud: {fileID: 0}
-  effect: {fileID: 0}
+  weaponEffect: {fileID: 0}
+  charEffect: {fileID: 0}
+  WeaponEffectDir: Effects/WeaponSkill/
+  charEffectDir: Effects/CharSkill/
   warriorSkillSprite: {fileID: 21300000, guid: 759d2db469762114a91216bb2268dffe, type: 3}
---- !u!114 &4698027752933056346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4410033845721660709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1db13b9210e36dd46be990fd1d414273, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  status: {fileID: 0}
-  playerCtrl: {fileID: 0}
-  playerPV: {fileID: 0}
-  charSkillCoolTime: 0
-  durationTime: 0
-  isInDungeon: 1
-  Hud: {fileID: 0}
-  weaponSkillCoolTime: 0
-  weaponSkillSprite: {fileID: 0}
-  effect: {fileID: 0}
-  effectDir: Effects/WeaponSkill/
   thisWeaponSkillCoolTime: 0
+  weaponSkillSprite:
+  - {fileID: 21300000, guid: 987ed8fda16f2cb4a8430bed76e3ac87, type: 3}
+  - {fileID: 21300000, guid: cc69b1c750639a94caef77d2e51ecb12, type: 3}
+  - {fileID: 21300000, guid: 7e013bb77493f4544ba03068ea16e205, type: 3}
+  - {fileID: 21300000, guid: 807818eb32253794c9c48246e7be0007, type: 3}
+  - {fileID: 21300000, guid: 3cc8276cee501894db48e5ec1e7a9513, type: 3}
 --- !u!1 &4457435718953625305
 GameObject:
   m_ObjectHideFlags: 0

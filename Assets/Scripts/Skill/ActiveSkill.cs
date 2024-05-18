@@ -9,10 +9,15 @@ using UnityEngine.UI;
 public class ActiveSkill : Skill
 {
     public float charSkillCoolTime;
+    public float weaponSkillCoolTime;
     public float durationTime;
     string charType;
-    public bool isInDungeon = true;
+    public bool isInDungeon = false;
     public HUD Hud = null;
+    public GameObject weaponEffect;
+    public GameObject charEffect;
+    public string WeaponEffectDir = "Effects/WeaponSkill/";
+    public string charEffectDir = "Effects/CharSkill/";
 
     // Start is called before the first frame update
     void Start()

@@ -7,23 +7,29 @@ using UnityEngine.UI;
 public class WarriorActiveSkill : ActiveSkill
 {
     Collider2D[] colliders;
-    float warriorActiveSkillCoolTime = 60.0f;
-    float warriorActiveSkillDurationTime = 10.0f;
-    float warriorActiveSkillRange = 8.0f;
-    public GameObject effect;
+    float setCharSkillCoolTime = 60.0f;
+    float setCharSkillDurationTime = 10.0f;
+    float setCharSkillRange = 8.0f;
     public Sprite warriorSkillSprite;
-    string effectDir = "Effects/CharSkill/";
+
+    
+    float setWeaponSkillCoolTime;
+    public Sprite[] weaponSkillSprite = new Sprite[5];
+    string swordEffectDir = "Sword/";
 
     // Start is called before the first frame update
     void Start()
     {
-        Hud = GameObject.Find("LocalHUD").GetComponent<HUD>();
-        if(Hud != null)
+        isInDungeon = false;
+        if (GameObject.Find("LocalHUD"))
         {
+            Hud = GameObject.Find("LocalHUD").GetComponent<HUD>();
             isInDungeon = true;
         }
-        if(isInDungeon)
+        if (isInDungeon)
         {
+            charSkillCoolTime = 0.0f;
+            weaponSkillCoolTime = 0.0f;
             Hud.charSkillImage.sprite = warriorSkillSprite;
         }
         colliders = null;
@@ -32,9 +38,11 @@ public class WarriorActiveSkill : ActiveSkill
     // Update is called once per frame
     void Update()
     {
-        if(isInDungeon)
+
+        if (isInDungeon) // 스킬 쿨타임 UI
         {
-            if(charSkillCoolTime > 0.0f)
+            //직업 쿨타임
+            if (charSkillCoolTime > 0.0f)
             {
                 Hud.charSkillCoolTime.canvasRenderer.SetAlpha(1f);
                 Hud.charSkillCoolTime.raycastTarget = true;
@@ -45,30 +53,108 @@ public class WarriorActiveSkill : ActiveSkill
                 Hud.charSkillCoolTime.canvasRenderer.SetAlpha(0f);
                 Hud.charSkillCoolTime.raycastTarget = false;
             }
-            Hud.charSkillImage.fillAmount = (warriorActiveSkillCoolTime - charSkillCoolTime) / warriorActiveSkillCoolTime;
-        }
-        charSkillCoolTime -= Time.deltaTime;
-        durationTime -= Time.deltaTime;
-        if (Input.GetKeyUp(KeyCode.E) && charSkillCoolTime < 0.0f)
-        {
-            effect = PhotonNetwork.Instantiate(effectDir + "WarriorSkillEffect", new Vector2(this.transform.position.x, this.transform.position.y + 1.0f), Quaternion.identity);
-            colliders = Physics2D.OverlapCircleAll(transform.position, warriorActiveSkillRange);
-            for (int i = 0; i < colliders.Length; i++)
+            Hud.charSkillImage.fillAmount = (setCharSkillCoolTime - charSkillCoolTime) / setCharSkillCoolTime;
+
+            //직업 스킬
+            charSkillCoolTime -= Time.deltaTime;
+            durationTime -= Time.deltaTime;
+            if (Input.GetKeyUp(KeyCode.E) && charSkillCoolTime < 0.0f)
             {
-                if (colliders[i].gameObject.CompareTag("Enemy"))
+                charEffect = PhotonNetwork.Instantiate(charEffectDir + "WarriorSkillEffect", new Vector2(this.transform.position.x, this.transform.position.y + 1.0f), Quaternion.identity);
+                colliders = Physics2D.OverlapCircleAll(transform.position, setCharSkillRange);
+                for (int i = 0; i < colliders.Length; i++)
                 {
-                    if (playerPV.ViewID == colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().GetFirstTarget().GetComponent<PhotonView>().ViewID)
+                    if (colliders[i].gameObject.CompareTag("Enemy"))
                     {
-                        colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter1 += 100;
+                        if (playerPV.ViewID == colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().GetFirstTarget().GetComponent<PhotonView>().ViewID)
+                        {
+                            colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter1 += 100;
+                        }
+                        else
+                        {
+                            colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter2 += 100;
+                        }
+                        durationTime = setCharSkillDurationTime;
                     }
-                    else
+                }
+                charSkillCoolTime = setCharSkillCoolTime;
+            }
+
+            weaponSkillCoolTime -= Time.deltaTime;
+            if (playerCtrl.GetEquipItem().itemType == ItemType.LEGENDARY)
+            {
+                //무기 쿨타임
+                Hud.weaponSkillImage.transform.parent.gameObject.SetActive(true);
+                if (weaponSkillCoolTime > 0.0f)
+                {
+                    Hud.weaponSkillCoolTime.canvasRenderer.SetAlpha(1f);
+                    Hud.weaponSkillCoolTime.raycastTarget = true;
+                    Hud.weaponSkillCoolTime.text = weaponSkillCoolTime.ToString("F1");
+                }
+                else
+                {
+                    Hud.weaponSkillCoolTime.canvasRenderer.SetAlpha(0f);
+                    Hud.weaponSkillCoolTime.raycastTarget = false;
+                }
+                Hud.weaponSkillImage.fillAmount = (setWeaponSkillCoolTime - weaponSkillCoolTime) / setWeaponSkillCoolTime;
+
+                //무기 스킬
+                if (playerCtrl.GetEquipItem().itemID == 160) // Legendary_Demon_Sword
+                {
+                    Hud.weaponSkillImage.sprite = weaponSkillSprite[0];
+                    setWeaponSkillCoolTime = 50.0f;
+                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
-                        colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter2 += 100;
+                        DemonSowrdSkill();
+                        weaponSkillCoolTime = setWeaponSkillCoolTime;
                     }
-                    durationTime = warriorActiveSkillDurationTime;
+                }
+                else if (playerCtrl.GetEquipItem().itemID == 161) // Great_Sword
+                {
+                    Hud.weaponSkillImage.sprite = weaponSkillSprite[1];
+                    setWeaponSkillCoolTime = 60.0f;
+
+                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    {
+                        GreatSwordSkill();
+                        weaponSkillCoolTime = setWeaponSkillCoolTime;
+                    }
+                }
+                else if (playerCtrl.GetEquipItem().itemID == 162) //DarkGalaxy_Dagger
+                {
+                    Hud.weaponSkillImage.sprite = weaponSkillSprite[2];
+                    setWeaponSkillCoolTime = 30.0f;
+                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    {
+                        DarkGalaxyDaggerSkill();
+                        weaponSkillCoolTime = setWeaponSkillCoolTime;
+                    }
+                }
+                else if (playerCtrl.GetEquipItem().itemID == 163) // Icycle_Sword
+                {
+                    Hud.weaponSkillImage.sprite = weaponSkillSprite[3];
+                    setWeaponSkillCoolTime = 40.0f;
+                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    {
+                        IcycleSwordSkill();
+                        weaponSkillCoolTime = setWeaponSkillCoolTime;
+                    }
+                }
+                else if (playerCtrl.GetEquipItem().itemID == 164) // King_Maker
+                {
+                    Hud.weaponSkillImage.sprite = weaponSkillSprite[4];
+                    setWeaponSkillCoolTime = 60.0f;
+                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    {
+                        KingMakerSkill();
+                        weaponSkillCoolTime = setWeaponSkillCoolTime;
+                    }
                 }
             }
-            charSkillCoolTime = warriorActiveSkillCoolTime;
+            else
+            {
+                Hud.weaponSkillImage.transform.parent.gameObject.SetActive(false);
+            }
         }
 
         // if (durationTime < 0.0f && Enemys != null)
@@ -87,5 +173,27 @@ public class WarriorActiveSkill : ActiveSkill
         //         }
         //     }
         // }
+    }
+
+    void DemonSowrdSkill()
+    {
+        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "DemonSwordSkillEffect", this.transform.position, Quaternion.identity);
+    }
+    void GreatSwordSkill()
+    {
+        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "GreatSwordSkillEffect", this.transform.position, Quaternion.identity);
+    }
+    void DarkGalaxyDaggerSkill()
+    {
+        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "DarkGalaxySwordSkillEffect", this.transform.position, Quaternion.identity);
+    }
+    void IcycleSwordSkill()
+    {
+        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "IcycleSwordSkillEffect", this.transform.position, Quaternion.identity);
+    }
+    void KingMakerSkill()
+    {
+        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "KingMakerSwordBuffEffect", this.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "KingMakerSwordSkillEffect", this.transform.position, Quaternion.identity);
     }
 }
