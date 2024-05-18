@@ -29,6 +29,7 @@ public class BejeweledPillar : MonoBehaviour
         jewelObj.GetComponent<SpriteRenderer>().sprite = jewelSprite[rand];
     }
 
+    [PunRPC]
     private void RandomIndexRPC()
     {
         rand = Random.Range(0, 3);

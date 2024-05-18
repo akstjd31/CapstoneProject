@@ -161,20 +161,20 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         npcParent = GameObject.Find("npc"); // find npc
         npcList = null;
 
-        //Skill UI
-        skill_explane = GameObject.Find("Skill_Explane");
-        Explane_Pos.skill_explane = skill_explane;
-        skill_explane.SetActive(false);
-
         ChangeState(State.NORMAL);
         items = null;
 
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
+            //Skill UI
+            skill_explane = GameObject.Find("Skill_Explane");
+            Explane_Pos.skill_explane = skill_explane;
+            skill_explane.SetActive(false);
+
             if (pv.IsMine)
             {
-                PhotonManager.playerWeaponID = randIdx;
+                GameObject.FindGameObjectWithTag("PhotonManager").GetComponent<PhotonManager>().playerWeaponIdx = randIdx;
             }
 
             //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
@@ -193,7 +193,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 던전 씬
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
-            randIdx = PhotonManager.playerWeaponID;
+            randIdx = GameObject.FindGameObjectWithTag("PhotonManager").GetComponent<PhotonManager>().playerWeaponIdx;
         }
 
         pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);

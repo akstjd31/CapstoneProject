@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
             remoteHUD.hpBar.value = this.remotePlayerStatus.HP;
         }
         // 원격 플레이어 생존 시
-        else if (localPlayerStatus == null)
+        else if (remotePlayerStatus != null)
         {
             remoteHUD.nickName.text = this.remotePlayerStatus.GetComponent<PhotonView>().Controller.NickName;
             remoteHUD.hpBarText.text = string.Format("{0} / {1}", remotePlayerStatus.HP, remotePlayerStatus.MAXHP);
@@ -59,7 +59,7 @@ public class UIManager : MonoBehaviour
         }
 
         // 로컬 플레이어 생존 시
-        else if (remotePlayerStatus == null)
+        else if (localPlayerStatus != null)
         {
             localHUD.hpBarText.text = string.Format("{0} / {1}", localPlayerStatus.HP, localPlayerStatus.MAXHP);
 
@@ -69,6 +69,10 @@ public class UIManager : MonoBehaviour
             }
 
             localHUD.hpBar.value = this.localPlayerStatus.HP;
+        }
+        else
+        {
+
         }
     }
 }
