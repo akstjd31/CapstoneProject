@@ -397,19 +397,10 @@ public class BossCtrl : MonoBehaviour
         anim.SetBool("isInvincibility", true);
     }
 
-
-    private void SecialLazerEndCheck()
-    {
-        if (specialLazerFire)
-        {
-            specialLazerFire = false;
-        }
-    }
-
     // 중간 패턴 1 : 즉사 레이저 애니메이션 이벤트 함수
     private void SpecialLazer()
     {
-        GameObject lazerPrefab = PhotonNetwork.Instantiate(warningLazerPrefab.name, this.transform.position, Quaternion.identity);
+        GameObject lazerPrefab = Instantiate(warningLazerPrefab.gameObject, this.transform.position, Quaternion.identity);
         WarningLazer warningLazer = lazerPrefab.GetComponent<WarningLazer>();
 
         warningLazer.SetTarget(enemyAI.GetFocusTarget());
@@ -417,12 +408,13 @@ public class BossCtrl : MonoBehaviour
         agent.isStopped = false;
         pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
         restTime = 0.0f;
+        onHit = false;
     }
 
     // 중간 패턴 2 : 아머 강화 애니메이션 이벤트 함수
     private void ArmorBuff()
     {
-        armorBuffObj = PhotonNetwork.Instantiate(armorBuffPrefab.name, armorBuffPoint.position, Quaternion.identity);
+        armorBuffObj = Instantiate(armorBuffPrefab.gameObject, armorBuffPoint.position, Quaternion.identity);
 
         int rand = Random.Range(0, 2);
 
@@ -582,6 +574,7 @@ public class BossCtrl : MonoBehaviour
             restTime = 0.0f;
             pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
             lazerFire = false;
+            onHit = false;
         }
     }
 
@@ -625,6 +618,7 @@ public class BossCtrl : MonoBehaviour
         anim.speed = 1f;
         restTime = 0.0f;
         pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
+        onHit = false;
     }
 
     // 플레이어한테 피격당했을 떄 RPC
@@ -683,15 +677,16 @@ public class BossCtrl : MonoBehaviour
     [PunRPC]
     public void BossKnockbackRPC(Vector3 attackDirection)
     {
+        onHit = true;
         if (state == State.MOVE || state == State.MELEE || state == State.NORMAL)
         {
-            onHit = true;
             playerAttackDirection = attackDirection;
             pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.ATTACKED);
         }
 
         attackerCharType = "";
     }
+
 
     private void KnockBack()
     {
