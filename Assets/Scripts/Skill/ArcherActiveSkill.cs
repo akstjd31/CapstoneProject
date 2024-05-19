@@ -9,13 +9,11 @@ public class ArcherActiveSkill : ActiveSkill
     float setCharSkillCoolTime = 60.0f;
     float setCharSkillDrationTime = 10.0f;
     public Sprite archerSkillSprite;
-    // Start is called before the first frame update
 
-    
     float setWeaponSkillCoolTime;
     public Sprite[] weaponSkillSprite = new Sprite[5];
     string bowEffectDir = "Bow/";
-
+    // Start is called before the first frame update
     void Start()
     {
         isInDungeon = false;
@@ -35,10 +33,10 @@ public class ArcherActiveSkill : ActiveSkill
     // Update is called once per frame
     void Update()
     {
-        if (isInDungeon)
+        if(isInDungeon)
         {
             //직업 쿨타임
-            if (charSkillCoolTime > 0.0f)
+            if(charSkillCoolTime > 0.0f)
             {
                 Hud.charSkillCoolTime.canvasRenderer.SetAlpha(1f);
                 Hud.charSkillCoolTime.raycastTarget = true;
@@ -50,29 +48,29 @@ public class ArcherActiveSkill : ActiveSkill
                 Hud.charSkillCoolTime.raycastTarget = false;
             }
             Hud.charSkillImage.fillAmount = (setCharSkillCoolTime - charSkillCoolTime) / setCharSkillCoolTime;
-
-            //직업 스킬
-            charSkillCoolTime -= Time.deltaTime;
-            durationTime -= Time.deltaTime;
-            if (Input.GetKeyUp(KeyCode.E) && charSkillCoolTime < 0.0f)
-            {
-                charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillcharEffect", this.transform.position, Quaternion.identity);
-                status.moveSpeed += status.GetDefaultMoveSpeed() * 0.3f;
-                durationTime = setCharSkillDrationTime;
-                charSkillCoolTime = setCharSkillCoolTime;
-            }
-            if (durationTime > 0.0f)
-            {
-                charEffect.transform.position = new Vector2(this.transform.position.x + (0.5f * this.transform.localScale.x), this.transform.position.y + 0.3f);
-                charEffect.transform.localScale = new Vector2(-this.transform.localScale.x, this.transform.localScale.y);
-            }
-
-            if (durationTime < 0.0f && charEffect != null)
-            {
-                PhotonNetwork.Destroy(charEffect);
-                status.moveSpeed = status.GetDefaultMoveSpeed();
-            }
-
+        }
+        
+        //직업 스킬
+        charSkillCoolTime -= Time.deltaTime;
+        durationTime -= Time.deltaTime;
+        if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
+        {
+            charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillcharEffect", this.transform.position, Quaternion.identity);
+            status.moveSpeed += status.GetDefaultMoveSpeed() * 0.3f;
+            durationTime = setCharSkillDrationTime;
+            charSkillCoolTime = setCharSkillCoolTime;
+        }
+        if(durationTime > 0.0f) 
+        {
+            charEffect.transform.position = new Vector2(this.transform.position.x + (0.5f * this.transform.localScale.x), this.transform.position.y + 0.3f);
+            charEffect.transform.localScale = new Vector2(-this.transform.localScale.x, this.transform.localScale.y);
+        }
+        
+        if(durationTime < 0.0f && charEffect != null)
+        {
+            PhotonNetwork.Destroy(charEffect);
+            status.moveSpeed = status.GetDefaultMoveSpeed();
+        }
 
             weaponSkillCoolTime -= Time.deltaTime;
             if (playerCtrl.GetEquipItem().itemType == ItemType.LEGENDARY)
@@ -97,7 +95,7 @@ public class ArcherActiveSkill : ActiveSkill
                 {
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[0];
                     setWeaponSkillCoolTime = 60.0f;
-                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         DarkLongBowSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
@@ -108,9 +106,9 @@ public class ArcherActiveSkill : ActiveSkill
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[1];
                     setWeaponSkillCoolTime = 50.0f;
 
-                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
-                        FirePhoenixBowSkill();
+                        FirePhoenixBow();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
                     }
                 }
@@ -118,7 +116,7 @@ public class ArcherActiveSkill : ActiveSkill
                 {
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[2];
                     setWeaponSkillCoolTime = 0.0f;
-                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime <= 0.0f)
                     {
                         IcycleWindBowSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
@@ -128,7 +126,7 @@ public class ArcherActiveSkill : ActiveSkill
                 {
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[3];
                     setWeaponSkillCoolTime = 40.0f;
-                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         ShiningCompoundBowSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
@@ -138,7 +136,7 @@ public class ArcherActiveSkill : ActiveSkill
                 {
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[4];
                     setWeaponSkillCoolTime = 60.0f;
-                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         PathfinderSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
@@ -149,16 +147,15 @@ public class ArcherActiveSkill : ActiveSkill
             {
                 Hud.weaponSkillImage.transform.parent.gameObject.SetActive(false);
             }
-        }
     }
 
     void DarkLongBowSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DarkLongBowSkillEffect", this.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DemonSwordSkillEffect", this.transform.position, Quaternion.identity);
     }
-    void FirePhoenixBowSkill()
+    void FirePhoenixBow()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "FirePhoenixBowSkillEffect", this.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "GreatSwordSkillEffect", this.transform.position, Quaternion.identity);
     }
     void IcycleWindBowSkill()
     {
@@ -173,5 +170,4 @@ public class ArcherActiveSkill : ActiveSkill
         PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "KingMakerSwordBuffEffect", this.transform.position, Quaternion.identity);
         PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "KingMakerSwordSkillEffect", this.transform.position, Quaternion.identity);
     }
-
 }
