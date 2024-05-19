@@ -886,15 +886,15 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 19
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: b8a3f9debf9a740ebba84d95c6700721, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.40625, y: 0.53125}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2538530464332269873
@@ -3251,6 +3251,7 @@ MonoBehaviour:
   attackRange: 0.5
   firePoint: {fileID: 283142515673125238}
   projectile: {fileID: 2763029994035334603, guid: f6d12d5adff682a4c9ea7677c94b8267, type: 3}
+  goldPrefab: {fileID: 8344386151322497146, guid: d6b98312a42aeae4e82c0d49d3542e39, type: 3}
 --- !u!114 &6936298984088212374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3395,6 +3396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 277907847e604a34194ca9c18dcbf805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  charType: 
 --- !u!1 &6217272189837564785
 GameObject:
   m_ObjectHideFlags: 0

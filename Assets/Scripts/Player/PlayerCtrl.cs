@@ -350,6 +350,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     if(inventory.gameObject.activeSelf)
                     {
                         inventory.FreshSlot();  // 아이템 리스트를 인벤토리에 추가한다. 
+                        UserInfoManager.SetUserMoney_Async(status.money);
                         GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
                     }
                 }

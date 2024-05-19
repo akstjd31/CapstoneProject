@@ -107,7 +107,7 @@ public class BossCtrl : MonoBehaviour
     [SerializeField] private GameObject onTriggerCheckObj;
     [SerializeField] private TriggerCheck triggerCheck;
 
-    //private bool isInvincibility = false;
+    public Transform goldPrefab;
 
     public State GetState()
     {
@@ -664,6 +664,36 @@ public class BossCtrl : MonoBehaviour
                 rigid.velocity = Vector2.zero;
                 dropCalc.SetLevel(status.level);    // 죽기 전에 본인을 죽인 플레이어의 레벨정보를 넘겨준다.
                 dropItem.SetCharType(status.charType);
+
+                status.curExp += 1;
+                status.CheckLevelUp();
+
+                Status targetStatus = null;
+                // 적을 잡으면 모든 플레이어한테 골드, 경험치를 부여
+                if (playerPV.transform.Equals(enemyAI.GetFirstTarget()))
+                {
+                    targetStatus = enemyAI.GetSecondTarget() != null ? enemyAI.GetSecondTarget().GetComponent<Status>() : null;
+
+                    if (targetStatus != null)
+                    {
+                        targetStatus.curExp += 1;
+                        targetStatus.CheckLevelUp();
+                    }
+                }
+                else
+                {
+                    targetStatus = enemyAI.GetFirstTarget() != null ? enemyAI.GetFirstTarget().GetComponent<Status>() : null;
+
+                    if (targetStatus != null)
+                    {
+                        targetStatus.curExp += 1;
+                        targetStatus.CheckLevelUp();
+                    }
+                }
+
+                GameObject gold = PhotonNetwork.Instantiate("Enemy/" + goldPrefab.name, this.transform.position, Quaternion.identity);
+                gold.GetComponent<GoldItem>().SetStatus(status, targetStatus);
+
                 return;
             }
         }
