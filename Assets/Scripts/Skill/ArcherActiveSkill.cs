@@ -24,6 +24,8 @@ public class ArcherActiveSkill : ActiveSkill
         }
         if(isInDungeon)
         {
+            charSkillCoolTime = 0.0f;
+            weaponSkillCoolTime = 0.0f;
             Hud.charSkillImage.sprite = archerSkillSprite;
         }
     }
