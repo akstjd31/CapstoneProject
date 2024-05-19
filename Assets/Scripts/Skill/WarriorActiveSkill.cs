@@ -58,7 +58,7 @@ public class WarriorActiveSkill : ActiveSkill
             //직업 스킬
             charSkillCoolTime -= Time.deltaTime;
             durationTime -= Time.deltaTime;
-            if (Input.GetKeyUp(KeyCode.E) && charSkillCoolTime < 0.0f)
+            if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
             {
                 charEffect = PhotonNetwork.Instantiate(charEffectDir + "WarriorSkillEffect", new Vector2(this.transform.position.x, this.transform.position.y + 1.0f), Quaternion.identity);
                 colliders = Physics2D.OverlapCircleAll(transform.position, setCharSkillRange);
@@ -103,9 +103,9 @@ public class WarriorActiveSkill : ActiveSkill
                 {
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[0];
                     setWeaponSkillCoolTime = 50.0f;
-                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
-                        DemonSowrdSkill();
+                        DemonSwordSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
                     }
                 }
@@ -114,7 +114,7 @@ public class WarriorActiveSkill : ActiveSkill
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[1];
                     setWeaponSkillCoolTime = 60.0f;
 
-                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         GreatSwordSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
@@ -124,7 +124,7 @@ public class WarriorActiveSkill : ActiveSkill
                 {
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[2];
                     setWeaponSkillCoolTime = 30.0f;
-                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         DarkGalaxyDaggerSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
@@ -134,7 +134,7 @@ public class WarriorActiveSkill : ActiveSkill
                 {
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[3];
                     setWeaponSkillCoolTime = 40.0f;
-                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         IcycleSwordSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
@@ -144,7 +144,7 @@ public class WarriorActiveSkill : ActiveSkill
                 {
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[4];
                     setWeaponSkillCoolTime = 60.0f;
-                    if (Input.GetKeyUp(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         KingMakerSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
@@ -175,7 +175,7 @@ public class WarriorActiveSkill : ActiveSkill
         // }
     }
 
-    void DemonSowrdSkill()
+    void DemonSwordSkill()
     {
         PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "DemonSwordSkillEffect", this.transform.position, Quaternion.identity);
     }
