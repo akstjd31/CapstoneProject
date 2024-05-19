@@ -2153,7 +2153,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: a7ec342e70cd7514cbc0fcfb6beeeaa2, type: 3}
+  m_Texture: {fileID: 2800000, guid: eb5327856761e1547b33b2c91f9b1038, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -2364,7 +2364,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 0d6a3cfcb3257dc4295af5589ae69dad, type: 3}
+  m_Texture: {fileID: 2800000, guid: 8f3a94b31064fc746b1579a7c062e878, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -2777,6 +2777,7 @@ MonoBehaviour:
   inputPassword: {fileID: 0}
   inputButton: {fileID: 0}
   charType: 
+  playerWeaponIdx: 0
 --- !u!4 &1894923728
 Transform:
   m_ObjectHideFlags: 0

@@ -150,7 +150,7 @@ MonoBehaviour:
   speed: 3.5
   targetPos: {x: 0, y: 0, z: 0}
   owner: 
-  playerViewID: -1
+  viewID: -1
   damage: 0
 --- !u!114 &4853737742149522177
 MonoBehaviour:

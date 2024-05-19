@@ -2214,6 +2214,8 @@ MonoBehaviour:
   defaultHP: 0
   level: 0
   maxLevel: 10
+  levelUpEffect: {fileID: 6553566394152269330, guid: 102d1da5b313a724e9ab4a82e9813b70, type: 3}
+  curExp: 0
   attackDamage: 38
   defaultAttackDamage: 0
   attackSpeed: 0
@@ -2221,6 +2223,7 @@ MonoBehaviour:
   defaultMoveSpeed: 0
   evasionRate: 5
   goldEarnRate: 1
+  money: 0
   superArmorDuration: 1
   damageTakenRate: 1
   coolTimeRate: 1
@@ -2496,13 +2499,22 @@ MonoBehaviour:
   status: {fileID: 0}
   playerCtrl: {fileID: 0}
   playerPV: {fileID: 0}
-  CharSkillCoolTime: 0
-  WeaponSkillCoolTime: 0
+  charSkillCoolTime: 0
+  weaponSkillCoolTime: 0
   durationTime: 0
   isInDungeon: 0
   Hud: {fileID: 0}
-  effect: {fileID: 0}
+  weaponEffect: {fileID: 0}
+  charEffect: {fileID: 0}
+  WeaponEffectDir: Effects/WeaponSkill/
+  charEffectDir: Effects/CharSkill/
   archerSkillSprite: {fileID: 21300000, guid: 628ca2a32dd8a3d408b9d2407fea6050, type: 3}
+  weaponSkillSprite:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &4751091562744504963
 GameObject:
   m_ObjectHideFlags: 0
