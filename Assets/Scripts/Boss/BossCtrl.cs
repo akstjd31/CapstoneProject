@@ -104,6 +104,9 @@ public class BossCtrl : MonoBehaviour
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.yellow };
     private int randColorIdx;
 
+    [SerializeField] private GameObject onTriggerCheckObj;
+    [SerializeField] private TriggerCheck triggerCheck;
+
     //private bool isInvincibility = false;
 
     public State GetState()
@@ -124,6 +127,7 @@ public class BossCtrl : MonoBehaviour
 
     private void Start()
     {
+
         enemyAI = this.GetComponent<EnemyAI>();
         agent = this.GetComponent<NavMeshAgent>();
         anim = this.GetComponent<Animator>();
@@ -759,13 +763,17 @@ public class BossCtrl : MonoBehaviour
     // HP UI 생성 및 세팅
     public void HPInitSetting()
     {
-        hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
-        hpBar.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 400);
-        hpBar.maxValue = enemy.enemyData.hp;
-        enemy.enemyData.maxHp = enemy.enemyData.hp;
-        hpBar.value = enemy.enemyData.hp;
+        // 플레이어가 방에 존재할때 HP바 생성
+        if (triggerCheck.isPlayerInRoom)
+        {
+            hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
+            hpBar.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 400);
+            hpBar.maxValue = enemy.enemyData.hp;
+            enemy.enemyData.maxHp = enemy.enemyData.hp;
+            hpBar.value = enemy.enemyData.hp;
 
-        hpBar.GetComponentInChildren<Text>().text = enemy.enemyData.name;
+            hpBar.GetComponentInChildren<Text>().text = enemy.enemyData.name;
+        }
     }
 
     // Melee 애니메이션 이벤트 함수 (공격 애니메이션에 맞춰서 이동)
@@ -843,6 +851,15 @@ public class BossCtrl : MonoBehaviour
         {
             agent.isStopped = false;
             enemyAI.isLookingAtPlayer = true;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("TriggerObj"))
+        {
+            onTriggerCheckObj = other.gameObject;
+            triggerCheck = onTriggerCheckObj.GetComponent<TriggerCheck>();
         }
     }
 
