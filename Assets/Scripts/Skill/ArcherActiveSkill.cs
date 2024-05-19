@@ -24,6 +24,8 @@ public class ArcherActiveSkill : ActiveSkill
         }
         if(isInDungeon)
         {
+            charSkillCoolTime = 0.0f;
+            weaponSkillCoolTime = 0.0f;
             Hud.charSkillImage.sprite = archerSkillSprite;
         }
     }
@@ -106,7 +108,7 @@ public class ArcherActiveSkill : ActiveSkill
 
                     if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
-                        FirePhoenixBow();
+                        FirePhoenixBowSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
                     }
                 }
@@ -150,23 +152,23 @@ public class ArcherActiveSkill : ActiveSkill
 
     void DarkLongBowSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DemonSwordSkillEffect", this.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DarkLongBowSkillEffect", this.transform.position, Quaternion.identity);
     }
-    void FirePhoenixBow()
+    void FirePhoenixBowSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "GreatSwordSkillEffect", this.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "FirePhoenixBowSkillEffect", this.transform.position, Quaternion.identity);
     }
     void IcycleWindBowSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DarkGalaxySwordSkillEffect", this.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "IcycleWindBowSkillEffect", this.transform.position, Quaternion.identity);
     }
     void ShiningCompoundBowSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "IcycleSwordSkillEffect", this.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "ShiningCompoundBowSkillEffect", this.transform.position, Quaternion.identity);
     }
     void PathfinderSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "KingMakerSwordBuffEffect", this.transform.position, Quaternion.identity);
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "KingMakerSwordSkillEffect", this.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "PathfinderBuffEffect", this.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "PathfinderSkillEffect", this.transform.position, Quaternion.identity);
     }
 }

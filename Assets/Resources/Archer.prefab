@@ -2479,6 +2479,7 @@ MonoBehaviour:
   charEffectDir: Effects/CharSkill/
   archerSkillSprite: {fileID: 21300000, guid: 628ca2a32dd8a3d408b9d2407fea6050, type: 3}
   weaponSkillSprite:
+<<<<<<< HEAD
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -2522,6 +2523,14 @@ MonoBehaviour:
   closeInventorySound: {fileID: 8300000, guid: e98d0aaf3df33ad41950f18a7710576b, type: 3}
   attackJewelSound: {fileID: 8300000, guid: fa5f40573ef1bca41b44358a06439211, type: 3}
   deathSound: {fileID: 8300000, guid: 4c98c32ccc0c5c54e949973f64d892c5, type: 3}
+=======
+  - {fileID: 21300000, guid: 02b7b4609e4d2b94bb6f9ace5ea256e0, type: 3}
+  - {fileID: 21300000, guid: 2728ff3b3586b1249ad3c2fa18fc27d0, type: 3}
+  - {fileID: 21300000, guid: 9caa88f9840330741886ff38850d8a51, type: 3}
+  - {fileID: 21300000, guid: 0e04057f9ef8f2a44a162644e130f2d6, type: 3}
+  - {fileID: 21300000, guid: 7bbb1fdaf9115f54aba928b1ffbb9728, type: 3}
+
+>>>>>>> 2fd16704d0bdec4ca85f93f1b6344b2d8134a7cd
 --- !u!1 &4751091562744504963
 GameObject:
   m_ObjectHideFlags: 0
