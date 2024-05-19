@@ -2060,6 +2060,7 @@ MonoBehaviour:
   defaultHP: 0
   level: 0
   maxLevel: 10
+  levelUpEffect: {fileID: 6553566394152269330, guid: 102d1da5b313a724e9ab4a82e9813b70, type: 3}
   curExp: 0
   attackDamage: 34
   defaultAttackDamage: 0

@@ -33,6 +33,7 @@ public class Status : MonoBehaviourPunCallbacks
         {8, 240},
         {9, 350}
     };
+    public Transform levelUpEffect;
 
     public int curExp = 0;  // 현재 경험치량
 
@@ -210,6 +211,7 @@ public class Status : MonoBehaviourPunCallbacks
         {
             if (curExp >= expByLevel[level])
             {
+                Instantiate(levelUpEffect.gameObject, new Vector2(this.transform.position.x, this.transform.position.y + 1.5f), Quaternion.identity, this.transform);
                 level += 1;
                 curExp = 0;
             }
