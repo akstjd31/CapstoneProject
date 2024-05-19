@@ -425,6 +425,11 @@ public class CharSkill : MonoBehaviour
         int skillNum = SkillData.Skill_NameToNum(skillKr);
         Debug.Log($"Skill kr : {skillKr} // skillNum : {skillNum}");
 
+        if(skill_point < 1)
+        {
+            return;
+        }
+
         await LevelUpSkill(skillNum);
     }
 
