@@ -62,6 +62,8 @@ public class EnemyCtrl : MonoBehaviour
 
     public Transform goldPrefab;
 
+    private EnemySound enemySound;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -72,7 +74,9 @@ public class EnemyCtrl : MonoBehaviour
         dropItem = this.GetComponent<DropItem>();
         dropCalc = this.GetComponent<DropChanceCalculator>();
         rigid = this.GetComponent<Rigidbody2D>();
+        enemySound = this.GetComponent<EnemySound>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
+        
 
         enemy.InitSetting();
 
@@ -274,6 +278,7 @@ public class EnemyCtrl : MonoBehaviour
 
     public void DeathAnimEvent()
     {
+        enemySound.PlayDeathSound();
         ChangeState(State.DIE);
         anim.speed = 0f;
     }
@@ -311,6 +316,8 @@ public class EnemyCtrl : MonoBehaviour
                     //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, player.passiveSkill.PrideDamaged(enemy.enemyData.attackDamage));
                     player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, enemy.enemyData.attackDamage);
                     player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, pv.ViewID, targetPos - this.transform.position);
+
+                    hitPlayers.GetComponent<PlayerSound>().PlayAttackedSound();
                 }
             }
         }

@@ -2094,10 +2094,9 @@ GameObject:
   - component: {fileID: 6824683839583191784}
   - component: {fileID: 3292534996406904524}
   - component: {fileID: 2115456393143909934}
-  - component: {fileID: 4243216989585506397}
   - component: {fileID: 6499672273212709022}
-  - component: {fileID: 865885039907827457}
   - component: {fileID: 6459888840109694189}
+  - component: {fileID: 7137513443306577954}
   m_Layer: 7
   m_Name: Archer
   m_TagString: Player
@@ -2358,18 +2357,6 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
---- !u!114 &4243216989585506397
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4700399001963533048}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 126494ae2a10a34499272ed97a6c9f5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &6499672273212709022
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2377,7 +2364,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4700399001963533048}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -2391,7 +2378,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 20
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -2466,24 +2453,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &865885039907827457
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4700399001963533048}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd7fea91fe63f4e1b884ef1e16a975c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playDelayConfig:
-    Low: 200
-    High: 200
-    Max: 1000
-    SpeedUpPerc: 5
-  restartOnDeviceChange: 1
 --- !u!114 &6459888840109694189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2510,12 +2479,49 @@ MonoBehaviour:
   charEffectDir: Effects/CharSkill/
   archerSkillSprite: {fileID: 21300000, guid: 628ca2a32dd8a3d408b9d2407fea6050, type: 3}
   weaponSkillSprite:
-  - {fileID: 21300000, guid: 02b7b4609e4d2b94bb6f9ace5ea256e0, type: 3}
-  - {fileID: 21300000, guid: 2728ff3b3586b1249ad3c2fa18fc27d0, type: 3}
-  - {fileID: 21300000, guid: 9caa88f9840330741886ff38850d8a51, type: 3}
-  - {fileID: 21300000, guid: 0e04057f9ef8f2a44a162644e130f2d6, type: 3}
-  - {fileID: 21300000, guid: 7bbb1fdaf9115f54aba928b1ffbb9728, type: 3}
-
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!114 &7137513443306577954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4700399001963533048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59ef5dbbdde31b5469fa576161863ef7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
+  lobbyWalkSound:
+  - {fileID: 8300000, guid: 50ad27f2e46a7074e9864dbad1e7eade, type: 3}
+  - {fileID: 8300000, guid: c758d50866c38364395e6497487c1af3, type: 3}
+  - {fileID: 8300000, guid: 88836c252240bf148b51f31eaa40423b, type: 3}
+  - {fileID: 8300000, guid: 7b0242fe2eb831e4cbf3bada890a9dcd, type: 3}
+  - {fileID: 8300000, guid: 2ee7a4274d261bf43bb411f2eae2561c, type: 3}
+  dungeonWalkSound:
+  - {fileID: 8300000, guid: 15f83402b27142948b7f94c11b46b1e4, type: 3}
+  - {fileID: 8300000, guid: d81969204cdd36541b228675c708b5f0, type: 3}
+  - {fileID: 8300000, guid: b365a807c0288da4ba2dee6dfd29cd97, type: 3}
+  - {fileID: 8300000, guid: a77552cacbb8d8a40a5e8a417930ca76, type: 3}
+  - {fileID: 8300000, guid: 8d73cd9e976e52f41842f3e9799c8ff0, type: 3}
+  attackSound:
+  - {fileID: 8300000, guid: af8d4b673ec721042a5cb349d4c119a6, type: 3}
+  attackedSound:
+  - {fileID: 8300000, guid: 66a84e12e48a01b498eccfd46308eb66, type: 3}
+  - {fileID: 8300000, guid: 24b7a38f300b6d543888b4162343f71d, type: 3}
+  - {fileID: 8300000, guid: 8de5e6305645256498b09ee824386f23, type: 3}
+  - {fileID: 8300000, guid: 81a30c50b06520d40bfee1eff9c77e8b, type: 3}
+  itemPickupSound: {fileID: 8300000, guid: d5fe177655ad6d14e9a17449d35ce381, type: 3}
+  levelUpSound: {fileID: 8300000, guid: 7250cf03d96f1cf45af65ef3a8a0f8a2, type: 3}
+  openInventorySound: {fileID: 8300000, guid: e35658a0b6daa254285659c592e7aee8, type: 3}
+  closeInventorySound: {fileID: 8300000, guid: e98d0aaf3df33ad41950f18a7710576b, type: 3}
+  attackJewelSound: {fileID: 8300000, guid: fa5f40573ef1bca41b44358a06439211, type: 3}
+  deathSound: {fileID: 8300000, guid: 4c98c32ccc0c5c54e949973f64d892c5, type: 3}
 --- !u!1 &4751091562744504963
 GameObject:
   m_ObjectHideFlags: 0

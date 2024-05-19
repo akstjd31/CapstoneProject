@@ -17,9 +17,13 @@ public class Lazer : MonoBehaviour
     public Transform lazerPoint;
     public Vector2 rectangleSize = new Vector2(10.5f, 1.0f); // 직사각형의 가로와 세로 길이
 
+    public AudioSource audioSource;
+    public AudioClip lazerSound;
+
     private void Start()
     {
         anim = this.GetComponent<Animator>();
+        audioSource = this.GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -60,6 +64,7 @@ public class Lazer : MonoBehaviour
 
     private void CollisionCheck()
     {
+        audioSource.PlayOneShot(lazerSound);
         Collider2D players = Physics2D.OverlapBox(lazerPoint.position, rectangleSize, 0f, playerMask);
 
         if (players != null)

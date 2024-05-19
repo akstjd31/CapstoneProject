@@ -324,6 +324,8 @@ GameObject:
   - component: {fileID: 461068818791501652}
   - component: {fileID: 553423913903183731}
   - component: {fileID: 2678385003455547443}
+  - component: {fileID: 5228014104517660223}
+  - component: {fileID: 2590132286738988918}
   m_Layer: 8
   m_Name: Golem(Boss)
   m_TagString: Enemy
@@ -705,3 +707,125 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
+--- !u!82 &5228014104517660223
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9090852874685010490}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 20
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &2590132286738988918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9090852874685010490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c8ff7723e663444e84eacd00d35c9e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 5228014104517660223}
+  golemRoarSound:
+  - {fileID: 8300000, guid: af39c521860800d409226967e82869f2, type: 3}
+  - {fileID: 8300000, guid: 2ed976d1f7299c24d8b49a14bf35b3c4, type: 3}
+  - {fileID: 8300000, guid: de25d284f7f72c64ab958710a82e64fd, type: 3}
+  attackSound: {fileID: 8300000, guid: a664b210460b78e4e9afd03aef77bd72, type: 3}
+  attackedSound: {fileID: 8300000, guid: 83a75db9ee63b1d4f9980b3b12ec7971, type: 3}
+  armorBuffSound: {fileID: 8300000, guid: 97cf5587e6e127b468ca34214e23b3c5, type: 3}
+  rangeAttackSound: {fileID: 8300000, guid: 09ced3b2004cc2241b5da97fe63bedfa, type: 3}
+  deathSound:
+  - {fileID: 8300000, guid: 5170bd7d32901b04d8a4049ea7628bcf, type: 3}
+  - {fileID: 8300000, guid: b551da2435655ab4dbd6fc252918286a, type: 3}
+  onTriggerCheckObj: {fileID: 0}
+  triggerCheck: {fileID: 0}

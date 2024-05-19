@@ -81,6 +81,8 @@ public class Arrow : MonoBehaviour
                 //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, player.passiveSkill.PrideDamaged(enemy.enemyData.attackDamage));
                 player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, viewID, targetPos - this.transform.position);
                 player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, damage);
+
+                player.GetComponent<PlayerSound>().PlayAttackedSound();
             }
 
             Destroy(this.gameObject);
@@ -104,6 +106,7 @@ public class Arrow : MonoBehaviour
                     {
                         bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
                         bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID, 1.0f);
+                        bossCtrl.GetComponent<BossSound>().PlayAttackedSound();
                     }
                     else
                     {
@@ -119,6 +122,7 @@ public class Arrow : MonoBehaviour
                 {
                     enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
                     enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID, 1.0f);
+                    enemyCtrl.GetComponent<EnemySound>().PlayAttackedSound();
                 }
             }
 

@@ -26,6 +26,8 @@ public class PartySystem : MonoBehaviourPunCallbacks
 
     PhotonView canvasPV;
 
+    public AudioSource audioSource;
+    public AudioClip clickSound;
 
     private const string PartiesKey = "Parties";
 
@@ -68,6 +70,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
         if (!partyCreator.activeSelf && !partyView.activeSelf)
         {
             partyView.SetActive(true);
+            audioSource.PlayOneShot(clickSound);
         }
     }
 
@@ -77,6 +80,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
         if (!partyView.activeSelf && !partyCreator.activeSelf)
         {
             partyCreator.SetActive(true);
+            audioSource.PlayOneShot(clickSound);
         }
     }
 
@@ -85,12 +89,14 @@ public class PartySystem : MonoBehaviourPunCallbacks
     {
         inputField.text = "";
         partyCreator.SetActive(false);
+        audioSource.PlayOneShot(clickSound);
     }
 
     // 파티 목록 UI X 버튼
     public void ViewerOnExitButtonClick()
     {
         partyView.SetActive(false);
+        audioSource.PlayOneShot(clickSound);
     }
 
     // 파티 ViewID로 Party.cs 찾기
@@ -123,6 +129,7 @@ public class PartySystem : MonoBehaviourPunCallbacks
     // 파티 생성 완료 버튼을 클릭했을때
     public void OnClickCompleteButton()
     {
+        audioSource.PlayOneShot(clickSound);
         // 로비에 있는 플레이어 ViewID
         foreach (int playerViewID in lobbyManager.lobbyPlayerViewID)
         {
@@ -198,6 +205,8 @@ public class PartySystem : MonoBehaviourPunCallbacks
     // 파티 가입 버튼
     public void OnClickJoinPartyButton()
     {
+        audioSource.PlayOneShot(clickSound);
+
         // 클릭한 파티 방의 정보를 가져옴.
         GameObject clickObject = EventSystem.current.currentSelectedGameObject;
         Party party = clickObject.transform.parent.GetComponent<Party>();
@@ -300,6 +309,8 @@ public class PartySystem : MonoBehaviourPunCallbacks
     // 파티 탈퇴 버튼
     public void OnLeavePartyButtonClick()
     {
+        audioSource.PlayOneShot(clickSound);
+
         PlayerCtrl playerCtrl = GetPlayerCtrlByNickname(PhotonNetwork.NickName);
 
         createPartyButton.SetActive(true);

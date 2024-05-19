@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class SpecialLazer : MonoBehaviour
 {
+    public AudioSource audioSource;
+    public AudioClip lazerSound;
     private void Start()
     {
+        audioSource = this.GetComponent<AudioSource>();
+
+        audioSource.PlayOneShot(lazerSound);
+
         Destroy(this.gameObject, this.GetComponent<ParticleSystem>().main.duration);
     }
 

@@ -12,6 +12,9 @@ public class WarningLazer : MonoBehaviour
     private float startDelay = 1f;
 
     public Transform specialLazerPrefab;
+
+    public AudioSource audioSource;
+    public AudioClip lazerBuildSound;
     public void SetTarget(Transform target)
     {
         this.target = target;
@@ -19,6 +22,9 @@ public class WarningLazer : MonoBehaviour
 
     private void Start()
     {
+        audioSource = this.GetComponent<AudioSource>();
+
+        audioSource.PlayOneShot(lazerBuildSound);
     }
 
     private void Update()
