@@ -2060,6 +2060,7 @@ MonoBehaviour:
   defaultHP: 0
   level: 0
   maxLevel: 10
+  curExp: 0
   attackDamage: 34
   defaultAttackDamage: 0
   attackSpeed: 0
@@ -2067,6 +2068,7 @@ MonoBehaviour:
   defaultMoveSpeed: 0
   evasionRate: 5
   goldEarnRate: 1
+  money: 0
   superArmorDuration: 1
   damageTakenRate: 1
   coolTimeRate: 1
