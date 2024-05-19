@@ -13,6 +13,7 @@ public class UserInfoManager : MonoBehaviour
     private static UserInfoManager instance;
     private static FirebaseUser currentUser; // Firebase 사용자 정보를 저장할 변수
     private static Dictionary<string, int> skillLevel; //스킬 데이터의 원본
+    private static Dictionary<string, int> skillLevel2; //스킬 데이터의 원본
     private static Inventory inv;
 
     private bool isDebug = true;
@@ -61,6 +62,11 @@ public class UserInfoManager : MonoBehaviour
     public static Dictionary<string, int> GetSkillLevel()
     {
         return skillLevel;
+    }
+
+    public static int GetSkillLevelByKey(string key)
+    {
+        return skillLevel[key];
     }
 
     //use for publish
@@ -250,71 +256,48 @@ public class UserInfoManager : MonoBehaviour
             if (userData.ContainsKey("charData") && userData["charData"] is Dictionary<string, object> charData &&
                 charData.ContainsKey("skill") && charData["skill"] is Dictionary<string, object> charSkill)
             {
-                //Dictionary<string, object> => Dictionary<string, int>
-                //kvp.Value.GetType()는 System.Int64 == long 타입
-                if (charSkill.ContainsKey("common") && charSkill["common"] is Dictionary<string, object> commonSkills)
+                foreach (var kvp in charSkill)
                 {
-                    foreach (var kvp in commonSkills)
-                    {
-                        //Debug.Log($"in foreach1 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
+                    //Debug.Log($"in foreach1 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
 
-                        if (kvp.Value is int intValue)
-                        {
-                            skill[kvp.Key] = intValue;
-                        }
-                        else if (kvp.Value is long longValue)
-                        {
-                            skill[kvp.Key] = (int)longValue;
-                        }
+                    if (kvp.Value is int intValue)
+                    {
+                        skill[kvp.Key] = intValue;
                     }
-                }
-                if (charSkill.ContainsKey("warrior") && charSkill["warrior"] is Dictionary<string, object> warriorSkills)
-                {
-                    foreach (var kvp in warriorSkills)
+                    else if (kvp.Value is long longValue)
                     {
-                        //Debug.Log($"in foreach2 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
-
-                        if (kvp.Value is int intValue)
-                        {
-                            skill[kvp.Key] = intValue;
-                        }
-                        else if (kvp.Value is long longValue)
-                        {
-                            skill[kvp.Key] = (int)longValue;
-                        }
-                    }
-                }
-                if (charSkill.ContainsKey("archer") && charSkill["archer"] is Dictionary<string, object> archerSkills)
-                {
-                    foreach (var kvp in archerSkills)
-                    {
-                        //Debug.Log($"in foreach3 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
-
-                        if (kvp.Value is int intValue)
-                        {
-                            skill[kvp.Key] = intValue;
-                        }
-                        else if (kvp.Value is long longValue)
-                        {
-                            skill[kvp.Key] = (int)longValue;
-                        }
+                        skill[kvp.Key] = (int)longValue;
                     }
                 }
             }
+            else
+            {
+                Debug.Log("Read charData & skill failed");
+            }
 
+            Debug.Log("show skill in UserInfoManager");
+            Show_Dictionary(skill);
             skillLevel = new();
             foreach (var kvp in skill)
             {
                 skillLevel[kvp.Key] = kvp.Value;
             }
 
-            //Debug.Log("in UserInfoManager ");
-            //Show_Dictionary(skillLevel);
+            Debug.Log("in UserInfoManager ");
+            Show_Dictionary(skillLevel);
         }
         else
         {
             Debug.Log("Document does not exist!");
         }
+    }
+
+    public static async Task UpgradeSkill(string key, int value)
+    {
+        skillLevel[key] = value;
+        Debug.Log("UpgradeSkill complete");
+
+        await SetSkillLevel_Async(skillLevel);
     }
 
     //CharSkill.cs에서만 사용
@@ -323,7 +306,7 @@ public class UserInfoManager : MonoBehaviour
         SetSkillLevel_Async(skill);
     }
 
-    public static async void SetSkillLevel_Async(Dictionary<string, int> skill)
+    public static async Task SetSkillLevel_Async(Dictionary<string, int> skill)
     {
         skillLevel = skill;
 
@@ -344,6 +327,11 @@ public class UserInfoManager : MonoBehaviour
 
                 // 업데이트된 데이터를 문서에 반영합니다.
                 await doc_user.UpdateAsync("charData", charData);
+                //Debug.Log("Call SetLevelState in UserInfoManager");
+                await CharSkill.DecreaseSkillPoint();
+
+                //key not found
+                //await CharSkill.SetLevelState();
             }
         }
         else

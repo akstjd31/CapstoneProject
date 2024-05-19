@@ -2214,6 +2214,8 @@ MonoBehaviour:
   defaultHP: 0
   level: 0
   maxLevel: 10
+  levelUpEffect: {fileID: 6553566394152269330, guid: 102d1da5b313a724e9ab4a82e9813b70, type: 3}
+  curExp: 0
   attackDamage: 38
   defaultAttackDamage: 0
   attackSpeed: 0
@@ -2221,6 +2223,7 @@ MonoBehaviour:
   defaultMoveSpeed: 0
   evasionRate: 5
   goldEarnRate: 1
+  money: 0
   superArmorDuration: 1
   damageTakenRate: 1
   coolTimeRate: 1
@@ -2512,6 +2515,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9caa88f9840330741886ff38850d8a51, type: 3}
   - {fileID: 21300000, guid: 0e04057f9ef8f2a44a162644e130f2d6, type: 3}
   - {fileID: 21300000, guid: 7bbb1fdaf9115f54aba928b1ffbb9728, type: 3}
+
 --- !u!1 &4751091562744504963
 GameObject:
   m_ObjectHideFlags: 0

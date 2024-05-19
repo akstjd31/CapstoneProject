@@ -133,7 +133,7 @@ public class Arrow : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        else if(other.CompareTag("Chest") && !owner.Equals(other.tag))
+        else if(other.CompareTag("Chest") && !owner.Equals("Enemy"))
         {
             ChestController chestController = other.GetComponent<ChestController>();
             chestController.ChestBreak();

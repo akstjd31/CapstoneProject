@@ -104,7 +104,10 @@ public class BossCtrl : MonoBehaviour
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.yellow };
     private int randColorIdx;
 
-    //private bool isInvincibility = false;
+    [SerializeField] private GameObject onTriggerCheckObj;
+    [SerializeField] private TriggerCheck triggerCheck;
+
+    public Transform goldPrefab;
 
     public State GetState()
     {
@@ -124,6 +127,7 @@ public class BossCtrl : MonoBehaviour
 
     private void Start()
     {
+
         enemyAI = this.GetComponent<EnemyAI>();
         agent = this.GetComponent<NavMeshAgent>();
         anim = this.GetComponent<Animator>();
@@ -660,6 +664,36 @@ public class BossCtrl : MonoBehaviour
                 rigid.velocity = Vector2.zero;
                 dropCalc.SetLevel(status.level);    // 죽기 전에 본인을 죽인 플레이어의 레벨정보를 넘겨준다.
                 dropItem.SetCharType(status.charType);
+
+                status.curExp += 1;
+                status.CheckLevelUp();
+
+                Status targetStatus = null;
+                // 적을 잡으면 모든 플레이어한테 골드, 경험치를 부여
+                if (playerPV.transform.Equals(enemyAI.GetFirstTarget()))
+                {
+                    targetStatus = enemyAI.GetSecondTarget() != null ? enemyAI.GetSecondTarget().GetComponent<Status>() : null;
+
+                    if (targetStatus != null)
+                    {
+                        targetStatus.curExp += 1;
+                        targetStatus.CheckLevelUp();
+                    }
+                }
+                else
+                {
+                    targetStatus = enemyAI.GetFirstTarget() != null ? enemyAI.GetFirstTarget().GetComponent<Status>() : null;
+
+                    if (targetStatus != null)
+                    {
+                        targetStatus.curExp += 1;
+                        targetStatus.CheckLevelUp();
+                    }
+                }
+
+                GameObject gold = PhotonNetwork.Instantiate("Enemy/" + goldPrefab.name, this.transform.position, Quaternion.identity);
+                gold.GetComponent<GoldItem>().SetStatus(status, targetStatus);
+
                 return;
             }
         }
@@ -759,13 +793,17 @@ public class BossCtrl : MonoBehaviour
     // HP UI 생성 및 세팅
     public void HPInitSetting()
     {
-        hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
-        hpBar.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 400);
-        hpBar.maxValue = enemy.enemyData.hp;
-        enemy.enemyData.maxHp = enemy.enemyData.hp;
-        hpBar.value = enemy.enemyData.hp;
+        // 플레이어가 방에 존재할때 HP바 생성
+        if (triggerCheck.isPlayerInRoom)
+        {
+            hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
+            hpBar.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 400);
+            hpBar.maxValue = enemy.enemyData.hp;
+            enemy.enemyData.maxHp = enemy.enemyData.hp;
+            hpBar.value = enemy.enemyData.hp;
 
-        hpBar.GetComponentInChildren<Text>().text = enemy.enemyData.name;
+            hpBar.GetComponentInChildren<Text>().text = enemy.enemyData.name;
+        }
     }
 
     // Melee 애니메이션 이벤트 함수 (공격 애니메이션에 맞춰서 이동)
@@ -843,6 +881,15 @@ public class BossCtrl : MonoBehaviour
         {
             agent.isStopped = false;
             enemyAI.isLookingAtPlayer = true;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("TriggerObj"))
+        {
+            onTriggerCheckObj = other.gameObject;
+            triggerCheck = onTriggerCheckObj.GetComponent<TriggerCheck>();
         }
     }
 

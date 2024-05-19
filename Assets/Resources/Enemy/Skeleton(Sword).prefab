@@ -2577,8 +2577,8 @@ MonoBehaviour:
   isLookingAtPlayer: 0
   onTriggerCheckObj: {fileID: 0}
   triggerCheck: {fileID: 0}
-  agroMeter1: 0
-  agroMeter2: 0
+  aggroMeter1: 0
+  aggroMeter2: 0
 --- !u!114 &4336204970219389137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2607,6 +2607,7 @@ MonoBehaviour:
   attackRange: 0.55
   firePoint: {fileID: 0}
   projectile: {fileID: 0}
+  goldPrefab: {fileID: 8344386151322497146, guid: d6b98312a42aeae4e82c0d49d3542e39, type: 3}
 --- !u!114 &4336204970219389136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2737,6 +2738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 899cdfdd7e3c97d4bab60251b9051081, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gradeDropProbability: 0
   playerLevel: 1
 --- !u!114 &152686519776000222
 MonoBehaviour:
@@ -2750,6 +2752,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 277907847e604a34194ca9c18dcbf805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  charType: 
 --- !u!1 &4904535179148934770
 GameObject:
   m_ObjectHideFlags: 0

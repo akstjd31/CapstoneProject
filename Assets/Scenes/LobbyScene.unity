@@ -3376,6 +3376,10 @@ MonoBehaviour:
   nickName: {fileID: 1461519807}
   hpBar: {fileID: 1623513607}
   hpBarText: {fileID: 0}
+  charSkillImage: {fileID: 0}
+  charSkillCoolTime: {fileID: 0}
+  weaponSkillImage: {fileID: 0}
+  weaponSkillCoolTime: {fileID: 0}
 --- !u!1 &292597148
 GameObject:
   m_ObjectHideFlags: 0
@@ -10744,7 +10748,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 400, y: 100}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &799785541
 MonoBehaviour:
@@ -12347,7 +12351,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &979014773
 GameObject:
@@ -16757,7 +16761,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7562292200316337128, guid: 73a57d2bbf307a1469c89907a07e146d, type: 3}
       propertyPath: m_RootOrder
-      value: 15
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 7562292200316337128, guid: 73a57d2bbf307a1469c89907a07e146d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17725,7 +17729,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce435cd72147d4543a382757326f7919, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skill_explane: {fileID: 0}
 --- !u!4 &1508226141
 Transform:
   m_ObjectHideFlags: 0
@@ -17739,7 +17742,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1510165038
 GameObject:
@@ -20951,7 +20954,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1748310593
 MonoBehaviour:
@@ -21606,6 +21609,10 @@ MonoBehaviour:
   nickName: {fileID: 1257617367}
   hpBar: {fileID: 1634220166}
   hpBarText: {fileID: 0}
+  charSkillImage: {fileID: 0}
+  charSkillCoolTime: {fileID: 0}
+  weaponSkillImage: {fileID: 0}
+  weaponSkillCoolTime: {fileID: 0}
 --- !u!222 &1786317338
 CanvasRenderer:
   m_ObjectHideFlags: 0

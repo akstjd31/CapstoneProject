@@ -496,6 +496,7 @@ GameObject:
   - component: {fileID: 5698147908999215646}
   - component: {fileID: 6532355889432002255}
   - component: {fileID: 62829193407099998}
+  - component: {fileID: 3965821814447249042}
   m_Layer: 0
   m_Name: wall_collider 10
   m_TagString: Untagged
@@ -2241,6 +2242,22 @@ TilemapCollider2D:
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0.00001
+--- !u!114 &3965821814447249042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4612222092756135332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94abb72b901174002a790e24615f9f03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 0
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
 --- !u!1 &4904781204296473312
 GameObject:
   m_ObjectHideFlags: 0
@@ -2372,6 +2389,7 @@ GameObject:
   - component: {fileID: 2408821244631523559}
   - component: {fileID: 4305897500554500938}
   - component: {fileID: 4627497002013198073}
+  - component: {fileID: 6974071379556811125}
   m_Layer: 0
   m_Name: decoration 12
   m_TagString: Untagged
@@ -2821,6 +2839,22 @@ TilemapCollider2D:
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0.00001
+--- !u!114 &6974071379556811125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6291994858817423912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94abb72b901174002a790e24615f9f03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 0
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
 --- !u!1 &7815149541772428893
 GameObject:
   m_ObjectHideFlags: 0
@@ -2833,6 +2867,7 @@ GameObject:
   - component: {fileID: 6370999294409336484}
   - component: {fileID: 2824243207592385586}
   - component: {fileID: 5839721578968594966}
+  - component: {fileID: 5735879850918580378}
   m_Layer: 0
   m_Name: interaction 11
   m_TagString: Untagged
@@ -3166,6 +3201,22 @@ TilemapCollider2D:
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0.00001
+--- !u!114 &5735879850918580378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7815149541772428893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94abb72b901174002a790e24615f9f03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 0
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
 --- !u!1 &8950593963448586013
 GameObject:
   m_ObjectHideFlags: 0
@@ -3177,6 +3228,7 @@ GameObject:
   - component: {fileID: 7790517542813603104}
   - component: {fileID: 2920932078611361044}
   - component: {fileID: 7630695077280565047}
+  - component: {fileID: 6581736264785332701}
   m_Layer: 0
   m_Name: base 0
   m_TagString: Untagged
@@ -10518,6 +10570,22 @@ TilemapRenderer:
   m_Mode: 0
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
+--- !u!114 &6581736264785332701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8950593963448586013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94abb72b901174002a790e24615f9f03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 0
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
 --- !u!1001 &2194354635177345040
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10539,7 +10607,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9090852874685010495, guid: 0ea57dbeab50d884093d156df4928f39, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.9495687
+      value: 2.44
       objectReference: {fileID: 0}
     - target: {fileID: 9090852874685010495, guid: 0ea57dbeab50d884093d156df4928f39, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10587,6 +10655,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4884295505551668604}
     m_Modifications:
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelObj
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -10649,6 +10725,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4884295505551668604}
     m_Modifications:
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelObj
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -10711,6 +10795,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4884295505551668604}
     m_Modifications:
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelObj
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -10773,6 +10865,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4884295505551668604}
     m_Modifications:
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelObj
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_RootOrder
       value: 7
