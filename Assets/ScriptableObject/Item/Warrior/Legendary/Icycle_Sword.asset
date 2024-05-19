@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: Icycle_Sword
   attackDamage: 30
   attackSpeed: 7
-  itemImage: {fileID: -1375443011, guid: 42fbeed4ea3cb6d4693f6d71872bd9e6, type: 3}
+  itemImage: {fileID: 341477115, guid: 6112fa1249a7ae6488b5bcc91bdb016d, type: 3}
   itemType: 2
   charType: 0
   bonusStat: 2
