@@ -25,6 +25,7 @@ TagManager:
   - Obstacle
   - Jewel
   - SkillUI
+  - Chest
   layers:
   - Default
   - TransparentFX

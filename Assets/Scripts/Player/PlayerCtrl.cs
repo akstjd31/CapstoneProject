@@ -55,6 +55,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public bool isPartyMember = false; // 파티에 이미 속해있는 상태인지 아닌지 확인하는 변수
     public bool isReady = false; // 파티에 이미 속해있고 던전 입장 준비가 됐는지 확인하는 변수
+    public bool isInDungeon = false;
 
     public Party party;
 
@@ -161,20 +162,20 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         npcParent = GameObject.Find("npc"); // find npc
         npcList = null;
 
-        //Skill UI
-        skill_explane = GameObject.Find("Skill_Explane");
-        Explane_Pos.skill_explane = skill_explane;
-        skill_explane.SetActive(false);
-
         ChangeState(State.NORMAL);
         items = null;
 
         // 로비 씬
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
+            //Skill UI
+            skill_explane = GameObject.Find("Skill_Explane");
+            Explane_Pos.skill_explane = skill_explane;
+            skill_explane.SetActive(false);
+
             if (pv.IsMine)
             {
-                PhotonManager.playerWeaponID = randIdx;
+                GameObject.FindGameObjectWithTag("PhotonManager").GetComponent<PhotonManager>().playerWeaponIdx = randIdx;
             }
 
             //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
@@ -193,7 +194,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         // 던전 씬
         else if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
-            randIdx = PhotonManager.playerWeaponID;
+            randIdx = GameObject.FindGameObjectWithTag("PhotonManager").GetComponent<PhotonManager>().playerWeaponIdx;
         }
 
         pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
@@ -531,6 +532,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
+    public Item GetEquipItem()
+    {
+        return this.equipItem;
+    }
     public void SetEquipItem(Item item)
     {
         this.equipItem = item;
@@ -754,6 +759,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                 if (enemy != null)
                 {
+                  if(enemy.CompareTag("Chest"))
+                  {
+                    ChestController chestController = enemy.GetComponent<ChestController>();
+
+                    chestController.ChestBreak();
+                  }
                     if (enemy.enemyData.enemyType == EnemyType.BOSS)
                     {
                         float rand = Random.Range(0, 100f);

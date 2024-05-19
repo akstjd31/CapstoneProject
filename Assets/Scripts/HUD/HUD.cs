@@ -8,4 +8,8 @@ public class HUD : MonoBehaviour
     public Text nickName;
     public Slider hpBar;
     public Text hpBarText;
+    public Image charSkillImage;
+    public Text charSkillCoolTime;
+    public Image weaponSkillImage;
+    public Text weaponSkillCoolTime;
 }

@@ -9,7 +9,7 @@ public class Arrow : MonoBehaviour
     [SerializeField] private Vector3 targetPos;
     [SerializeField] string owner = "";  // 이 화살을 쏜 사람?
 
-    [SerializeField] private int playerViewID = -1;
+    [SerializeField] private int viewID = -1;
 
     [SerializeField] private float damage;
 
@@ -24,7 +24,7 @@ public class Arrow : MonoBehaviour
         speed = spd;
         damage = dam;
         owner = tag;
-        playerViewID = viewID;
+        this.viewID = viewID;
     }
 
     private void Start()
@@ -79,7 +79,7 @@ public class Arrow : MonoBehaviour
             if (player != null && !player.onHit && rigid.velocity != Vector2.zero)
             {
                 //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, player.passiveSkill.PrideDamaged(enemy.enemyData.attackDamage));
-                player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
+                player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, viewID, targetPos - this.transform.position);
                 player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, damage);
             }
 
@@ -104,7 +104,7 @@ public class Arrow : MonoBehaviour
                     {
                         //enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
                         bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
-                        bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID);
+                        bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID);
                     }
                     else
                     {
@@ -120,7 +120,7 @@ public class Arrow : MonoBehaviour
                 {
                     //enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
                     enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
-                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID);
+                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID);
                 }
             }
 
@@ -130,6 +130,13 @@ public class Arrow : MonoBehaviour
         else if (other.CompareTag("Jewel"))
         {
             other.GetComponent<BejeweledPillar>().ChangeJewelColor();
+            Destroy(this.gameObject);
+        }
+
+        else if(other.CompareTag("Chest") && !owner.Equals(other.tag))
+        {
+            ChestController chestController = other.GetComponent<ChestController>();
+            chestController.ChestBreak();
             Destroy(this.gameObject);
         }
 

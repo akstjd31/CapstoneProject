@@ -19,17 +19,14 @@ public class ChestController : MonoBehaviourPunCallbacks
     {
         
     }
-    void OnTriggerEnter2D(Collider2D other)
+
+    public void ChestBreak()
     {
-        if (other.tag == "Player")
+        int randInt = Random.Range(0, 11);
+        if (randInt < 2)
         {
-            Debug.Log("asdfasdf");
-            int randInt = Random.Range(0, 11);
-            if(randInt < 2)
-            {
-                PhotonNetwork.InstantiateRoomObject(mapDir + "Heart", this.transform.position, Quaternion.identity, 0);
-            }
-            PhotonNetwork.Destroy(this.gameObject);
+            PhotonNetwork.InstantiateRoomObject(mapDir + "Heart", this.transform.position, Quaternion.identity, 0);
         }
+        PhotonNetwork.Destroy(this.gameObject);
     }
 }
