@@ -13,6 +13,7 @@ public class UserInfoManager : MonoBehaviour
     private static UserInfoManager instance;
     private static FirebaseUser currentUser; // Firebase 사용자 정보를 저장할 변수
     private static Dictionary<string, int> skillLevel; //스킬 데이터의 원본
+    private static Dictionary<string, int> skillLevel2; //스킬 데이터의 원본
     private static Inventory inv;
 
     private bool isDebug = true;
@@ -63,7 +64,7 @@ public class UserInfoManager : MonoBehaviour
         return skillLevel;
     }
 
-    public static int GetSkillLevel(string key)
+    public static int GetSkillLevelByKey(string key)
     {
         return skillLevel[key];
     }
@@ -255,26 +256,27 @@ public class UserInfoManager : MonoBehaviour
             if (userData.ContainsKey("charData") && userData["charData"] is Dictionary<string, object> charData &&
                 charData.ContainsKey("skill") && charData["skill"] is Dictionary<string, object> charSkill)
             {
-                //Dictionary<string, object> => Dictionary<string, int>
-                //kvp.Value.GetType()는 System.Int64 == long 타입
-                if (charSkill.ContainsKey("common") && charSkill["common"] is Dictionary<string, object> commonSkills)
+                foreach (var kvp in charSkill)
                 {
-                    foreach (var kvp in commonSkills)
-                    {
-                        //Debug.Log($"in foreach1 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
+                    //Debug.Log($"in foreach1 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
 
-                        if (kvp.Value is int intValue)
-                        {
-                            skill[kvp.Key] = intValue;
-                        }
-                        else if (kvp.Value is long longValue)
-                        {
-                            skill[kvp.Key] = (int)longValue;
-                        }
+                    if (kvp.Value is int intValue)
+                    {
+                        skill[kvp.Key] = intValue;
+                    }
+                    else if (kvp.Value is long longValue)
+                    {
+                        skill[kvp.Key] = (int)longValue;
                     }
                 }
             }
+            else
+            {
+                Debug.Log("Read charData & skill failed");
+            }
 
+            Debug.Log("show skill in UserInfoManager");
+            Show_Dictionary(skill);
             skillLevel = new();
             foreach (var kvp in skill)
             {

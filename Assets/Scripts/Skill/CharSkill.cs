@@ -148,7 +148,8 @@ public class CharSkill : MonoBehaviour
 
         skill_point_text = "SKILL Point : " + skill_point;
         point_text.text = skill_point_text;
-        await SetLevelState();
+        //await SetLevelState();
+        await SetNowSkillLevel();
     }
 
     public static async Task DecreaseSkillPoint()
@@ -160,6 +161,79 @@ public class CharSkill : MonoBehaviour
         point_text.text = skill_point_text;
 
         await UserInfoManager.SetSkillPoint(skill_point);
+        await SetNowSkillLevel();
+    }
+
+    private static async Task SetNowSkillLevel()
+    {
+        //reload
+        await UserInfoManager.GetCharSkillAsync();
+
+        Dictionary<string, int> skill = UserInfoManager.GetSkillLevel();
+        Debug.Log("show skill");
+        Show_Dictionary(skill);
+
+        BoxCollider2D[] coll_List = GameObject.Find("Images").GetComponentsInChildren<BoxCollider2D>();
+        GameObject[] skill_Level_text = new GameObject[7];
+
+        //find level text = gameobject
+        int index = 0;
+        for (int i = 0; i < coll_List.Length; i++)
+        {
+            var parent = coll_List[i].gameObject;
+            Transform levelTransform = parent.transform.Find("level");
+
+            if (levelTransform != null)
+            {
+                skill_Level_text[index] = levelTransform.gameObject;
+                index++;
+            }
+
+            // Ensure the array does not exceed its bounds
+            if (index >= skill_Level_text.Length)
+            {
+                break;
+            }
+        }
+
+        for (int i = 0; i < skill_Level_text.Length; i++)
+        {
+            string parent = skill_Level_text[i].transform.parent.name;
+            index = -1;
+
+            switch (parent)
+            {
+                case "pride":
+                    index = 0;
+                    break;
+                case "greed":
+                    index = 1;
+                    break;
+                case "lust":
+                    index = 2;
+                    break;
+                case "envy":
+                    index = 3;
+                    break;
+                case "glutny":
+                    index = 4;
+                    break;
+                case "wrath":
+                    index = 5;
+                    break;
+                case "sloth":
+                    index = 6;
+                    break;
+            }
+
+            //Debug.Log($"parent index : {index}"); //0~6
+            int skillKey_int = index + 1001;
+            string skillKey_string = skillKey_int.ToString();
+
+            Debug.Log($"skill level : {UserInfoManager.GetSkillLevelByKey(skillKey_string)}");
+
+            skill_Level_text[i].GetComponent<TextMeshProUGUI>().text = "Lv. " + UserInfoManager.GetSkillLevelByKey(skillKey_string);
+        }
     }
 
     public static async Task SetLevelState()
@@ -327,13 +401,16 @@ public class CharSkill : MonoBehaviour
     //스킬의 레벨을 하나 올릴 때 사용
     public static async Task LevelUpSkill(int skillNum)
     {
+        Debug.Log($"LevelUpSkill : {skillNum}");
+        /*
         if (!UserInfoManager.GetSkillLevel().ContainsKey(skillNum.ToString()))
         {
             // 존재하지 않는 경우 예외 발생
             throw new KeyNotFoundException($"Skill number {skillNum} does not exist.");
         }
+        */
 
-        await UserInfoManager.UpgradeSkill(skillNum.ToString(), UserInfoManager.GetSkillLevel(skillNum.ToString()) + 1);
+        await UserInfoManager.UpgradeSkill(skillNum.ToString(), UserInfoManager.GetSkillLevelByKey(skillNum.ToString()) + 1);
 
         //userSkill[skillNum.ToString()] = ++userSkill[skillNum.ToString()];
         //UpdataSkillData();
