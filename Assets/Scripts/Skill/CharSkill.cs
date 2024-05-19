@@ -182,6 +182,13 @@ public class CharSkill : MonoBehaviour
 
         List<int> value = await GetSkillLevelAll(0);
 
+        string temp = "";
+        for(int i = 0; i < value.Count; i++)
+        {
+            temp += value[i].ToString() + "_";
+        }
+        Debug.Log($"value : {temp}");
+
         for(int i = 0; i < list.Length; i++)
         {
             int index = -1;
@@ -239,6 +246,7 @@ public class CharSkill : MonoBehaviour
                     break;
             }
 
+            Debug.Log($"i : {i} => index : {index}");
             if(index == -1)
             {
                 Debug.Log($"not valid skill : {list[i].name} {index}");
