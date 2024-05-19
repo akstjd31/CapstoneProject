@@ -20,6 +20,21 @@ public class Status : MonoBehaviourPunCallbacks
 
     public int level = 0; // 플레이어 레벨
     public int maxLevel = 10; // 플레이어의 최대 레벨
+    private Dictionary<int, int> expByLevel = new Dictionary<int, int>  // <현재 레벨, 다음 레벨에 필요한 경험치량>
+    {
+        {0, 10},
+        {1, 25},
+        {2, 40},
+        {3, 60},
+        {4, 80},
+        {5, 110},
+        {6, 150},
+        {7, 180},
+        {8, 240},
+        {9, 350}
+    };
+
+    public int curExp = 0;  // 현재 경험치량
 
     public float attackDamage; // 공격력
     [SerializeField] private float defaultAttackDamage; // 디폴트 공격력 (무기 포함 X)
@@ -30,7 +45,9 @@ public class Status : MonoBehaviourPunCallbacks
     [SerializeField] private float defaultMoveSpeed; // 디폴트 이동 속도
 
     public float evasionRate = 5f; // 회피율
-    public float goldEarnRate = 1.0f; // 골드 획득량
+    public int goldEarnRate = 0; // 골드 획득량
+    private int goldEarnMinRate, goldEarnMaxRate;
+    public int money = 0; // 현재 잔고
     public float superArmorDuration = 1.0f; // 슈퍼아머 지속시간 초
     public float damageTakenRate = 1.0f; // 받는 데미지 퍼센트
     public float coolTimeRate = 1.0f; // 쿨타임 감소
@@ -138,6 +155,64 @@ public class Status : MonoBehaviourPunCallbacks
             //Vector3 playerPos = Camera.main.WorldToScreenPoint(playerCtrl.transform.position);
 
             //UpdateText(playerPos);
+        }
+    }
+
+    public void GoldPerLevel()
+    {
+        switch (level)
+        {
+            case 0:
+                goldEarnMinRate = 1; goldEarnMaxRate = 2;
+                break;
+            case 1:
+                goldEarnMaxRate = 3;
+                break;
+            case 2:
+                goldEarnMinRate = 2; goldEarnMaxRate = 5;
+                break;
+            case 3:
+                goldEarnMinRate = 3;
+                break;
+            case 4:
+                goldEarnMaxRate = 7;
+                break;
+            case 5:
+                goldEarnMinRate = 4;
+                break;
+            case 6:
+                goldEarnMinRate = 5;
+                break;
+            case 7:
+                goldEarnMaxRate = 9;
+                break;
+            case 8:
+                goldEarnMaxRate = 10;
+                break;
+            case 9:
+                goldEarnMinRate = 6;
+                break;
+            case 10:
+                goldEarnMinRate = 7;
+                break;
+        }
+    }
+
+    [PunRPC]
+    private void RandomGoldAmount()
+    {
+        goldEarnRate = Random.Range(goldEarnMinRate, goldEarnMaxRate+1);
+    }
+
+    public void CheckLevelUp()
+    {
+        if (level != maxLevel)
+        {
+            if (curExp >= expByLevel[level])
+            {
+                level += 1;
+                curExp = 0;
+            }
         }
     }
 

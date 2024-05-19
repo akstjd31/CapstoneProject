@@ -561,6 +561,9 @@ MonoBehaviour:
   hiddenPatternTimer: {fileID: 1185740185764952849, guid: 245d0e4e04a02be478604739cba7b409, type: 3}
   bejeweledPillars: []
   isComplete: 00000000
+  onTriggerCheckObj: {fileID: 0}
+  triggerCheck: {fileID: 0}
+  goldPrefab: {fileID: 8344386151322497146, guid: d6b98312a42aeae4e82c0d49d3542e39, type: 3}
 --- !u!195 &8564032641353652021
 NavMeshAgent:
   m_ObjectHideFlags: 0

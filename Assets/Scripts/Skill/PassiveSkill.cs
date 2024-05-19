@@ -21,7 +21,7 @@ public class PassiveSkill : Skill
 
     public int attackCount = 0;
     float _attackDamage;
-    float _goldEarnRate;
+    int _goldEarnRate;
     float _MAXHP;
     float _evasionRate;
     float _damageTakenRate;
@@ -68,7 +68,7 @@ public class PassiveSkill : Skill
     {
         if(skillLevelAll[1] > 0)
         {
-            status.goldEarnRate = _goldEarnRate * (1.0f + greedPercentage[skillLevelAll[1]] / 100);
+            status.goldEarnRate = _goldEarnRate * (int)(1.0f + greedPercentage[skillLevelAll[1]] / 100);
         }
     }
 
