@@ -378,7 +378,7 @@ public class UserData : MonoBehaviour
         {
             { "type", "null" },   //캐릭터 선택 후 업데이트
             { "stats", charStats },
-            { "skill",  charSkill },
+            { "skill",  char_common_skill },
             { "itemList", new List<string>() },
             { "stack", 0 },
             { "skillPoint", 0 }

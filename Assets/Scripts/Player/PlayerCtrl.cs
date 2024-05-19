@@ -450,9 +450,23 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                             //skill UI
                             else if(distance <= interactionDist && npc.name.StartsWith("skill") && showOnSaleItem != null)
                             {
-                                isSkillUI = true;
-                                //GameObject.Find("Main Camera").GetComponent<Camera>().enabled = false;
-                                SceneManager.LoadScene("Skill_UI", LoadSceneMode.Additive);
+                                if(!isSkillUI)
+                                {
+                                    isSkillUI = true;
+                                    //GameObject.Find("Main Camera").GetComponent<Camera>().enabled = false;
+                                    SceneManager.LoadScene("Skill_UI", LoadSceneMode.Additive);
+                                }
+                                else
+                                {
+                                    isSkillUI = false;
+                                    SceneManager.UnloadSceneAsync("Skill_UI");
+
+                                    GameObject btn = GameObject.Find("prefab_close_btn");
+                                    if(btn != null)
+                                    {
+                                        Destroy(btn);
+                                    }
+                                }
                             }
                             
                         }
@@ -475,7 +489,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             if (hit.collider != null)
             {
-                Debug.Log($"hit in PlayerCtrl : {hit.collider.name}");
+                //Debug.Log($"hit in PlayerCtrl : {hit.collider.name}");
                 //CharSkill.SetHitName(hit.collider.name);
             }
             else
