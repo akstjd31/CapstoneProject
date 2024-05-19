@@ -10,12 +10,18 @@ public class RocketArm : MonoBehaviour
 
     private Rigidbody2D rigid;
 
+    public AudioSource audioSource;
+    public AudioClip fireSound;
+    public AudioClip breakSound;
+
     private void Start()
     {
         rigid = this.GetComponent<Rigidbody2D>();
 
         // 초기 위치를 startPos로 설정
         transform.position = startPos.position;
+
+        audioSource.PlayOneShot(fireSound);
 
         Destroy(this.gameObject, 5f);
     }
@@ -78,6 +84,8 @@ public class RocketArm : MonoBehaviour
                 playerPV.RPC("DamageEnemyOnHitRPC", RpcTarget.All, damage);
                 playerPV.RPC("PlayerKnockbackRPC", RpcTarget.All, ownerViewID, target.position - startPos.position);
 
+                audioSource.loop = false;
+                audioSource.PlayOneShot(breakSound);
                 Destroy(this.gameObject);
             }
         }

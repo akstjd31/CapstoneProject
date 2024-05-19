@@ -126,6 +126,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private GameObject skill_explane;
     private bool isSkillUI = false;
 
+    PlayerSound playerSound;
+
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void ChangeState(State state)
@@ -156,6 +158,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         inventory.SetStatus(status);
         itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
         spum_SpriteList = this.transform.Find("Root").GetComponent<SPUM_SpriteList>();
+        playerSound = this.GetComponent<PlayerSound>();
 
         //recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
         showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();    //상점
@@ -278,6 +281,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     if (jewel != null)
                     {
                         jewel.GetComponent<PhotonView>().RPC("ChangeJewelColor", RpcTarget.All);
+                        playerSound.PlayAttackJewelSound();
                         //InteractJewel(mouseWorldPosition);
                     }
 
@@ -349,9 +353,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     //UI에 보유 금액 표기
                     if(inventory.gameObject.activeSelf)
                     {
+                        playerSound.PlayOpenInventorySound();
                         inventory.FreshSlot();  // 아이템 리스트를 인벤토리에 추가한다. 
                         UserInfoManager.SetUserMoney_Async(status.money);
                         GameObject.Find("DoubleCurrencyBox").transform.Find("Text").GetComponent<Text>().text = UserInfoManager.GetNowMoney().ToString();
+                    }
+                    else
+                    {
+                        playerSound.PlayCloseInventorySound();
                     }
                 }
 
@@ -379,6 +388,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     if (inventory.items.Count < inventory.GetInventorySlotLength())
                     {
                         inventory.GetComponent<Inventory>().AddItem(items.item);
+                        playerSound.PlayItemPickupSound();
                         Destroy(items.gameObject);
                     }
                     else
@@ -675,6 +685,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public void DeathAnimEvent()
     {
+        playerSound.PlayDeathSound();
         ChangeState(State.DIE);
         anim.speed = 0f;
     }
@@ -791,6 +802,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                             {
                                 bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
                                 bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+
+                                bossCtrl.GetComponent<BossSound>().PlayAttackedSound();
                             }
                             else
                             {
@@ -808,6 +821,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                             //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
                             enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
                             enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
+
+                            enemyCtrl.GetComponent<EnemySound>().PlayAttackedSound();
                         }
                     }
                 }

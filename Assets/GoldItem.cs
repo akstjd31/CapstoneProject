@@ -7,7 +7,15 @@ public class GoldItem : MonoBehaviour
 {
     private Status status1, status2;
     private float rand1, rand2;
-    
+
+    public AudioSource audioSource;
+    public AudioClip goldSound;
+
+    private void Start()
+    {
+        audioSource = this.GetComponent<AudioSource>();
+    }
+
     public void SetStatus(Status status1, Status status2)
     {
         this.status1 = status1;
@@ -73,6 +81,7 @@ public class GoldItem : MonoBehaviour
                 }
             }
 
+            audioSource.PlayOneShot(goldSound);
             PhotonNetwork.Destroy(this.gameObject);
         }
     }

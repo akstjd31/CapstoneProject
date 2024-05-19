@@ -143,7 +143,8 @@ public class ArcherActiveSkill : ActiveSkill
             }
             else
             {
-                Hud.weaponSkillImage.transform.parent.gameObject.SetActive(false);
+                if (Hud != null)
+                    Hud.weaponSkillImage.transform.parent.gameObject.SetActive(false);
             }
     }
 
