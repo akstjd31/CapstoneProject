@@ -62,17 +62,6 @@ public class CharSkill : MonoBehaviour
                 CloseSkillUI();
             });
 
-            /*
-            dy_coll = new GameObject("dy_coll");
-            dy_coll.transform.parent = btn_Lobby_close.transform;
-            dy_coll.transform.position = new Vector2(dy_coll.transform.position.x - 100, dy_coll.transform.position.y - 100);
-            dy_coll.AddComponent<RectTransform>().sizeDelta = new Vector2(500, 300);
-            dy_coll.transform.position = new Vector2(dy_coll.transform.position.x - 200, dy_coll.transform.position.y - 200);
-            BoxCollider2D box = dy_coll.AddComponent<BoxCollider2D>();
-            box.size = new Vector2(500, 300);
-            box.isTrigger = true;
-            */
-
             Init();
         }
         else
@@ -94,7 +83,8 @@ public class CharSkill : MonoBehaviour
             btn_skill[i].onClick.AddListener(async () =>
             {
                 skill_point = await UserInfoManager.GetSkillPoint();
-                UpgradeSkill(btn_skill[index].transform.parent.name);
+                Debug.Log($"Call Upgrade with : {btn_skill[index].transform.parent.name}");
+                UpgradeSkill2(btn_skill[index].transform.parent.name);
             });
             //Debug.Log($"{btn_skill[i].transform.parent.name}");
         }
@@ -114,7 +104,7 @@ public class CharSkill : MonoBehaviour
 
         if (hit.collider != null)
         {
-            Debug.Log($"hit!! {hit.collider.name}");
+            //Debug.Log($"hit!! {hit.collider.name}");
             explane.SetActive(true);
             
             col_name = hit.collider.name;
@@ -153,7 +143,7 @@ public class CharSkill : MonoBehaviour
         // 여기에 비동기 작업 완료 후 수행할 작업 추가
         userSkill = UserInfoManager.GetSkillLevel();
         Debug.Log($"Skill level initialized: ");
-        //Show_Dictionary(userSkill);
+        Show_Dictionary(userSkill);
         skill_point = await UserInfoManager.GetSkillPoint();
 
         skill_point_text = "SKILL Point : " + skill_point;
@@ -161,8 +151,20 @@ public class CharSkill : MonoBehaviour
         await SetLevelState();
     }
 
+    public static async Task DecreaseSkillPoint()
+    {
+        skill_point = await UserInfoManager.GetSkillPoint();
+        skill_point--;
+
+        skill_point_text = "SKILL Point : " + skill_point;
+        point_text.text = skill_point_text;
+
+        await UserInfoManager.SetSkillPoint(skill_point);
+    }
+
     public static async Task SetLevelState()
     {
+        Debug.Log("call SetLevelState");
         await UserInfoManager.GetCharSkillAsync();
         userSkill = UserInfoManager.GetSkillLevel();
 
@@ -187,13 +189,13 @@ public class CharSkill : MonoBehaviour
         {
             temp += value[i].ToString() + "_";
         }
-        Debug.Log($"value : {temp}");
+        //Debug.Log($"value : {temp}");
 
         for(int i = 0; i < list.Length; i++)
         {
             int index = -1;
 
-            Debug.Log($"list name : {list[i].name} {list[i].transform.parent.name} {list[i].transform.parent.parent.name}");
+            //Debug.Log($"list name : {list[i].name} {list[i].transform.parent.name} {list[i].transform.parent.parent.name}");
 
             switch (list[i].name)
             {
@@ -246,17 +248,17 @@ public class CharSkill : MonoBehaviour
                     break;
             }
 
-            Debug.Log($"i : {i} => index : {index}");
+            //Debug.Log($"i : {i} => index : {index}");
             if(index == -1)
             {
                 Debug.Log($"not valid skill : {list[i].name} {index}");
                 return;
             }
 
-            Debug.Log($"{value[index]} {list[i].name}");
+            //Debug.Log($"{value[index]} {list[i].name}");
 
             var now = list[i].transform.Find("level");
-            Debug.Log($"now : {now}");
+            //Debug.Log($"now : {now}");
 
             now.GetComponent<TextMeshProUGUI>().text = "Lv." + value[index];
         }
@@ -281,7 +283,19 @@ public class CharSkill : MonoBehaviour
             await InitSkill();
         }
 
+        userSkill = UserInfoManager.GetSkillLevel();
         Show_Dictionary(userSkill);
+        //Debug.Log($"skillNum in GetSkillLevel : {skillNum}");   //1001~1007
+        //Debug.Log($"keys : {userSkill.Keys}");
+        var keys = userSkill.Keys;
+        string temp = "";
+
+        foreach (string key in keys)
+        {
+            temp += key + " ";
+        }
+        Debug.Log($"keys : {temp}");    //keys : 1001 1002 1003 1004 1005 1006 1007 
+
 
         if (!userSkill.ContainsKey(skillNum.ToString()))
         {
@@ -311,16 +325,30 @@ public class CharSkill : MonoBehaviour
     }
 
     //스킬의 레벨을 하나 올릴 때 사용
-    public static void LevelUpSkill(int skillNum)
+    public static async Task LevelUpSkill(int skillNum)
     {
-        if (!userSkill.ContainsKey(skillNum.ToString()))
+        if (!UserInfoManager.GetSkillLevel().ContainsKey(skillNum.ToString()))
         {
             // 존재하지 않는 경우 예외 발생
             throw new KeyNotFoundException($"Skill number {skillNum} does not exist.");
         }
 
-        userSkill[skillNum.ToString()] = ++userSkill[skillNum.ToString()];
-        UpdataSkillData();
+        await UserInfoManager.UpgradeSkill(skillNum.ToString(), UserInfoManager.GetSkillLevel(skillNum.ToString()) + 1);
+
+        //userSkill[skillNum.ToString()] = ++userSkill[skillNum.ToString()];
+        //UpdataSkillData();
+    }
+
+    //UI에서 접근하는 메소드
+    public static async void UpgradeSkill2(string skillName)
+    {
+        Debug.Log($"in UpgradeSkill2 : clicked {skillName}");
+
+        string skillKr = SkillData.GetSkillNameKr(skillName);
+        int skillNum = SkillData.Skill_NameToNum(skillKr);
+        Debug.Log($"Skill kr : {skillKr} // skillNum : {skillNum}");
+
+        await LevelUpSkill(skillNum);
     }
 
     //UI에서 접근하는 메소드
@@ -464,13 +492,13 @@ class SkillData
 
     private static readonly Dictionary<int, string> skill_desc = new()
     {
-        {1001, "체력이 30%보다 낮은 적에게 주는 피해량 증가\n그 대신 적에게 받는 피해량 10% 증가"},
+        {1001, "체력이 30%보다\n낮은 적에게 주는\n피해량 증가\n그 대신 적에게 받는\n피해량 10% 증가"},
         {1002, "골드 획득량 증가"},
-        {1003, "피격 당하지 않고 공격 5회 이상 시 공격력 10퍼 증가"},
-        {1004, "회피율 50%\n그 대신 피격 시 플레이어와 팀원 플레이어 또한 같이 피격"},
-        {1005, "공격 시 현재체력의 5퍼센트의 피해량 흡혈\n체력의 50퍼 아래가 되면 피격 데미지 30퍼 증가"},
-        {1006, "적에게 피격 시 슈퍼 아머 시간 증가\n슈퍼 아머 시간 동안 공격력 30퍼 증가"},
-        {1007, "공격이 장전 형식으로 변경\n1회 공격후 3초간 공격 불가\n그 대신 공격력의 200퍼센트 데미지"},
+        {1003, "피격 당하지 않고\n공격 5회 이상 시\n공격력 10% 증가"},
+        {1004, "회피율 50%\n그 대신 피격 시\n플레이어와 팀원\n또한 같이 피격"},
+        {1005, "공격 시\n현재 체력의 5퍼센트의\n피해량 흡혈\n체력의 50%\n이하가 되면\n피격 데미지 30% 증가"},
+        {1006, "적에게 피격 시\n슈퍼 아머 시간 증가\n슈퍼 아머 시간 동안\n공격력 30퍼 증가"},
+        {1007, "공격이\n장전 형식으로 변경\n1회 공격 후\n3초간 공격 불가\n그 대신 공격력 데미지의 200%"},
         {10001, "전사1 스킬 설명" },
         {10002, "전사2 스킬 설명" },
         {10003, "전사3 스킬 설명" },

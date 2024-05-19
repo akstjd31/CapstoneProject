@@ -474,7 +474,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
             if (hit.collider != null)
             {
-                Debug.Log($"hit in PlayerCtrl : {hit.collider.name}");
+                //Debug.Log($"hit in PlayerCtrl : {hit.collider.name}");
                 //CharSkill.SetHitName(hit.collider.name);
             }
             else

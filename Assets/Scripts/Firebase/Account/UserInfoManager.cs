@@ -63,6 +63,11 @@ public class UserInfoManager : MonoBehaviour
         return skillLevel;
     }
 
+    public static int GetSkillLevel(string key)
+    {
+        return skillLevel[key];
+    }
+
     //use for publish
     public static async Task SetUserMoney_Async(int change)
     {
@@ -268,38 +273,6 @@ public class UserInfoManager : MonoBehaviour
                         }
                     }
                 }
-                if (charSkill.ContainsKey("warrior") && charSkill["warrior"] is Dictionary<string, object> warriorSkills)
-                {
-                    foreach (var kvp in warriorSkills)
-                    {
-                        //Debug.Log($"in foreach2 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
-
-                        if (kvp.Value is int intValue)
-                        {
-                            skill[kvp.Key] = intValue;
-                        }
-                        else if (kvp.Value is long longValue)
-                        {
-                            skill[kvp.Key] = (int)longValue;
-                        }
-                    }
-                }
-                if (charSkill.ContainsKey("archer") && charSkill["archer"] is Dictionary<string, object> archerSkills)
-                {
-                    foreach (var kvp in archerSkills)
-                    {
-                        //Debug.Log($"in foreach3 : {kvp}, {kvp.Key}, {kvp.Value}, {kvp.Value.GetType()}");
-
-                        if (kvp.Value is int intValue)
-                        {
-                            skill[kvp.Key] = intValue;
-                        }
-                        else if (kvp.Value is long longValue)
-                        {
-                            skill[kvp.Key] = (int)longValue;
-                        }
-                    }
-                }
             }
 
             skillLevel = new();
@@ -308,13 +281,21 @@ public class UserInfoManager : MonoBehaviour
                 skillLevel[kvp.Key] = kvp.Value;
             }
 
-            //Debug.Log("in UserInfoManager ");
-            //Show_Dictionary(skillLevel);
+            Debug.Log("in UserInfoManager ");
+            Show_Dictionary(skillLevel);
         }
         else
         {
             Debug.Log("Document does not exist!");
         }
+    }
+
+    public static async Task UpgradeSkill(string key, int value)
+    {
+        skillLevel[key] = value;
+        Debug.Log("UpgradeSkill complete");
+
+        await SetSkillLevel_Async(skillLevel);
     }
 
     //CharSkill.cs에서만 사용
@@ -323,7 +304,7 @@ public class UserInfoManager : MonoBehaviour
         SetSkillLevel_Async(skill);
     }
 
-    public static async void SetSkillLevel_Async(Dictionary<string, int> skill)
+    public static async Task SetSkillLevel_Async(Dictionary<string, int> skill)
     {
         skillLevel = skill;
 
@@ -344,7 +325,11 @@ public class UserInfoManager : MonoBehaviour
 
                 // 업데이트된 데이터를 문서에 반영합니다.
                 await doc_user.UpdateAsync("charData", charData);
-                await CharSkill.SetLevelState();
+                //Debug.Log("Call SetLevelState in UserInfoManager");
+                await CharSkill.DecreaseSkillPoint();
+
+                //key not found
+                //await CharSkill.SetLevelState();
             }
         }
         else
