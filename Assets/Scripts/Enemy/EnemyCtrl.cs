@@ -17,7 +17,7 @@ public class EnemyCtrl : MonoBehaviour
 
     private PhotonView pv;
     private Animator anim;
-    private NavMeshAgent agent;
+    public NavMeshAgent agent;
     private EnemyAI enemyAI;
     private DropChanceCalculator dropCalc;
     private DropItem dropItem;
@@ -111,7 +111,7 @@ public class EnemyCtrl : MonoBehaviour
 
     // 플레이어한테 피격당했을 떄 RPC
     [PunRPC]
-    public void DamagePlayerOnHitRPC(int playerViewID)
+    public void DamagePlayerOnHitRPC(int playerViewID, float percentage)
     {
         PhotonView playerPV = PhotonView.Find(playerViewID);
         //PassiveSkill passiveSkill = playerPV.GetComponent<PassiveSkill>();
@@ -121,8 +121,8 @@ public class EnemyCtrl : MonoBehaviour
         // 플레이어의 공격력만큼 체력에서 깎음
         if (hpBar != null)
         {
-            enemy.enemyData.hp -= status.attackDamage;
-
+            enemy.enemyData.hp -= status.attackDamage * percentage;
+            Debug.Log(enemy.enemyData.hp);
             // 죽음
             if (enemy.enemyData.hp <= 0)
             {

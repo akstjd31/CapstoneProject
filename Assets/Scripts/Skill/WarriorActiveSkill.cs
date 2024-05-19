@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
+using Photon.Voice.PUN;
 
 public class WarriorActiveSkill : ActiveSkill
 {
+    PhotonView pv;
+    Vector3 mouseWorldPosition;
+
     Collider2D[] colliders;
     float setCharSkillCoolTime = 60.0f;
     float setCharSkillDurationTime = 10.0f;
@@ -20,6 +24,7 @@ public class WarriorActiveSkill : ActiveSkill
     // Start is called before the first frame update
     void Start()
     {
+        pv = playerCtrl.GetComponent<PhotonView>();
         isInDungeon = false;
         if (GameObject.Find("LocalHUD"))
         {
@@ -38,6 +43,8 @@ public class WarriorActiveSkill : ActiveSkill
     // Update is called once per frame
     void Update()
     {
+        Vector3 mouseScreenPosition = Input.mousePosition;
+        mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
 
         if (isInDungeon) // 스킬 쿨타임 UI
         {
@@ -66,7 +73,7 @@ public class WarriorActiveSkill : ActiveSkill
                 {
                     if (colliders[i].gameObject.CompareTag("Enemy"))
                     {
-                        if (playerPV.ViewID == colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().GetFirstTarget().GetComponent<PhotonView>().ViewID)
+                        if (playerCtrl.pv.ViewID == colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().GetFirstTarget().GetComponent<PhotonView>().ViewID)
                         {
                             colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter1 += 100;
                         }
@@ -106,7 +113,6 @@ public class WarriorActiveSkill : ActiveSkill
                     if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         DemonSwordSkill();
-                        weaponSkillCoolTime = setWeaponSkillCoolTime;
                     }
                 }
                 else if (playerCtrl.GetEquipItem().itemID == 161) // Great_Sword
@@ -117,7 +123,6 @@ public class WarriorActiveSkill : ActiveSkill
                     if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         GreatSwordSkill();
-                        weaponSkillCoolTime = setWeaponSkillCoolTime;
                     }
                 }
                 else if (playerCtrl.GetEquipItem().itemID == 162) //DarkGalaxy_Dagger
@@ -127,7 +132,6 @@ public class WarriorActiveSkill : ActiveSkill
                     if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         DarkGalaxyDaggerSkill();
-                        weaponSkillCoolTime = setWeaponSkillCoolTime;
                     }
                 }
                 else if (playerCtrl.GetEquipItem().itemID == 163) // Icycle_Sword
@@ -137,7 +141,6 @@ public class WarriorActiveSkill : ActiveSkill
                     if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         IcycleSwordSkill();
-                        weaponSkillCoolTime = setWeaponSkillCoolTime;
                     }
                 }
                 else if (playerCtrl.GetEquipItem().itemID == 164) // King_Maker
@@ -147,7 +150,6 @@ public class WarriorActiveSkill : ActiveSkill
                     if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
                     {
                         KingMakerSkill();
-                        weaponSkillCoolTime = setWeaponSkillCoolTime;
                     }
                 }
             }
@@ -177,23 +179,62 @@ public class WarriorActiveSkill : ActiveSkill
 
     void DemonSwordSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "DemonSwordSkillEffect", this.transform.position, Quaternion.identity);
+        GameObject demonSwordSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "DemonSwordSkill_", this.transform.position, Quaternion.identity);
+        PhotonView demonSwordSkillPv = demonSwordSkillPrefab.GetComponent<PhotonView>();
+        DemonSwordSkill demonSwordSkill = demonSwordSkillPv.GetComponent<DemonSwordSkill>();
+        Debug.Log(pv.ViewID);
+        demonSwordSkillPv.RPC("InitializeDemonSwordSkill", RpcTarget.AllBuffered, pv.ViewID);
+        weaponSkillCoolTime = setWeaponSkillCoolTime;
     }
     void GreatSwordSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "GreatSwordSkillEffect", this.transform.position, Quaternion.identity);
+        Vector3 direction = mouseWorldPosition - this.transform.position;
+        direction.z = 0; // 2D 게임의 경우 z 축 방향을 무시
+
+        // 방향 벡터를 기준으로 회전 각도 계산
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        GameObject GreatSwordSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "GreatSwordSkill_", this.transform.position,  Quaternion.Euler(0, 0, angle));
+        PhotonView GreatSwordSkillPv = GreatSwordSkillPrefab.GetComponent<PhotonView>();
+        DemonSwordSkill GreatSwordSkill = GreatSwordSkillPv.GetComponent<DemonSwordSkill>();
+        Debug.Log(pv.ViewID);
+        GreatSwordSkillPv.RPC("InitializeGreatSwordSkill", RpcTarget.AllBuffered, pv.ViewID, playerCtrl);
+        weaponSkillCoolTime = setWeaponSkillCoolTime;
     }
     void DarkGalaxyDaggerSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "DarkGalaxySwordSkillEffect", this.transform.position, Quaternion.identity);
+        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, 8.0f);
+        for(int i = 0; i < collider.Length; i++)
+        {
+            if(collider[i].CompareTag("Enemy"))
+            {
+                playerCtrl.transform.position = collider[i].gameObject.transform.position;
+                GameObject DarkGalaxyDaggerSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "DarkGalaxySwordSkill_", this.transform.position, Quaternion.identity);
+                PhotonView DarkGalaxyDaggerSkillPv = DarkGalaxyDaggerSkillPrefab.GetComponent<PhotonView>();
+                DemonSwordSkill DarkGalaxyDaggerSkill = DarkGalaxyDaggerSkillPv.GetComponent<DemonSwordSkill>();
+                Debug.Log(pv.ViewID);
+                DarkGalaxyDaggerSkillPv.RPC("InitializeDarkGalaxyDaggerSkill", RpcTarget.AllBuffered, pv.ViewID);
+                weaponSkillCoolTime = setWeaponSkillCoolTime;
+                break;
+            }
+        }
     }
     void IcycleSwordSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "IcycleSwordSkillEffect", this.transform.position, Quaternion.identity);
+        GameObject IcycleSwordSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "IcycleSwordSkill_", this.transform.position, Quaternion.identity);
+        PhotonView IcycleSwordSkillPv = IcycleSwordSkillPrefab.GetComponent<PhotonView>();
+        DemonSwordSkill IcycleSwordSkill = IcycleSwordSkillPv.GetComponent<DemonSwordSkill>();
+        Debug.Log(pv.ViewID);
+        IcycleSwordSkillPv.RPC("InitializeIcycleSwordSkill", RpcTarget.AllBuffered, pv.ViewID);
+        weaponSkillCoolTime = setWeaponSkillCoolTime;
     }
     void KingMakerSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "KingMakerSwordBuffEffect", this.transform.position, Quaternion.identity);
-        PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "KingMakerSwordSkillEffect", this.transform.position, Quaternion.identity);
+        GameObject KingMakerSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "KingMakerSwordSkill_", this.transform.position, Quaternion.identity);
+        PhotonView KingMakerSkillPv = KingMakerSkillPrefab.GetComponent<PhotonView>();
+        DemonSwordSkill KingMakerSkill = KingMakerSkillPv.GetComponent<DemonSwordSkill>();
+        KingMakerSkillPv.RPC("InitializeKingMakerSwordSkill", RpcTarget.AllBuffered, pv.ViewID);
+        status.attackSpeed = 20;
+        weaponSkillCoolTime = setWeaponSkillCoolTime;
     }
 }

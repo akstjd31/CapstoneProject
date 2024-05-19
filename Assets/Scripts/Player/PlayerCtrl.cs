@@ -38,7 +38,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     GameObject canvas;
 
-    PhotonView pv, weaponPV; // 플레이어 pv, 무기 pv
+    public PhotonView pv;
+    PhotonView weaponPV; // 플레이어 pv, 무기 pv
     Rigidbody2D rigid; // 플레이어 리지드 바디
 
     Vector3 moveDir, rollDir, attackDir; // 이동 방향, 구르기 방향, 공격 방향
@@ -789,7 +790,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                         {
                             if (rand > enemy.enemyData.evasionRate)
                             {
-                                bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
+                                bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, 1.0f);
                                 bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
                             }
                             else
@@ -805,8 +806,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                         if (enemyCtrl != null && !enemyCtrl.onHit)
                         {
-                            //enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
-                            enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID);
+                            enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, 1.0f);
                             enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
                         }
                     }
