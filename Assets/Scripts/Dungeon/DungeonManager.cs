@@ -69,7 +69,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         {
             if(endRooms.Count < 3)
             {
-                DungeonReset();
+                //DungeonReset();
             }
             for(int i = 0; i < endRooms.Count; i++)
             {
