@@ -33,17 +33,17 @@ public class RoomController : MonoBehaviourPunCallbacks
     }
     void Start()
     {
-        if (dungeonManager.dungeonPV.IsMine)
+        startPoint = GameObject.Find("Spawn(Clone)");
+        if (this.name == "Spawn(Clone)")
         {
-            startPoint = GameObject.Find("Spawn(Clone)");
-            if (this.name == "Spawn(Clone)")
-            {
-                dungeonManager = this.transform.parent.GetComponent<DungeonManager>();
-            }
-            else
-            {
-                dungeonManager = startPoint.transform.parent.GetComponent<DungeonManager>();
-            }
+            dungeonManager = this.transform.parent.GetComponent<DungeonManager>();
+        }
+        else
+        {
+            dungeonManager = startPoint.transform.parent.GetComponent<DungeonManager>();
+        }
+        if (dungeonManager.GetComponent<PhotonView>().IsMine)
+        {
             //Invoke("CreateRoom", 0.3f);
             StartCoroutine(CreateRoom());
             //CreateRoom();
