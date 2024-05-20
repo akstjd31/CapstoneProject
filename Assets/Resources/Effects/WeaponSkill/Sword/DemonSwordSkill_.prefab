@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6506696260414443639}
+  - {fileID: 8753515178410465520}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -59,7 +59,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 4}
+  m_Size: {x: 7, y: 7}
   m_EdgeRadius: 0
 --- !u!114 &2438573387064383041
 MonoBehaviour:
@@ -73,26 +73,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad3c510475ed22a4db023f45a747458f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  status: {fileID: 0}
-  playerCtrl: {fileID: 0}
-  pv: {fileID: 0}
-  charSkillCoolTime: 0
-  weaponSkillCoolTime: 0
-  durationTime: 0
-  isInDungeon: 0
-  Hud: {fileID: 0}
-  weaponEffect: {fileID: 0}
-  charEffect: {fileID: 0}
-  WeaponEffectDir: Effects/WeaponSkill/
-  charEffectDir: Effects/CharSkill/
-  warriorSkillSprite: {fileID: 0}
-  weaponSkillSprite:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  pv: {fileID: 0}
+  duration: 0.5
+  viewID: -1
 --- !u!114 &7069298769058722736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,7 +97,7 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!1001 &8051385497284209292
+--- !u!1001 &5515381328752910859
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -172,8 +154,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d55be0e935cd36a45a808b8eefdc5caa, type: 3}
---- !u!4 &6506696260414443639 stripped
+--- !u!4 &8753515178410465520 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3886652340014873339, guid: d55be0e935cd36a45a808b8eefdc5caa, type: 3}
-  m_PrefabInstance: {fileID: 8051385497284209292}
+  m_PrefabInstance: {fileID: 5515381328752910859}
   m_PrefabAsset: {fileID: 0}
