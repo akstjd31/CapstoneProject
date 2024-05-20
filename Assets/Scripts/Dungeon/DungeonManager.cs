@@ -39,13 +39,14 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        spawnPoint = PhotonNetwork.Instantiate(mapDir + "Spawn", new Vector3(500.0f, 500.0f, 0.0f), Quaternion.identity);
         //GetComponent<RoomController>().Invoke("CreateRoom", 0.3f);
     }
 
     
     public override void OnCreatedRoom()
     {
-        spawnPoint = PhotonNetwork.Instantiate(mapDir + "Spawn", new Vector3(500.0f, 500.0f, 0.0f), Quaternion.identity);
+        
     }
 
     // Update is called once per frame
