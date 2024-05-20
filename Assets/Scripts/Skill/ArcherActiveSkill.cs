@@ -77,7 +77,7 @@ public class ArcherActiveSkill : ActiveSkill
             durationTime = setCharSkillDrationTime;
             charSkillCoolTime = setCharSkillCoolTime;
         }
-        if(durationTime > 0.0f) 
+        if(durationTime > 0.0f)
         {
             charEffect.transform.position = new Vector2(this.transform.position.x + (0.5f * this.transform.localScale.x), this.transform.position.y + 0.3f);
             charEffect.transform.localScale = new Vector2(-this.transform.localScale.x, this.transform.localScale.y);

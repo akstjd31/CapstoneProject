@@ -5896,6 +5896,7 @@ GameObject:
   - component: {fileID: 996791424}
   - component: {fileID: 996791426}
   - component: {fileID: 996791425}
+  - component: {fileID: 996791427}
   m_Layer: 5
   m_Name: WeaponSkillUI
   m_TagString: Untagged
@@ -5965,6 +5966,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996791423}
   m_CullTransparentMesh: 1
+--- !u!114 &996791427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 996791423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 3
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1006605853
 GameObject:
   m_ObjectHideFlags: 0
@@ -11836,6 +11859,7 @@ GameObject:
   - component: {fileID: 1911540646}
   - component: {fileID: 1911540648}
   - component: {fileID: 1911540647}
+  - component: {fileID: 1911540649}
   m_Layer: 5
   m_Name: CharacterSkillUI
   m_TagString: Untagged
@@ -11905,6 +11929,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1911540645}
   m_CullTransparentMesh: 1
+--- !u!114 &1911540649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911540645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1915044904
 GameObject:
   m_ObjectHideFlags: 0
