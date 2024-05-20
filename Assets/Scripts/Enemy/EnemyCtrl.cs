@@ -318,6 +318,7 @@ public class EnemyCtrl : MonoBehaviour
                     player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, pv.ViewID, targetPos - this.transform.position);
 
                     hitPlayers.GetComponent<PlayerSound>().PlayAttackedSound();
+                    Instantiate(player.attackedEffect, player.bloodPoint.position, Quaternion.identity, player.bloodPoint);
                 }
             }
         }

@@ -499,7 +499,7 @@ GameObject:
   - component: {fileID: 3965821814447249042}
   m_Layer: 0
   m_Name: wall_collider 10
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2297,9 +2297,9 @@ Transform:
   - {fileID: 6860731016388672760}
   - {fileID: 6007259551422854892}
   - {fileID: 8598689342896211459}
-  - {fileID: 2710043892462811047}
-  - {fileID: 9153332845935950961}
-  - {fileID: 7418789769534036375}
+  - {fileID: 4151617428672814388}
+  - {fileID: 1286292091313145648}
+  - {fileID: 78741360441446013}
   - {fileID: 6943103033253958191}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -2392,7 +2392,7 @@ GameObject:
   - component: {fileID: 6974071379556811125}
   m_Layer: 0
   m_Name: decoration 12
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2870,7 +2870,7 @@ GameObject:
   - component: {fileID: 5735879850918580378}
   m_Layer: 0
   m_Name: interaction 11
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2899,16 +2899,6 @@ Tilemap:
   m_GameObject: {fileID: 7815149541772428893}
   m_Enabled: 1
   m_Tiles:
-  - first: {x: -12, y: 4, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 1
-      m_TileSpriteIndex: 8
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741824
   - first: {x: -17, y: 7, z: 0}
     second:
       serializedVersion: 2
@@ -3029,34 +3019,12 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
-  m_AnimatedTiles:
-  - first: {x: -12, y: 4, z: 0}
-    second:
-      m_AnimatedSprites:
-      - {fileID: 1873690933, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 1462866657, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: -1180003578, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 453616471, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 1343764109, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 675916897, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 502021942, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: -494027022, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 675353681, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 82805018, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: -72018699, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 1845962401, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 778441908, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 956431421, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: 243293439, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      - {fileID: -1871567196, guid: e40319226da2e03459faf00ac611414b, type: 3}
-      m_AnimationSpeed: 1
-      m_AnimationTimeOffset: 0
-      m_IsLooping: 1
+  m_AnimatedTiles: {}
   m_TileAssetArray:
   - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: 2bccb166258374f4e961a6610522f674, type: 2}
-  - m_RefCount: 1
-    m_Data: {fileID: 11400000, guid: 8ce3fbe69e9399b48950fe7d690a7e2c, type: 2}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 0
     m_Data: {fileID: 0}
   - m_RefCount: 2
@@ -3088,10 +3056,10 @@ Tilemap:
     m_Data: {fileID: -1977178763, guid: 4721d7cae5ff52240bc5d6117f98516d, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: -101705365, guid: 4721d7cae5ff52240bc5d6117f98516d, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: -1871567196, guid: e40319226da2e03459faf00ac611414b, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   m_TileMatrixArray:
-  - m_RefCount: 13
+  - m_RefCount: 12
     m_Data:
       e00: 1
       e01: 0
@@ -3110,7 +3078,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 13
+  - m_RefCount: 12
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 8
@@ -10658,11 +10626,27 @@ PrefabInstance:
     - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: jewelObj
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 8598689342279318584}
     - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: jewelSprite.Array.size
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[0]
+      value: 
+      objectReference: {fileID: -667596707, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[1]
+      value: 
+      objectReference: {fileID: 1817733100, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[2]
+      value: 
+      objectReference: {fileID: 1523596187, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[3]
+      value: 
+      objectReference: {fileID: 1517538564, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -10713,12 +10697,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+--- !u!1 &8598689342279318584 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6090561833833406640, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+  m_PrefabInstance: {fileID: 2581314454202342536}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8598689342896211459 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
   m_PrefabInstance: {fileID: 2581314454202342536}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &3134837451309623034
+--- !u!1001 &4998949819697765819
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10728,22 +10717,38 @@ PrefabInstance:
     - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: jewelObj
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1286292092739894539}
     - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: jewelSprite.Array.size
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[0]
+      value: 
+      objectReference: {fileID: -667596707, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[1]
+      value: 
+      objectReference: {fileID: 1817733100, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[2]
+      value: 
+      objectReference: {fileID: 1523596187, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[3]
+      value: 
+      objectReference: {fileID: 1517538564, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_RootOrder
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 26.64
+      value: 25.42
       objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.76
+      value: -0.66
       objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10783,12 +10788,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8793597850d6294cb8502e4577038d2, type: 3}
---- !u!4 &9153332845935950961 stripped
+--- !u!4 &1286292091313145648 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
-  m_PrefabInstance: {fileID: 3134837451309623034}
+  m_PrefabInstance: {fileID: 4998949819697765819}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &3635196868665475868
+--- !u!1 &1286292092739894539 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6090561833833406640, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+  m_PrefabInstance: {fileID: 4998949819697765819}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6165915446826865910
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10798,22 +10808,38 @@ PrefabInstance:
     - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: jewelObj
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 78741361192645702}
     - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: jewelSprite.Array.size
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[0]
+      value: 
+      objectReference: {fileID: -667596707, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[1]
+      value: 
+      objectReference: {fileID: 1817733100, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[2]
+      value: 
+      objectReference: {fileID: 1523596187, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[3]
+      value: 
+      objectReference: {fileID: 1517538564, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_RootOrder
       value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.07
+      value: 3.99
       objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.76
+      value: -0.66
       objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10853,12 +10879,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8793597850d6294cb8502e4577038d2, type: 3}
---- !u!4 &7418789769534036375 stripped
+--- !u!4 &78741360441446013 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
-  m_PrefabInstance: {fileID: 3635196868665475868}
+  m_PrefabInstance: {fileID: 6165915446826865910}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &8149834414373580076
+--- !u!1 &78741361192645702 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6090561833833406640, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+  m_PrefabInstance: {fileID: 6165915446826865910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7862026805532084159
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10868,18 +10899,34 @@ PrefabInstance:
     - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: jewelObj
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 4151617430066030351}
     - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: jewelSprite.Array.size
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[0]
+      value: 
+      objectReference: {fileID: -667596707, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[1]
+      value: 
+      objectReference: {fileID: 1817733100, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[2]
+      value: 
+      objectReference: {fileID: 1523596187, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
+    - target: {fileID: 6090561832035801736, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: jewelSprite.Array.data[3]
+      value: 
+      objectReference: {fileID: 1517538564, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_RootOrder
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 26.64
+      value: 25.42
       objectReference: {fileID: 0}
     - target: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10923,8 +10970,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8793597850d6294cb8502e4577038d2, type: 3}
---- !u!4 &2710043892462811047 stripped
+--- !u!4 &4151617428672814388 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6090561832035801739, guid: c8793597850d6294cb8502e4577038d2, type: 3}
-  m_PrefabInstance: {fileID: 8149834414373580076}
+  m_PrefabInstance: {fileID: 7862026805532084159}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4151617430066030351 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6090561833833406640, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+  m_PrefabInstance: {fileID: 7862026805532084159}
   m_PrefabAsset: {fileID: 0}

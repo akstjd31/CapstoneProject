@@ -99,7 +99,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private float interactionDist = 2f;     //상호작용 거리
     private GameObject npcParent;
 
-    private Items items; // 바닥에 놓여있는 아이템
+    [SerializeField] private Items items; // 바닥에 놓여있는 아이템
 
     // 바닥에 떨어진 아이템 체크포인트
     public Transform itemCheckPoint;
@@ -129,6 +129,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     PlayerSound playerSound;
 
+    // 피격 이펙트
+    public Transform attackedEffect;
+    public Transform bloodPoint;
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void ChangeState(State state)
@@ -156,7 +159,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
-        inventory.SetStatus(status);
         itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
         spum_SpriteList = this.transform.Find("Root").GetComponent<SPUM_SpriteList>();
         playerSound = this.GetComponent<PlayerSound>();
@@ -209,6 +211,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             inventory.equippedItem = equipItem;
             inventory.FreshSlot();
+            inventory.SetStatus(status);
         }
 
         TotalStatus(equipItem);
@@ -245,6 +248,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 {
                     isDeactiveUI = chatScript != null && partySystemScript != null &&
                     !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf;
+
                 }
                 else
                 {
@@ -265,17 +269,16 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                         ChangeState(State.NORMAL);
                     }
                 }
+                Vector3 mouseScreenPosition = Input.mousePosition;
 
+                // 마우스의 스크린 좌표를 월드 좌표로 변환합니다.
+                mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
                 // 공격 & 공격 쿨타임 끝나면
                 if (Input.GetMouseButtonDown(0) && isAttackCooldownOver &&
                     !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.gameObject.activeSelf)
                 {
                     ChangeState(State.ATTACK);
 
-                    Vector3 mouseScreenPosition = Input.mousePosition;
-
-                    // 마우스의 스크린 좌표를 월드 좌표로 변환합니다.
-                    mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
                     // 플레이어가 보고 있는 방향에 따른 공격방향
                     //SetDirection();
 
@@ -566,7 +569,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         this.equipItem = item;
     }
-
     public void TotalStatus(Item equippedItem)
     {
         status.attackDamage = status.GetDefaultAttackDamage() + equippedItem.attackDamage;

@@ -1197,6 +1197,37 @@ Transform:
   m_Father: {fileID: 5809744976138945420}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2911039205682202898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7533640100322802747}
+  m_Layer: 7
+  m_Name: BloodPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7533640100322802747
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2911039205682202898}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.339, y: 0.761, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4046014790040115723}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2930042249053473507
 GameObject:
   m_ObjectHideFlags: 0
@@ -2119,6 +2150,7 @@ Transform:
   - {fileID: 5305725294359329851}
   - {fileID: 1805860024953033304}
   - {fileID: 2449067334134557032}
+  - {fileID: 7533640100322802747}
   m_Father: {fileID: 5576781921316357828}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2170,6 +2202,7 @@ MonoBehaviour:
   isAttackCooldownOver: 1
   attackCoolTime: 1
   animController: []
+  pv: {fileID: 0}
   weaponName: None
   state: 0
   isPartyMember: 0
@@ -2186,6 +2219,7 @@ MonoBehaviour:
   knockBackDistanceSpeed: 0
   originalKnockBackDistanceSpeed: 0
   isMoveRoom: 0
+  items: {fileID: 0}
   itemCheckPoint: {fileID: 5305725294359329851}
   itemCheckRange: 0.8
   itemLayers:
@@ -2196,6 +2230,8 @@ MonoBehaviour:
   arrowTargetPos: {x: 0, y: 0, z: 0}
   randIdx: -1
   equipItem: {fileID: 0}
+  attackedEffect: {fileID: 8371388529732963607, guid: 44c585494fea3fc47946f04e92c85791, type: 3}
+  bloodPoint: {fileID: 7533640100322802747}
 --- !u!114 &1584516156953086667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2277,7 +2313,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.05}
+  m_Offset: {x: 0, y: 0.0512352}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2288,7 +2324,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5408145, y: 0.1}
+  m_Size: {x: 0.5408145, y: 0.1024704}
   m_EdgeRadius: 0
 --- !u!114 &6824683839583191784
 MonoBehaviour:
@@ -2467,7 +2503,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   status: {fileID: 0}
   playerCtrl: {fileID: 0}
-  playerPV: {fileID: 0}
   charSkillCoolTime: 0
   weaponSkillCoolTime: 0
   durationTime: 0
@@ -2479,11 +2514,11 @@ MonoBehaviour:
   charEffectDir: Effects/CharSkill/
   archerSkillSprite: {fileID: 21300000, guid: 628ca2a32dd8a3d408b9d2407fea6050, type: 3}
   weaponSkillSprite:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 21300000, guid: 02b7b4609e4d2b94bb6f9ace5ea256e0, type: 3}
+  - {fileID: 21300000, guid: 2728ff3b3586b1249ad3c2fa18fc27d0, type: 3}
+  - {fileID: 21300000, guid: 9caa88f9840330741886ff38850d8a51, type: 3}
+  - {fileID: 21300000, guid: 0e04057f9ef8f2a44a162644e130f2d6, type: 3}
+  - {fileID: 21300000, guid: 7bbb1fdaf9115f54aba928b1ffbb9728, type: 3}
 --- !u!114 &7137513443306577954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2522,6 +2557,7 @@ MonoBehaviour:
   closeInventorySound: {fileID: 8300000, guid: e98d0aaf3df33ad41950f18a7710576b, type: 3}
   attackJewelSound: {fileID: 8300000, guid: fa5f40573ef1bca41b44358a06439211, type: 3}
   deathSound: {fileID: 8300000, guid: 4c98c32ccc0c5c54e949973f64d892c5, type: 3}
+  openStoreSound: {fileID: 0}
 --- !u!1 &4751091562744504963
 GameObject:
   m_ObjectHideFlags: 0

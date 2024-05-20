@@ -913,17 +913,17 @@ public class BossCtrl : MonoBehaviour
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
-    private void OnDrawGizmos()
-    {
-        if (rocketAndLaserPoint != null)
-        {
-            Gizmos.color = Color.red; // 기즈모의 색상 설정
-            // 직사각형 중심 위치
-            Vector3 center = rocketAndLaserPoint.position;
-            // 직사각형의 크기 설정
-            Vector3 size = new Vector3(rectangleSize.x, rectangleSize.y, 0.0f);
-            // 직사각형 그리기
-            Gizmos.DrawWireCube(center, size);
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    if (rocketAndLaserPoint != null)
+    //    {
+    //        Gizmos.color = Color.red; // 기즈모의 색상 설정
+    //        // 직사각형 중심 위치
+    //        Vector3 center = rocketAndLaserPoint.position;
+    //        // 직사각형의 크기 설정
+    //        Vector3 size = new Vector3(rectangleSize.x, rectangleSize.y, 0.0f);
+    //        // 직사각형 그리기
+    //        Gizmos.DrawWireCube(center, size);
+    //    }
+    //}
 }

@@ -43,6 +43,11 @@ public class EnemySound : MonoBehaviour
         }
     }
 
+    private void PlayWalkSound()
+    {
+
+    }
+
     private void PlayAttackSound()
     {
         audioSource.PlayOneShot(attackSound[0]);

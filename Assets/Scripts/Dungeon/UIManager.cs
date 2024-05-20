@@ -13,9 +13,92 @@ public class UIManager : MonoBehaviour
     // 로컬 플레이어
     public HUD localHUD;
 
+    [SerializeField] private Inventory inventory;
+    [SerializeField] private int activePlayers = -1;
+    [SerializeField] private float removeItemInterval = 0.0f;
+    private float startTime = 5.0f;
+
+    public AudioSource audioSource;
+    public AudioClip audioClip;
+    public AudioClip chestSound;
+    public AudioClip healSound;
+    public AudioClip goldSound;
+    public AudioClip[] arrowHitObstacle;
+    public AudioClip jewelSound;
+
+    private void Start()
+    {
+        inventory = this.transform.Find("Inventory").GetComponent<Inventory>();
+    }
+
     private void Update()
     {
         UpdateHUD();
+
+        if (startTime > 0.0f)
+        {
+            startTime -= Time.deltaTime;
+        }
+        else
+        {
+            if (GameObject.FindGameObjectsWithTag("Player").Length == 0)
+            {
+                if (!inventory.gameObject.activeSelf)
+                {
+                    inventory.gameObject.SetActive(true);
+                }
+                else
+                {
+                    ItemRecovery();
+                }
+            }
+        }
+    }
+
+    public void PlayChestSound()
+    {
+        audioSource.PlayOneShot(chestSound);
+    }
+
+    public void PlayHealSound()
+    {
+        audioSource.PlayOneShot(healSound);
+    }
+
+    public void PlayGoldSound()
+    {
+        audioSource.PlayOneShot(goldSound);
+    }
+
+    public void PlayJewelSound()
+    {
+        audioSource.PlayOneShot(jewelSound);
+    }
+
+    public void PlayArrowHitObstacleSound()
+    {
+        int rand = Random.Range(0, arrowHitObstacle.Length);
+
+        audioSource.PlayOneShot(arrowHitObstacle[rand]);
+    }
+
+    // 아이템 회수
+    private void ItemRecovery()
+    {
+        if (inventory.items.Count > 0)
+        {
+            if (removeItemInterval <= 0.0f)
+            {
+                inventory.items.Remove(inventory.items[inventory.items.Count - 1]);
+                inventory.FreshSlot();
+                audioSource.PlayOneShot(audioClip);
+                removeItemInterval = 1.0f;
+            }
+            else
+            {
+                removeItemInterval -= Time.deltaTime;
+            }
+        }
     }
 
     private void UpdateHUD()

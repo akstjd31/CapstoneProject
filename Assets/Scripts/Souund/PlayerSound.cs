@@ -14,6 +14,7 @@ public class PlayerSound : MonoBehaviour
     public AudioClip openInventorySound, closeInventorySound;
     public AudioClip attackJewelSound;
     public AudioClip deathSound;
+    public AudioClip openStoreSound;
 
     private PlayerCtrl playerCtrl;
     private Status status;

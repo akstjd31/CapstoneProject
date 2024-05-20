@@ -9,12 +9,11 @@ public class ChestController : MonoBehaviourPunCallbacks
 {
     string mapDir = "Dungeon/";
 
-    public AudioSource audioSource;
-    public AudioClip breakSound;
+    UIManager uiManager;
     // Start is called before the first frame update
     void Start()
     {
-        audioSource = this.GetComponent<AudioSource>();
+        uiManager = GameObject.FindGameObjectWithTag("Canvas").GetComponent<UIManager>();
     }
 
     // Update is called once per frame
@@ -31,7 +30,7 @@ public class ChestController : MonoBehaviourPunCallbacks
             PhotonNetwork.InstantiateRoomObject(mapDir + "Heart", this.transform.position, Quaternion.identity, 0);
         }
 
-        audioSource.PlayOneShot(breakSound);
+        uiManager.PlayChestSound();
         PhotonNetwork.Destroy(this.gameObject);
     }
 }

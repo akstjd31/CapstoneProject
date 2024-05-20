@@ -80,22 +80,29 @@ public class Slot : MonoBehaviour, IDropHandler
             // 장착된 아이템 교체
             if (drag.isEquippedItem)
             {
-                Drag targetDrag = targetObj.GetComponent<Drag>();
+                if (this.item.charType.Equals(targetObj.GetComponent<Slot>().item.charType))
+                {
+                    Drag targetDrag = targetObj.GetComponent<Drag>();
 
-                Sprite tmpSprite = drag.defaultSprite;
-                drag.defaultSprite = targetDrag.defaultSprite;
-                targetDrag.defaultSprite = tmpSprite;
+                    Sprite tmpSprite = drag.defaultSprite;
+                    drag.defaultSprite = targetDrag.defaultSprite;
+                    targetDrag.defaultSprite = tmpSprite;
 
-                this.transform.root.Find("Inventory").GetComponent<Inventory>().equippedItem = targetDrag.defaultItem;
-                this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Remove(targetDrag.defaultItem);
+                    this.transform.root.Find("Inventory").GetComponent<Inventory>().equippedItem = targetDrag.defaultItem;
+                    this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Remove(targetDrag.defaultItem);
 
-                Item tmpItem = targetDrag.defaultItem;
-                targetDrag.defaultItem = drag.defaultItem;
-                drag.defaultItem = tmpItem;
+                    Item tmpItem = targetDrag.defaultItem;
+                    targetDrag.defaultItem = drag.defaultItem;
+                    drag.defaultItem = tmpItem;
 
-                this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Add(targetDrag.defaultItem);
+                    this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Add(targetDrag.defaultItem);
 
-                item = drag.defaultItem;
+                    item = drag.defaultItem;
+                }
+                else
+                {
+                    Debug.Log("해당 아이템 착용 불가!");
+                }
             }
         }
     }

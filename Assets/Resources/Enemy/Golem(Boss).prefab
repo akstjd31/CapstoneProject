@@ -636,6 +636,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   charType: 
+  audioSource: {fileID: 0}
+  itemDropSound:
+  - {fileID: 8300000, guid: ec7ce74892dec2d42a6bf501bd8fd017, type: 3}
+  - {fileID: 8300000, guid: f7e1ffe717a8ce84ba261243e61725c0, type: 3}
 --- !u!114 &461068818791501652
 MonoBehaviour:
   m_ObjectHideFlags: 0
