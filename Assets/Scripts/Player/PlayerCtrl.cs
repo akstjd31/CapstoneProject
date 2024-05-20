@@ -805,7 +805,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                         if (bossCtrl != null && !bossCtrl.onHit)
                         {
-                            if (rand > enemy.enemyData.evasionRate && bossCtrl.GetState() != BossCtrl.State.ATTACKED)
+                            if (rand > enemy.enemyData.evasionRate && bossCtrl.GetState() != BossCtrl.State.ATTACKED && bossCtrl.GetState() != BossCtrl.State.INVINCIBILITY)
                             {
                                 bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, 1.0f);
                                 bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);

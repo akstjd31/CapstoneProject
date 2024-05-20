@@ -495,7 +495,6 @@ public class BossCtrl : MonoBehaviour
     [PunRPC]
     private void JewelColorCheck()
     {
-        onHit = false;
         if (bejeweledPillars.Count > 0)
         {
             int count = 0;
@@ -515,7 +514,6 @@ public class BossCtrl : MonoBehaviour
                 agent.isStopped = false;
                 enemyAI.isLookingAtPlayer = true;
                 onHit = false;
-                HiddenPatternStart = false;
                 pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
                 jewelColorObj.SetActive(false);
                 pv.RPC("DestroyTimer", RpcTarget.All);
