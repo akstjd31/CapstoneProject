@@ -674,7 +674,7 @@ public class BossCtrl : MonoBehaviour
                 // 적을 잡으면 모든 플레이어한테 골드, 경험치를 부여
                 if (playerPV.transform.Equals(enemyAI.GetFirstTarget()))
                 {
-                    targetStatus = enemyAI.GetSecondTarget() != null ? enemyAI.GetSecondTarget().GetComponent<Status>() : null;
+                    targetStatus = enemyAI.GetSecondTarget().GetComponent<Status>();
 
                     if (targetStatus != null)
                     {
@@ -684,7 +684,7 @@ public class BossCtrl : MonoBehaviour
                 }
                 else
                 {
-                    targetStatus = enemyAI.GetFirstTarget() != null ? enemyAI.GetFirstTarget().GetComponent<Status>() : null;
+                    targetStatus = enemyAI.GetFirstTarget().GetComponent<Status>();
 
                     if (targetStatus != null)
                     {

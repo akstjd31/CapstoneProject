@@ -26,17 +26,24 @@ public class HealItem : MonoBehaviour
         Destroy(this.gameObject);
     }
 
+    [PunRPC]
+    private void PlayerRecovery(int viewID, int healRate)
+    {
+        PhotonView targetView = PhotonView.Find(viewID);
+        Status status = targetView.GetComponent<Status>();
+
+        status.HP += healRate;
+        if (status.HP >= status.MAXHP)
+        {
+            status.HP = status.MAXHP;
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            Status status = other.GetComponent<Status>();
-            
-            status.HP += healRate;
-            if(status.HP > status.MAXHP)
-            {
-                status.HP = status.MAXHP;
-            }
+            this.GetComponent<PhotonView>().RPC("PlayerRecovery", RpcTarget.All, other.GetComponent<PhotonView>().ViewID, healRate);
 
             uiManager.PlayHealSound();
             this.GetComponent<PhotonView>().RPC("DestroyObj", RpcTarget.All);
