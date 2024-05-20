@@ -9003,8 +9003,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localPlayerStatus: {fileID: 0}
   remotePlayerStatus: {fileID: 0}
-  remoteHUD: {fileID: 1025951647}
-  localHUD: {fileID: 1077121225}
+  remoteHUD: {fileID: 1077121225}
+  localHUD: {fileID: 1025951647}
   inventory: {fileID: 0}
   activePlayers: -1
   removeItemInterval: 0
@@ -9018,6 +9018,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: b00cb711607c2dd4096ee851f275200d, type: 3}
   - {fileID: 8300000, guid: 0796dd22b435e60408c8a6d6a4da7227, type: 3}
   jewelSound: {fileID: 8300000, guid: fa5f40573ef1bca41b44358a06439211, type: 3}
+  rand: 0
 --- !u!82 &1491024236
 AudioSource:
   m_ObjectHideFlags: 0

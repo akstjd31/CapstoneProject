@@ -36,7 +36,6 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-
         UpdateHUD();
 
         if (startTime > 0.0f)
