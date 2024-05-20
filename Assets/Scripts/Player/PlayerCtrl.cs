@@ -99,7 +99,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private float interactionDist = 2f;     //상호작용 거리
     private GameObject npcParent;
 
-    private Items items; // 바닥에 놓여있는 아이템
+    [SerializeField] private Items items; // 바닥에 놓여있는 아이템
 
     // 바닥에 떨어진 아이템 체크포인트
     public Transform itemCheckPoint;
