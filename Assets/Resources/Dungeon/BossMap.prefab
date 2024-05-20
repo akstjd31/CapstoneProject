@@ -10561,6 +10561,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4884295505551668604}
     m_Modifications:
+    - target: {fileID: 5825587941090296931, guid: 0ea57dbeab50d884093d156df4928f39, type: 3}
+      propertyPath: m_Mass
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 9090852874685010490, guid: 0ea57dbeab50d884093d156df4928f39, type: 3}
       propertyPath: m_Name
       value: Golem(Boss)
