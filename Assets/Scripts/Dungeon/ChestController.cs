@@ -25,7 +25,7 @@ public class ChestController : MonoBehaviourPunCallbacks
     public void ChestBreak()
     {
         int randInt = Random.Range(0, 11);
-        if (randInt < 2)
+        if (randInt < 11)
         {
             PhotonNetwork.InstantiateRoomObject(mapDir + "Heart", this.transform.position, Quaternion.identity, 0);
         }
