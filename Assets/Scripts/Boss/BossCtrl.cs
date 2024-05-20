@@ -189,7 +189,7 @@ public class BossCtrl : MonoBehaviour
                 }
 
                 // 체력이 30퍼 이하가 되면 히든 패턴 시작
-                if (enemy.enemyData.hp <= enemy.enemyData.maxHp * 0.3f && !HiddenPatternStart && !flag)
+                if (enemy.enemyData.hp <= enemy.enemyData.maxHp * 0.3f && !HiddenPatternStart)
                 {
                     flag = true;
                     anim.Play("Idle");
@@ -205,67 +205,64 @@ public class BossCtrl : MonoBehaviour
                     return;
                 }
 
-                if (!HiddenPatternStart)
+                // 로켓 손 or 레이저 발사
+                if (state == State.MOVE)
                 {
-                    // 로켓 손 or 레이저 발사
-                    if (state == State.MOVE)
+                    if (IsPlayerInRectangleRange())
                     {
-                        if (IsPlayerInRectangleRange())
+                        if (lazerCoolTime <= 0.0f && state != State.RANGEATTACK)
                         {
-                            if (lazerCoolTime <= 0.0f && state != State.RANGEATTACK)
-                            {
-                                lazerCoolTime = lazerDefaultCoolTime;
-                                FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
-                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.LAZERCAST);
-                                agent.isStopped = true;
-                            }
-
-                            if (rocketCoolTime <= 0.0f && state != State.LAZERCAST)
-                            {
-                                rocketCoolTime = rocketDefaultCoolTime;
-                                agent.isStopped = true;
-                                FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
-                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.RANGEATTACK);
-                            }
+                            lazerCoolTime = lazerDefaultCoolTime;
+                            FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
+                            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.LAZERCAST);
+                            agent.isStopped = true;
                         }
 
-                        if (IsEnemyClosetPlayer())
+                        if (rocketCoolTime <= 0.0f && state != State.LAZERCAST)
                         {
-                            if (armorBuffCoolTime <= 0.0f || spcialLazerCoolTime <= 0.0f)
+                            rocketCoolTime = rocketDefaultCoolTime;
+                            agent.isStopped = true;
+                            FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
+                            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.RANGEATTACK);
+                        }
+                    }
+
+                    if (IsEnemyClosetPlayer())
+                    {
+                        if (armorBuffCoolTime <= 0.0f || spcialLazerCoolTime <= 0.0f)
+                        {
+                            if (armorBuffCoolTime <= 0.0f && state != State.SPECIAL_LAZER)
                             {
-                                if (armorBuffCoolTime <= 0.0f && state != State.SPECIAL_LAZER)
-                                {
-                                    armorBuffCoolTime = armorBuffDefaultCoolTime;
-                                    agent.isStopped = true;
-                                    pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.ARMORBUFF);
-                                    armorBuffElapsedTime = armorBuffDurationTime;
-                                }
+                                armorBuffCoolTime = armorBuffDefaultCoolTime;
+                                agent.isStopped = true;
+                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.ARMORBUFF);
+                                armorBuffElapsedTime = armorBuffDurationTime;
+                            }
 
-                                if (spcialLazerCoolTime <= 0.0f && state != State.ARMORBUFF)
-                                {
-                                    spcialLazerCoolTime = spcialLazerDefaultCoolTime;
-                                    agent.isStopped = true;
-                                    pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.SPECIAL_LAZER);
-                                }
-                                else
-                                {
-                                    pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.MELEE);
-                                }
-
+                            if (spcialLazerCoolTime <= 0.0f && state != State.ARMORBUFF)
+                            {
+                                spcialLazerCoolTime = spcialLazerDefaultCoolTime;
+                                agent.isStopped = true;
+                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.SPECIAL_LAZER);
                             }
                             else
                             {
                                 pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.MELEE);
                             }
+
+                        }
+                        else
+                        {
+                            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.MELEE);
                         }
                     }
+                }
 
-                    CoolTimeCalculator();
-                }
-                else
-                {
-                    rigid.velocity = Vector2.zero;
-                }
+                CoolTimeCalculator();
+            }
+            else
+            {
+                rigid.velocity = Vector2.zero;
             }
         }
     }
