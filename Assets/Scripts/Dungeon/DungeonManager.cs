@@ -123,7 +123,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
             }
             playerMarker = PhotonNetwork.Instantiate(mapDir + playerMarker.name, new Vector2(playerRoomPos.x / mapSize[0] + spawnPoint.transform.position.x, playerRoomPos.y / mapSize[1] + spawnPoint.transform.position.x), Quaternion.identity, 0);
             PhotonNetwork.Instantiate(mapDir + healRoomMarker.name, healRoom.transform.position, Quaternion.identity, 0);
-            PhotonNetwork.Instantiate(mapDir + shopRoomMarker.name+"_", shopRoom.transform.position, Quaternion.identity, 0);
+            PhotonNetwork.Instantiate(mapDir + shopRoomMarker.name, shopRoom.transform.position, Quaternion.identity, 0);
             PhotonNetwork.Instantiate(mapDir + bossRoomMarker.name, bossRoom.transform.position, Quaternion.identity, 0);
             specialRoomSelect = true;
 
@@ -138,7 +138,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
                     {
                         bakeNavMesh.BakeNavigation();
                         NavMeshbaked = true;
-                        GameObject.FindGameObjectWithTag("Canvas").GetComponent<Inventory>().gameObject.transform.SetAsLastSibling();
+                        GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").GetComponent<Inventory>().gameObject.transform.SetAsLastSibling();
                     }
                 }
                 else

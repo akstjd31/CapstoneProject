@@ -10137,7 +10137,7 @@ GameObject:
   - component: {fileID: 1777458929862009822}
   m_Layer: 0
   m_Name: ShopManager
-  m_TagString: Store
+  m_TagString: HiddenStore
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10171,6 +10171,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shopView: {fileID: 3089237400207473097, guid: 270d48ea8af651644b04bd95e7131462, type: 3}
   item_Container: {fileID: 2498112146650351077, guid: 5e82061647261c346a86ccd036d9ac47, type: 3}
+  audioSource: {fileID: 0}
+  openShopSound: {fileID: 0}
+  closeShopSound: {fileID: 0}
 --- !u!114 &1777458929862009821
 MonoBehaviour:
   m_ObjectHideFlags: 0

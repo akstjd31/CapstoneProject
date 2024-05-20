@@ -49,38 +49,38 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
 
     }
 
-    // void OnTriggerEnter2D(Collider2D other)
-    // {
-    //     playerCtrl = other.GetComponent<PlayerCtrl>();
-    //     if(playerCtrl.isPartyMember)
-    //     {
-    //         if(playerCtrl.isReady && PhotonView.Find(playerCtrl.party.GetPartyMemberID()).GetComponent<PlayerCtrl>().isReady)
-    //         {
-    //             if(playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2)
-    //             {
-    //                 partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
-    //                 partyPlayersID[1] = playerCtrl.party.GetPartyMemberID();
-    //                 roomName = PhotonView.Find(partyPlayersID[0]).Controller.NickName;
-    //                 foreach (int playerID in partyPlayersID)
-    //                 {
-    //                     PhotonView playerView = PhotonView.Find(playerID);
-    //                     playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID, roomName);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-
-    //for test
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Enter Trigger");
         playerCtrl = other.GetComponent<PlayerCtrl>();
         if(playerCtrl.isPartyMember)
         {
-            partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
-            PhotonView playerView = PhotonView.Find(partyPlayersID[0]);
-            playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID[0], roomName);
+            if(playerCtrl.isReady && PhotonView.Find(playerCtrl.party.GetPartyMemberID()).GetComponent<PlayerCtrl>().isReady)
+            {
+                if(playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2)
+                {
+                    partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
+                    partyPlayersID[1] = playerCtrl.party.GetPartyMemberID();
+                    roomName = PhotonView.Find(partyPlayersID[0]).Controller.NickName;
+                    foreach (int playerID in partyPlayersID)
+                    {
+                        PhotonView playerView = PhotonView.Find(playerID);
+                        playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID, roomName);
+                    }
+                }
+            }
         }
     }
+
+    //for test
+    // void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     Debug.Log("Enter Trigger");
+    //     playerCtrl = other.GetComponent<PlayerCtrl>();
+    //     if(playerCtrl.isPartyMember)
+    //     {
+    //         partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
+    //         PhotonView playerView = PhotonView.Find(partyPlayersID[0]);
+    //         playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID[0], roomName);
+    //     }
+    // }
 }

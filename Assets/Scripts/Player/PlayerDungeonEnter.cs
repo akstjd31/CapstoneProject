@@ -23,51 +23,51 @@ public class PlayerDungeonEnter : MonoBehaviourPunCallbacks
 
     }
 
-    // [PunRPC]
-    // public IEnumerator OnEnterDungeon(int[] partyPlayersID, string roomName)
-    // {
-    //     foreach (int playerID in partyPlayersID)
-    //     {
-    //         // PhotonView PartyPV = PhotonView.Find(partyPlayersID);
-    //         PhotonView PartyPV = PhotonView.Find(playerID);
-    //         if (PartyPV.IsMine)
-    //         {
-    //             //SceneManager.LoadScene(sceneName);
-    //             if (partyPlayersID[0] == PartyPV.ViewID)
-    //             {
-    //                 PhotonNetwork.LeaveRoom();
-    //                 yield return new WaitForSeconds(3.0f);
-    //                 CreateRoom(roomName);
-    //                 yield return new WaitForSeconds(3.0f);
-    //                 JoinRoom(roomName);
-    //             }
-    //             else
-    //             {
-    //                 PhotonNetwork.LeaveRoom();
-    //                 yield return new WaitForSeconds(7.0f);
-    //                 JoinRoom(roomName);
-    //             }
-    //             yield break;
-    //         }
-    //     }
-    // }
-
-    //for test
     [PunRPC]
-    public IEnumerator OnEnterDungeon(int partyPlayersID, string roomName)
+    public IEnumerator OnEnterDungeon(int[] partyPlayersID, string roomName)
     {
-        PhotonView PartyPV = PhotonView.Find(partyPlayersID);
-        if (PartyPV.IsMine)
+        foreach (int playerID in partyPlayersID)
         {
-            PhotonNetwork.LeaveRoom();
-            yield return new WaitForSeconds(5.0f);
-            PhotonNetwork.JoinLobby();
-            yield return new WaitForSeconds(5.0f);
-            CreateRoom(roomName);
-            yield return new WaitForSeconds(5.0f);
-            JoinRoom(roomName);
+            // PhotonView PartyPV = PhotonView.Find(partyPlayersID);
+            PhotonView PartyPV = PhotonView.Find(playerID);
+            if (PartyPV.IsMine)
+            {
+                //SceneManager.LoadScene(sceneName);
+                if (partyPlayersID[0] == PartyPV.ViewID)
+                {
+                    PhotonNetwork.LeaveRoom();
+                    yield return new WaitForSeconds(3.0f);
+                    CreateRoom(roomName);
+                    yield return new WaitForSeconds(3.0f);
+                    JoinRoom(roomName);
+                }
+                else
+                {
+                    PhotonNetwork.LeaveRoom();
+                    yield return new WaitForSeconds(7.0f);
+                    JoinRoom(roomName);
+                }
+                yield break;
+            }
         }
     }
+
+    //for test
+    // [PunRPC]
+    // public IEnumerator OnEnterDungeon(int partyPlayersID, string roomName)
+    // {
+    //     PhotonView PartyPV = PhotonView.Find(partyPlayersID);
+    //     if (PartyPV.IsMine)
+    //     {
+    //         PhotonNetwork.LeaveRoom();
+    //         yield return new WaitForSeconds(5.0f);
+    //         PhotonNetwork.JoinLobby();
+    //         yield return new WaitForSeconds(5.0f);
+    //         CreateRoom(roomName);
+    //         yield return new WaitForSeconds(5.0f);
+    //         JoinRoom(roomName);
+    //     }
+    // }
 
     void CreateRoom(string roomName)
     {

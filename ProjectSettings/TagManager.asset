@@ -26,6 +26,7 @@ TagManager:
   - Jewel
   - SkillUI
   - Chest
+  - HiddenStore
   layers:
   - Default
   - TransparentFX
