@@ -91,9 +91,7 @@ public class EnemyCtrl : MonoBehaviour
     // HP UI 생성 및 세팅
     public void HPInitSetting()
     {
-        GameObject hpBarPrefab = PhotonNetwork.Instantiate("Enemy/" + HPBar.name, Vector2.zero, Quaternion.identity);
-        hpBarPrefab.transform.parent = canvas.transform;
-        hpBar = hpBarPrefab.GetComponent<Slider>();
+        hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
 
         hpBar.maxValue = enemy.enemyData.hp;
         enemy.enemyData.maxHp = enemy.enemyData.hp;
