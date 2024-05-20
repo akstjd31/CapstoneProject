@@ -130,6 +130,7 @@ MonoBehaviour:
   - InitializeGreatSwordSkill
   - InitializeIcycleSwordSkill
   - InitializeKingMakerSwordSkill
+  - InitializeDarkLongBowSkill
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

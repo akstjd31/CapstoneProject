@@ -6,6 +6,10 @@ using UnityEngine.UI;
 
 public class ArcherActiveSkill : ActiveSkill
 {
+    PhotonView pv;
+    Vector3 mouseWorldPosition;
+
+
     float setCharSkillCoolTime = 60.0f;
     float setCharSkillDrationTime = 10.0f;
     public Sprite archerSkillSprite;
@@ -16,6 +20,7 @@ public class ArcherActiveSkill : ActiveSkill
     // Start is called before the first frame update
     void Start()
     {
+        pv = playerCtrl.GetComponent<PhotonView>();
         isInDungeon = false;
         if (GameObject.Find("LocalHUD"))
         {
@@ -31,6 +36,9 @@ public class ArcherActiveSkill : ActiveSkill
     // Update is called once per frame
     void Update()
     {
+        Vector3 mouseScreenPosition = Input.mousePosition;
+        mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+
         if(isInDungeon)
         {
             //직업 쿨타임
@@ -150,6 +158,12 @@ public class ArcherActiveSkill : ActiveSkill
 
     void DarkLongBowSkill()
     {
+        GameObject demonSwordSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DarkLongBowSkill_", this.transform.position, Quaternion.identity);
+        PhotonView demonSwordSkillPv = demonSwordSkillPrefab.GetComponent<PhotonView>();
+        DemonSwordSkill demonSwordSkill = demonSwordSkillPv.GetComponent<DemonSwordSkill>();
+        Debug.Log(pv.ViewID);
+        demonSwordSkillPv.RPC("InitializeDarkLongBowSkill", RpcTarget.AllBuffered, pv.ViewID);
+        weaponSkillCoolTime = setWeaponSkillCoolTime;
         PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DemonSwordSkillEffect", this.transform.position, Quaternion.identity);
     }
     void FirePhoenixBow()
