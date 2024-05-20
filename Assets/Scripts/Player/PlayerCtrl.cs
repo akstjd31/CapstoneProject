@@ -219,7 +219,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     //Graphic & Input Updates	
     void Update()
     {
-        if (npcParent != null && !getNPC)
+        if (npcParent == null && !getNPC)
         {
             npcParent = GameObject.Find("npc"); // find npc
             // npcParent에서 자식 GameObject들을 모두 가져와서 배열에 저장
