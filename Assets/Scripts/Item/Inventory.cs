@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using Photon.Pun;
-using Random = UnityEngine.Random;
 
 public class Inventory : MonoBehaviour
 {
@@ -41,7 +41,7 @@ public class Inventory : MonoBehaviour
     private PlayerCtrl playerCtrl;
     private Text nowMoney;
 
-    private float removeItemInterval = 1.0f;
+
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -57,7 +57,6 @@ public class Inventory : MonoBehaviour
         // EventSystem 가져오기
         eventSystem = this.transform.root.GetComponent<EventSystem>();
 
-        this.transform.SetAsLastSibling();
     }
 #endif
 
@@ -86,7 +85,12 @@ public class Inventory : MonoBehaviour
 
     private void Update()
     {
-        EquipItem();
+        // 인벤토리가 캔버스의 마지막 자식이 아닌경우 마지막으로 설정
+        //if (!this.transform.root.GetChild(this.transform.root.childCount).Equals(this.transform))
+        //{
+        //    this.transform.SetAsLastSibling();
+        //}
+        this.transform.SetAsLastSibling();
 
         // 마우스 위치에서 PointerEventData 생성
         pointerEventData = new PointerEventData(eventSystem);
@@ -102,7 +106,7 @@ public class Inventory : MonoBehaviour
         }
 
         //상점인 경우
-        if(playerCtrl.IsEnableStore())
+        if(playerCtrl != null && playerCtrl.IsEnableStore())
         {
             if(Input.GetMouseButtonDown(0))
             {
@@ -191,21 +195,6 @@ public class Inventory : MonoBehaviour
             }
         }
     }
-
-    // 아이템 회수
-    //public void ItemRecovery()
-    //{
-    //    this.gameObject.SetActive(true);
-
-    //    if (items.Count > 0)
-    //    {
-    //        if (removeItemInterval <= 0.0f)
-    //        {
-    //            items.Remove()
-    //        }
-    //    }
-        
-    //}
 
 
 
@@ -298,7 +287,10 @@ public class Inventory : MonoBehaviour
             inventoryDrags[i].defaultItem = null;
         }
 
-        Refresh_InvMoney();
+        if (playerCtrl != null)
+        {
+            Refresh_InvMoney();
+        }
     }
 
     public int GetInventorySlotLength()

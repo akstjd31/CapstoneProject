@@ -245,6 +245,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 {
                     isDeactiveUI = chatScript != null && partySystemScript != null &&
                     !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf;
+
                 }
                 else
                 {
@@ -566,7 +567,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         this.equipItem = item;
     }
-
     public void TotalStatus(Item equippedItem)
     {
         status.attackDamage = status.GetDefaultAttackDamage() + equippedItem.attackDamage;

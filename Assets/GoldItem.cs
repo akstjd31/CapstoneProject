@@ -8,12 +8,11 @@ public class GoldItem : MonoBehaviour
     private Status status1, status2;
     private float rand1, rand2;
 
-    public AudioSource audioSource;
-    public AudioClip goldSound;
+    UIManager uiManager;
 
     private void Start()
     {
-        audioSource = this.GetComponent<AudioSource>();
+        uiManager = GameObject.FindGameObjectWithTag("Canvas").GetComponent<UIManager>();
     }
 
     public void SetStatus(Status status1, Status status2)
@@ -81,7 +80,7 @@ public class GoldItem : MonoBehaviour
                 }
             }
 
-            audioSource.PlayOneShot(goldSound);
+            uiManager.PlayGoldSound();
             PhotonNetwork.Destroy(this.gameObject);
         }
     }
