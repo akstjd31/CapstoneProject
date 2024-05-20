@@ -157,6 +157,10 @@ public class ArcherActiveSkill : ActiveSkill
                     Hud.weaponSkillImage.transform.parent.gameObject.SetActive(false);
             }
         }
+        if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
+        {
+            durationTime = setCharSkillDrationTime;
+        }
 
         if (durationTime > 0.0f && charEffect != null)
         {
