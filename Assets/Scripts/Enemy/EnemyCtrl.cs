@@ -91,7 +91,10 @@ public class EnemyCtrl : MonoBehaviour
     // HP UI 생성 및 세팅
     public void HPInitSetting()
     {
-        hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
+        GameObject hpBarPrefab = PhotonNetwork.Instantiate("Enemy/" + HPBar.name, Vector2.zero, Quaternion.identity);
+        hpBarPrefab.transform.parent = canvas.transform;
+        hpBar = hpBarPrefab.GetComponent<Slider>();
+
         hpBar.maxValue = enemy.enemyData.hp;
         enemy.enemyData.maxHp = enemy.enemyData.hp;
         hpBar.value = enemy.enemyData.hp;
@@ -291,9 +294,9 @@ public class EnemyCtrl : MonoBehaviour
         }
         else
         {
-            dropItem.GetComponent<PhotonView>().RPC("SpawnDroppedItem", RpcTarget.All);
+            pv.RPC("SpawnDroppedItem", RpcTarget.All);
 
-            Destroy(hpBar.gameObject);
+            PhotonNetwork.Destroy(hpBar.gameObject);
             PhotonNetwork.Destroy(this.gameObject);
         }
     }
