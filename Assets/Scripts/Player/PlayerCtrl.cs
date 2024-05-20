@@ -132,6 +132,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 피격 이펙트
     public Transform attackedEffect;
     public Transform bloodPoint;
+    bool getNPC = false;
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void ChangeState(State state)
@@ -214,7 +215,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         TotalStatus(equipItem);
 
 
-        if (npcParent != null)
+    }
+
+    //Graphic & Input Updates	
+    void Update()
+    {
+        if (npcParent != null && !getNPC)
         {
             // npcParent에서 자식 GameObject들을 모두 가져와서 배열에 저장
             npcList = new GameObject[npcParent.transform.childCount];
@@ -222,12 +228,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 npcList[i] = npcParent.transform.GetChild(i).gameObject;
             }
+            if(npcList.Length > 0)
+            {
+                getNPC = true;
+            }
         }
-    }
 
-    //Graphic & Input Updates	
-    void Update()
-    {
         if (pv.IsMine)
         {
             //anim.speed = animSpeed;
