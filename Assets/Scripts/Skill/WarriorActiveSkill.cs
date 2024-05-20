@@ -21,6 +21,9 @@ public class WarriorActiveSkill : ActiveSkill
     public Sprite[] weaponSkillSprite = new Sprite[5];
     string swordEffectDir = "Sword/";
 
+    float angle;
+    Vector3 direction;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +48,13 @@ public class WarriorActiveSkill : ActiveSkill
     {
         Vector3 mouseScreenPosition = Input.mousePosition;
         mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+        mouseWorldPosition = new Vector3(mouseWorldPosition.x, mouseWorldPosition.y, 0.0f);
+
+        direction = mouseWorldPosition - this.transform.position;
+        direction.z = 0; // 2D 게임의 경우 z 축 방향을 무시
+
+        // 방향 벡터를 기준으로 회전 각도 계산
+        angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         if (isInDungeon) // 스킬 쿨타임 UI
         {
@@ -188,17 +198,12 @@ public class WarriorActiveSkill : ActiveSkill
     }
     void GreatSwordSkill()
     {
-        Vector3 direction = mouseWorldPosition - this.transform.position;
-        direction.z = 0; // 2D 게임의 경우 z 축 방향을 무시
-
-        // 방향 벡터를 기준으로 회전 각도 계산
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         GameObject GreatSwordSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "GreatSwordSkill_", this.transform.position,  Quaternion.Euler(0, 0, angle));
         PhotonView GreatSwordSkillPv = GreatSwordSkillPrefab.GetComponent<PhotonView>();
         GreatSwordSkill GreatSwordSkill = GreatSwordSkillPv.GetComponent<GreatSwordSkill>();
         Debug.Log(pv.ViewID);
-        GreatSwordSkillPv.RPC("InitializeGreatSwordSkill", RpcTarget.AllBuffered, pv.ViewID, playerCtrl);
+        GreatSwordSkillPv.RPC("InitializeGreatSwordSkill", RpcTarget.AllBuffered, pv.ViewID, direction);
         weaponSkillCoolTime = setWeaponSkillCoolTime;
     }
     void DarkGalaxyDaggerSkill()

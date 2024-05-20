@@ -268,17 +268,16 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                         ChangeState(State.NORMAL);
                     }
                 }
+                Vector3 mouseScreenPosition = Input.mousePosition;
 
+                // 마우스의 스크린 좌표를 월드 좌표로 변환합니다.
+                mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
                 // 공격 & 공격 쿨타임 끝나면
                 if (Input.GetMouseButtonDown(0) && isAttackCooldownOver &&
                     !EventSystem.current.currentSelectedGameObject && isDeactiveUI && !onHit && !inventory.gameObject.activeSelf)
                 {
                     ChangeState(State.ATTACK);
 
-                    Vector3 mouseScreenPosition = Input.mousePosition;
-
-                    // 마우스의 스크린 좌표를 월드 좌표로 변환합니다.
-                    mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
                     // 플레이어가 보고 있는 방향에 따른 공격방향
                     //SetDirection();
 

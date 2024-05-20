@@ -40,7 +40,7 @@ public class KingMakerSkill : MonoBehaviour
     {
         if(status != null && playerCtrl != null)
         destroyTimer += Time.deltaTime;
-        this.transform.position = playerCtrl.transform.position;
+        this.transform.position = new Vector2(playerCtrl.transform.position.x, playerCtrl.transform.position.y + 1.0f);
         status.attackSpeed = 20;
         if(destroyTimer > duration)
         {

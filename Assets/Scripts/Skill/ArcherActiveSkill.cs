@@ -17,6 +17,10 @@ public class ArcherActiveSkill : ActiveSkill
     float setWeaponSkillCoolTime;
     public Sprite[] weaponSkillSprite = new Sprite[5];
     string bowEffectDir = "Bow/";
+
+    float angle;
+    Vector3 direction;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +42,13 @@ public class ArcherActiveSkill : ActiveSkill
     {
         Vector3 mouseScreenPosition = Input.mousePosition;
         mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+        mouseWorldPosition = new Vector3(mouseWorldPosition.x, mouseWorldPosition.y, 0.0f);
+
+        direction = mouseWorldPosition - this.transform.position;
+        direction.z = 0; // 2D 게임의 경우 z 축 방향을 무시
+
+        // 방향 벡터를 기준으로 회전 각도 계산
+        angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         if(isInDungeon)
         {
@@ -61,7 +72,7 @@ public class ArcherActiveSkill : ActiveSkill
         durationTime -= Time.deltaTime;
         if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
         {
-            charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillcharEffect", this.transform.position, Quaternion.identity);
+            charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillEffect", this.transform.position, Quaternion.identity);
             status.moveSpeed += status.GetDefaultMoveSpeed() * 0.3f;
             durationTime = setCharSkillDrationTime;
             charSkillCoolTime = setCharSkillCoolTime;
@@ -121,8 +132,8 @@ public class ArcherActiveSkill : ActiveSkill
                 else if (playerCtrl.GetEquipItem().itemID == 262) //Icycle_Wind_Bow
                 {
                     Hud.weaponSkillImage.sprite = weaponSkillSprite[2];
-                    setWeaponSkillCoolTime = 0.0f;
-                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime <= 0.0f)
+                    setWeaponSkillCoolTime = 0.1f;
+                    if (Input.GetKey(KeyCode.R) && weaponSkillCoolTime <= 0.0f)
                     {
                         IcycleWindBowSkill();
                         weaponSkillCoolTime = setWeaponSkillCoolTime;
@@ -158,13 +169,11 @@ public class ArcherActiveSkill : ActiveSkill
 
     void DarkLongBowSkill()
     {
-        GameObject demonSwordSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DarkLongBowSkill_", this.transform.position, Quaternion.identity);
-        PhotonView demonSwordSkillPv = demonSwordSkillPrefab.GetComponent<PhotonView>();
-        DemonSwordSkill demonSwordSkill = demonSwordSkillPv.GetComponent<DemonSwordSkill>();
-        Debug.Log(pv.ViewID);
-        demonSwordSkillPv.RPC("InitializeDarkLongBowSkill", RpcTarget.AllBuffered, pv.ViewID);
+        GameObject DarkLongBowSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DarkLongBowSkill_", mouseWorldPosition, Quaternion.identity);
+        PhotonView DarkLongBowSkillPv = DarkLongBowSkillPrefab.GetComponent<PhotonView>();
+        DarkLongBowSkill DarkLongBowSkill = DarkLongBowSkillPv.GetComponent<DarkLongBowSkill>();
+        DarkLongBowSkillPv.RPC("InitializeDarkLongBowSkill", RpcTarget.AllBuffered, pv.ViewID);
         weaponSkillCoolTime = setWeaponSkillCoolTime;
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DemonSwordSkillEffect", this.transform.position, Quaternion.identity);
     }
     void FirePhoenixBow()
     {
@@ -172,15 +181,32 @@ public class ArcherActiveSkill : ActiveSkill
     }
     void IcycleWindBowSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "DarkGalaxySwordSkillEffect", this.transform.position, Quaternion.identity);
+        playerCtrl.Fire();
+        if(mouseWorldPosition.x < playerCtrl.transform.position.x)
+        {
+            PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "IcycleWindBowSkill_L", new Vector2(this.transform.position.x - 0.7f, this.transform.position.y + 0.5f), Quaternion.identity);
+        }
+        else if(mouseWorldPosition.x > playerCtrl.transform.position.x)
+        {
+            PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "IcycleWindBowSkill_R", new Vector2(this.transform.position.x + 0.7f, this.transform.position.y + 0.5f), Quaternion.identity);
+        }
     }
     void ShiningCompoundBowSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "IcycleSwordSkillEffect", this.transform.position, Quaternion.identity);
+        GameObject ShiningCompoundBowSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "ShiningCompoundBowSkill_", new Vector2(mouseWorldPosition.x, mouseWorldPosition.y + 5.0f), Quaternion.identity);
+        PhotonView ShiningCompoundBowSkillPv = ShiningCompoundBowSkillPrefab.GetComponent<PhotonView>();
+        ShiningCompoundBowSkill DarkLongBowSkill = ShiningCompoundBowSkillPv.GetComponent<ShiningCompoundBowSkill>();
+        ShiningCompoundBowSkillPv.RPC("InitializeShiningCompoundBowSkill", RpcTarget.AllBuffered, pv.ViewID, direction);
+        weaponSkillCoolTime = setWeaponSkillCoolTime;
     }
     void PathfinderSkill()
     {
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "KingMakerSwordBuffEffect", this.transform.position, Quaternion.identity);
-        PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "KingMakerSwordSkillEffect", this.transform.position, Quaternion.identity);
+        GameObject PathFinderSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + bowEffectDir + "PathFinderSkill_", this.transform.position, Quaternion.identity);
+        PhotonView PathFinderSkillPv = PathFinderSkillPrefab.GetComponent<PhotonView>();
+        PathFinderSkill PathFinderSkill = PathFinderSkillPv.GetComponent<PathFinderSkill>();
+        PathFinderSkillPv.RPC("InitializePathFinderSkill", RpcTarget.AllBuffered, pv.ViewID);
+        PathFinderSkill.setPlayerCtrl(playerCtrl);
+        PathFinderSkill.setStatus(status);
+        weaponSkillCoolTime = setWeaponSkillCoolTime;
     }
 }
