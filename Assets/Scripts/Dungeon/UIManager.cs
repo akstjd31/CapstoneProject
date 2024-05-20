@@ -23,6 +23,8 @@ public class UIManager : MonoBehaviour
     public AudioClip chestSound;
     public AudioClip healSound;
     public AudioClip goldSound;
+    public AudioClip[] arrowHitObstacle;
+    public AudioClip jewelSound;
 
     private void Start()
     {
@@ -66,6 +68,18 @@ public class UIManager : MonoBehaviour
     public void PlayGoldSound()
     {
         audioSource.PlayOneShot(goldSound);
+    }
+
+    public void PlayJewelSound()
+    {
+        audioSource.PlayOneShot(jewelSound);
+    }
+
+    public void PlayArrowHitObstacleSound()
+    {
+        int rand = Random.Range(0, arrowHitObstacle.Length);
+
+        audioSource.PlayOneShot(arrowHitObstacle[rand]);
     }
 
     // 아이템 회수

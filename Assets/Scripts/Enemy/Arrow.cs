@@ -15,6 +15,8 @@ public class Arrow : MonoBehaviour
 
     private Rigidbody2D rigid;
 
+    UIManager uiManager;
+
     //private float elapsedTime = 2.0f;
 
     [PunRPC]
@@ -30,6 +32,7 @@ public class Arrow : MonoBehaviour
     private void Start()
     {
         rigid = this.GetComponent<Rigidbody2D>();
+        uiManager = GameObject.FindGameObjectWithTag("Canvas").GetComponent<UIManager>();
 
         Destroy(this.gameObject, 2f);
     }
@@ -133,18 +136,22 @@ public class Arrow : MonoBehaviour
         else if (other.CompareTag("Jewel"))
         {
             other.GetComponent<BejeweledPillar>().ChangeJewelColor();
+            uiManager.PlayJewelSound();
             Destroy(this.gameObject);
         }
 
         else if(other.CompareTag("Chest") && !owner.Equals("Enemy"))
         {
             ChestController chestController = other.GetComponent<ChestController>();
+
+            uiManager.PlayChestSound();
             chestController.ChestBreak();
             Destroy(this.gameObject);
         }
 
         else if (other.CompareTag("Obstacle"))
         {
+            uiManager.PlayArrowHitObstacleSound();
             Destroy(this.gameObject);
         }
     }

@@ -499,7 +499,7 @@ GameObject:
   - component: {fileID: 3965821814447249042}
   m_Layer: 0
   m_Name: wall_collider 10
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2392,7 +2392,7 @@ GameObject:
   - component: {fileID: 6974071379556811125}
   m_Layer: 0
   m_Name: decoration 12
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2870,7 +2870,7 @@ GameObject:
   - component: {fileID: 5735879850918580378}
   m_Layer: 0
   m_Name: interaction 11
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -8943,6 +8943,11 @@ MonoBehaviour:
   chestSound: {fileID: 8300000, guid: 82ccdbe39da18cf4b8d6e0a72a7a9f7b, type: 3}
   healSound: {fileID: 8300000, guid: fca6295bf0cfcc040a60347daab48211, type: 3}
   goldSound: {fileID: 8300000, guid: dce2e100b2f110c4f805038c68d6e7d9, type: 3}
+  arrowHitObstacle:
+  - {fileID: 8300000, guid: d983be2d709ff4b499b45a7334195e8c, type: 3}
+  - {fileID: 8300000, guid: b00cb711607c2dd4096ee851f275200d, type: 3}
+  - {fileID: 8300000, guid: 0796dd22b435e60408c8a6d6a4da7227, type: 3}
+  jewelSound: {fileID: 8300000, guid: fa5f40573ef1bca41b44358a06439211, type: 3}
 --- !u!82 &1491024236
 AudioSource:
   m_ObjectHideFlags: 0
