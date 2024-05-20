@@ -20,10 +20,16 @@ public class ShowOnSaleItem : MonoBehaviour
 
     private Inventory inv;
 
+    public AudioSource audioSource;
+    public AudioClip openShopSound;
+    public AudioClip closeShopSound;
+
     public void ShowShopUI()
     {
         if (shop == null)
         {
+            audioSource.PlayOneShot(openShopSound);
+
             shop = Instantiate(shopView, GameObject.Find("Canvas").transform);
             content = shop.transform.Find("Bag/Items/Viewport/Content");
             btn_reroll = GameObject.Find("ButtonReroll").GetComponent<Button>();
@@ -58,8 +64,9 @@ public class ShowOnSaleItem : MonoBehaviour
 
     public void CloseShopUI()
     {
+        audioSource.PlayOneShot(closeShopSound);
         itemList = new List<GameObject>();
-        //ÆÇ¸Å ÁßÀÌ¾ú´ø ¾ÆÀÌÅÛ »èÁ¦
+        //ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         foreach (Transform child in content)
         {
             Destroy(child.gameObject);
@@ -73,7 +80,7 @@ public class ShowOnSaleItem : MonoBehaviour
         await UserInfoManager.SetUserMoney_Async(-5);
 
         itemList = new List<GameObject>();
-        //ÆÇ¸Å ÁßÀÌ¾ú´ø ¾ÆÀÌÅÛ »èÁ¦
+        //ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         foreach (Transform child in content)
         {
             Destroy(child.gameObject);
@@ -87,7 +94,7 @@ public class ShowOnSaleItem : MonoBehaviour
         GameObject temp;
         ItemSell showOnSaleItem = FindObjectOfType<ItemSell>();
 
-        //ÀÌ ºÎºÐÀÌ RerollÀÇ ¿µÇâÀ» ¹ÞÀ½
+        //ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ Rerollï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         Dictionary<int, List<string>> items = await showOnSaleItem.GetShopItemList();
 
         int numOfItem = items.Count;
@@ -104,7 +111,7 @@ public class ShowOnSaleItem : MonoBehaviour
             temp.GetComponentInChildren<Text>().text = ItemSell.GetItemNameByKey(itemKeys[index]);
             temp.GetComponent<Button>().onClick.AddListener(() =>
             {
-                // Å¬¸¯µÈ ¹öÆ°À» Ã£±â
+                // Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ Ã£ï¿½ï¿½
                 Button clickedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
 
                 //Debug.Log($"call buyItem with button : index {index}, key {itemKeys[index]}");
@@ -124,13 +131,13 @@ public class ShowOnSaleItem : MonoBehaviour
             //explanation with mouse hover
             EventTrigger trigger = temp.gameObject.AddComponent<EventTrigger>();
 
-            // PointerEnter ÀÌº¥Æ® Ãß°¡
+            // PointerEnter ï¿½Ìºï¿½Æ® ï¿½ß°ï¿½
             EventTrigger.Entry pointerEnter = new EventTrigger.Entry();
             pointerEnter.eventID = EventTriggerType.PointerEnter;
             pointerEnter.callback.AddListener((data) => { OnPointerEnter(); });
             trigger.triggers.Add(pointerEnter);
 
-            // PointerExit ÀÌº¥Æ® Ãß°¡
+            // PointerExit ï¿½Ìºï¿½Æ® ï¿½ß°ï¿½
             EventTrigger.Entry pointerExit = new EventTrigger.Entry();
             pointerExit.eventID = EventTriggerType.PointerExit;
             pointerExit.callback.AddListener((data) => { OnPointerExit(); });

@@ -1705,6 +1705,37 @@ Transform:
   m_Father: {fileID: 3077982103072132495}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3784675691318775660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8620187897658266818}
+  m_Layer: 7
+  m_Name: BloodPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8620187897658266818
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3784675691318775660}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.33900005, y: 0.7610016, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3653973436958560024}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3927897286248726270
 GameObject:
   m_ObjectHideFlags: 0
@@ -1866,6 +1897,7 @@ Transform:
   - {fileID: 5333576331982244535}
   - {fileID: 7117730854833785047}
   - {fileID: 412918821328581671}
+  - {fileID: 8620187897658266818}
   m_Father: {fileID: 6367398623077263358}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1967,6 +1999,7 @@ MonoBehaviour:
   randIdx: -1
   equipItem: {fileID: 0}
   attackedEffect: {fileID: 8371388529732963607, guid: 44c585494fea3fc47946f04e92c85791, type: 3}
+  bloodPoint: {fileID: 8620187897658266818}
 --- !u!114 &5726380531837837366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2032,7 +2065,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.05}
+  m_Offset: {x: 0, y: 0.05542755}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2043,7 +2076,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5408145, y: 0.1}
+  m_Size: {x: 0.5408145, y: 0.1108551}
   m_EdgeRadius: 0
 --- !u!114 &4917115041854513549
 MonoBehaviour:
@@ -2188,6 +2221,7 @@ MonoBehaviour:
   closeInventorySound: {fileID: 8300000, guid: e98d0aaf3df33ad41950f18a7710576b, type: 3}
   attackJewelSound: {fileID: 8300000, guid: fa5f40573ef1bca41b44358a06439211, type: 3}
   deathSound: {fileID: 8300000, guid: 4c98c32ccc0c5c54e949973f64d892c5, type: 3}
+  openStoreSound: {fileID: 0}
 --- !u!82 &5035325290950759270
 AudioSource:
   m_ObjectHideFlags: 0
