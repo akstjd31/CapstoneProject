@@ -13,6 +13,14 @@ public class Chat : MonoBehaviour
     public GameObject content; // 스크롤 뷰에 존재하는 컨텐트
     public GameObject chatView; // 스크롤 뷰
 
+    public AudioSource audioSource;
+    public AudioClip notificationSound;
+
+    private void Start()
+    {
+        audioSource = this.GetComponent<AudioSource>();
+    }
+
     void Update()
     {
         if (inputField.isFocused)
@@ -39,7 +47,8 @@ public class Chat : MonoBehaviour
     }
 
     public void SendMessage()
-    {   
+    {
+        audioSource.PlayOneShot(notificationSound);
         // 닉네임 : 메세지 형식으로 전달
         this.GetComponent<PhotonView>().RPC("GetMessage", RpcTarget.All, PhotonNetwork.NickName, inputField.text);
 

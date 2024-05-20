@@ -67,9 +67,9 @@ public class Status : MonoBehaviourPunCallbacks
     PassiveSkill passiveSkill;
     string nickName; // 플레이어 닉네임
 
-    private Inventory inventory;
-
     private float randNum;
+
+    private PlayerSound playerSound;
 
     private void Awake()
     {
@@ -86,12 +86,12 @@ public class Status : MonoBehaviourPunCallbacks
     private void Start()
     {
         playerCtrl = this.GetComponent<PlayerCtrl>();
-        nickName = playerCtrl.GetComponent<PhotonView>().Owner.NickName;
+        nickName = this.GetComponent<PhotonView>().Owner.NickName;
         pv = this.GetComponent<PhotonView>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
-        inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
         uiManager = canvas.GetComponent<UIManager>();
         passiveSkill = playerCtrl.GetComponent<PassiveSkill>();
+        playerSound = this.GetComponent<PlayerSound>();
 
         if (SceneManager.GetActiveScene().name == "DungeonScene")
         {
@@ -211,6 +211,7 @@ public class Status : MonoBehaviourPunCallbacks
         {
             if (curExp >= expByLevel[level])
             {
+                playerSound.PlayLevelUpSound();
                 Instantiate(levelUpEffect.gameObject, new Vector2(this.transform.position.x, this.transform.position.y + 1.5f), Quaternion.identity, this.transform);
                 level += 1;
                 curExp = 0;

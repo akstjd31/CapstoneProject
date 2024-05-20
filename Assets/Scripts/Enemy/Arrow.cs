@@ -81,6 +81,8 @@ public class Arrow : MonoBehaviour
                 //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, player.passiveSkill.PrideDamaged(enemy.enemyData.attackDamage));
                 player.GetComponent<PhotonView>().RPC("PlayerKnockbackRPC", RpcTarget.All, viewID, targetPos - this.transform.position);
                 player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, damage);
+
+                player.GetComponent<PlayerSound>().PlayAttackedSound();
             }
 
             Destroy(this.gameObject);
@@ -102,9 +104,9 @@ public class Arrow : MonoBehaviour
 
                     if (rand > enemy.enemyData.evasionRate)
                     {
-                        //enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
                         bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
-                        bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID);
+                        bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID, 1.0f);
+                        bossCtrl.GetComponent<BossSound>().PlayAttackedSound();
                     }
                     else
                     {
@@ -118,9 +120,9 @@ public class Arrow : MonoBehaviour
 
                 if (enemyCtrl != null && !enemyCtrl.onHit && rigid.velocity != Vector2.zero)
                 {
-                    //enemy.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, playerViewID, passiveSkill.PrideAttack(enemyCtrl, status.attackDamage));
                     enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
-                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID);
+                    enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID, 1.0f);
+                    enemyCtrl.GetComponent<EnemySound>().PlayAttackedSound();
                 }
             }
 

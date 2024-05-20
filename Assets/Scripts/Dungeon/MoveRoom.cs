@@ -7,10 +7,14 @@ public class MoveRoom : MonoBehaviour
 {
     Vector3 dir;
     int playerCount = 0;
+
+    public AudioSource audioSource;
+    public AudioClip openSound;
     // Start is called before the first frame update
     void Start()
     {
         dir = this.transform.localRotation * Vector3.up;
+        audioSource = this.GetComponent<AudioSource>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -26,6 +30,7 @@ public class MoveRoom : MonoBehaviour
         if(playerCount == 2)
         {
             other.transform.Translate(dir * 5.0f);
+            audioSource.PlayOneShot(openSound);
         }
     }
     

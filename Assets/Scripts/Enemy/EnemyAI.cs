@@ -46,47 +46,54 @@ public class EnemyAI : MonoBehaviour
     void Update()
     {
         // 현재 플레이어가 해당 방에 존재할 때
-        if (triggerCheck != null && triggerCheck.isPlayerInRoom)
+        if (triggerCheck != null)
         {
-            // 아직 해당 던전에 플레이어가 타겟에 할당되지 않았다면
-            if (target1 == null && target2 == null)
+            if (triggerCheck.isPlayerInRoom)
             {
-                if (GameObject.FindGameObjectsWithTag("Player").Length == 2)
+                // 아직 해당 던전에 플레이어가 타겟에 할당되지 않았다면
+                if (target1 == null && target2 == null)
                 {
-                    GameObject[] targets = GameObject.FindGameObjectsWithTag("Player");
+                    if (GameObject.FindGameObjectsWithTag("Player").Length == 2)
+                    {
+                        GameObject[] targets = GameObject.FindGameObjectsWithTag("Player");
 
-                    target1 = targets[0].transform;
-                    target2 = targets[1].transform;
+                        target1 = targets[0].transform;
+                        target2 = targets[1].transform;
 
-                    StartCoroutine(GetTimeToFacePlayer());
+                        StartCoroutine(GetTimeToFacePlayer());
+                    }
+                    else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
+                    {
+                        GameObject target = GameObject.FindGameObjectWithTag("Player");
+
+                        target1 = target.transform;
+
+                        StartCoroutine(GetTimeToFacePlayer());
+                    }
+                    else
+                    {
+                        agent.isStopped = true;
+                    }
                 }
-                else if (GameObject.FindGameObjectsWithTag("Player").Length == 1)
+
+                if (focusTarget != null)
                 {
-                    GameObject target = GameObject.FindGameObjectWithTag("Player");
+                    agent.SetDestination(focusTarget.position);
 
-                    target1 = target.transform;
-
-                    StartCoroutine(GetTimeToFacePlayer());
+                    CheckAggroMeterAndChangeFocus();
                 }
                 else
                 {
-                    agent.isStopped = true;
+                    // 포커스했던 플레이어가 죽을 시 다시 체크
+                    if (isLookingAtPlayer && focusTargetSetting)
+                    {
+                        FollowClosetPlayer();
+                    }
                 }
-            }
-
-            if (focusTarget != null)
-            {
-                agent.SetDestination(focusTarget.position);
-
-                CheckAggroMeterAndChangeFocus();
             }
             else
             {
-                // 포커스했던 플레이어가 죽을 시 다시 체크
-                if (isLookingAtPlayer && focusTargetSetting)
-                {
-                    FollowClosetPlayer();
-                }
+                agent.isStopped = true;
             }
         }
     }

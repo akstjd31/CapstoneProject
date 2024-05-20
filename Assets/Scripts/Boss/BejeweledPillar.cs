@@ -55,7 +55,7 @@ public class BejeweledPillar : MonoBehaviour
     {
         if (!flag && color != null)
         {
-            flag = Check(color);
+            //flag = Check(color);
         }
     }
 

@@ -109,6 +109,8 @@ public class BossCtrl : MonoBehaviour
 
     public Transform goldPrefab;
 
+    private BossSound bossSound;
+
     public State GetState()
     {
         return state;
@@ -136,6 +138,7 @@ public class BossCtrl : MonoBehaviour
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         dropItem = this.GetComponent<DropItem>();
         dropCalc = this.GetComponent<DropChanceCalculator>();
+        bossSound = this.GetComponent<BossSound>();
 
         HPInitSetting();
 
@@ -626,6 +629,8 @@ public class BossCtrl : MonoBehaviour
         rocketArm.SetViewID(pv.ViewID);
         rocketArm.SetDamage(enemy.enemyData.attackDamage * 1.5f);
 
+        bossSound.PlayRangeAttackSound();
+
         anim.speed = 1f;
         restTime = 0.0f;
         pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
@@ -786,6 +791,8 @@ public class BossCtrl : MonoBehaviour
                 //player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, player.passiveSkill.PrideDamaged(enemy.enemyData.attackDamage));
                 playerPV.RPC("DamageEnemyOnHitRPC", RpcTarget.All, enemy.enemyData.attackDamage);
                 playerPV.RPC("PlayerKnockbackRPC", RpcTarget.All, pv.ViewID, targetPos - this.transform.position);
+
+                hitPlayers.GetComponent<PlayerSound>().PlayAttackedSound();
             }
         }
     }
