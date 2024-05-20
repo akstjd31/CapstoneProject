@@ -10,10 +10,15 @@ public class DropItem : MonoBehaviour
     [SerializeField] private string charType = "";   // 직업 정보
 
     private float plusXPos = 1;
+
+    public AudioSource audioSource;
+    public AudioClip[] itemDropSound;
+
     // Start is called before the first frame update
     void Start()
     {
         dropCalc = this.GetComponent<DropChanceCalculator>();
+        audioSource = this.GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -45,6 +50,16 @@ public class DropItem : MonoBehaviour
             this.transform.position.x + plusXPos,
             this.transform.position.y
             );
+
+        if (spawnItem.charType == CharacterType.WARRIOR)
+        {
+            audioSource.PlayOneShot(itemDropSound[0]);
+        }
+        else
+        {
+            audioSource.PlayOneShot(itemDropSound[1]);
+        }
+
         Instantiate(spawnItem.prefab, newPos, Quaternion.identity);
 
         plusXPos += 1;

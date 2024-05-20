@@ -156,7 +156,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
-        inventory.SetStatus(status);
         itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
         spum_SpriteList = this.transform.Find("Root").GetComponent<SPUM_SpriteList>();
         playerSound = this.GetComponent<PlayerSound>();
@@ -209,6 +208,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             inventory.equippedItem = equipItem;
             inventory.FreshSlot();
+            inventory.SetStatus(status);
         }
 
         TotalStatus(equipItem);
