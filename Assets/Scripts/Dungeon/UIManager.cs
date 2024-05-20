@@ -42,19 +42,23 @@ public class UIManager : MonoBehaviour
         {
             startTime -= Time.deltaTime;
         }
-        else if (localPlayerStatus != null && remotePlayerStatus == null && !flag)
+        else if (localPlayerStatus == null && remotePlayerStatus == null && !flag)
         {
             flag = true;
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             
-            if (localPlayerStatus.gameObject.Equals(players[0]))
-            {
-                remotePlayerStatus = players[1].GetComponent<Status>();
-            }
-            else
-            {
-                remotePlayerStatus = players[0].GetComponent<Status>();
-            }
+            localPlayerStatus = players[0].GetComponent<Status>();
+            remotePlayerStatus = players[1].GetComponent<Status>();
+            
+            // if (localPlayerStatus.gameObject.Equals(players[0]))
+            // {
+            //     localPlayerStatus = players[0].GetComponent<Status>();
+            //     remotePlayerStatus = players[1].GetComponent<Status>();
+            // }
+            // else
+            // {
+            //     remotePlayerStatus = players[0].GetComponent<Status>();
+            // }
         }
         else
         {

@@ -97,8 +97,7 @@ public class Status : MonoBehaviourPunCallbacks
         {
             HP = MAXHP;
 
-            uiManager.localPlayerStatus = this;
-
+            //uiManager.localPlayerStatus = this;
         }
 
         // 태그로 찾은 후에 텍스트 집어넣기
