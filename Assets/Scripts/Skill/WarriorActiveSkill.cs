@@ -82,24 +82,7 @@ public class WarriorActiveSkill : ActiveSkill
                 durationTime -= Time.deltaTime;
                 if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
                 {
-                    charEffect = PhotonNetwork.Instantiate(charEffectDir + "WarriorSkillEffect", new Vector2(this.transform.position.x, this.transform.position.y + 1.0f), Quaternion.identity);
-                    colliders = Physics2D.OverlapCircleAll(transform.position, setCharSkillRange);
-                    for (int i = 0; i < colliders.Length; i++)
-                    {
-                        if (colliders[i].gameObject.CompareTag("Enemy"))
-                        {
-                            if (playerCtrl.pv.ViewID == colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().GetFirstTarget().GetComponent<PhotonView>().ViewID)
-                            {
-                                colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter1 += 100;
-                            }
-                            else
-                            {
-                                colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter2 += 100;
-                            }
-                            durationTime = setCharSkillDurationTime;
-                        }
-                    }
-                    charSkillCoolTime = setCharSkillCoolTime;
+                    CharSkill();
                 }
 
                 weaponSkillCoolTime -= Time.deltaTime;
@@ -193,6 +176,27 @@ public class WarriorActiveSkill : ActiveSkill
         }
     }
 
+    void CharSkill()
+    {
+        charEffect = PhotonNetwork.Instantiate(charEffectDir + "WarriorSkillEffect", new Vector2(this.transform.position.x, this.transform.position.y + 1.0f), Quaternion.identity);
+        colliders = Physics2D.OverlapCircleAll(transform.position, setCharSkillRange);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i].gameObject.CompareTag("Enemy"))
+            {
+                if (playerCtrl.pv.ViewID == colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().GetFirstTarget().GetComponent<PhotonView>().ViewID)
+                {
+                    colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter1 += 100;
+                }
+                else
+                {
+                    colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter2 += 100;
+                }
+                durationTime = setCharSkillDurationTime;
+            }
+        }
+        charSkillCoolTime = setCharSkillCoolTime;
+    }
     void DemonSwordSkill()
     {
         GameObject demonSwordSkillPrefab = PhotonNetwork.Instantiate(WeaponEffectDir + swordEffectDir + "DemonSwordSkill_", this.transform.position, Quaternion.identity);

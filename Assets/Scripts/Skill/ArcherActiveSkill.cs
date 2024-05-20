@@ -77,21 +77,7 @@ public class ArcherActiveSkill : ActiveSkill
             durationTime -= Time.deltaTime;
             if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
             {
-                charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillEffect", this.transform.position, Quaternion.identity);
-                status.moveSpeed += status.GetDefaultMoveSpeed() * 0.3f;
-                durationTime = setCharSkillDrationTime;
-                charSkillCoolTime = setCharSkillCoolTime;
-            }
-            if (durationTime > 0.0f)
-            {
-                charEffect.transform.position = new Vector2(this.transform.position.x + (0.5f * this.transform.localScale.x), this.transform.position.y + 0.3f);
-                charEffect.transform.localScale = new Vector2(-this.transform.localScale.x, this.transform.localScale.y);
-            }
-
-            if (durationTime < 0.0f && charEffect != null)
-            {
-                PhotonNetwork.Destroy(charEffect);
-                status.moveSpeed = status.GetDefaultMoveSpeed();
+                CharSkill();
             }
 
             weaponSkillCoolTime -= Time.deltaTime;
@@ -170,6 +156,25 @@ public class ArcherActiveSkill : ActiveSkill
                 if (Hud != null)
                     Hud.weaponSkillImage.transform.parent.gameObject.SetActive(false);
             }
+        }
+    }
+    void CharSkill()
+    {
+        charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillEffect", this.transform.position, Quaternion.identity);
+        status.moveSpeed += status.GetDefaultMoveSpeed() * 0.3f;
+        durationTime = setCharSkillDrationTime;
+        charSkillCoolTime = setCharSkillCoolTime;
+        
+        if (durationTime > 0.0f)
+        {
+            charEffect.transform.position = new Vector2(this.transform.position.x + (0.5f * this.transform.localScale.x), this.transform.position.y + 0.3f);
+            charEffect.transform.localScale = new Vector2(-this.transform.localScale.x, this.transform.localScale.y);
+        }
+
+        if (durationTime < 0.0f && charEffect != null)
+        {
+            PhotonNetwork.Destroy(charEffect);
+            status.moveSpeed = status.GetDefaultMoveSpeed();
         }
     }
 
