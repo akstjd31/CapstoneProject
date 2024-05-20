@@ -498,6 +498,7 @@ public class BossCtrl : MonoBehaviour
     {
         if (bejeweledPillars.Count > 0)
         {
+            count = 0;
             foreach (BejeweledPillar jewelPillar in bejeweledPillars)
             {
                 if (jewelPillar.flag)
