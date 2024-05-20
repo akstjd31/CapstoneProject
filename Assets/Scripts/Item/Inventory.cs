@@ -314,6 +314,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    [PunRPC]
     public void EquipItem()
     {
         if (status != null)

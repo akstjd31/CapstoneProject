@@ -294,7 +294,7 @@ public class EnemyCtrl : MonoBehaviour
         {
             pv.RPC("SpawnDroppedItem", RpcTarget.All);
 
-            PhotonNetwork.Destroy(hpBar.gameObject);
+            Destroy(hpBar.gameObject);
             PhotonNetwork.Destroy(this.gameObject);
         }
     }
