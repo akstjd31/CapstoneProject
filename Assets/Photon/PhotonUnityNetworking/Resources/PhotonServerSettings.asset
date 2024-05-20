@@ -136,6 +136,7 @@ MonoBehaviour:
   - InitializePathFinderSkill
   - EquipItem
   - RandomFloat
+  - DestroyObj
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
