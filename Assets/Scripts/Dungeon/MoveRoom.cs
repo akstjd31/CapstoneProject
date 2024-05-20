@@ -29,7 +29,7 @@ public class MoveRoom : MonoBehaviour
     {
         if(playerCount == 2)
         {
-            other.transform.Translate(dir * 5.0f);
+            other.transform.Translate(dir * 6.0f);
             audioSource.PlayOneShot(openSound);
         }
     }
