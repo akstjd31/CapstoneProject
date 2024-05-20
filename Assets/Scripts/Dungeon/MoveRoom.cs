@@ -11,6 +11,7 @@ public class MoveRoom : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip openSound;
     float timer = 0.0f;
+    public List<Collider2D> colliders = new List<Collider2D>();
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +28,7 @@ public class MoveRoom : MonoBehaviour
     {
         if (other.tag == "Player")
         {
+            colliders.Add(other);
             playerCount++;
         }
     }
@@ -35,7 +37,10 @@ public class MoveRoom : MonoBehaviour
     {
         if(playerCount == 2 && timer > 1.0f)
         {
-            other.transform.Translate(dir * 6.0f);
+            for(int i = 0; i < colliders.Count; i++)
+            {
+                colliders[i].transform.Translate(dir * 6.0f);
+            }
             audioSource.PlayOneShot(openSound);
             timer = 0.0f;
         }
@@ -45,6 +50,13 @@ public class MoveRoom : MonoBehaviour
     {
         if (other.tag == "Player")
         {
+            for(int i = 0; i < colliders.Count; i++)
+            {
+                if(colliders[i] == other)
+                {
+                    colliders.Remove(colliders[i]);
+                }
+            }
             playerCount--;
         }
     }
