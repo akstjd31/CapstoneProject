@@ -41,8 +41,6 @@ public class Inventory : MonoBehaviour
     private PlayerCtrl playerCtrl;
     private Text nowMoney;
 
-
-
 #if UNITY_EDITOR
     private void OnValidate()
     {

@@ -200,17 +200,17 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             randIdx = GameObject.FindGameObjectWithTag("PhotonManager").GetComponent<PhotonManager>().playerWeaponIdx;
         }
 
-        pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
+        //pv.RPC("CommonWeaponEquipRPC", RpcTarget.AllBuffered, randIdx, status.charType);
 
         anim.speed = GetAnimSpeed(status.attackSpeed);
 
-        inventory.equippedItem = equipItem;
-        inventory.FreshSlot();
-        inventory.SetStatus(status);
-        //if (pv.IsMine)
-        //{
-
-        //}
+        if (pv.IsMine)
+        {
+            CommonWeaponEquipRPC(randIdx, status.charType);
+            inventory.equippedItem = equipItem;
+            inventory.FreshSlot();
+            inventory.SetStatus(status);
+        }
 
         TotalStatus(equipItem);
 
@@ -643,7 +643,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     }
 
     // 처음 시작할 뽑기로 커먼 아이템 자동선택
-    [PunRPC]
+    //[PunRPC]
     private void CommonWeaponEquipRPC(int rand, string charType)
     {
         if (inventory != null && itemManager != null)
@@ -660,6 +660,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 item = itemManager.archerCommonList[rand];
                 spum_SpriteList._weaponList[0].sprite = item.itemImage;   // R_Weapon
             }
+
             equipItem = item;
         }
     }

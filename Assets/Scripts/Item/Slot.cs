@@ -100,8 +100,6 @@ public class Slot : MonoBehaviour, IDropHandler
                     this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Add(targetDrag.defaultItem);
 
                     item = drag.defaultItem;
-
-                    inventory.EquipItem();
                 }
                 else
                 {
