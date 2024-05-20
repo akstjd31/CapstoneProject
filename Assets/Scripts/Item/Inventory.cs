@@ -83,7 +83,7 @@ public class Inventory : MonoBehaviour
 
     private void Update()
     {
-        EquipItem();
+        //EquipItem();
         // 인벤토리가 캔버스의 마지막 자식이 아닌경우 마지막으로 설정
         //if (!this.transform.root.GetChild(this.transform.root.childCount).Equals(this.transform))
         //{

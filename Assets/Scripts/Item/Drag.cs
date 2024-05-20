@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Photon.Pun;
 
 public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
@@ -101,6 +102,8 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
         this.GetComponent<Image>().sprite = defaultSprite;
         this.GetComponent<Image>().color = defaultColor;
         this.GetComponent<Slot>().item = defaultItem;
+
+        this.transform.root.Find("Inventory").GetComponent<Inventory>().GetComponent<PhotonView>().RPC("EquipItem", RpcTarget.All);
         image.raycastTarget = true;
     }
 }

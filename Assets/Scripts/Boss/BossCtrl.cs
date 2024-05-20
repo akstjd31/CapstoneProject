@@ -159,7 +159,7 @@ public class BossCtrl : MonoBehaviour
             {
                 if (agent.velocity != Vector3.zero &&
                restTime >= enemy.enemyData.attackDelayTime &&
-               state == State.NORMAL)
+               state == State.NORMAL && state != State.INVINCIBILITY)
                 {
                     pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.MOVE);
                 }

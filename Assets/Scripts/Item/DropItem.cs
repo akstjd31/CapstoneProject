@@ -23,10 +23,10 @@ public class DropItem : MonoBehaviour
 
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.M))
-        //{
-        //    SpawnDroppedItem();
-        //}
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            SpawnDroppedItem();
+        }
     }
 
     public void SetCharType(string charType)

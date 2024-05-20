@@ -52,11 +52,11 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
     void OnTriggerEnter2D(Collider2D other)
     {
         playerCtrl = other.GetComponent<PlayerCtrl>();
-        if(playerCtrl.isPartyMember)
+        if (playerCtrl.isPartyMember)
         {
-            if(playerCtrl.isReady && PhotonView.Find(playerCtrl.party.GetPartyMemberID()).GetComponent<PlayerCtrl>().isReady)
+            if (playerCtrl.isReady && PhotonView.Find(playerCtrl.party.GetPartyMemberID()).GetComponent<PlayerCtrl>().isReady)
             {
-                if(playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2)
+                if (playerCtrl.GetComponent<PhotonView>().ViewID == playerCtrl.party.GetPartyLeaderID() && playerCtrl.party.GetPartyHeadCount() == 2)
                 {
                     partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
                     partyPlayersID[1] = playerCtrl.party.GetPartyMemberID();
@@ -73,14 +73,14 @@ public class DungeonEnter : MonoBehaviourPunCallbacks
 
     //for test
     // void OnTriggerEnter2D(Collider2D other)
-    // {
-    //     Debug.Log("Enter Trigger");
-    //     playerCtrl = other.GetComponent<PlayerCtrl>();
-    //     if(playerCtrl.isPartyMember)
-    //     {
-    //         partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
-    //         PhotonView playerView = PhotonView.Find(partyPlayersID[0]);
-    //         playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID[0], roomName);
-    //     }
-    // }
+    //{
+    //    Debug.Log("Enter Trigger");
+    //    playerCtrl = other.GetComponent<PlayerCtrl>();
+    //    if (playerCtrl.isPartyMember)
+    //    {
+    //        partyPlayersID[0] = playerCtrl.party.GetPartyLeaderID();
+    //        PhotonView playerView = PhotonView.Find(partyPlayersID[0]);
+    //        playerView.RPC("OnEnterDungeon", RpcTarget.AllBuffered, partyPlayersID[0], roomName);
+    //    }
+    //}
 }

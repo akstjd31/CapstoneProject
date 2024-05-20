@@ -98,7 +98,6 @@ public class Slot : MonoBehaviour, IDropHandler
                     drag.defaultItem = tmpItem;
 
                     inventory.GetComponent<Inventory>().items.Add(targetDrag.defaultItem);
-                    inventory.GetComponent<PhotonView>().RPC("EquipItem", RpcTarget.All);
 
                     item = drag.defaultItem;
 
