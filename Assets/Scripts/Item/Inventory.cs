@@ -316,7 +316,7 @@ public class Inventory : MonoBehaviour
 
     public void EquipItem()
     {
-        if (status != null && status.GetComponent<PhotonView>().IsMine)
+        if (status != null)
         {
             if (spum_SpriteList != null && equippedSlot.item != null)
             {

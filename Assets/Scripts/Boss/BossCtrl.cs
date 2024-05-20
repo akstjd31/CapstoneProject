@@ -806,9 +806,7 @@ public class BossCtrl : MonoBehaviour
         if (triggerCheck.isPlayerInRoom && !hpSetting)
         {
             hpSetting = true;
-            GameObject hpBarPrefab = PhotonNetwork.Instantiate("Enemy/" + HPBar.name, Vector2.zero, Quaternion.identity);
-            hpBarPrefab.transform.parent = canvas.transform;
-            hpBar = hpBarPrefab.GetComponent<Slider>();
+            hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
 
             hpBar.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 400);
             hpBar.maxValue = enemy.enemyData.hp;
