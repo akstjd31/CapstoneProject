@@ -641,7 +641,7 @@ public class BossCtrl : MonoBehaviour
 
     // 플레이어한테 피격당했을 떄 RPC
     [PunRPC]
-    public void DamagePlayerOnHitRPC(int playerViewID)
+    public void DamagePlayerOnHitRPC(int playerViewID, float percentage)
     {
         PhotonView playerPV = PhotonView.Find(playerViewID);
         Status status = playerPV.GetComponent<Status>();
@@ -658,7 +658,7 @@ public class BossCtrl : MonoBehaviour
         // 플레이어의 공격력만큼 체력에서 깎음
         if (hpBar != null)
         {
-            enemy.enemyData.hp -= status.attackDamage;
+            enemy.enemyData.hp -= status.attackDamage * percentage;
 
             // 죽음
             if (enemy.enemyData.hp <= 0)
@@ -707,17 +707,17 @@ public class BossCtrl : MonoBehaviour
 
         if (enemyAI.GetSecondTarget() == null)
         {
-            enemyAI.aggroMeter1 += status.attackDamage;
+            enemyAI.aggroMeter1 += status.attackDamage * percentage;
         }
         else
         {
             if (playerViewID == enemyAI.GetFirstTarget().GetComponent<PhotonView>().ViewID)
             {
-                enemyAI.aggroMeter1 += status.attackDamage;
+                enemyAI.aggroMeter1 += status.attackDamage * percentage;
             }
             else
             {
-                enemyAI.aggroMeter2 += status.attackDamage;
+                enemyAI.aggroMeter2 += status.attackDamage * percentage;
             }
         }
     }
