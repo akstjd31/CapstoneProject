@@ -93,7 +93,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private float deathTime = 1.0f;
 
     private ShowOnSaleItem showOnSaleItem;  //상점
-    private GameObject[] npcList;           //npc
+    [SerializeField] private GameObject[] npcList;           //npc
     private bool isActiveSale = false;
     public bool isMoveRoom = false;
     private float interactionDist = 2f;     //상호작용 거리
@@ -132,7 +132,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     // 피격 이펙트
     public Transform attackedEffect;
     public Transform bloodPoint;
-    bool getNPC = false;
+    public bool getNPC = false;
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void ChangeState(State state)
