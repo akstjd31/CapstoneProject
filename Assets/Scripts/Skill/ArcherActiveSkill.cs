@@ -159,6 +159,7 @@ public class ArcherActiveSkill : ActiveSkill
         }
         if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
         {
+            charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillEffect", this.transform.position, Quaternion.identity);
             durationTime = setCharSkillDrationTime;
         }
 
