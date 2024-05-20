@@ -97,17 +97,8 @@ public class Status : MonoBehaviourPunCallbacks
         {
             HP = MAXHP;
 
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            uiManager.localPlayerStatus = this;
 
-            if (pv.IsMine)
-            {
-                if (players.Length > 1)
-                {
-                    uiManager.remotePlayerStatus = players[0] == this.gameObject ? players[1].GetComponent<Status>() : players[0].GetComponent<Status>();
-                }
-
-                uiManager.localPlayerStatus = this;
-            }
         }
 
         // 태그로 찾은 후에 텍스트 집어넣기

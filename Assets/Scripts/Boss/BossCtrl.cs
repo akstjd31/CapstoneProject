@@ -809,8 +809,7 @@ public class BossCtrl : MonoBehaviour
             hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
 
             hpBar.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 400);
-            hpBar.maxValue = enemy.enemyData.hp;
-            enemy.enemyData.maxHp = enemy.enemyData.hp;
+            hpBar.maxValue = enemy.enemyData.maxHp;
             hpBar.value = enemy.enemyData.hp;
 
             hpBar.GetComponentInChildren<Text>().text = enemy.enemyData.name;

@@ -33,6 +33,20 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
+        if (localPlayerStatus != null && remotePlayerStatus == null)
+        {
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            
+            if (localPlayerStatus.gameObject.Equals(players[0]))
+            {
+                remotePlayerStatus = players[1].GetComponent<Status>();
+            }
+            else
+            {
+                remotePlayerStatus = players[0].GetComponent<Status>();
+            }
+        }
+
         UpdateHUD();
 
         if (startTime > 0.0f)
@@ -115,7 +129,6 @@ public class UIManager : MonoBehaviour
             }
             
             localHUD.hpBar.value = this.localPlayerStatus.HP;
-
 
             remoteHUD.nickName.text = this.remotePlayerStatus.GetComponent<PhotonView>().Controller.NickName;
             remoteHUD.hpBarText.text = string.Format("{0} / {1}", remotePlayerStatus.HP, remotePlayerStatus.MAXHP);
