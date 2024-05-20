@@ -103,6 +103,7 @@ public class BossCtrl : MonoBehaviour
     [SerializeField] private bool[] isComplete;
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.yellow };
     private int randColorIdx;
+    GameObject timer;
 
     [SerializeField] private GameObject onTriggerCheckObj;
     [SerializeField] private TriggerCheck triggerCheck;
@@ -193,7 +194,7 @@ public class BossCtrl : MonoBehaviour
                 agent.isStopped = true;
                 enemyAI.isLookingAtPlayer = false;
                 pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.INVINCIBILITY);
-                GameObject timer = Instantiate(hiddenPatternTimer.gameObject, Vector2.zero, Quaternion.identity);
+                timer = Instantiate(hiddenPatternTimer.gameObject, Vector2.zero, Quaternion.identity);
                 timer.transform.parent = canvas.transform;
                 timer.GetComponent<RectTransform>().anchoredPosition = new Vector2(160, -60);
                 timerText = timer.GetComponentInChildren<Text>();
@@ -455,7 +456,6 @@ public class BossCtrl : MonoBehaviour
     [PunRPC]
     private void DestroyObj()
     {
-
         Destroy(hpBar.gameObject);
         Destroy(this.gameObject);
     }
@@ -480,7 +480,7 @@ public class BossCtrl : MonoBehaviour
 
         foreach (BejeweledPillar jewelPillar in bejeweledPillars)
         {
-            jewelPillar.SetColor(colors[rand]);
+            jewelPillar.SetColor(colors[1]);
         }
 
         for (var i = 0; i < bejeweledPillars.Count; i++)
@@ -512,6 +512,7 @@ public class BossCtrl : MonoBehaviour
                 onHit = false;
                 pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
                 jewelColorObj.SetActive(false);
+                pv.RPC("DestroyTimer", RpcTarget.All);
                 return;
             }
 
@@ -523,6 +524,12 @@ public class BossCtrl : MonoBehaviour
                 }
             }
         }
+    }
+
+    [PunRPC]
+    private void DestroyTimer()
+    {
+        Destroy(timer.gameObject);
     }
 
     private void HiddenPatternRemainingTime()
