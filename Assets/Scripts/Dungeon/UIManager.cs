@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     public AudioClip jewelSound;
 
     public float rand;
+    private bool flag = false;
 
     private void Start()
     {
@@ -35,8 +36,9 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if (localPlayerStatus != null && remotePlayerStatus == null)
+        if (localPlayerStatus != null && remotePlayerStatus == null && !flag)
         {
+            flag = true;
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             
             if (localPlayerStatus.gameObject.Equals(players[0]))
