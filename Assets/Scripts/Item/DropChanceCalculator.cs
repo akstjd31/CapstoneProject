@@ -63,8 +63,8 @@ public class DropChanceCalculator : MonoBehaviour
             levelInfo[9] = new float[]  { 57,    35,    8    };
             levelInfo[10] = new float[] { 50,    40,    10   };
 
-            // 적이 아이템을 드랍할 확률 50퍼
-            if (Random.Range(0f, 100f) >= 50.0f)
+            // 적이 아이템을 드랍할 확률 20퍼
+            if (Random.Range(0f, 100f) >= 20.0f)
             {
                 return GetGrade(
                     levelInfo[playerLevel][0], levelInfo[playerLevel][1], levelInfo[playerLevel][2]

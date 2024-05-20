@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Inventory inventory;
     [SerializeField] private int activePlayers = -1;
     [SerializeField] private float removeItemInterval = 0.0f;
-    private float startTime = 5.0f;
+    private float startTime = 10.0f;
 
     public AudioSource audioSource;
     public AudioClip audioClip;

@@ -9003,8 +9003,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localPlayerStatus: {fileID: 0}
   remotePlayerStatus: {fileID: 0}
-  remoteHUD: {fileID: 1077121225}
-  localHUD: {fileID: 1025951647}
+  remoteHUD: {fileID: 1025951647}
+  localHUD: {fileID: 1077121225}
   inventory: {fileID: 0}
   activePlayers: -1
   removeItemInterval: 0
