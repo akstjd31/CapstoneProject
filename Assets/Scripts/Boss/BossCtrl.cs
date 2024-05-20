@@ -101,7 +101,7 @@ public class BossCtrl : MonoBehaviour
     private bool HiddenPatternStart = false;
     private bool flag = false;
     private float remainingTime = 120f;
-    [SerializeField] private bool[] isComplete;
+    //[SerializeField] private bool[] isComplete;
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.yellow };
     private int randColorIdx;
     GameObject timer;
@@ -493,11 +493,6 @@ public class BossCtrl : MonoBehaviour
         {
             jewelPillar.SetColor(colors[1]);
         }
-
-        for (var i = 0; i < bejeweledPillars.Count; i++)
-        {
-            isComplete[i] = false;
-        }
     }
 
     [PunRPC]
@@ -506,9 +501,9 @@ public class BossCtrl : MonoBehaviour
         if (bejeweledPillars.Count > 0)
         {
             bool allTrue = true;
-            foreach (bool value in isComplete)
+            foreach (BejeweledPillar jewelPillar in bejeweledPillars)
             {
-                if (!value)
+                if (!jewelPillar.flag)
                 {
                     allTrue = false;
                     break;
@@ -527,14 +522,6 @@ public class BossCtrl : MonoBehaviour
                 jewelColorObj.SetActive(false);
                 pv.RPC("DestroyTimer", RpcTarget.All);
                 return;
-            }
-
-            for (var i = 0; i < bejeweledPillars.Count; i++)
-            {
-                if (!isComplete[i] && bejeweledPillars[i].flag)
-                {
-                    isComplete[i] = true;
-                }
             }
         }
     }
