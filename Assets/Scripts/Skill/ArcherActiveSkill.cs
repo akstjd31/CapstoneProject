@@ -24,70 +24,75 @@ public class ArcherActiveSkill : ActiveSkill
     // Start is called before the first frame update
     void Start()
     {
-        pv = playerCtrl.GetComponent<PhotonView>();
-        isInDungeon = false;
-        if (GameObject.Find("LocalHUD"))
+        if (pv.IsMine)
         {
-            Hud = GameObject.Find("LocalHUD").GetComponent<HUD>();
-            isInDungeon = true;
-        }
-        if(isInDungeon)
-        {
-            Hud.charSkillImage.sprite = archerSkillSprite;
+            pv = playerCtrl.GetComponent<PhotonView>();
+            isInDungeon = false;
+            if (GameObject.Find("LocalHUD"))
+            {
+                Hud = GameObject.Find("LocalHUD").GetComponent<HUD>();
+                isInDungeon = true;
+            }
+            if (isInDungeon)
+            {
+                Hud.charSkillImage.sprite = archerSkillSprite;
+            }
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 mouseScreenPosition = Input.mousePosition;
-        mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
-        mouseWorldPosition = new Vector3(mouseWorldPosition.x, mouseWorldPosition.y, 0.0f);
-
-        direction = mouseWorldPosition - this.transform.position;
-        direction.z = 0; // 2D 게임의 경우 z 축 방향을 무시
-
-        // 방향 벡터를 기준으로 회전 각도 계산
-        angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        if(isInDungeon)
+        if (pv.IsMine)
         {
-            //직업 쿨타임
-            if(charSkillCoolTime > 0.0f)
+            Vector3 mouseScreenPosition = Input.mousePosition;
+            mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+            mouseWorldPosition = new Vector3(mouseWorldPosition.x, mouseWorldPosition.y, 0.0f);
+
+            direction = mouseWorldPosition - this.transform.position;
+            direction.z = 0; // 2D 게임의 경우 z 축 방향을 무시
+
+            // 방향 벡터를 기준으로 회전 각도 계산
+            angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            if (isInDungeon)
             {
-                Hud.charSkillCoolTime.canvasRenderer.SetAlpha(1f);
-                Hud.charSkillCoolTime.raycastTarget = true;
-                Hud.charSkillCoolTime.text = charSkillCoolTime.ToString("F1");
+                //직업 쿨타임
+                if (charSkillCoolTime > 0.0f)
+                {
+                    Hud.charSkillCoolTime.canvasRenderer.SetAlpha(1f);
+                    Hud.charSkillCoolTime.raycastTarget = true;
+                    Hud.charSkillCoolTime.text = charSkillCoolTime.ToString("F1");
+                }
+                else
+                {
+                    Hud.charSkillCoolTime.canvasRenderer.SetAlpha(0f);
+                    Hud.charSkillCoolTime.raycastTarget = false;
+                }
+                Hud.charSkillImage.fillAmount = (setCharSkillCoolTime - charSkillCoolTime) / setCharSkillCoolTime;
             }
-            else
+
+            //직업 스킬
+            charSkillCoolTime -= Time.deltaTime;
+            durationTime -= Time.deltaTime;
+            if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
             {
-                Hud.charSkillCoolTime.canvasRenderer.SetAlpha(0f);
-                Hud.charSkillCoolTime.raycastTarget = false;
+                charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillEffect", this.transform.position, Quaternion.identity);
+                status.moveSpeed += status.GetDefaultMoveSpeed() * 0.3f;
+                durationTime = setCharSkillDrationTime;
+                charSkillCoolTime = setCharSkillCoolTime;
             }
-            Hud.charSkillImage.fillAmount = (setCharSkillCoolTime - charSkillCoolTime) / setCharSkillCoolTime;
-        }
-        
-        //직업 스킬
-        charSkillCoolTime -= Time.deltaTime;
-        durationTime -= Time.deltaTime;
-        if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
-        {
-            charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillEffect", this.transform.position, Quaternion.identity);
-            status.moveSpeed += status.GetDefaultMoveSpeed() * 0.3f;
-            durationTime = setCharSkillDrationTime;
-            charSkillCoolTime = setCharSkillCoolTime;
-        }
-        if(durationTime > 0.0f)
-        {
-            charEffect.transform.position = new Vector2(this.transform.position.x + (0.5f * this.transform.localScale.x), this.transform.position.y + 0.3f);
-            charEffect.transform.localScale = new Vector2(-this.transform.localScale.x, this.transform.localScale.y);
-        }
-        
-        if(durationTime < 0.0f && charEffect != null)
-        {
-            PhotonNetwork.Destroy(charEffect);
-            status.moveSpeed = status.GetDefaultMoveSpeed();
-        }
+            if (durationTime > 0.0f)
+            {
+                charEffect.transform.position = new Vector2(this.transform.position.x + (0.5f * this.transform.localScale.x), this.transform.position.y + 0.3f);
+                charEffect.transform.localScale = new Vector2(-this.transform.localScale.x, this.transform.localScale.y);
+            }
+
+            if (durationTime < 0.0f && charEffect != null)
+            {
+                PhotonNetwork.Destroy(charEffect);
+                status.moveSpeed = status.GetDefaultMoveSpeed();
+            }
 
             weaponSkillCoolTime -= Time.deltaTime;
             if (playerCtrl.GetEquipItem().itemType == ItemType.LEGENDARY)
@@ -165,6 +170,7 @@ public class ArcherActiveSkill : ActiveSkill
                 if (Hud != null)
                     Hud.weaponSkillImage.transform.parent.gameObject.SetActive(false);
             }
+        }
     }
 
     void DarkLongBowSkill()

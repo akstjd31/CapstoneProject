@@ -27,164 +27,170 @@ public class WarriorActiveSkill : ActiveSkill
     // Start is called before the first frame update
     void Start()
     {
-        pv = playerCtrl.GetComponent<PhotonView>();
-        isInDungeon = false;
-        if (GameObject.Find("LocalHUD"))
+        if (pv.IsMine)
         {
-            Hud = GameObject.Find("LocalHUD").GetComponent<HUD>();
-            isInDungeon = true;
+            pv = playerCtrl.GetComponent<PhotonView>();
+            isInDungeon = false;
+            if (GameObject.Find("LocalHUD"))
+            {
+                Hud = GameObject.Find("LocalHUD").GetComponent<HUD>();
+                isInDungeon = true;
+            }
+            if (isInDungeon)
+            {
+                charSkillCoolTime = 0.0f;
+                weaponSkillCoolTime = 0.0f;
+                Hud.charSkillImage.sprite = warriorSkillSprite;
+            }
+            colliders = null;
         }
-        if (isInDungeon)
-        {
-            charSkillCoolTime = 0.0f;
-            weaponSkillCoolTime = 0.0f;
-            Hud.charSkillImage.sprite = warriorSkillSprite;
-        }
-        colliders = null;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 mouseScreenPosition = Input.mousePosition;
-        mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
-        mouseWorldPosition = new Vector3(mouseWorldPosition.x, mouseWorldPosition.y, 0.0f);
-
-        direction = mouseWorldPosition - this.transform.position;
-        direction.z = 0; // 2D 게임의 경우 z 축 방향을 무시
-
-        // 방향 벡터를 기준으로 회전 각도 계산
-        angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        if (isInDungeon) // 스킬 쿨타임 UI
+        if (pv.IsMine)
         {
-            //직업 쿨타임
-            if (charSkillCoolTime > 0.0f)
-            {
-                Hud.charSkillCoolTime.canvasRenderer.SetAlpha(1f);
-                Hud.charSkillCoolTime.raycastTarget = true;
-                Hud.charSkillCoolTime.text = charSkillCoolTime.ToString("F1");
-            }
-            else
-            {
-                Hud.charSkillCoolTime.canvasRenderer.SetAlpha(0f);
-                Hud.charSkillCoolTime.raycastTarget = false;
-            }
-            Hud.charSkillImage.fillAmount = (setCharSkillCoolTime - charSkillCoolTime) / setCharSkillCoolTime;
+            Vector3 mouseScreenPosition = Input.mousePosition;
+            mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+            mouseWorldPosition = new Vector3(mouseWorldPosition.x, mouseWorldPosition.y, 0.0f);
 
-            //직업 스킬
-            charSkillCoolTime -= Time.deltaTime;
-            durationTime -= Time.deltaTime;
-            if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
-            {
-                charEffect = PhotonNetwork.Instantiate(charEffectDir + "WarriorSkillEffect", new Vector2(this.transform.position.x, this.transform.position.y + 1.0f), Quaternion.identity);
-                colliders = Physics2D.OverlapCircleAll(transform.position, setCharSkillRange);
-                for (int i = 0; i < colliders.Length; i++)
-                {
-                    if (colliders[i].gameObject.CompareTag("Enemy"))
-                    {
-                        if (playerCtrl.pv.ViewID == colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().GetFirstTarget().GetComponent<PhotonView>().ViewID)
-                        {
-                            colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter1 += 100;
-                        }
-                        else
-                        {
-                            colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter2 += 100;
-                        }
-                        durationTime = setCharSkillDurationTime;
-                    }
-                }
-                charSkillCoolTime = setCharSkillCoolTime;
-            }
+            direction = mouseWorldPosition - this.transform.position;
+            direction.z = 0; // 2D 게임의 경우 z 축 방향을 무시
 
-            weaponSkillCoolTime -= Time.deltaTime;
-            if (playerCtrl.GetEquipItem().itemType == ItemType.LEGENDARY)
+            // 방향 벡터를 기준으로 회전 각도 계산
+            angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            if (isInDungeon) // 스킬 쿨타임 UI
             {
-                //무기 쿨타임
-                Hud.weaponSkillImage.transform.parent.gameObject.SetActive(true);
-                if (weaponSkillCoolTime > 0.0f)
+                //직업 쿨타임
+                if (charSkillCoolTime > 0.0f)
                 {
-                    Hud.weaponSkillCoolTime.canvasRenderer.SetAlpha(1f);
-                    Hud.weaponSkillCoolTime.raycastTarget = true;
-                    Hud.weaponSkillCoolTime.text = weaponSkillCoolTime.ToString("F1");
+                    Hud.charSkillCoolTime.canvasRenderer.SetAlpha(1f);
+                    Hud.charSkillCoolTime.raycastTarget = true;
+                    Hud.charSkillCoolTime.text = charSkillCoolTime.ToString("F1");
                 }
                 else
                 {
-                    Hud.weaponSkillCoolTime.canvasRenderer.SetAlpha(0f);
-                    Hud.weaponSkillCoolTime.raycastTarget = false;
+                    Hud.charSkillCoolTime.canvasRenderer.SetAlpha(0f);
+                    Hud.charSkillCoolTime.raycastTarget = false;
                 }
-                Hud.weaponSkillImage.fillAmount = (setWeaponSkillCoolTime - weaponSkillCoolTime) / setWeaponSkillCoolTime;
+                Hud.charSkillImage.fillAmount = (setCharSkillCoolTime - charSkillCoolTime) / setCharSkillCoolTime;
 
-                //무기 스킬
-                if (playerCtrl.GetEquipItem().itemID == 160) // Legendary_Demon_Sword
+                //직업 스킬
+                charSkillCoolTime -= Time.deltaTime;
+                durationTime -= Time.deltaTime;
+                if (Input.GetKeyDown(KeyCode.E) && charSkillCoolTime < 0.0f)
                 {
-                    Hud.weaponSkillImage.sprite = weaponSkillSprite[0];
-                    setWeaponSkillCoolTime = 50.0f;
-                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                    charEffect = PhotonNetwork.Instantiate(charEffectDir + "WarriorSkillEffect", new Vector2(this.transform.position.x, this.transform.position.y + 1.0f), Quaternion.identity);
+                    colliders = Physics2D.OverlapCircleAll(transform.position, setCharSkillRange);
+                    for (int i = 0; i < colliders.Length; i++)
                     {
-                        DemonSwordSkill();
+                        if (colliders[i].gameObject.CompareTag("Enemy"))
+                        {
+                            if (playerCtrl.pv.ViewID == colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().GetFirstTarget().GetComponent<PhotonView>().ViewID)
+                            {
+                                colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter1 += 100;
+                            }
+                            else
+                            {
+                                colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter2 += 100;
+                            }
+                            durationTime = setCharSkillDurationTime;
+                        }
                     }
+                    charSkillCoolTime = setCharSkillCoolTime;
                 }
-                else if (playerCtrl.GetEquipItem().itemID == 161) // Great_Sword
-                {
-                    Hud.weaponSkillImage.sprite = weaponSkillSprite[1];
-                    setWeaponSkillCoolTime = 60.0f;
 
-                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                weaponSkillCoolTime -= Time.deltaTime;
+                if (playerCtrl.GetEquipItem().itemType == ItemType.LEGENDARY)
+                {
+                    //무기 쿨타임
+                    Hud.weaponSkillImage.transform.parent.gameObject.SetActive(true);
+                    if (weaponSkillCoolTime > 0.0f)
                     {
-                        GreatSwordSkill();
+                        Hud.weaponSkillCoolTime.canvasRenderer.SetAlpha(1f);
+                        Hud.weaponSkillCoolTime.raycastTarget = true;
+                        Hud.weaponSkillCoolTime.text = weaponSkillCoolTime.ToString("F1");
+                    }
+                    else
+                    {
+                        Hud.weaponSkillCoolTime.canvasRenderer.SetAlpha(0f);
+                        Hud.weaponSkillCoolTime.raycastTarget = false;
+                    }
+                    Hud.weaponSkillImage.fillAmount = (setWeaponSkillCoolTime - weaponSkillCoolTime) / setWeaponSkillCoolTime;
+
+                    //무기 스킬
+                    if (playerCtrl.GetEquipItem().itemID == 160) // Legendary_Demon_Sword
+                    {
+                        Hud.weaponSkillImage.sprite = weaponSkillSprite[0];
+                        setWeaponSkillCoolTime = 50.0f;
+                        if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                        {
+                            DemonSwordSkill();
+                        }
+                    }
+                    else if (playerCtrl.GetEquipItem().itemID == 161) // Great_Sword
+                    {
+                        Hud.weaponSkillImage.sprite = weaponSkillSprite[1];
+                        setWeaponSkillCoolTime = 60.0f;
+
+                        if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                        {
+                            GreatSwordSkill();
+                        }
+                    }
+                    else if (playerCtrl.GetEquipItem().itemID == 162) //DarkGalaxy_Dagger
+                    {
+                        Hud.weaponSkillImage.sprite = weaponSkillSprite[2];
+                        setWeaponSkillCoolTime = 30.0f;
+                        if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                        {
+                            DarkGalaxyDaggerSkill();
+                        }
+                    }
+                    else if (playerCtrl.GetEquipItem().itemID == 163) // Icycle_Sword
+                    {
+                        Hud.weaponSkillImage.sprite = weaponSkillSprite[3];
+                        setWeaponSkillCoolTime = 40.0f;
+                        if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                        {
+                            IcycleSwordSkill();
+                        }
+                    }
+                    else if (playerCtrl.GetEquipItem().itemID == 164) // King_Maker
+                    {
+                        Hud.weaponSkillImage.sprite = weaponSkillSprite[4];
+                        setWeaponSkillCoolTime = 60.0f;
+                        if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
+                        {
+                            KingMakerSkill();
+                        }
                     }
                 }
-                else if (playerCtrl.GetEquipItem().itemID == 162) //DarkGalaxy_Dagger
+                else
                 {
-                    Hud.weaponSkillImage.sprite = weaponSkillSprite[2];
-                    setWeaponSkillCoolTime = 30.0f;
-                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
-                    {
-                        DarkGalaxyDaggerSkill();
-                    }
-                }
-                else if (playerCtrl.GetEquipItem().itemID == 163) // Icycle_Sword
-                {
-                    Hud.weaponSkillImage.sprite = weaponSkillSprite[3];
-                    setWeaponSkillCoolTime = 40.0f;
-                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
-                    {
-                        IcycleSwordSkill();
-                    }
-                }
-                else if (playerCtrl.GetEquipItem().itemID == 164) // King_Maker
-                {
-                    Hud.weaponSkillImage.sprite = weaponSkillSprite[4];
-                    setWeaponSkillCoolTime = 60.0f;
-                    if (Input.GetKeyDown(KeyCode.R) && weaponSkillCoolTime < 0.0f)
-                    {
-                        KingMakerSkill();
-                    }
+                    Hud.weaponSkillImage.transform.parent.gameObject.SetActive(false);
                 }
             }
-            else
-            {
-                Hud.weaponSkillImage.transform.parent.gameObject.SetActive(false);
-            }
+
+            // if (durationTime < 0.0f && Enemys != null)
+            // {
+            //     for (int i = 0; i < Enemys.Count; i++)
+            //     {
+            //         if (playerPV.ViewID == colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().GetFirstTarget().GetComponent<PhotonView>().ViewID)
+            //         {
+            //             Enemys[0].GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter1 -= 100;
+            //             Enemys.Remove(Enemys[0]);
+            //         }
+            //         else
+            //         {
+            //             colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter2 -= 100;
+            //             Enemys.Remove(Enemys[0]);
+            //         }
+            //     }
+            // }
         }
-
-        // if (durationTime < 0.0f && Enemys != null)
-        // {
-        //     for (int i = 0; i < Enemys.Count; i++)
-        //     {
-        //         if (playerPV.ViewID == colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().GetFirstTarget().GetComponent<PhotonView>().ViewID)
-        //         {
-        //             Enemys[0].GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter1 -= 100;
-        //             Enemys.Remove(Enemys[0]);
-        //         }
-        //         else
-        //         {
-        //             colliders[i].gameObject.GetComponent<EnemyCtrl>().GetComponent<EnemyAI>().aggroMeter2 -= 100;
-        //             Enemys.Remove(Enemys[0]);
-        //         }
-        //     }
-        // }
     }
 
     void DemonSwordSkill()
