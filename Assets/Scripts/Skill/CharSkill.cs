@@ -83,14 +83,14 @@ public class CharSkill : MonoBehaviour
             btn_skill[i].onClick.AddListener(async () =>
             {
                 skill_point = await UserInfoManager.GetSkillPoint();
-                Debug.Log($"Call Upgrade with : {btn_skill[index].transform.parent.name}");
                 UpgradeSkill2(btn_skill[index].transform.parent.name);
             });
             //Debug.Log($"{btn_skill[i].transform.parent.name}");
         }
 
-        //explane.SetActive(false);
-        explane = pc.GetSkillExplane();
+        explane = GameObject.Find("Skill_Explane");
+        explane.SetActive(false);
+        //explane = pc.GetSkillExplane();
         layerMask = LayerMask.GetMask("Skill_UI");
         //Invoke();
 
@@ -104,7 +104,7 @@ public class CharSkill : MonoBehaviour
 
         if (hit.collider != null)
         {
-            //Debug.Log($"hit!! {hit.collider.name}");
+            Debug.Log($"hit!! {hit.collider.name}");
             explane.SetActive(true);
             
             col_name = hit.collider.name;
@@ -143,7 +143,7 @@ public class CharSkill : MonoBehaviour
         // 여기에 비동기 작업 완료 후 수행할 작업 추가
         userSkill = UserInfoManager.GetSkillLevel();
         Debug.Log($"Skill level initialized: ");
-        Show_Dictionary(userSkill);
+        //Show_Dictionary(userSkill);
         skill_point = await UserInfoManager.GetSkillPoint();
 
         skill_point_text = "SKILL Point : " + skill_point;
@@ -170,8 +170,8 @@ public class CharSkill : MonoBehaviour
         await UserInfoManager.GetCharSkillAsync();
 
         Dictionary<string, int> skill = UserInfoManager.GetSkillLevel();
-        Debug.Log("show skill");
-        Show_Dictionary(skill);
+        //Debug.Log("show skill");
+        //Show_Dictionary(skill);
 
         BoxCollider2D[] coll_List = GameObject.Find("Images").GetComponentsInChildren<BoxCollider2D>();
         GameObject[] skill_Level_text = new GameObject[7];
@@ -236,120 +236,6 @@ public class CharSkill : MonoBehaviour
         }
     }
 
-    public static async Task SetLevelState()
-    {
-        Debug.Log("call SetLevelState");
-        await UserInfoManager.GetCharSkillAsync();
-        userSkill = UserInfoManager.GetSkillLevel();
-
-        BoxCollider2D[] images = GameObject.Find("Images").GetComponentsInChildren<BoxCollider2D>();
-
-        GameObject[] list = new GameObject[images.Length];
-        for(int i = 0; i < list.Length; i++)
-        {
-            list[i] = images[i].gameObject;
-        }
-
-
-        List<string> skillName_kr = new()
-        {
-            "교만", "탐욕", "색욕", "질투", "먹보", "분노", "나태"
-        };
-
-        List<int> value = await GetSkillLevelAll(0);
-
-        string temp = "";
-        for(int i = 0; i < value.Count; i++)
-        {
-            temp += value[i].ToString() + "_";
-        }
-        //Debug.Log($"value : {temp}");
-
-        for(int i = 0; i < list.Length; i++)
-        {
-            int index = -1;
-
-            //Debug.Log($"list name : {list[i].name} {list[i].transform.parent.name} {list[i].transform.parent.parent.name}");
-
-            switch (list[i].name)
-            {
-                case "pride":
-                    index = 0;
-                    break;
-                case "greed":
-                    index = 1;
-                    break;
-                case "lust":
-                    index = 2;
-                    break;
-                case "envy":
-                    index = 3;
-                    break;
-                case "glutny":
-                    index = 4;
-                    break;
-                case "wrath":
-                    index = 5;
-                    break;
-                case "sloth":
-                    index = 6;
-                    break;
-                default:
-                    switch(list[i].transform.parent.name)
-                    {
-                        case "pride":
-                            index = 0;
-                            break;
-                        case "greed":
-                            index = 1;
-                            break;
-                        case "lust":
-                            index = 2;
-                            break;
-                        case "envy":
-                            index = 3;
-                            break;
-                        case "glutny":
-                            index = 4;
-                            break;
-                        case "wrath":
-                            index = 5;
-                            break;
-                        case "sloth":
-                            index = 6;
-                            break;
-                    }
-                    break;
-            }
-
-            //Debug.Log($"i : {i} => index : {index}");
-            if(index == -1)
-            {
-                Debug.Log($"not valid skill : {list[i].name} {index}");
-                return;
-            }
-
-            //Debug.Log($"{value[index]} {list[i].name}");
-
-            var now = list[i].transform.Find("level");
-            //Debug.Log($"now : {now}");
-
-            now.GetComponent<TextMeshProUGUI>().text = "Lv." + value[index];
-        }
-    }
-
-    public static void SetSkillLevel(int skillNum, int level)
-    {
-        if (!userSkill.ContainsKey(skillNum.ToString()))
-        {
-            // 존재하지 않는 경우 예외 발생
-            throw new KeyNotFoundException($"Skill number {skillNum} does not exist.");
-        }
-
-        userSkill[skillNum.ToString()] = level;
-        UpdataSkillData();
-    }
-
     public async static Task<int> GetSkillLevel(int skillNum)
     {
         if (userSkill == null)
@@ -358,7 +244,7 @@ public class CharSkill : MonoBehaviour
         }
 
         userSkill = UserInfoManager.GetSkillLevel();
-        Show_Dictionary(userSkill);
+        //Show_Dictionary(userSkill);
         //Debug.Log($"skillNum in GetSkillLevel : {skillNum}");   //1001~1007
         //Debug.Log($"keys : {userSkill.Keys}");
         var keys = userSkill.Keys;
@@ -401,29 +287,19 @@ public class CharSkill : MonoBehaviour
     //스킬의 레벨을 하나 올릴 때 사용
     public static async Task LevelUpSkill(int skillNum)
     {
-        Debug.Log($"LevelUpSkill : {skillNum}");
-        /*
-        if (!UserInfoManager.GetSkillLevel().ContainsKey(skillNum.ToString()))
-        {
-            // 존재하지 않는 경우 예외 발생
-            throw new KeyNotFoundException($"Skill number {skillNum} does not exist.");
-        }
-        */
-
+        //Debug.Log($"LevelUpSkill : {skillNum}");
+        
         await UserInfoManager.UpgradeSkill(skillNum.ToString(), UserInfoManager.GetSkillLevelByKey(skillNum.ToString()) + 1);
-
-        //userSkill[skillNum.ToString()] = ++userSkill[skillNum.ToString()];
-        //UpdataSkillData();
     }
 
     //UI에서 접근하는 메소드
     public static async void UpgradeSkill2(string skillName)
     {
-        Debug.Log($"in UpgradeSkill2 : clicked {skillName}");
+        //Debug.Log($"in UpgradeSkill2 : clicked {skillName}");
 
         string skillKr = SkillData.GetSkillNameKr(skillName);
         int skillNum = SkillData.Skill_NameToNum(skillKr);
-        Debug.Log($"Skill kr : {skillKr} // skillNum : {skillNum}");
+        //Debug.Log($"Skill kr : {skillKr} // skillNum : {skillNum}");
 
         if(skill_point < 1)
         {
@@ -431,71 +307,6 @@ public class CharSkill : MonoBehaviour
         }
 
         await LevelUpSkill(skillNum);
-    }
-
-    //UI에서 접근하는 메소드
-    //parameter는 영어 이름
-    public static async void UpgradeSkill(string skillName)
-    {
-        if(skill_point < 1)
-        {
-            return;
-        }
-
-        //"pride", "greed", "lust", "envy", "glutny", "wrath", "sloth"
-        //교만, 탐욕, 색욕, 질투, 먹보, 분노, 나태
-        List<string> skillName_kr = new()
-        {
-            "교만", "탐욕", "색욕", "질투", "먹보", "분노", "나태"
-        };
-
-        int index = -1;
-        switch(skillName)
-        {
-            case "pride":
-                index = 0;
-                break;
-            case "greed":
-                index = 1;
-                break;
-            case "lust":
-                index = 2;
-                break;
-            case "envy":
-                index = 3;
-                break;
-            case "glutny":
-                index = 4;
-                break;
-            case "wrath":
-                index = 5;
-                break;
-            case "sloth":
-                index = 6;
-                break;
-        }
-
-        if(index == -1)
-        {
-            Debug.Log($"skillName {skillName} is not exist");
-            return;
-        }
-
-        //parameter는 한글 이름
-        int skillNum = SkillData.Skill_NameToNum(skillName_kr[index]);
-        Debug.Log($"Upgrade by button => {skillNum} {skillName}");
-
-        await UserInfoManager.SetSkillPoint(--skill_point);
-        skill_point_text = "SKILL Point : " + skill_point;
-        point_text.text = skill_point_text;
-
-        LevelUpSkill(skillNum);
-    }
-
-    //CharSkill.cs (userSkill) => UserInfoManager.cs (skillLevel) & Firestore Server
-    private static void UpdataSkillData()
-    {
-        UserInfoManager.SetSkillLevel(userSkill);
     }
 
     private static void Show_Dictionary(Dictionary<string, int> dict)
