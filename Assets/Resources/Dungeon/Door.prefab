@@ -115,6 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 4105385092482229975}
   openSound: {fileID: 8300000, guid: 7fd5390d272fa5a438e78d8768096198, type: 3}
+  colliders: []
 --- !u!82 &4105385092482229975
 AudioSource:
   m_ObjectHideFlags: 0
