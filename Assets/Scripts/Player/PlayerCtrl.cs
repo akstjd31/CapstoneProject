@@ -166,7 +166,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
         //recorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
         showOnSaleItem = FindObjectOfType<ShowOnSaleItem>();    //상점
-        npcParent = GameObject.Find("npc"); // find npc
         npcList = null;
 
         ChangeState(State.NORMAL);
@@ -222,6 +221,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         if (npcParent != null && !getNPC)
         {
+            npcParent = GameObject.Find("npc"); // find npc
             // npcParent에서 자식 GameObject들을 모두 가져와서 배열에 저장
             npcList = new GameObject[npcParent.transform.childCount];
             for (int i = 0; i < npcParent.transform.childCount; i++)
