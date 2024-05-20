@@ -15,7 +15,6 @@ public class UserInfoManager : MonoBehaviour
     private static Dictionary<string, int> skillLevel; //스킬 데이터의 원본
     private static Inventory inv;
 
-    private bool isDebug = true;
     private static int nowMoney = 0;
 
     void Awake()
@@ -35,15 +34,6 @@ public class UserInfoManager : MonoBehaviour
 
         // 3초마다 GetUserMoney 함수를 호출합니다.
         InvokeRepeating("WrapGetUserMoney", 0f, 3f);
-    }
-
-    //디버그인 경우 유저를 FirebaseAuth에서 자동 삭제
-    private void OnApplicationQuit()
-    {
-        if(isDebug && currentUser != null)
-        {
-            currentUser.DeleteAsync();
-        }
     }
 
     // 사용자 정보를 설정하는 메서드
