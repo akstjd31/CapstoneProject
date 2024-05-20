@@ -49,7 +49,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private Status status; // 플레이어 상태 스크립트
     private Chat chatScript;
     private PartySystem partySystemScript;
-    
+
     public string weaponName = "None"; // 초기에는 아무 무기가 없음.
 
     [SerializeField] private State state; // enum 클래스 변수
@@ -118,7 +118,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     [SerializeField] private Item equipItem;
 
     private Transform jewel;
-    
+
     private GameObject openPartyButton;
     private GameObject createPartyButton;
     private GameObject InputMessage;
@@ -219,7 +219,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     //Graphic & Input Updates	
     void Update()
     {
-        if (npcParent == null && !getNPC)
+        if (npcParent != null && !getNPC)
         {
             npcParent = GameObject.Find("npc"); // find npc
             // npcParent에서 자식 GameObject들을 모두 가져와서 배열에 저장
@@ -228,7 +228,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             {
                 npcList[i] = npcParent.transform.GetChild(i).gameObject;
             }
-            if(npcList.Length > 0)
+            if (npcList.Length > 0)
             {
                 getNPC = true;
             }
@@ -358,7 +358,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                     inventory.gameObject.SetActive(!inventory.gameObject.activeSelf);
 
                     //UI에 보유 금액 표기
-                    if(inventory.gameObject.activeSelf)
+                    if (inventory.gameObject.activeSelf)
                     {
                         playerSound.PlayOpenInventorySound();
                         inventory.FreshSlot();  // 아이템 리스트를 인벤토리에 추가한다. 
@@ -374,14 +374,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 // 보이스 참가하기
                 //if (SceneManager.GetActiveScene().name == "DungeonScene")
                 //{
-                    //if (Input.GetKey(KeyCode.T))
-                    //{
-                    //    recorder.TransmitEnabled = true;
-                    //}
-                    //else
-                    //{
-                    //    recorder.TransmitEnabled = false;
-                    //}
+                //if (Input.GetKey(KeyCode.T))
+                //{
+                //    recorder.TransmitEnabled = true;
+                //}
+                //else
+                //{
+                //    recorder.TransmitEnabled = false;
+                //}
                 //}
 
                 if (partySystemScript != null)
@@ -417,7 +417,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                         if (distance <= interactionDist && showOnSaleItem != null)
                         {
                             //store
-                            if(npc.name.StartsWith("npc"))
+                            if (npc.name.StartsWith("npc"))
                             {
                                 inRange = true;
                                 break;
@@ -448,7 +448,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                         isActiveSale = false;
                     }
                     //open UI
-                    else if(npcList != null)
+                    else if (npcList != null)
                     {
                         foreach (var npc in npcList)
                         {
@@ -456,7 +456,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                             //Debug.Log($"dist : {npc.name} => {distance}");
 
                             //store
-                            if(distance <= interactionDist && npc.name.StartsWith("npc") && showOnSaleItem != null)
+                            if (distance <= interactionDist && npc.name.StartsWith("npc") && showOnSaleItem != null)
                             {
                                 showOnSaleItem.ShowShopUI();
                                 inventory.transform.SetAsLastSibling();
@@ -465,9 +465,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                                 return;
                             }
                             //skill UI
-                            else if(distance <= interactionDist && npc.name.StartsWith("skill") && showOnSaleItem != null)
+                            else if (distance <= interactionDist && npc.name.StartsWith("skill") && showOnSaleItem != null)
                             {
-                                if(!isSkillUI)
+                                if (!isSkillUI)
                                 {
                                     isSkillUI = true;
                                     //GameObject.Find("Main Camera").GetComponent<Camera>().enabled = false;
@@ -479,13 +479,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                                     SceneManager.UnloadSceneAsync("Skill_UI");
 
                                     GameObject btn = GameObject.Find("prefab_close_btn");
-                                    if(btn != null)
+                                    if (btn != null)
                                     {
                                         Destroy(btn);
                                     }
                                 }
                             }
-                            
+
                         }
                     }
                 }
@@ -496,7 +496,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
         }
 
-        if(isSkillUI)
+        if (isSkillUI)
         {
             Explane_Pos.SetMousePos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
@@ -547,13 +547,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     public PlayerCtrl GetPartyMember(PlayerCtrl playerCtrl) //파티원 정보 게터
     {
-        if(party.GetPartyHeadCount() == 1) //혼자라면 나를 리턴
+        if (party.GetPartyHeadCount() == 1) //혼자라면 나를 리턴
         {
             return playerCtrl;
         }
         else
         {
-            if(party.GetPartyLeaderID() == pv.ViewID) //파티장이 나라면 파티원 리턴
+            if (party.GetPartyLeaderID() == pv.ViewID) //파티장이 나라면 파티원 리턴
             {
                 return PhotonView.Find(party.GetPartyMemberID()).GetComponent<PlayerCtrl>();
             }
@@ -601,7 +601,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         anim.speed = animSpeed;
     }
 
-    public  float GetAnimSpeed(int speed)
+    public float GetAnimSpeed(int speed)
     {
         float animSpeed = 1.0f;
         switch (speed)
@@ -805,7 +805,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
                         if (bossCtrl != null && !bossCtrl.onHit)
                         {
-                            if (rand > enemy.enemyData.evasionRate)
+                            if (rand > enemy.enemyData.evasionRate && bossCtrl.GetState() != BossCtrl.State.ATTACKED)
                             {
                                 bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, pv.ViewID, 1.0f);
                                 bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, mouseWorldPosition - this.transform.position);
@@ -835,7 +835,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             }
         }
     }
-        
+
 
     void AttackDirection()
     {
@@ -897,7 +897,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         }
     }
 
-    
+
 
     //// 2D 캐릭터 방향 결정
     //void SetDirection()
@@ -923,7 +923,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 PhotonView partyLeaderPhotonView = PhotonView.Find(party.GetPartyLeaderID());
                 partySystemScript.partyMemberHUD[0].transform.GetChild(0).GetComponentInChildren<Text>().text = partyLeaderPhotonView.Owner.NickName;
                 partySystemScript.partyMemberHUD[0].SetActive(true);
-                if(partySystemScript.partyMemberHUD[1].activeSelf)
+                if (partySystemScript.partyMemberHUD[1].activeSelf)
                 {
                     partySystemScript.partyMemberHUD[1].SetActive(false);
                 }
@@ -991,7 +991,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(isLobbyScene && other.name == "DungeonEntrance") //&& DungeonEnterCondition()
+        if (isLobbyScene && other.name == "DungeonEntrance") //&& DungeonEnterCondition()
         {
             //던전 선택창 출력
             DungeonCanvas.SetActive(true);
@@ -1081,7 +1081,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             Debug.Log("파티장이 아닙니다");
         }
-        
+
 
         return false;
     }
