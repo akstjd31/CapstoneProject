@@ -9,8 +9,8 @@ public class Golem : Enemy
         enemyData.name = "Golem";
         enemyData.hp = 1000;
         enemyData.maxHp = enemyData.hp;
-        enemyData.attackDamage = 40;
-        enemyData.attackDelayTime = 2.5f;
+        enemyData.attackDamage = 20;
+        enemyData.attackDelayTime = 1f;
         enemyData.moveSpeed = 2f;
         enemyData.evasionRate = 5;
         enemyData.enemyType = EnemyType.BOSS;

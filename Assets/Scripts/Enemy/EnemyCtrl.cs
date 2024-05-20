@@ -293,10 +293,16 @@ public class EnemyCtrl : MonoBehaviour
         else
         {
             pv.RPC("SpawnDroppedItem", RpcTarget.All);
-
-            Destroy(hpBar.gameObject);
-            Destroy(this.gameObject);
+            pv.RPC("DestroyObj", RpcTarget.All);
         }
+    }
+
+    [PunRPC]
+    private void DestroyObj()
+    {
+
+        Destroy(hpBar.gameObject);
+        Destroy(this.gameObject);
     }
 
 

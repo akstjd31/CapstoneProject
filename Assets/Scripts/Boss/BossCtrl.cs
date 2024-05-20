@@ -152,7 +152,6 @@ public class BossCtrl : MonoBehaviour
     {
         if (!isDeath)
         {
-
             if (agent.velocity != Vector3.zero &&
            restTime >= enemy.enemyData.attackDelayTime &&
            state == State.NORMAL)
@@ -205,14 +204,15 @@ public class BossCtrl : MonoBehaviour
             {
                 if (IsPlayerInRectangleRange())
                 {
-                    if (lazerCoolTime <= 0.0f)
+                    if (lazerCoolTime <= 0.0f && state != State.RANGEATTACK)
                     {
                         lazerCoolTime = lazerDefaultCoolTime;
                         FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
                         pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.LAZERCAST);
                         agent.isStopped = true;
                     }
-                    if (rocketCoolTime <= 0.0f)
+
+                    if (rocketCoolTime <= 0.0f && state != State.LAZERCAST)
                     {
                         rocketCoolTime = rocketDefaultCoolTime;
                         agent.isStopped = true;
@@ -456,9 +456,16 @@ public class BossCtrl : MonoBehaviour
         {
             dropItem.GetComponent<PhotonView>().RPC("SpawnDroppedItem", RpcTarget.All);
 
-            Destroy(hpBar.gameObject);
-            Destroy(this.gameObject);
+            pv.RPC("DestroyObj", RpcTarget.All);
         }
+    }
+
+    [PunRPC]
+    private void DestroyObj()
+    {
+
+        Destroy(hpBar.gameObject);
+        Destroy(this.gameObject);
     }
 
     // 히든 패턴 : 2분 동안 재단 색 보스 머리에 뜨는 색하고 같은걸로 변경하기
@@ -732,7 +739,7 @@ public class BossCtrl : MonoBehaviour
             rigid.velocity = Vector2.zero;
             onHit = false;
             pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
-            restTime = 1.0f;
+            restTime = 0.0f;
             return;
         }
 
@@ -760,7 +767,7 @@ public class BossCtrl : MonoBehaviour
                 attackedDistanceSpeed = 3f;
                 anim.speed = 1f;
                 pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
-                restTime = 1.5f;
+                restTime = 0.0f;
             }
         }
     }

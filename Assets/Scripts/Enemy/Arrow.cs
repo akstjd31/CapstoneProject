@@ -106,7 +106,7 @@ public class Arrow : MonoBehaviour
                 {
                     float rand = Random.Range(0, 100f);
 
-                    if (rand > enemy.enemyData.evasionRate)
+                    if (rand > enemy.enemyData.evasionRate && bossCtrl.GetState() != BossCtrl.State.ATTACKED)
                     {
                         bossCtrl.GetComponent<PhotonView>().RPC("BossKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
                         bossCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID, 1.0f);
@@ -122,7 +122,7 @@ public class Arrow : MonoBehaviour
             {
                 EnemyCtrl enemyCtrl = other.GetComponent<EnemyCtrl>();
 
-                if (enemyCtrl != null && !enemyCtrl.onHit && rigid.velocity != Vector2.zero)
+                if (enemyCtrl != null && !enemyCtrl.onHit)
                 {
                     enemyCtrl.GetComponent<PhotonView>().RPC("EnemyKnockbackRPC", RpcTarget.All, targetPos - this.transform.position);
                     enemyCtrl.GetComponent<PhotonView>().RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID, 1.0f);
