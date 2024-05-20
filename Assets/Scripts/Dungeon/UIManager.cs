@@ -47,8 +47,17 @@ public class UIManager : MonoBehaviour
             flag = true;
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             
-            localPlayerStatus = players[0].GetComponent<Status>();
-            remotePlayerStatus = players[1].GetComponent<Status>();
+            if (players[0].GetComponent<PhotonView>().IsMine)
+            {
+                localPlayerStatus = players[0].GetComponent<Status>();
+                remotePlayerStatus = players[1].GetComponent<Status>();
+            }
+            else
+            {
+                localPlayerStatus = players[1].GetComponent<Status>();
+                remotePlayerStatus = players[0].GetComponent<Status>();
+            }
+
             
             // if (localPlayerStatus.gameObject.Equals(players[0]))
             // {
