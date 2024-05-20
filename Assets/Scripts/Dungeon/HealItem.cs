@@ -20,6 +20,12 @@ public class HealItem : MonoBehaviour
         
     }
 
+    [PunRPC]
+    public void DestroyObj()
+    {
+        Destroy(this.gameObject);
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -33,7 +39,7 @@ public class HealItem : MonoBehaviour
             }
 
             uiManager.PlayHealSound();
-            PhotonNetwork.Destroy(this.gameObject);
+            this.GetComponent<PhotonView>().RPC("DestroyObj", RpcTarget.All);
         }
     }
 }
