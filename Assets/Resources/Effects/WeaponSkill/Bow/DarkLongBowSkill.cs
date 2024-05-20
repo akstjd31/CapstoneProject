@@ -7,9 +7,9 @@ using Photon.Realtime;
 
 public class DarkLongBowSkill : MonoBehaviour
 {
-    Position skillPos;
+    Vector3 skillPos;
     float destroyTimer = 0.0f;
-    public float duration = 1.4f;
+    public float duration = 0.5f;
     [SerializeField] private int viewID = -1;
     // Start is called before the first frame update
 
@@ -32,6 +32,23 @@ public class DarkLongBowSkill : MonoBehaviour
         if(destroyTimer > duration)
         {
             PhotonNetwork.Destroy(this.gameObject);
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            EnemyCtrl enemyCtrl = other.gameObject.GetComponent<EnemyCtrl>();
+            if (enemyCtrl != null)
+            {
+                PhotonView enemyPv = enemyCtrl.GetComponent<PhotonView>();
+                if (enemyPv != null)
+                {
+                    Debug.Log(viewID);
+                    enemyPv.RPC("DamagePlayerOnHitRPC", RpcTarget.All, viewID, 3.0f);
+                }
+            }
         }
     }
 }

@@ -131,6 +131,9 @@ MonoBehaviour:
   - InitializeIcycleSwordSkill
   - InitializeKingMakerSwordSkill
   - InitializeDarkLongBowSkill
+  - InitializeShiningCompoundBowSkill
+  - InitializePatyhFinderSkill
+  - InitializePathFinderSkill
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
