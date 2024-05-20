@@ -10790,6 +10790,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jewel_Pillar (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 6090561833833406642, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1517538564, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8793597850d6294cb8502e4577038d2, type: 3}
 --- !u!4 &1286292091313145648 stripped
@@ -10881,6 +10885,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jewel_Pillar (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 6090561833833406642, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1523596187, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8793597850d6294cb8502e4577038d2, type: 3}
 --- !u!4 &78741360441446013 stripped
@@ -10972,6 +10980,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jewel_Pillar (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6090561833833406642, guid: c8793597850d6294cb8502e4577038d2, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1817733100, guid: 0b225c7753c46e9469b82e3f8b9e05fb, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8793597850d6294cb8502e4577038d2, type: 3}
 --- !u!4 &4151617428672814388 stripped

@@ -2218,6 +2218,7 @@ MonoBehaviour:
   enemyAttackDirection: {x: 0, y: 0, z: 0}
   knockBackDistanceSpeed: 0
   originalKnockBackDistanceSpeed: 0
+  npcList: []
   isMoveRoom: 0
   items: {fileID: 0}
   itemCheckPoint: {fileID: 5305725294359329851}
@@ -2232,6 +2233,7 @@ MonoBehaviour:
   equipItem: {fileID: 0}
   attackedEffect: {fileID: 8371388529732963607, guid: 44c585494fea3fc47946f04e92c85791, type: 3}
   bloodPoint: {fileID: 7533640100322802747}
+  getNPC: 0
 --- !u!114 &1584516156953086667
 MonoBehaviour:
   m_ObjectHideFlags: 0

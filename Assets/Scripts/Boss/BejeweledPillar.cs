@@ -23,7 +23,7 @@ public class BejeweledPillar : MonoBehaviour
     
     private void Start()
     {
-        this.GetComponent<PhotonView>().RPC("RandomIndexRPC", RpcTarget.All);
+        //this.GetComponent<PhotonView>().RPC("RandomIndexRPC", RpcTarget.All);
         idx = rand;
 
         jewelObj.GetComponent<SpriteRenderer>().sprite = jewelSprite[rand];
