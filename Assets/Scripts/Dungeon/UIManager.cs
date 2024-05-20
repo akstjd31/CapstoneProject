@@ -51,6 +51,8 @@ public class UIManager : MonoBehaviour
             {
                 localPlayerStatus = players[0].GetComponent<Status>();
                 remotePlayerStatus = players[1].GetComponent<Status>();
+
+
             }
             else
             {
@@ -58,7 +60,9 @@ public class UIManager : MonoBehaviour
                 remotePlayerStatus = players[0].GetComponent<Status>();
             }
 
-            
+            localHUD.hpBar.maxValue = this.localPlayerStatus.MAXHP;
+            remoteHUD.hpBar.maxValue = this.remotePlayerStatus.MAXHP;
+
             // if (localPlayerStatus.gameObject.Equals(players[0]))
             // {
             //     localPlayerStatus = players[0].GetComponent<Status>();
@@ -143,22 +147,11 @@ public class UIManager : MonoBehaviour
         if (localPlayerStatus != null && remotePlayerStatus != null)
         {
             localHUD.hpBarText.text = string.Format("{0} / {1}", localPlayerStatus.HP, localPlayerStatus.MAXHP);
-
-            // 만약 MAXHP가 변경되었을 경우 갱신
-            if (localHUD.hpBar.maxValue != localPlayerStatus.MAXHP)
-            {
-                localHUD.hpBar.maxValue = this.localPlayerStatus.MAXHP;
-            }
             
             localHUD.hpBar.value = this.localPlayerStatus.HP;
 
             remoteHUD.nickName.text = this.remotePlayerStatus.GetComponent<PhotonView>().Controller.NickName;
             remoteHUD.hpBarText.text = string.Format("{0} / {1}", remotePlayerStatus.HP, remotePlayerStatus.MAXHP);
-            
-            if (remoteHUD.hpBar.maxValue != remotePlayerStatus.MAXHP)
-            {
-                remoteHUD.hpBar.maxValue = this.remotePlayerStatus.MAXHP;
-            }
 
             remoteHUD.hpBar.value = this.remotePlayerStatus.HP;
         }
@@ -168,11 +161,6 @@ public class UIManager : MonoBehaviour
             remoteHUD.nickName.text = this.remotePlayerStatus.GetComponent<PhotonView>().Controller.NickName;
             remoteHUD.hpBarText.text = string.Format("{0} / {1}", remotePlayerStatus.HP, remotePlayerStatus.MAXHP);
 
-            if (remoteHUD.hpBar.maxValue != remotePlayerStatus.MAXHP)
-            {
-                remoteHUD.hpBar.maxValue = this.remotePlayerStatus.MAXHP;
-            }
-
             remoteHUD.hpBar.value = this.remotePlayerStatus.HP;
         }
 
@@ -180,11 +168,6 @@ public class UIManager : MonoBehaviour
         else if (localPlayerStatus != null)
         {
             localHUD.hpBarText.text = string.Format("{0} / {1}", localPlayerStatus.HP, localPlayerStatus.MAXHP);
-
-            if (localHUD.hpBar.maxValue != localPlayerStatus.MAXHP)
-            {
-                localHUD.hpBar.maxValue = this.localPlayerStatus.MAXHP;
-            }
 
             localHUD.hpBar.value = this.localPlayerStatus.HP;
         }

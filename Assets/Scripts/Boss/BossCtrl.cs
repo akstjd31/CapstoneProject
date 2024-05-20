@@ -225,27 +225,19 @@ public class BossCtrl : MonoBehaviour
                 {
                     if (armorBuffCoolTime <= 0.0f || spcialLazerCoolTime <= 0.0f)
                     {
-                        uiManager.RandomFloat();
-
-
-                        if (uiManager.rand <= 10f)
+                        if (armorBuffCoolTime <= 0.0f && state != State.SPECIAL_LAZER)
                         {
-                            if (armorBuffCoolTime <= 0.0f)
-                            {
-                                armorBuffCoolTime = armorBuffDefaultCoolTime;
-                                agent.isStopped = true;
-                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.ARMORBUFF);
-                                armorBuffElapsedTime = armorBuffDurationTime;
-                            }
+                            armorBuffCoolTime = armorBuffDefaultCoolTime;
+                            agent.isStopped = true;
+                            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.ARMORBUFF);
+                            armorBuffElapsedTime = armorBuffDurationTime;
                         }
-                        else if (uiManager.rand <= 20f)
+
+                        if (spcialLazerCoolTime <= 0.0f && state != State.ARMORBUFF)
                         {
-                            if (spcialLazerCoolTime <= 0.0f)
-                            {
-                                spcialLazerCoolTime = spcialLazerDefaultCoolTime;
-                                agent.isStopped = true;
-                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.SPECIAL_LAZER);
-                            }
+                            spcialLazerCoolTime = spcialLazerDefaultCoolTime;
+                            agent.isStopped = true;
+                            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.SPECIAL_LAZER);
                         }
                         else
                         {
