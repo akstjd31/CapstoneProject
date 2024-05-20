@@ -9,6 +9,7 @@ using UnityEngine.UIElements;
 
 public class DungeonManager : MonoBehaviourPunCallbacks
 {
+    public PhotonView dungeonPV;
     public float[] mapSize = new float[2] {36.0f, 20.0f};
     public int roomNum = 8;
     public int createdRoomNum = 1;
@@ -39,10 +40,11 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        dungeonPV = this.GetComponent<PhotonView>();
         //GetComponent<RoomController>().Invoke("CreateRoom", 0.3f);
     }
 
-    
+
     public override void OnCreatedRoom()
     {
         spawnPoint = PhotonNetwork.Instantiate(mapDir + "Spawn", new Vector3(500.0f, 500.0f, 0.0f), Quaternion.identity);
@@ -51,99 +53,102 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if(specialRoomSelect)
+        if (dungeonPV.IsMine)
         {
-            playerMarker.transform.position = new Vector2(playerRoomPos.x / mapSize[0] + spawnPoint.transform.position.x, playerRoomPos.y / mapSize[1] + spawnPoint.transform.position.x);
-        }
-        gridMapCreateTimer += Time.deltaTime;
-        if (!isMapCreate)
-        {
-            mapCreateTimer += Time.deltaTime;
-        }
-        if (mapCreateTimer > 2.0f && coroutineNum == 0)
-        {
-            isMapCreate = true;
-            mapCreateTimer = 0.0f;
-        }
-        if (isMapCreate && !specialRoomSelect)
-        {
-            if(endRooms.Count < 3)
+            if (specialRoomSelect)
             {
-                //DungeonReset();
+                playerMarker.transform.position = new Vector2(playerRoomPos.x / mapSize[0] + spawnPoint.transform.position.x, playerRoomPos.y / mapSize[1] + spawnPoint.transform.position.x);
             }
-            for(int i = 0; i < endRooms.Count; i++)
+            gridMapCreateTimer += Time.deltaTime;
+            if (!isMapCreate)
             {
-                if(endRooms[i] == null)
-                {
-                    continue;
-                }
-                float endRoomDistance = Mathf.Sqrt(Mathf.Pow(endRooms[i].transform.position.x,2) + Mathf.Pow(endRooms[i].transform.position.y,2));
-                if(bossRoomDistance < endRoomDistance)
-                {
-                    bossRoomDistance = endRoomDistance;
-                    bossRoom = endRooms[i];
-                    endRooms.Remove(endRooms[i]);
-                }
+                mapCreateTimer += Time.deltaTime;
             }
-            while(true)
+            if (mapCreateTimer > 2.0f && coroutineNum == 0)
             {
-                int rannum = Random.Range(0, endRooms.Count);
-                Debug.Log(endRooms.Count);
-                Debug.Log(rannum);
-                if(endRooms[rannum] == null)
-                {
-                    Debug.Log("null");
-                    continue;
-                }
-                else
-                {
-                    shopRoom = endRooms[rannum];
-                    endRooms.Remove(endRooms[rannum]);
-                    Debug.Log("Remove");
-                    break;
-                }
+                isMapCreate = true;
+                mapCreateTimer = 0.0f;
             }
-            while(true)
+            if (isMapCreate && !specialRoomSelect)
             {
-                int rannum = Random.Range(0, endRooms.Count);
-                Debug.Log(endRooms.Count);
-                Debug.Log(rannum);
-                if(endRooms[rannum] == null)
+                if (endRooms.Count < 3)
                 {
-                    Debug.Log("null");
-                    continue;
+                    DungeonReset();
                 }
-                else
+                for (int i = 0; i < endRooms.Count; i++)
                 {
-                    healRoom = endRooms[rannum];
-                    endRooms.Remove(endRooms[rannum]);
-                    Debug.Log("Remove");
-                    break;
-                }
-            }
-            playerMarker = PhotonNetwork.Instantiate(mapDir + playerMarker.name, new Vector2(playerRoomPos.x / mapSize[0] + spawnPoint.transform.position.x, playerRoomPos.y / mapSize[1] + spawnPoint.transform.position.x), Quaternion.identity, 0);
-            PhotonNetwork.Instantiate(mapDir + healRoomMarker.name, healRoom.transform.position, Quaternion.identity, 0);
-            PhotonNetwork.Instantiate(mapDir + shopRoomMarker.name, shopRoom.transform.position, Quaternion.identity, 0);
-            PhotonNetwork.Instantiate(mapDir + bossRoomMarker.name, bossRoom.transform.position, Quaternion.identity, 0);
-            specialRoomSelect = true;
-
-        }
-        if(isMapCreate && specialRoomSelect && !NavMeshbaked)
-        {
-            for(int i = 0; i < createdRoomNum; i++)
-            {
-                if(rooms[i].GetComponent<RoomController>().makePlayMap)
-                {
-                    if(i == createdRoomNum - 1)
+                    if (endRooms[i] == null)
                     {
-                        bakeNavMesh.BakeNavigation();
-                        NavMeshbaked = true;
-                        GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").GetComponent<Inventory>().gameObject.transform.SetAsLastSibling();
+                        continue;
+                    }
+                    float endRoomDistance = Mathf.Sqrt(Mathf.Pow(endRooms[i].transform.position.x, 2) + Mathf.Pow(endRooms[i].transform.position.y, 2));
+                    if (bossRoomDistance < endRoomDistance)
+                    {
+                        bossRoomDistance = endRoomDistance;
+                        bossRoom = endRooms[i];
+                        endRooms.Remove(endRooms[i]);
                     }
                 }
-                else
+                while (true)
                 {
-                    break;
+                    int rannum = Random.Range(0, endRooms.Count);
+                    Debug.Log(endRooms.Count);
+                    Debug.Log(rannum);
+                    if (endRooms[rannum] == null)
+                    {
+                        Debug.Log("null");
+                        continue;
+                    }
+                    else
+                    {
+                        shopRoom = endRooms[rannum];
+                        endRooms.Remove(endRooms[rannum]);
+                        Debug.Log("Remove");
+                        break;
+                    }
+                }
+                while (true)
+                {
+                    int rannum = Random.Range(0, endRooms.Count);
+                    Debug.Log(endRooms.Count);
+                    Debug.Log(rannum);
+                    if (endRooms[rannum] == null)
+                    {
+                        Debug.Log("null");
+                        continue;
+                    }
+                    else
+                    {
+                        healRoom = endRooms[rannum];
+                        endRooms.Remove(endRooms[rannum]);
+                        Debug.Log("Remove");
+                        break;
+                    }
+                }
+                playerMarker = PhotonNetwork.Instantiate(mapDir + playerMarker.name, new Vector2(playerRoomPos.x / mapSize[0] + spawnPoint.transform.position.x, playerRoomPos.y / mapSize[1] + spawnPoint.transform.position.x), Quaternion.identity, 0);
+                PhotonNetwork.Instantiate(mapDir + healRoomMarker.name, healRoom.transform.position, Quaternion.identity, 0);
+                PhotonNetwork.Instantiate(mapDir + shopRoomMarker.name, shopRoom.transform.position, Quaternion.identity, 0);
+                PhotonNetwork.Instantiate(mapDir + bossRoomMarker.name, bossRoom.transform.position, Quaternion.identity, 0);
+                specialRoomSelect = true;
+
+            }
+            if (isMapCreate && specialRoomSelect && !NavMeshbaked)
+            {
+                for (int i = 0; i < createdRoomNum; i++)
+                {
+                    if (rooms[i].GetComponent<RoomController>().makePlayMap)
+                    {
+                        if (i == createdRoomNum - 1)
+                        {
+                            bakeNavMesh.BakeNavigation();
+                            NavMeshbaked = true;
+                            GameObject.FindGameObjectWithTag("Canvas").transform.Find("Inventory").GetComponent<Inventory>().gameObject.transform.SetAsLastSibling();
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
         }
