@@ -812,6 +812,7 @@ MonoBehaviour:
   healRoom: {fileID: 0}
   healRoomMarker: {fileID: 6302366022903837396, guid: 6c508bd623e73464381f03e5bea51d61, type: 3}
   spawnPoint: {fileID: 6403420414911489873, guid: e4036221cebebf440b5986eca28f9351, type: 3}
+  playerMarker: {fileID: 6302366022903837396, guid: 330345520995e69408422af830f48c9d, type: 3}
   bakeNavMesh: {fileID: 1401224167}
 --- !u!1 &173065455
 GameObject:

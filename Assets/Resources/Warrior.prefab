@@ -1938,6 +1938,7 @@ MonoBehaviour:
   isAttackCooldownOver: 1
   attackCoolTime: 1
   animController: []
+  pv: {fileID: 0}
   weaponName: None
   state: 0
   isPartyMember: 0
@@ -2130,7 +2131,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   status: {fileID: 0}
   playerCtrl: {fileID: 0}
-  playerPV: {fileID: 0}
   charSkillCoolTime: 0
   weaponSkillCoolTime: 0
   durationTime: 0

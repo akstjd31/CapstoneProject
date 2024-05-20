@@ -31,6 +31,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public GameObject healRoom;
     public GameObject healRoomMarker;
     public GameObject spawnPoint;
+    public GameObject playerMarker;
 
     string mapDir = "Dungeon/";
 
@@ -50,6 +51,10 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
+        if(specialRoomSelect)
+        {
+            playerMarker.transform.position = new Vector2(playerRoomPos.x / mapSize[0] + spawnPoint.transform.position.x, playerRoomPos.y / mapSize[1] + spawnPoint.transform.position.x);
+        }
         gridMapCreateTimer += Time.deltaTime;
         if (!isMapCreate)
         {
@@ -116,6 +121,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
                     break;
                 }
             }
+            playerMarker = PhotonNetwork.Instantiate(mapDir + playerMarker.name, new Vector2(playerRoomPos.x / mapSize[0] + spawnPoint.transform.position.x, playerRoomPos.y / mapSize[1] + spawnPoint.transform.position.x), Quaternion.identity, 0);
             PhotonNetwork.Instantiate(mapDir + healRoomMarker.name, healRoom.transform.position, Quaternion.identity, 0);
             PhotonNetwork.Instantiate(mapDir + shopRoomMarker.name, shopRoom.transform.position, Quaternion.identity, 0);
             PhotonNetwork.Instantiate(mapDir + bossRoomMarker.name, bossRoom.transform.position, Quaternion.identity, 0);
