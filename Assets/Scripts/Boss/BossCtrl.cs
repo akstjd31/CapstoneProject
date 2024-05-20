@@ -132,7 +132,6 @@ public class BossCtrl : MonoBehaviour
 
     private void Start()
     {
-
         enemyAI = this.GetComponent<EnemyAI>();
         agent = this.GetComponent<NavMeshAgent>();
         anim = this.GetComponent<Animator>();
