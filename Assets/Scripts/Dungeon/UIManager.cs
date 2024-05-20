@@ -26,6 +26,8 @@ public class UIManager : MonoBehaviour
     public AudioClip[] arrowHitObstacle;
     public AudioClip jewelSound;
 
+    public float rand;
+
     private void Start()
     {
         inventory = this.transform.Find("Inventory").GetComponent<Inventory>();
@@ -67,6 +69,12 @@ public class UIManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    [PunRPC]
+    public void RandomFloat()
+    {
+        rand = Random.Range(0, 100f);
     }
 
     public void PlayChestSound()

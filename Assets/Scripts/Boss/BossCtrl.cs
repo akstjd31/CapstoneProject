@@ -112,6 +112,7 @@ public class BossCtrl : MonoBehaviour
     private BossSound bossSound;
 
     private bool hpSetting = false;
+    private UIManager uiManager;
 
     public State GetState()
     {
@@ -141,6 +142,7 @@ public class BossCtrl : MonoBehaviour
         dropItem = this.GetComponent<DropItem>();
         dropCalc = this.GetComponent<DropChanceCalculator>();
         bossSound = this.GetComponent<BossSound>();
+        uiManager = canvas.GetComponent<UIManager>();
 
         bejeweledPillars = new List<BejeweledPillar>();
 
@@ -205,8 +207,10 @@ public class BossCtrl : MonoBehaviour
                 {
                     if (armorBuffCoolTime <= 0.0f || spcialLazerCoolTime <= 0.0f)
                     {
-                        float rand = Random.Range(0, 100f);
-                        if (rand <= 10f)
+                        uiManager.RandomFloat();
+
+
+                        if (uiManager.rand <= 10f)
                         {
                             if (armorBuffCoolTime <= 0.0f)
                             {
@@ -216,7 +220,7 @@ public class BossCtrl : MonoBehaviour
                                 armorBuffElapsedTime = armorBuffDurationTime;
                             }
                         }
-                        else if (rand <= 20f)
+                        else if (uiManager.rand <= 20f)
                         {
                             if (spcialLazerCoolTime <= 0.0f)
                             {
@@ -240,27 +244,19 @@ public class BossCtrl : MonoBehaviour
                 {
                     if (IsPlayerInRectangleRange())
                     {
-                        int rand = Random.Range(0, 2);
-
-                        if (rand == 0)
+                        if (lazerCoolTime <= 0.0f)
                         {
-                            if (lazerCoolTime <= 0.0f)
-                            {
-                                lazerCoolTime = lazerDefaultCoolTime;
-                                FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
-                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.LAZERCAST);
-                                agent.isStopped = true;
-                            }
+                            lazerCoolTime = lazerDefaultCoolTime;
+                            FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
+                            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.LAZERCAST);
+                            agent.isStopped = true;
                         }
-                        else
+                        if (rocketCoolTime <= 0.0f)
                         {
-                            if (rocketCoolTime <= 0.0f)
-                            {
-                                rocketCoolTime = rocketDefaultCoolTime;
-                                agent.isStopped = true;
-                                FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
-                                pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.RANGEATTACK);
-                            }
+                            rocketCoolTime = rocketDefaultCoolTime;
+                            agent.isStopped = true;
+                            FlipHorizontalRelativeToTarget(enemyAI.GetFocusTarget().position);
+                            pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.RANGEATTACK);
                         }
                     }
                 }
@@ -448,12 +444,6 @@ public class BossCtrl : MonoBehaviour
         agent.isStopped = false;
         restTime = 1.0f;
         pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
-    }
-
-    [PunRPC]
-    private void RandomNumber()
-    {
-        rand = Random.Range(0, 2);
     }
 
     // 죽음
