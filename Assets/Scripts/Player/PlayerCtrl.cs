@@ -179,10 +179,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
             Explane_Pos.skill_explane = skill_explane;
             skill_explane.SetActive(false);
 
-            if (pv.IsMine)
-            {
-                GameObject.FindGameObjectWithTag("PhotonManager").GetComponent<PhotonManager>().playerWeaponIdx = randIdx;
-            }
+            GameObject.FindGameObjectWithTag("PhotonManager").GetComponent<PhotonManager>().playerWeaponIdx = randIdx;
 
             //itemManager.GetComponent<PhotonView>().RPC("RandomCommonItemIndex", RpcTarget.AllBuffered, pv.ViewID);
             //CommonWeaponEquipRPC(randIdx);
@@ -207,12 +204,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
         anim.speed = GetAnimSpeed(status.attackSpeed);
 
-        if (pv.IsMine)
-        {
-            inventory.equippedItem = equipItem;
-            inventory.FreshSlot();
-            inventory.SetStatus(status);
-        }
+        inventory.equippedItem = equipItem;
+        inventory.FreshSlot();
+        inventory.SetStatus(status);
+        //if (pv.IsMine)
+        //{
+
+        //}
 
         TotalStatus(equipItem);
 
