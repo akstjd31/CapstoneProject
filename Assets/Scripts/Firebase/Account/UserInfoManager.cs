@@ -13,10 +13,8 @@ public class UserInfoManager : MonoBehaviour
     private static UserInfoManager instance;
     private static FirebaseUser currentUser; // Firebase 사용자 정보를 저장할 변수
     private static Dictionary<string, int> skillLevel; //스킬 데이터의 원본
-    private static Dictionary<string, int> skillLevel2; //스킬 데이터의 원본
     private static Inventory inv;
 
-    private bool isDebug = true;
     private static int nowMoney = 0;
 
     void Awake()
@@ -36,15 +34,6 @@ public class UserInfoManager : MonoBehaviour
 
         // 3초마다 GetUserMoney 함수를 호출합니다.
         InvokeRepeating("WrapGetUserMoney", 0f, 3f);
-    }
-
-    //디버그인 경우 유저를 FirebaseAuth에서 자동 삭제
-    private void OnApplicationQuit()
-    {
-        if(isDebug && currentUser != null)
-        {
-            currentUser.DeleteAsync();
-        }
     }
 
     // 사용자 정보를 설정하는 메서드
@@ -275,16 +264,16 @@ public class UserInfoManager : MonoBehaviour
                 Debug.Log("Read charData & skill failed");
             }
 
-            Debug.Log("show skill in UserInfoManager");
-            Show_Dictionary(skill);
+            //Debug.Log("show skill in UserInfoManager");
+            //Show_Dictionary(skill);
             skillLevel = new();
             foreach (var kvp in skill)
             {
                 skillLevel[kvp.Key] = kvp.Value;
             }
 
-            Debug.Log("in UserInfoManager ");
-            Show_Dictionary(skillLevel);
+            //Debug.Log("in UserInfoManager ");
+            //Show_Dictionary(skillLevel);
         }
         else
         {
@@ -295,15 +284,9 @@ public class UserInfoManager : MonoBehaviour
     public static async Task UpgradeSkill(string key, int value)
     {
         skillLevel[key] = value;
-        Debug.Log("UpgradeSkill complete");
+        //Debug.Log("UpgradeSkill complete");
 
         await SetSkillLevel_Async(skillLevel);
-    }
-
-    //CharSkill.cs에서만 사용
-    public static void SetSkillLevel(Dictionary<string, int> skill)
-    {
-        SetSkillLevel_Async(skill);
     }
 
     public static async Task SetSkillLevel_Async(Dictionary<string, int> skill)
