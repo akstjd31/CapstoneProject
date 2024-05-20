@@ -111,6 +111,8 @@ public class BossCtrl : MonoBehaviour
 
     private BossSound bossSound;
 
+    private bool hpSetting = false;
+
     public State GetState()
     {
         return state;
@@ -139,8 +141,6 @@ public class BossCtrl : MonoBehaviour
         dropItem = this.GetComponent<DropItem>();
         dropCalc = this.GetComponent<DropChanceCalculator>();
         bossSound = this.GetComponent<BossSound>();
-
-        HPInitSetting();
 
         bejeweledPillars = new List<BejeweledPillar>();
 
@@ -333,6 +333,8 @@ public class BossCtrl : MonoBehaviour
             armorBuffObj = null;
             debuffPlayerCharType = "";
         }
+
+        HPInitSetting();
     }
 
     private void IdleAndMoveAnimation()
@@ -801,8 +803,9 @@ public class BossCtrl : MonoBehaviour
     public void HPInitSetting()
     {
         // 플레이어가 방에 존재할때 HP바 생성
-        if (triggerCheck.isPlayerInRoom)
+        if (triggerCheck.isPlayerInRoom && !hpSetting)
         {
+            hpSetting = true;
             hpBar = Instantiate(HPBar, Vector2.zero, Quaternion.identity, canvas.transform);
             hpBar.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 400);
             hpBar.maxValue = enemy.enemyData.hp;
