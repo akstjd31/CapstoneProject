@@ -157,15 +157,8 @@ public class ArcherActiveSkill : ActiveSkill
                     Hud.weaponSkillImage.transform.parent.gameObject.SetActive(false);
             }
         }
-    }
-    void CharSkill()
-    {
-        charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillEffect", this.transform.position, Quaternion.identity);
-        status.moveSpeed += status.GetDefaultMoveSpeed() * 0.3f;
-        durationTime = setCharSkillDrationTime;
-        charSkillCoolTime = setCharSkillCoolTime;
-        
-        if (durationTime > 0.0f)
+
+        if (durationTime > 0.0f && charEffect != null)
         {
             charEffect.transform.position = new Vector2(this.transform.position.x + (0.5f * this.transform.localScale.x), this.transform.position.y + 0.3f);
             charEffect.transform.localScale = new Vector2(-this.transform.localScale.x, this.transform.localScale.y);
@@ -176,6 +169,13 @@ public class ArcherActiveSkill : ActiveSkill
             PhotonNetwork.Destroy(charEffect);
             status.moveSpeed = status.GetDefaultMoveSpeed();
         }
+    }
+    void CharSkill()
+    {
+        charEffect = PhotonNetwork.Instantiate(charEffectDir + "ArcherSkillEffect", this.transform.position, Quaternion.identity);
+        status.moveSpeed += status.GetDefaultMoveSpeed() * 0.3f;
+        durationTime = setCharSkillDrationTime;
+        charSkillCoolTime = setCharSkillCoolTime;
     }
 
     void DarkLongBowSkill()
