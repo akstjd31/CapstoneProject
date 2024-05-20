@@ -11,6 +11,9 @@ public class EnemyAI : MonoBehaviour
 
     private NavMeshAgent agent;
     private EnemyCtrl enemyCtrl;
+    private BossCtrl bossCtrl;
+    private Enemy enemy;
+    
 
     [SerializeField] private Transform target1, target2; // 2인 멀티 플레이어
 
@@ -38,6 +41,12 @@ public class EnemyAI : MonoBehaviour
         agent.updateUpAxis = false;
 
         enemyPV = this.GetComponent<PhotonView>();
+        enemy = this.GetComponent<Enemy>();
+
+        if (enemy.enemyData.enemyType == EnemyType.BOSS)
+        {
+            bossCtrl = this.GetComponent<BossCtrl>();
+        }
 
         aggroMeter1 = 0; aggroMeter2 = 0;
     }
@@ -50,6 +59,12 @@ public class EnemyAI : MonoBehaviour
         {
             if (triggerCheck.isPlayerInRoom)
             {
+                if (enemy.enemyData.enemyType == EnemyType.BOSS && bossCtrl.GetState() == BossCtrl.State.INVINCIBILITY)
+                {
+                    agent.isStopped = true;
+                    return;
+                }
+
                 // 아직 해당 던전에 플레이어가 타겟에 할당되지 않았다면
                 if (target1 == null && target2 == null)
                 {

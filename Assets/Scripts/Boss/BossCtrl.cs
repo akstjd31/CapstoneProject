@@ -105,6 +105,7 @@ public class BossCtrl : MonoBehaviour
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.yellow };
     private int randColorIdx;
     GameObject timer;
+    [SerializeField] int count = 0;
 
     [SerializeField] private GameObject onTriggerCheckObj;
     [SerializeField] private TriggerCheck triggerCheck;
@@ -497,7 +498,6 @@ public class BossCtrl : MonoBehaviour
     {
         if (bejeweledPillars.Count > 0)
         {
-            int count = 0;
             foreach (BejeweledPillar jewelPillar in bejeweledPillars)
             {
                 if (jewelPillar.flag)
@@ -510,10 +510,10 @@ public class BossCtrl : MonoBehaviour
             if (count >= 4)
             {
                 anim.speed = 1f;
+                anim.Play("Idle");
                 restTime = 0.0f;
                 agent.isStopped = false;
                 enemyAI.isLookingAtPlayer = true;
-                onHit = false;
                 pv.RPC("ChangeStateRPC", RpcTarget.All, (int)State.NORMAL);
                 jewelColorObj.SetActive(false);
                 pv.RPC("DestroyTimer", RpcTarget.All);
