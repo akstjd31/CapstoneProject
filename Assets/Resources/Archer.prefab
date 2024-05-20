@@ -2187,6 +2187,7 @@ MonoBehaviour:
   knockBackDistanceSpeed: 0
   originalKnockBackDistanceSpeed: 0
   isMoveRoom: 0
+  items: {fileID: 0}
   itemCheckPoint: {fileID: 5305725294359329851}
   itemCheckRange: 0.8
   itemLayers:

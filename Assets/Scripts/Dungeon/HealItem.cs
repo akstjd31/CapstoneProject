@@ -6,12 +6,12 @@ using UnityEngine;
 public class HealItem : MonoBehaviour
 {
     public int healRate = 50;
-    public AudioSource audioSource;
-    public AudioClip eatingSound;
+
+    UIManager uiManager;
     // Start is called before the first frame update
     void Start()
     {
-        audioSource = this.GetComponent<AudioSource>();
+        uiManager = GameObject.FindGameObjectWithTag("Canvas").GetComponent<UIManager>();
     }
 
     // Update is called once per frame
@@ -32,7 +32,7 @@ public class HealItem : MonoBehaviour
                 status.HP = status.MAXHP;
             }
 
-            audioSource.PlayOneShot(eatingSound);
+            uiManager.PlayHealSound();
             PhotonNetwork.Destroy(this.gameObject);
         }
     }

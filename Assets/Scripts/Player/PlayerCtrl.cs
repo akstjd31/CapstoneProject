@@ -99,7 +99,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     private float interactionDist = 2f;     //상호작용 거리
     private GameObject npcParent;
 
-    private Items items; // 바닥에 놓여있는 아이템
+    [SerializeField] private Items items; // 바닥에 놓여있는 아이템
 
     // 바닥에 떨어진 아이템 체크포인트
     public Transform itemCheckPoint;
@@ -156,7 +156,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
         inventory = canvas.transform.Find("Inventory").GetComponent<Inventory>();
-        inventory.SetStatus(status);
         itemManager = GameObject.Find("ItemManager").GetComponent<ItemManager>();
         spum_SpriteList = this.transform.Find("Root").GetComponent<SPUM_SpriteList>();
         playerSound = this.GetComponent<PlayerSound>();
@@ -209,6 +208,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
         {
             inventory.equippedItem = equipItem;
             inventory.FreshSlot();
+            inventory.SetStatus(status);
         }
 
         TotalStatus(equipItem);
@@ -245,6 +245,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
                 {
                     isDeactiveUI = chatScript != null && partySystemScript != null &&
                     !chatScript.chatView.activeSelf && !partySystemScript.partyCreator.activeSelf && !partySystemScript.partyView.activeSelf;
+
                 }
                 else
                 {
@@ -565,7 +566,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
     {
         this.equipItem = item;
     }
-
     public void TotalStatus(Item equippedItem)
     {
         status.attackDamage = status.GetDefaultAttackDamage() + equippedItem.attackDamage;
