@@ -495,19 +495,20 @@ public class BossCtrl : MonoBehaviour
     [PunRPC]
     private void JewelColorCheck()
     {
+        onHit = false;
         if (bejeweledPillars.Count > 0)
         {
-            bool allTrue = true;
+            int count = 0;
             foreach (BejeweledPillar jewelPillar in bejeweledPillars)
             {
-                if (!jewelPillar.flag)
+                if (jewelPillar.flag)
                 {
-                    allTrue = false;
+                    count++;
                     break;
                 }
             }
 
-            if (allTrue)
+            if (count >= 4)
             {
                 anim.speed = 1f;
                 restTime = 0.0f;
