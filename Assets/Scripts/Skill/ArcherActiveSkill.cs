@@ -24,9 +24,9 @@ public class ArcherActiveSkill : ActiveSkill
     // Start is called before the first frame update
     void Start()
     {
+        pv = playerCtrl.GetComponent<PhotonView>();
         if (pv.IsMine)
         {
-            pv = playerCtrl.GetComponent<PhotonView>();
             isInDungeon = false;
             if (GameObject.Find("LocalHUD"))
             {
