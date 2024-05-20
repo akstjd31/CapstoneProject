@@ -83,6 +83,7 @@ public class Arrow : MonoBehaviour
                 player.GetComponent<PhotonView>().RPC("DamageEnemyOnHitRPC", RpcTarget.All, damage);
 
                 player.GetComponent<PlayerSound>().PlayAttackedSound();
+                Instantiate(player.attackedEffect, new Vector2(0.293f, 0.637f), Quaternion.identity, player.transform);
             }
 
             Destroy(this.gameObject);

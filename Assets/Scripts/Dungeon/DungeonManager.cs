@@ -138,6 +138,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
                     {
                         bakeNavMesh.BakeNavigation();
                         NavMeshbaked = true;
+                        GameObject.FindGameObjectWithTag("Canvas").GetComponent<Inventory>().gameObject.transform.SetAsLastSibling();
                     }
                 }
                 else

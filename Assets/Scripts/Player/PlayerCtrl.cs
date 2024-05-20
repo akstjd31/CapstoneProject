@@ -129,6 +129,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks
 
     PlayerSound playerSound;
 
+    // 피격 이펙트
+    public Transform attackedEffect;
     //public float animSpeed;   // 애니메이션 속도 테스트
 
     public void ChangeState(State state)

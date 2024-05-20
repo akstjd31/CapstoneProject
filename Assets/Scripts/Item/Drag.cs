@@ -52,7 +52,6 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
         {
             // parent.parent.parent = Bag
             this.transform.SetParent(transform.root);
-            this.transform.SetAsLastSibling();
 
             image.raycastTarget = false;
         }
@@ -70,6 +69,8 @@ public class Drag : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHand
             this.transform.position = currentPos;
 
             this.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 250);
+
+            this.transform.SetAsLastSibling();
         }
         
     }
