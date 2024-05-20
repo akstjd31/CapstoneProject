@@ -316,7 +316,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    private void EquipItem()
+    public void EquipItem()
     {
         if (status != null && status.GetComponent<PhotonView>().IsMine)
         {

@@ -88,8 +88,10 @@ public class Slot : MonoBehaviour, IDropHandler
                     drag.defaultSprite = targetDrag.defaultSprite;
                     targetDrag.defaultSprite = tmpSprite;
 
-                    this.transform.root.Find("Inventory").GetComponent<Inventory>().equippedItem = targetDrag.defaultItem;
-                    this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Remove(targetDrag.defaultItem);
+                    Inventory inventory = this.transform.root.Find("Inventory").GetComponent<Inventory>();
+
+                    inventory.equippedItem = targetDrag.defaultItem;
+                    inventory.items.Remove(targetDrag.defaultItem);
 
                     Item tmpItem = targetDrag.defaultItem;
                     targetDrag.defaultItem = drag.defaultItem;
@@ -98,6 +100,8 @@ public class Slot : MonoBehaviour, IDropHandler
                     this.transform.root.Find("Inventory").GetComponent<Inventory>().items.Add(targetDrag.defaultItem);
 
                     item = drag.defaultItem;
+
+                    inventory.EquipItem();
                 }
                 else
                 {
