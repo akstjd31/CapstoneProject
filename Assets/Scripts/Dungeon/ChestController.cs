@@ -22,6 +22,12 @@ public class ChestController : MonoBehaviourPunCallbacks
         
     }
 
+    [PunRPC]
+    public void DestroyObj()
+    {
+        Destroy(this.gameObject);
+    }
+
     public void ChestBreak()
     {
         int randInt = Random.Range(0, 11);
@@ -31,6 +37,6 @@ public class ChestController : MonoBehaviourPunCallbacks
         }
 
         uiManager.PlayChestSound();
-        PhotonNetwork.Destroy(this.gameObject);
+        this.GetComponent<PhotonView>().RPC("DestroyObj", RpcTarget.All);
     }
 }
