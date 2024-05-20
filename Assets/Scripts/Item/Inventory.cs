@@ -65,6 +65,8 @@ public class Inventory : MonoBehaviour
     {
         FreshSlot();
         playerCtrl = FindObjectOfType<PlayerCtrl>();
+
+        spum_SpriteList = status.transform.Find("Root").GetComponent<SPUM_SpriteList>();
     }
 
     public Item GetEquippedItem()
