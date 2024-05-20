@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     public AudioClip jewelSound;
 
     public float rand;
+    private bool flag = false;
 
     private void Start()
     {
@@ -42,6 +43,20 @@ public class UIManager : MonoBehaviour
         {
             startTime -= Time.deltaTime;
         }
+        else if (localPlayerStatus != null && remotePlayerStatus == null && !flag)
+        {
+            flag = true;
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            
+            if (localPlayerStatus.gameObject.Equals(players[0]))
+            {
+                remotePlayerStatus = players[1].GetComponent<Status>();
+            }
+            else
+            {
+                remotePlayerStatus = players[0].GetComponent<Status>();
+            }
+        }
         else
         {
             if (GameObject.FindGameObjectsWithTag("Player").Length == 0)
@@ -53,20 +68,6 @@ public class UIManager : MonoBehaviour
                 else
                 {
                     ItemRecovery();
-                }
-
-                if (localPlayerStatus != null && remotePlayerStatus == null)
-                {
-                    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
-                    if (localPlayerStatus.gameObject.Equals(players[0]))
-                    {
-                        remotePlayerStatus = players[1].GetComponent<Status>();
-                    }
-                    else
-                    {
-                        remotePlayerStatus = players[0].GetComponent<Status>();
-                    }
                 }
             }
         }
