@@ -41,6 +41,8 @@ public class Inventory : MonoBehaviour
     private PlayerCtrl playerCtrl;
     private Text nowMoney;
 
+    private float removeItemInterval = 1.0f;
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -187,6 +189,23 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+
+    // 아이템 회수
+    //public void ItemRecovery()
+    //{
+    //    this.gameObject.SetActive(true);
+
+    //    if (items.Count > 0)
+    //    {
+    //        if (removeItemInterval <= 0.0f)
+    //        {
+    //            items.Remove()
+    //        }
+    //    }
+        
+    //}
+
+
 
     public void ShowExplanationStore()
     {
