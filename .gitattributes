@@ -4,3 +4,10 @@ size 41
 Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_7_0.bundle filter=lfs diff=lfs merge=lfs -text
 Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_9_0.bundle filter=lfs diff=lfs merge=lfs -text
 Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_9_0.so filter=lfs diff=lfs merge=lfs -text
+Packages filter=lfs diff=lfs merge=lfs -text
+ProjectSettings filter=lfs diff=lfs merge=lfs -text
+README.md filter=lfs diff=lfs merge=lfs -text
+app.config filter=lfs diff=lfs merge=lfs -text
+packages.config filter=lfs diff=lfs merge=lfs -text
+protos filter=lfs diff=lfs merge=lfs -text
+Assets filter=lfs diff=lfs merge=lfs -text
